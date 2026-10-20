@@ -1,6 +1,7 @@
 ---
 description: Every recorded change to one value, and why; give its name or the end of it, such as replicas
 argument-hint: VALUE
+disable-model-invocation: true
 allowed-tools: Bash("${CLAUDE_PLUGIN_ROOT}/bin/minihub":*)
 ---
 

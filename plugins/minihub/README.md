@@ -1,6 +1,6 @@
 # minihub, for Claude Code
 
-Keeps a record of what the agent changes in configuration, and why. Nothing is shown to the agent or added to its work, and nothing in the repository changes unless you turn that on.
+Keeps a record of what the agent changes in configuration, and why. The agent is asked for nothing; when it opens a file that earlier sessions changed, it is given what they changed and why. Nothing in the repository changes unless you turn that on.
 
 - **What it records:** each value the agent changes in Kubernetes files, Helm values, Kustomize, Compose, workflows, settings files, Terraform variables and agent configuration; each `kubectl`, `helm`, `argocd`, `flux`, `terraform` and `cub` command, with where it went and whether it changed something; and what the agent said at the end of each turn.
 - **What it never keeps:** a command's output, a copy of a file, or a value that looks like a credential.

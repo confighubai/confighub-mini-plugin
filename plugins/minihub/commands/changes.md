@@ -1,5 +1,6 @@
 ---
 description: What agents changed in this folder's configuration, and why
+disable-model-invocation: true
 allowed-tools: Bash("${CLAUDE_PLUGIN_ROOT}/bin/minihub":*)
 ---
 
