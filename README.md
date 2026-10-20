@@ -40,6 +40,42 @@ Deployment/api/spec.replicas, in k8s/api.yaml: 2 in the file now
       asked: The sale is over: take the api back to two replicas. Don't commit.
 ```
 
+## Try it in five minutes
+
+You need Claude Code and Git. In an empty folder, make a repository with one settings file:
+
+```
+git init try-minihub && cd try-minihub && printf 'CACHE=off\nLOG_LEVEL=warn\n' > .env && git add . && git commit -qm start
+```
+
+Then three Claude Code sessions in `try-minihub`, one after another. In each, ask one thing, let it make the edit, and close it with `/exit`:
+
+1. `Turn the cache on in .env for next week's sale. Don't commit.`
+2. `We're chasing a memory leak: turn the cache off and set debug logging. Don't commit.`
+3. `Is the cache set up right for the sale?`
+
+Neither change is committed, so Git shows only `LOG_LEVEL warn → debug`. The third session still knows both. In a real run it answered:
+
+```
+No, it isn't. .env currently has CACHE=off.
+According to the minihub plugin's change log, two earlier sessions changed this file today:
+1. 06:56: a session turned the cache on, with the request "Turn the cache on in .env for next week's sale."
+2. 06:57: one minute later, a different session turned it back off and changed LOG_LEVEL from warn to debug. ...
+I haven't changed anything, because the two goals conflict. ...
+```
+
+Then type `/minihub:why CACHE` in that session:
+
+```
+CACHE, in .env: off in the file now
+    20 October 06:56  off → on               session f8fb2870
+        asked: Turn the cache on in .env for next week's sale. Don't commit.
+    20 October 06:57  on → off               session b44c14c5
+        asked: We're chasing a memory leak: turn the cache off and set debug logging. Don't commit.
+```
+
+When you are done, remove the folder. Its record, in `~/.confighub/agent-changes`, is removed after 30 days unused.
+
 ## What the agent is given
 
 Nothing, unless earlier sessions changed the file it is looking at. Then, once in the session, beside what it read:
@@ -75,4 +111,4 @@ One program for each of macOS and Linux, on Intel and ARM, about 9 MB each, and 
 
 ## Licence
 
-The licence of the minihub program is not yet decided; until it is, no licence is granted for it. The program is built with Go and open-source modules, whose licences are in [`plugins/minihub/THIRD_PARTY_LICENSES.txt`](plugins/minihub/THIRD_PARTY_LICENSES.txt).
+MIT ([LICENSE](LICENSE)). The program is built with Go and open-source modules, whose licences are in [`plugins/minihub/THIRD_PARTY_LICENSES.txt`](plugins/minihub/THIRD_PARTY_LICENSES.txt).
