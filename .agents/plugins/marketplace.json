@@ -1,0 +1,20 @@
+{
+  "interface": {
+    "displayName": "minihub"
+  },
+  "name": "minihub",
+  "plugins": [
+    {
+      "category": "Productivity",
+      "name": "minihub",
+      "policy": {
+        "authentication": "ON_INSTALL",
+        "installation": "AVAILABLE"
+      },
+      "source": {
+        "path": "./plugins/minihub",
+        "source": "local"
+      }
+    }
+  ]
+}

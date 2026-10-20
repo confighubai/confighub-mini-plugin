@@ -1,0 +1,14 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "author": {
+    "name": "ConfigHub"
+  },
+  "description": "Keeps a record of what the agent changes in configuration, and why: each value changed, what it ran against a cluster, and what it said. Nothing is shown to the agent or added to its work. Read it with /minihub:changes. Needs no hub, server or account.",
+  "extensions": {
+    "com.openai": {
+      "hooks": "./hooks/codex-hooks.json"
+    }
+  },
+  "name": "minihub",
+  "version": "0.35.0"
+}

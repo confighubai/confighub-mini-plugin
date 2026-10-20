@@ -10,7 +10,8 @@ claude plugin install minihub@minihub
 Afterwards, in a session:
 
 ```
-/minihub:changes
+/minihub:changes              what the agent changed, and why
+/minihub:why replicas         every recorded change to one value, and why
 ```
 
 ```
@@ -29,10 +30,20 @@ Asked: The api is getting more traffic from the sale next week. ...
     kubectl get deploy,pods,cm -A (kind-shop)
 ```
 
+```
+/minihub:why replicas
+
+Deployment/api/spec.replicas, in k8s/api.yaml: now 2
+  19 October 17:25  2 → 3                  session d31421b5
+      why: third replica for next week's sale, when traffic is expected to triple
+  19 October 17:25  3 → 2                  session 08e3720e
+      asked: The sale is over: take the api back to two replicas.
+```
+
 ## What it records, and what it does not
 
 - **Recorded:** each value the agent changes in Kubernetes files, Helm values, Kustomize, Compose, GitHub Actions workflows, settings files, Terraform variables and agent configuration; each `kubectl`, `helm`, `argocd`, `flux`, `terraform` and `cub` command, with where it went and whether it changed something; and what the agent said at the end of each turn.
-- **Never kept:** a command's output, a copy of a file, or a value that looks like a credential.
+- **Never kept:** a command's output, a copy of a file, or a value that looks like a credential, even when the request or the agent names it in words.
 - **Where:** in `~/.confighub/agent-changes` on your machine, outside the repository. Nothing leaves the machine unless you turn on one of the settings below.
 
 Each setting is turned on in Claude Code's settings, as `env`:
