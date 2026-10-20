@@ -9,7 +9,7 @@
       "description": "Keeps a record of what the agent changes in configuration, and why: each value changed, what it ran against a cluster, and what it said. Nothing is shown to the agent or added to its work. Read it with /minihub:changes. Needs no hub, server or account.",
       "name": "minihub",
       "source": "./plugins/minihub",
-      "version": "0.35.0"
+      "version": "0.35.1"
     }
   ]
 }

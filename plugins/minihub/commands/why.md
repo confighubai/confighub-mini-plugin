@@ -4,6 +4,6 @@ argument-hint: VALUE
 allowed-tools: Bash("${CLAUDE_PLUGIN_ROOT}/bin/minihub":*)
 ---
 
-!`"${CLAUDE_PLUGIN_ROOT}/bin/minihub" mini changes --dir "${CLAUDE_PROJECT_DIR:-.}" --why "$ARGUMENTS"`
+!`"${CLAUDE_PLUGIN_ROOT}/bin/minihub" mini changes --why "$ARGUMENTS"`
 
 Show the person the answer above exactly as it is, in a code block, and add nothing to it.
