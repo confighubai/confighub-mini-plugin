@@ -94,6 +94,7 @@ Asked next whether the api was ready for the sale, the agent named both changes,
 ## What it records, and what it does not
 
 - **Recorded:** each value the agent changes in Kubernetes files, Helm values, Kustomize, Compose, GitHub Actions workflows, settings files, Terraform variables and agent configuration, whether with its edit tool or with shell commands such as `sed`, including files Git ignores; each `kubectl`, `helm`, `argocd`, `flux`, `terraform` and `cub` command, also when run through `env`, `bash -c`, `xargs`, `make` or a script in the repository, with where it went and whether it changed something; and what the agent said at the end of each turn. `/minihub:why` also lists changes the agent made directly on a cluster to the same resource.
+- **Changed outside an agent session:** a file an agent changed that has changed since, by hand, by another program or by Git, is recorded as such before the next request, so it is never put down to the agent, and the next agent is told.
 - **Never kept:** a command's output, a copy of a file, or a value that looks like a credential, including a password inside an address such as `postgres://user:password@host`, even when the request or the agent names it in words.
 - **Where:** in `~/.confighub/agent-changes` on your machine, outside the repository. Nothing leaves the machine unless you turn on one of the settings below.
 
