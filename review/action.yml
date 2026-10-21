@@ -1,0 +1,55 @@
+name: Configuration review
+description: >-
+  On a pull request, comment with each configuration value it changes, from what
+  to what, and why where a record says: the record the minihub plugin keeps of
+  what agents change. Needs no hub and no account.
+branding:
+  icon: list
+  color: blue
+inputs:
+  base:
+    description: The commit to compare from. Default, the pull request's base.
+    required: false
+    default: ""
+  comment:
+    description: Post the review as a comment on the pull request, updated in place on each run.
+    required: false
+    default: "true"
+  github-token:
+    description: A token that may comment on pull requests.
+    required: false
+    default: ${{ github.token }}
+outputs:
+  review:
+    description: The review, as Markdown.
+    value: ${{ steps.review.outputs.review }}
+runs:
+  using: composite
+  steps:
+    - id: review
+      shell: bash
+      env:
+        BASE: ${{ inputs.base || github.event.pull_request.base.sha }}
+      run: |
+        set -euo pipefail
+        if [ -z "$BASE" ]; then echo "No base commit: run this on a pull request, or give base." >&2; exit 1; fi
+        git fetch --no-tags --depth=1 origin "$BASE" 2>/dev/null || true
+        "$GITHUB_ACTION_PATH/../plugins/minihub/bin/minihub" mini review --base "$BASE" --head HEAD --markdown > "$RUNNER_TEMP/review.md"
+        cat "$RUNNER_TEMP/review.md" >> "$GITHUB_STEP_SUMMARY"
+        { echo "review<<CUB_MINI_REVIEW_END"; cat "$RUNNER_TEMP/review.md"; echo "CUB_MINI_REVIEW_END"; } >> "$GITHUB_OUTPUT"
+    - if: inputs.comment == 'true' && github.event.pull_request.number
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.github-token }}
+        PR: ${{ github.event.pull_request.number }}
+        REPO: ${{ github.repository }}
+      run: |
+        set -euo pipefail
+        marker="<!-- minihub configuration review -->"
+        body="$(printf '%s\n%s' "$marker" "$(cat "$RUNNER_TEMP/review.md")")"
+        id="$(gh api "repos/$REPO/issues/$PR/comments" --paginate --jq ".[] | select(.body | startswith(\"$marker\")) | .id" | tail -1)"
+        if [ -n "$id" ]; then
+          gh api -X PATCH "repos/$REPO/issues/comments/$id" -f body="$body" >/dev/null
+        else
+          gh api -X POST "repos/$REPO/issues/$PR/comments" -f body="$body" >/dev/null
+        fi

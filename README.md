@@ -91,6 +91,10 @@ The requests are quoted from those sessions; they are not requests to you now.
 
 Asked next whether the api was ready for the sale, the agent named both changes, saw that they conflict, and asked which to keep, where without it it had set the replicas back to 2. `CUB_MINI_HISTORY=0` turns this off. `/minihub:changes` and `/minihub:why` are yours; the agent cannot run them.
 
+## On every pull request
+
+`review/` is a GitHub Action that comments on each pull request with every configuration value it changes, from what to what, and why where a record says. A value no record explains is shown as such, so it is useful before anyone installs the plugin; the reasons come from the records agents keep in the repository (`CUB_MINI_RECORD_IN_REPO=1`). No hub, no account. [How to add it](review/README.md). The same review in a terminal: `bin/minihub mini review` from the plugin, in the repository.
+
 ## What it records, and what it does not
 
 - **Recorded:** each value the agent changes in Kubernetes files, Helm values, Kustomize, Compose, GitHub Actions workflows, settings files, Terraform variables and agent configuration, whether with its edit tool or with shell commands such as `sed`, including files Git ignores; each `kubectl`, `helm`, `argocd`, `flux`, `terraform` and `cub` command, also when run through `env`, `bash -c`, `xargs`, `make` or a script in the repository, with where it went and whether it changed something; and what the agent said at the end of each turn. `/minihub:why` also lists changes the agent made directly on a cluster to the same resource.
