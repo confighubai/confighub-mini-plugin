@@ -93,7 +93,7 @@ Asked next whether the api was ready for the sale, the agent named both changes,
 
 ## On every pull request
 
-`review/` is a GitHub Action that comments on each pull request with every configuration value it changes, from what to what, and why where a record says. A value no record explains is shown as such, so it is useful before anyone installs the plugin; the reasons come from the records agents keep in the repository (`CUB_MINI_RECORD_IN_REPO=1`). No hub, no account. [How to add it](review/README.md). The same review in a terminal: `bin/minihub mini review` from the plugin, in the repository.
+`review/` is a GitHub Action that comments on each pull request with every configuration value it changes, from what to what, and why where a record says. A value no record explains is shown as such, so it is useful before anyone installs the plugin; the reasons come from the records agents keep in the repository (`CUB_MINI_RECORD_IN_REPO=1`). No hub, no account. [How to add it](review/README.md), as `uses: confighubai/minihub-plugin/review@v0`. The same review in a terminal: `bin/minihub mini review` from the plugin, in the repository.
 
 ## What it records, and what it does not
 
