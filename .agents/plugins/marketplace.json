@@ -1,18 +1,18 @@
 {
   "interface": {
-    "displayName": "minihub"
+    "displayName": "confighub-mini"
   },
-  "name": "minihub",
+  "name": "confighub-mini",
   "plugins": [
     {
       "category": "Productivity",
-      "name": "minihub",
+      "name": "confighub-mini",
       "policy": {
         "authentication": "ON_INSTALL",
         "installation": "AVAILABLE"
       },
       "source": {
-        "path": "./plugins/minihub",
+        "path": "./plugins/confighub-mini",
         "source": "local"
       }
     }

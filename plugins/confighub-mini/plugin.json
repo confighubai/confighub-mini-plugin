@@ -1,0 +1,15 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "author": {
+    "name": "ConfigHub"
+  },
+  "description": "Keeps a record of what the agent changes in configuration, and why: each value changed, what it ran against a cluster, and what it said. When the agent opens a file that earlier sessions changed, it is given what they changed and why. Read it with /confighub-mini:changes. Needs no hub, server or account.",
+  "extensions": {
+    "com.openai": {
+      "hooks": "./hooks/codex-hooks.json"
+    }
+  },
+  "license": "MIT",
+  "name": "confighub-mini",
+  "version": "0.39.0"
+}

@@ -1,7 +1,7 @@
 name: Configuration review
 description: >-
   On a pull request, comment with each configuration value it changes, from what
-  to what, and why where a record says: the record the minihub plugin keeps of
+  to what, and why where a record says: the record the confighub-mini plugin keeps of
   what agents change. Needs no hub and no account.
 branding:
   icon: list
@@ -34,7 +34,7 @@ runs:
         set -euo pipefail
         if [ -z "$BASE" ]; then echo "No base commit: run this on a pull request, or give base." >&2; exit 1; fi
         git fetch --no-tags --depth=1 origin "$BASE" 2>/dev/null || true
-        "$GITHUB_ACTION_PATH/../plugins/minihub/bin/minihub" mini review --base "$BASE" --head HEAD --markdown > "$RUNNER_TEMP/review.md"
+        "$GITHUB_ACTION_PATH/../plugins/confighub-mini/bin/confighub-mini" mini review --base "$BASE" --head HEAD --markdown > "$RUNNER_TEMP/review.md"
         cat "$RUNNER_TEMP/review.md" >> "$GITHUB_STEP_SUMMARY"
         { echo "review<<CUB_MINI_REVIEW_END"; cat "$RUNNER_TEMP/review.md"; echo "CUB_MINI_REVIEW_END"; } >> "$GITHUB_OUTPUT"
     - if: inputs.comment == 'true' && github.event.pull_request.number
@@ -45,7 +45,7 @@ runs:
         REPO: ${{ github.repository }}
       run: |
         set -euo pipefail
-        marker="<!-- minihub configuration review -->"
+        marker="<!-- confighub-mini configuration review -->"
         body="$(printf '%s\n%s' "$marker" "$(cat "$RUNNER_TEMP/review.md")")"
         id="$(gh api "repos/$REPO/issues/$PR/comments" --paginate --jq ".[] | select(.body | startswith(\"$marker\")) | .id" | tail -1)"
         if [ -n "$id" ]; then

@@ -1,4 +1,4 @@
-The minihub program in this plugin is built with Go and the modules below. Their licences follow.
+The confighub-mini program in this plugin is built with Go and the modules below. Their licences follow.
 
 ================================================================
 Go (LICENSE)
