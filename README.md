@@ -1,4 +1,4 @@
-# confighub-mini plugin for Claude Code and Codex
+# The ConfigHub plugin for Claude Code and Codex
 
 A plugin for Claude Code, and for Codex, that keeps a record of what an agent changes in configuration, and why. The agent is not told about it and works as it always does. When an agent opens a file that earlier sessions changed, it is given what they changed and why, so its next answer does not undo or contradict work it cannot see in Git.
 
@@ -45,10 +45,10 @@ Deployment/api/spec.replicas, in k8s/api.yaml: 2 in the file now
 You need Claude Code and Git. In an empty folder, make a repository with one settings file:
 
 ```
-git init try-confighub-mini && cd try-confighub-mini && printf 'CACHE=off\nLOG_LEVEL=warn\n' > .env && git add . && git commit -qm start
+git init try-confighub && cd try-confighub && printf 'CACHE=off\nLOG_LEVEL=warn\n' > .env && git add . && git commit -qm start
 ```
 
-Then three Claude Code sessions in `try-confighub-mini`, one after another. In each, ask one thing, let it make the edit, and close it with `/exit`:
+Then three Claude Code sessions in `try-confighub`, one after another. In each, ask one thing, let it make the edit, and close it with `/exit`:
 
 1. `Turn the cache on in .env for next week's sale. Don't commit.`
 2. `We're chasing a memory leak: turn the cache off and set debug logging. Don't commit.`
@@ -150,7 +150,7 @@ Each setting is turned on in Claude Code's settings, as `env`:
 
 One program for each of macOS and Linux, on Intel and ARM, about 9 MB each, and a launcher that runs the one for this machine. No server, no database, no account. Tested in real Claude Code and Codex sessions on macOS, and in Claude Code on Linux.
 
-This plugin was called minihub until version 0.38.0. Version 0.39.0 is the first under the name confighub-mini; reinstall it with the two commands above.
+It installs as confighub-mini. Until version 0.38.0 it was called minihub; to move to the new name, install it again with the two commands above.
 
 ## Licence
 

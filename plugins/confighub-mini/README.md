@@ -1,4 +1,4 @@
-# confighub-mini, for Claude Code
+# The ConfigHub plugin, for Claude Code and Codex
 
 Keeps a record of what the agent changes in configuration, and why. The agent is asked for nothing; when it opens a file that earlier sessions changed, it is given what they changed and why. Nothing in the repository changes unless you turn that on.
 
@@ -27,7 +27,7 @@ Codex keeps the same record, but not by installing this plugin there: Codex runs
 bin/confighub-mini mini codex-setup
 ```
 
-It copies the program to `~/.codex/confighub-mini` and adds confighub-mini's hooks to `~/.codex/hooks.json`, beside any hooks already there. Then open Codex and type `/hooks` to approve them, once. Read the record with `~/.codex/confighub-mini/bin/confighub-mini mini changes`. `codex-setup --dry-run` says what it would do, and `codex-setup --remove` takes it all out again.
+It copies the program to `~/.codex/confighub-mini` and adds the plugin's hooks to `~/.codex/hooks.json`, beside any hooks already there. Then open Codex and type `/hooks` to approve them, once. Read the record with `~/.codex/confighub-mini/bin/confighub-mini mini changes`. `codex-setup --dry-run` says what it would do, and `codex-setup --remove` takes it all out again.
 
 ## What is in it
 
