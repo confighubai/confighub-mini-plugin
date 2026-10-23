@@ -146,6 +146,8 @@ Each setting is turned on in Claude Code's settings, as `env`:
 | `CUB_MINI_PULL_REQUEST=1` | The record and its reasons in each pull request the agent opens with `gh` |
 | `CUB_MINI_RECORD_IN_REPO=1` | The record in each commit the agent makes, readable from any checkout; when the agent commits in the same command that changed a file, the record is staged for the next commit |
 
+What it does not do, or has not been shown to do, is in [what we do not claim](docs/limits.md).
+
 ## What is in it
 
 One program for each of macOS and Linux, on Intel and ARM, about 9 MB each, and a launcher that runs the one for this machine. No server, no database, no account. Tested in real Claude Code and Codex sessions on macOS, and in Claude Code on Linux.
