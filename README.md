@@ -115,7 +115,7 @@ Deployment/api/spec.replicas, set by a command on kind-shop, namespace shop, not
       kubectl scale deployment api --namespace shop --replicas=1
 ```
 
-What a value was before a command set it is not known: the cluster is not asked.
+What a value was before a command set it is not known: the cluster is not asked. The next agent is told of such a change when it looks at the resource with `kubectl get` or `describe`, or reads a manifest that describes it. With `CUB_MINI_ASK_REASONS=1`, the agent is asked why for these values too, and the reason goes with them into the record committed with `CUB_MINI_RECORD_IN_REPO=1`.
 
 ## In Codex
 
@@ -135,7 +135,7 @@ Then type `/hooks` in Codex to approve its hooks, once. Read the record with `~/
 
 - **Recorded:** each value the agent changes in Kubernetes files, Helm values, Kustomize, Compose, GitHub Actions workflows, settings files, Terraform variables and agent configuration, whether with its edit tool or with shell commands such as `sed`, including files Git ignores; each `kubectl`, `helm`, `argocd`, `flux`, `terraform` and `cub` command, also when run through `env`, `bash -c`, `xargs`, `make` or a script in the repository, with where it went, whether it changed something, and the values it set; and what the agent said at the end of each turn. `/confighub-mini:why` also lists changes the agent made directly on a cluster to the same resource.
 - **Changed outside an agent session:** a file an agent changed that has changed since, by hand, by another program or by Git, is recorded as such before the next request, so it is never put down to the agent, and the next agent is told.
-- **Never kept:** a command's output, a copy of a file, or a value that looks like a credential, including a password inside an address such as `postgres://user:password@host`, even when the request or the agent names it in words.
+- **Never kept:** a command's output, a copy of a file, or a value that looks like a credential, including a password inside an address or a connection string (`postgres://user:password@host`, `password=`, `AccountKey=`), even when the request, the command or the agent names it in words.
 - **Where:** in `~/.confighub/agent-changes` on your machine, outside the repository. Nothing leaves the machine unless you turn on one of the settings below.
 
 Each setting is turned on in Claude Code's settings, as `env`:
