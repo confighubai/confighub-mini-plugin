@@ -2,6 +2,14 @@
 
 A plugin for Claude Code, and for Codex, that keeps a record of what an agent changes in configuration, and why. The agent is not told about it and works as it always does. When an agent opens a file that earlier sessions changed, it is given what they changed and why, so its next answer does not undo or contradict work it cannot see in Git.
 
+ConfigHub is the product, and this plugin is the simplest way into it:
+
+1. **The ConfigHub plugin** gives a record, with no hub, so agents do not undo each other's work.
+2. **confighub mini** is ConfigHub, small, on a laptop: an agent can propose a change to production, and only the person you name can approve it. It is not yet published for download.
+3. **The company's ConfigHub** is where the work ends up ([ConfigHub](https://docs.confighub.com)).
+
+Every `cub mini` command runs ordinary ConfigHub commands, so nothing in the plugin or confighub mini is a separate product.
+
 ```
 claude plugin marketplace add confighubai/confighub-mini-plugin
 claude plugin install confighub-mini@confighub-mini
