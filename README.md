@@ -152,6 +152,6 @@ One program for each of macOS and Linux, on Intel and ARM, about 9 MB each, and 
 
 It installs as confighub-mini. Until version 0.38.0 it was called minihub; to move to the new name, install it again with the two commands above.
 
-## Licence
+## License
 
-MIT ([LICENSE](LICENSE)). The program is built with Go and open-source modules, whose licences are in [`plugins/confighub-mini/THIRD_PARTY_LICENSES.txt`](plugins/confighub-mini/THIRD_PARTY_LICENSES.txt).
+MIT ([LICENSE](LICENSE)). The program is built with Go and open-source modules, whose licenses are in [`plugins/confighub-mini/THIRD_PARTY_LICENSES.txt`](plugins/confighub-mini/THIRD_PARTY_LICENSES.txt).
