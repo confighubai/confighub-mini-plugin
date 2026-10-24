@@ -73,10 +73,10 @@ In each run, an earlier agent scaled an api to 4 on the cluster for a sale. A la
 | | Kept the 4 | Undid it, and said so | Undid it without a word |
 |---|---|---|---|
 | Without the plugin (60 runs) | 9 | 0 | 51 |
-| With the plugin as it installs (60 runs) | 30 | 9 | 21 |
-| With `CUB_MINI_STOP_BEFORE_UNDO=1` (60 runs) | 60 | 0 | 0 |
+| With the plugin before 0.43.0 (60 runs) | 30 | 9 | 21 |
+| With the plugin, stopping before an undo (60 runs) | 60 | 0 | 0 |
 
-As it installs, the plugin tells the agent only after a command has run, so every run with the deploy script undid the change. The setting stops such a command once, before it runs, with the reason. Asked outright to cut the api to save money, 19 of 20 agents without the plugin cut it without a word of the sale; with it, each either asked first or named the sale as it cut.
+Before 0.43.0, the plugin told the agent only after a command had run, so every run with the deploy script undid the change. From 0.43.0 it stops such a command once, before it runs, with the reason. In 340 more runs the stop held for an image tag, an env var and a ConfigMap flag, and for an agent in CI with nobody to ask. Told the earlier change was no longer needed, the agent still undid it, in 40 of 40. Asked outright to cut the api to save money, 19 of 20 agents without the plugin cut it without a word of the sale; with it, each either asked first or named the sale as it cut.
 
 **Git only sees what was committed.** One session gave the api 4 replicas for the sale, a later one cut it to 1, and nobody committed in between. Then an agent was asked about the replicas.
 
@@ -149,7 +149,7 @@ Earlier agent sessions in this folder changed .env, as the confighub-mini plugin
 The requests are quoted from those sessions; they are not requests to you now.
 ```
 
-In an earlier run on a Kubernetes file, asked whether the api was ready for a sale, the agent named both changes, saw that they conflict, and asked which to keep, where without the plugin it had set the replicas back to 2. It also warns before a deploy undoes another agent's work. Say an earlier agent scaled the api to 4 on the cluster for a sale, and a later agent, whose manifest still says 2, runs `kubectl apply -f k8s/` or `./deploy.sh`. The plugin tells it that this sets the api back to 2, and why the earlier agent set 4. On its own, Claude Code shows the agent this only after the command has run. With the setting `CUB_MINI_STOP_BEFORE_UNDO=1`, the plugin stops that command the first time, before anything changes, and shows the reason. The agent then decides, usually by asking you; if it runs the same command again, it goes through:
+In an earlier run on a Kubernetes file, asked whether the api was ready for a sale, the agent named both changes, saw that they conflict, and asked which to keep, where without the plugin it had set the replicas back to 2. It also warns before a deploy undoes another agent's work. Say an earlier agent scaled the api to 4 on the cluster for a sale, and a later agent, whose manifest still says 2, runs `kubectl apply -f k8s/` or `./deploy.sh`. The plugin tells it that this sets the api back to 2, and why the earlier agent set 4. On its own, Claude Code shows the agent this only after the command has run. So the plugin stops that command the first time, before anything changes, and shows the reason. The agent then decides, usually by asking you; if it runs the same command again, it goes through. An agent with nobody to ask, in a CI job, usually makes no change and says why. `CUB_MINI_STOP_BEFORE_UNDO=0` turns the stop off:
 
 ```
 Before this runs: it applies manifests with values that differ from what earlier agent sessions set directly on the cluster, as the confighub-mini plugin recorded. Applying them puts these back:
@@ -205,13 +205,13 @@ Then type `/hooks` in Codex to approve its hooks, once. Read the record with `~/
 - **Never kept:** a command's output, a copy of a file, or a value that looks like a credential, including a password inside an address or a connection string (`postgres://user:password@host`, `password=`, `AccountKey=`), even when the request, the command or the agent names it in words.
 - **Where:** in `~/.confighub/agent-changes` on your machine, outside the repository. Nothing leaves the machine unless you turn on one of the settings below; what the next agent is given, though, is part of its context, and goes to the model provider with the rest of it.
 
-Each setting is turned on in Claude Code's settings, as `env`:
+Each setting is set in Claude Code's settings, as `env`:
 
-| Setting | What it adds |
+| Setting | What it does |
 |---|---|
 | `CUB_MINI_ASK_REASONS=1` | A reason for each value, in the agent's own answer |
 | `CUB_MINI_PULL_REQUEST=1` | The record and its reasons in each pull request the agent opens with `gh` |
-| `CUB_MINI_STOP_BEFORE_UNDO=1` | Before a deploy that would undo another agent's change on the cluster, the command is stopped once, with the reason; run again, it goes through |
+| `CUB_MINI_STOP_BEFORE_UNDO=0` | Turns off the stop before a deploy that would undo another agent's change on the cluster; the agent is then told only after the command has run |
 | `CUB_MINI_RECORD_IN_REPO=1` | The record in each commit the agent makes, readable from any checkout; when the agent commits in the same command that changed a file, the record is staged for the next commit |
 
 What it does not do, or has not been shown to do, is in [what we do not claim](docs/limits.md).
