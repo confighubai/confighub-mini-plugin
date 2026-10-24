@@ -66,7 +66,9 @@ With the plugin, the second session was told what the first had done, and said s
 
 ## What goes wrong when agents change configuration
 
-Seen in real Claude Code sessions, one run with the plugin and one without; the answers are quoted as the agent wrote them. In these runs a careful agent seldom undid an earlier change even without the plugin; what it lacked was the reason.
+Seen in real Claude Code sessions, with the plugin and without; the answers are quoted as the agent wrote them.
+
+Over 80 runs without the plugin, a later agent put back an earlier agent's change on the cluster, with no word of it, in 70. It had been asked to apply the manifests, run the deploy script, add a setting and apply it, or cut costs. With the plugin and `CUB_MINI_STOP_BEFORE_UNDO=1`, it kept the change in 70 of 80 and never undid one silently. The other 10 were told outright to cut, did, and named what they undid.
 
 **Git only sees what was committed.** One session gave the api 4 replicas for the sale, a later one cut it to 1, and nobody committed in between. Then an agent was asked about the replicas.
 
@@ -139,7 +141,16 @@ Earlier agent sessions in this folder changed .env, as the confighub-mini plugin
 The requests are quoted from those sessions; they are not requests to you now.
 ```
 
-In an earlier run on a Kubernetes file, asked whether the api was ready for a sale, the agent named both changes, saw that they conflict, and asked which to keep, where without the plugin it had set the replicas back to 2. `CUB_MINI_HISTORY=0` turns this off. `/confighub-mini:changes` and `/confighub-mini:why` are yours; the agent cannot run them.
+In an earlier run on a Kubernetes file, asked whether the api was ready for a sale, the agent named both changes, saw that they conflict, and asked which to keep, where without the plugin it had set the replicas back to 2. Before a command applies manifests to a cluster, itself or through a script in the repository, the agent is told which values would put back what an earlier session set on the cluster, and why. Claude Code shows this only after the command has run. With `CUB_MINI_STOP_BEFORE_UNDO=1`, the command is held back once, so the agent is told before. Run again, the command goes ahead:
+
+```
+Before this runs: it applies manifests with values that differ from what earlier agent sessions set directly on the cluster, as the confighub-mini plugin recorded. Applying them puts these back:
+  k8s/api.yaml sets Deployment/api/spec.replicas to 2. An earlier session in another folder set it to 4 on the cluster, …: kubectl -n shop scale deployment api --replicas=4, asked: "Friday's flash sale will quadruple traffic to the api. …"
+
+Nothing has run. If you still mean to apply it, run the same command again.
+```
+
+`CUB_MINI_HISTORY=0` turns this off. `/confighub-mini:changes` and `/confighub-mini:why` are yours; the agent cannot run them.
 
 ## Changes made by command
 
