@@ -141,7 +141,7 @@ Earlier agent sessions in this folder changed .env, as the confighub-mini plugin
 The requests are quoted from those sessions; they are not requests to you now.
 ```
 
-In an earlier run on a Kubernetes file, asked whether the api was ready for a sale, the agent named both changes, saw that they conflict, and asked which to keep, where without the plugin it had set the replicas back to 2. Before a command applies manifests to a cluster, itself or through a script in the repository, the agent is told which values would put back what an earlier session set on the cluster, and why. Claude Code shows this only after the command has run. With `CUB_MINI_STOP_BEFORE_UNDO=1`, the command is held back once, so the agent is told before. Run again, the command goes ahead:
+In an earlier run on a Kubernetes file, asked whether the api was ready for a sale, the agent named both changes, saw that they conflict, and asked which to keep, where without the plugin it had set the replicas back to 2. It also warns before a deploy undoes another agent's work. Say an earlier agent scaled the api to 4 on the cluster for a sale, and a later agent, whose manifest still says 2, runs `kubectl apply -f k8s/` or `./deploy.sh`. The plugin tells it that this sets the api back to 2, and why the earlier agent set 4. On its own, Claude Code shows the agent this only after the command has run. With the setting `CUB_MINI_STOP_BEFORE_UNDO=1`, the plugin stops that command the first time, before anything changes, and shows the reason. The agent then decides, usually by asking you; if it runs the same command again, it goes through:
 
 ```
 Before this runs: it applies manifests with values that differ from what earlier agent sessions set directly on the cluster, as the confighub-mini plugin recorded. Applying them puts these back:
@@ -203,6 +203,7 @@ Each setting is turned on in Claude Code's settings, as `env`:
 |---|---|
 | `CUB_MINI_ASK_REASONS=1` | A reason for each value, in the agent's own answer |
 | `CUB_MINI_PULL_REQUEST=1` | The record and its reasons in each pull request the agent opens with `gh` |
+| `CUB_MINI_STOP_BEFORE_UNDO=1` | Before a deploy that would undo another agent's change on the cluster, the command is stopped once, with the reason; run again, it goes through |
 | `CUB_MINI_RECORD_IN_REPO=1` | The record in each commit the agent makes, readable from any checkout; when the agent commits in the same command that changed a file, the record is staged for the next commit |
 
 What it does not do, or has not been shown to do, is in [what we do not claim](docs/limits.md).
