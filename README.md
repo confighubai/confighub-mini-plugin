@@ -68,7 +68,15 @@ With the plugin, the second session was told what the first had done, and said s
 
 Seen in real Claude Code sessions, with the plugin and without; the answers are quoted as the agent wrote them.
 
-Over 80 runs without the plugin, a later agent put back an earlier agent's change on the cluster, with no word of it, in 70. It had been asked to apply the manifests, run the deploy script, add a setting and apply it, or cut costs. With the plugin and `CUB_MINI_STOP_BEFORE_UNDO=1`, it kept the change in 70 of 80 and never undid one silently. The other 10 were told outright to cut, did, and named what they undid.
+In each run, an earlier agent scaled an api to 4 on the cluster for a sale. A later agent, in another worktree, was asked to apply the manifests, run the deploy script, or add a setting and apply it, none of which asks it to change the replicas. Ten runs of each, on two models:
+
+| | Kept the 4 | Undid it, and said so | Undid it without a word |
+|---|---|---|---|
+| Without the plugin (60 runs) | 9 | 0 | 51 |
+| With the plugin as it installs (60 runs) | 30 | 9 | 21 |
+| With `CUB_MINI_STOP_BEFORE_UNDO=1` (60 runs) | 60 | 0 | 0 |
+
+As it installs, the plugin tells the agent only after a command has run, so every run with the deploy script undid the change. The setting stops such a command once, before it runs, with the reason. Asked outright to cut the api to save money, 19 of 20 agents without the plugin cut it without a word of the sale; with it, each either asked first or named the sale as it cut.
 
 **Git only sees what was committed.** One session gave the api 4 replicas for the sale, a later one cut it to 1, and nobody committed in between. Then an agent was asked about the replicas.
 
@@ -172,7 +180,7 @@ What a value was before a command set it is not known: the cluster is not asked.
 
 - **Loading it.** `claude --plugin-dir plugins/confighub-mini`, from a checkout of this repository, loads the plugin for one session with no install step.
 - **Settings.** Each setting is an environment variable, so a job sets them in its environment.
-- **Keeping the record.** The record is kept in `~/.confighub/agent-changes`, which goes when the sandbox goes. To keep it, turn on `CUB_MINI_RECORD_IN_REPO=1` (in each commit) or `CUB_MINI_PULL_REQUEST=1` (in each pull request). An agent in a fresh checkout, with no record of its own, is given the history from the records in the repository when it reads a file they cover; that is how the plugin reads them, not yet run in a fresh sandbox.
+- **Keeping the record.** The record is kept in `~/.confighub/agent-changes`, which goes when the sandbox goes. To keep it, turn on `CUB_MINI_RECORD_IN_REPO=1` (in each commit) or `CUB_MINI_PULL_REQUEST=1` (in each pull request). An agent in a fresh checkout, with no record of its own, is given the history from the records in the repository when it reads a file they cover; this is checked in a fresh clone with an empty configuration before each release.
 - **Reviewing.** The pull-request review Action needs neither the plugin nor a hub.
 - **Not yet run:** an agent with the plugin inside a CI job.
 
@@ -224,6 +232,8 @@ When you want more than a record, add a hub, where configuration is kept and cha
 ## What is in it
 
 One program for each of macOS and Linux, on Intel and ARM, about 9 MB each, and a launcher that runs the one for this machine. No server, no database, no account. Tested in real Claude Code and Codex sessions on macOS, and in Claude Code on Linux.
+
+What it costs, measured on a Mac: about 15 ms a tool call, and about 30 ms after a shell command. With 200 sessions in 10 worktrees at once, 70,400 calls, nothing was lost, and nothing was put down to the wrong session. The history given to the next agent when it reads a file is a few hundred tokens: about 300 with 10 earlier sessions, about 600 with 200, since it keeps only each value's latest changes.
 
 It installs as confighub-mini. Until version 0.38.0 it was called minihub; to move to the new name, install it again with the two commands above.
 
