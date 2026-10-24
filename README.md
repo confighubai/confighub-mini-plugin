@@ -1,10 +1,10 @@
 # The ConfigHub plugin for Claude Code and Codex
 
-A plugin for Claude Code, and for Codex, that keeps a record of what an agent changes in configuration, and why. The agent is not told about it and works as it always does. When an agent opens a file that earlier sessions changed, it is given what they changed and why, so its next answer does not undo or contradict work it cannot see in Git.
+A plugin for Claude Code, and for Codex, that keeps a record of what an agent changes in configuration, and why. You don't change your prompts or add instructions. When an agent opens a file, or looks at a resource, that earlier sessions changed, it is given what they changed and why, before it changes the same value.
 
 ConfigHub is the product, and this plugin is the simplest way into it:
 
-1. **The ConfigHub plugin** gives a record, with no hub, so agents do not undo each other's work.
+1. **The ConfigHub plugin** gives a record, with no hub, and tells the next agent what earlier ones changed and why.
 2. **confighub mini** is ConfigHub, small, on a laptop: an agent can propose a change to production, and only the person you name can approve it. It is not yet published for download.
 3. **The company's ConfigHub** is where the work ends up ([ConfigHub](https://docs.confighub.com)).
 
@@ -41,11 +41,11 @@ Asked: The api is getting more traffic from the sale next week. ...
 ```
 /confighub-mini:why replicas
 
-Deployment/api/spec.replicas, in k8s/api.yaml: 2 in the file now
-  19 October 22:10  2 → 3                  session 8622fb51
-      why: add a third replica for next week's sale, when traffic is expected to triple
-  19 October 22:11  3 → 2                  session e82a40c3
-      asked: The sale is over: take the api back to two replicas. Don't commit.
+Deployment/api/spec.replicas, in k8s/api.yaml: 1 in the file now
+  22 October 11:48  2 → 4                  session 38a8dcfd
+      asked: Friday's flash sale will quadruple traffic to the api: give it 4 replicas. Don't commit.
+  22 October 11:48  4 → 1                  session ec81acce
+      asked: We're over budget on the cluster. Trim the api's replicas to 1. Don't commit.
 ```
 
 ## Git shows 2 → 1. Your agent set 4 in between.
@@ -157,6 +157,14 @@ Deployment/api/spec.replicas, set by a command on kind-shop, namespace shop, not
 
 What a value was before a command set it is not known: the cluster is not asked. The next agent is told of such a change when it looks at the resource with `kubectl get` or `describe`, or reads a manifest that describes it. With `CUB_MINI_ASK_REASONS=1`, the agent is asked why for these values too, and the reason goes with them into the record committed with `CUB_MINI_RECORD_IN_REPO=1`.
 
+## In CI or a sandbox
+
+- **Loading it.** `claude --plugin-dir plugins/confighub-mini`, from a checkout of this repository, loads the plugin for one session with no install step.
+- **Settings.** Each setting is an environment variable, so a job sets them in its environment.
+- **Keeping the record.** The record is kept in `~/.confighub/agent-changes`, which goes when the sandbox goes. To keep it, turn on `CUB_MINI_RECORD_IN_REPO=1` (in each commit) or `CUB_MINI_PULL_REQUEST=1` (in each pull request).
+- **Reviewing.** The pull-request review Action needs neither the plugin nor a hub.
+- **Not yet run:** an agent with the plugin inside a CI job.
+
 ## In Codex
 
 Codex runs only the hooks in its own configuration, not those a plugin carries, so installing the plugin in Codex records nothing. From a copy of the plugin, the one Claude Code installed or a clone of this repository, run:
@@ -176,7 +184,7 @@ Then type `/hooks` in Codex to approve its hooks, once. Read the record with `~/
 - **Recorded:** each value the agent changes in Kubernetes files, Helm values, Kustomize, Compose, GitHub Actions workflows, settings files, Terraform variables and agent configuration, whether with its edit tool or with shell commands such as `sed`, including files Git ignores; each `kubectl`, `helm`, `argocd`, `flux`, `terraform` and `cub` command, also when run through `env`, `bash -c`, `xargs`, `make` or a script in the repository, with where it went, whether it changed something, and the values it set; and what the agent said at the end of each turn. `/confighub-mini:why` also lists changes the agent made directly on a cluster to the same resource.
 - **Changed outside an agent session:** a file an agent changed that has changed since, by hand, by another program or by Git, is recorded as such before the next request, so it is never put down to the agent, and the next agent is told.
 - **Never kept:** a command's output, a copy of a file, or a value that looks like a credential, including a password inside an address or a connection string (`postgres://user:password@host`, `password=`, `AccountKey=`), even when the request, the command or the agent names it in words.
-- **Where:** in `~/.confighub/agent-changes` on your machine, outside the repository. Nothing leaves the machine unless you turn on one of the settings below.
+- **Where:** in `~/.confighub/agent-changes` on your machine, outside the repository. Nothing leaves the machine unless you turn on one of the settings below; what the next agent is given, though, is part of its context, and goes to the model provider with the rest of it.
 
 Each setting is turned on in Claude Code's settings, as `env`:
 
