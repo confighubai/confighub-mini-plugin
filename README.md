@@ -48,6 +48,38 @@ Deployment/api/spec.replicas, in k8s/api.yaml: 2 in the file now
       asked: The sale is over: take the api back to two replicas. Don't commit.
 ```
 
+## Git shows 2 → 1. Your agent set 4 in between.
+
+Two sessions, one after the other, and nobody commits in between. The first is asked to give the api 4 replicas for Friday's flash sale; the second, to trim it to 1 to save money. Git sees only the end of it:
+
+```
+$ git diff k8s/api.yaml
+-  replicas: 2
++  replicas: 1
+```
+
+With the plugin, the second session was told what the first had done, and said so:
+
+> I set `spec.replicas` to 1 in `k8s/api.yaml:7`. Nothing is committed.
+>
+> **This change undoes an earlier one.** The file already had an uncommitted change that raised replicas from 2 to 4. A session earlier today (11:48) made it, with this request: *"Friday's flash sale will quadruple traffic to the api: give it 4 replicas."* So 1 replica is below even the committed value of 2, and it would leave the api with a single pod on Friday, when traffic is expected to be about 4× normal.
+
+## What goes wrong when agents change configuration
+
+Seen in real Claude Code sessions, with the plugin and without it; the answers are quoted as the agent wrote them.
+
+**Git only sees what was committed.** One session gave the api 4 replicas for the sale, a later one cut it to 1, and nobody committed in between. Then an agent was asked about the replicas.
+
+- Without the plugin: "This repo has no record of `replicas` ever being 4 … I searched every branch, the reflog and the stash, and nothing ever set 4."
+- With the plugin: "A plugin hook showed that earlier agent sessions made conflicting edits to this file. One raised replicas from 2 to 4 because the flash sale will quadruple traffic. A later one cut them to 1 to stay within the cluster budget, which undid the first."
+
+**A careful agent stops. It doesn't know why.** Two agents worked at once, in two worktrees. One scaled the api to 4 on the cluster for the sale. The other was asked to add one setting and apply the manifest, which would have put the api back to 2.
+
+- Without the plugin: "Someone scaled it to 4 by hand without updating the file. … Go back to 2. I'd apply the file as it is, which also reverses the manual scale-up …"
+- With the plugin: "Another session (in the `wt-1` worktree) ran `kubectl scale` to 4 replicas for Friday's flash sale … Applying the whole file would have dropped it to 2. Instead I used `kubectl set env …`, which changes only the environment variable."
+
+The reason travels with the value, across sessions, worktrees and folders, so the next agent can finish its job without undoing the last one's.
+
 ## Try it in five minutes
 
 You need Claude Code and Git. In an empty folder, make a repository with one settings file:
@@ -155,6 +187,19 @@ Each setting is turned on in Claude Code's settings, as `env`:
 | `CUB_MINI_RECORD_IN_REPO=1` | The record in each commit the agent makes, readable from any checkout; when the agent commits in the same command that changed a file, the record is staged for the next commit |
 
 What it does not do, or has not been shown to do, is in [what we do not claim](docs/limits.md).
+
+## What you can ask, and where it leads
+
+With the plugin alone, in your editor, where Git stays the source:
+
+| | The question | What answers it |
+|---|---|---|
+| 0 | What does this PR change in config? | A comment on each pull request with every value it changes, and why: `uses: confighubai/confighub-mini-plugin/review@v0` |
+| 1 | What did my agent just change? | `/confighub-mini:changes` |
+| 2 | Why is this value set? Does the next agent know? | `/confighub-mini:why replicas`; the next agent is given the history when it reads the file |
+| 3 | Can my team ask why, from any checkout? | `CUB_MINI_RECORD_IN_REPO=1`: the record in the agent's commit and pull request |
+
+When you want more than a record, add a hub, where configuration is kept and changed: confighub mini, ConfigHub small enough for your laptop, which is built and tested but not yet downloadable. It keeps your own values when a vendor ships a chart's next version, holds a change until the person you name approves it (an agent with a key of its own cannot approve its own change), and lets a colleague start from your setup. When your team needs the work too, it moves to the company's [ConfigHub](https://docs.confighub.com).
 
 ## What is in it
 
