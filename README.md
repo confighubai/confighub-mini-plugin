@@ -155,7 +155,7 @@ Deployment/api/spec.replicas, set by a command on kind-shop, namespace shop, not
       kubectl scale deployment api --namespace shop --replicas=1
 ```
 
-What a value was before a command set it is not known: the cluster is not asked. The next agent is told of such a change when it looks at the resource with `kubectl get` or `describe`, or reads a manifest that describes it. With `CUB_MINI_ASK_REASONS=1`, the agent is asked why for these values too, and the reason goes with them into the record committed with `CUB_MINI_RECORD_IN_REPO=1`.
+What a value was before a command set it is not known: the cluster is not asked. The next agent is told of such a change when it looks at the resource with `kubectl get` or `describe`, or at the release with `helm get`, `helm status` or `helm history`, or reads a manifest that describes it. With `CUB_MINI_ASK_REASONS=1`, the agent is asked why for these values too, and the reason goes with them into the record committed with `CUB_MINI_RECORD_IN_REPO=1`.
 
 ## In CI or a sandbox
 
