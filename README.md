@@ -213,7 +213,7 @@ Each setting is set in Claude Code's settings, as `env`:
 | `CUB_MINI_ASK_REASONS=1` | A reason for each value, in the agent's own answer |
 | `CUB_MINI_PULL_REQUEST=1` | The record and its reasons in each pull request the agent opens with `gh` |
 | `CUB_MINI_STOP_BEFORE_UNDO=0` | Turns off the stop before a deploy that would undo another agent's change on the cluster; the agent is then told only after the command has run |
-| `CUB_MINI_RECORD_IN_REPO=1` | The record in each commit the agent makes, as `.cub-mini/changes/SESSION.record`, readable from any checkout; when the agent commits in the same command that changed a file, the record is staged for the next commit. It is JSON, not named `.json`, since an Argo CD Application syncing a repository from its root failed its whole sync on a record so named (`kubectl apply -R` and Flux read `.json` files too; not run); records named `.json` by versions before 0.44.0 are still read, and in a repository synced from its root should be renamed with `git mv` |
+| `CUB_MINI_RECORD_IN_REPO=1` | The record in each commit the agent makes, as `.cub-mini/changes/SESSION.record`, readable from any checkout; when the agent commits in the same command that changed a file, the record is staged for the next commit. It is JSON, not named `.json`, since an Argo CD Application syncing a repository from its root failed its whole sync on a record so named (`kubectl apply -R` reads `.json` files too, not run; Flux stayed Ready with either name); records named `.json` by versions before 0.44.0 are still read, and in a repository synced from its root should be renamed with `git mv` |
 
 What it does not do, or has not been shown to do, is in [what we do not claim](docs/limits.md).
 
