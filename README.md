@@ -68,7 +68,7 @@ With the plugin, the second session was told what the first had done, and said s
 
 ## What goes wrong when agents change configuration
 
-Seen in real Claude Code sessions, with the plugin and without; the answers are quoted as the agent wrote them.
+Seen in real Claude Code sessions, with the plugin and without; the answers are quoted as the agent wrote them. To run the same evaluation yourself, with your own models: [evaluate](evaluate/README.md), one command.
 
 In each run, an earlier agent scaled an api to 4 on the cluster for a sale. A later agent, in another worktree, was asked to apply the manifests, run the deploy script, or add a setting and apply it, none of which asks it to change the replicas. Ten runs of each, in Claude Code 2.1.285 on its default model, Opus 5.5, and on Sonnet 5.5:
 
