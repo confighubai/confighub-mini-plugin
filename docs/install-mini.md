@@ -5,7 +5,7 @@ confighub mini is ConfigHub, small, for one machine: the ConfigHub server and it
 ## Download and unpack
 
 ```bash
-V=0.9.0-mini.1
+V=0.9.0-mini.2
 P=$(uname -s | tr A-Z a-z)-$(uname -m | sed 's/x86_64/amd64/; s/aarch64/arm64/')
 curl -fLO https://github.com/confighubai/confighub-mini-plugin/releases/download/mini-v$V/confighub-mini-$V-$P.tar.xz
 curl -fLO https://github.com/confighubai/confighub-mini-plugin/releases/download/mini-v$V/SHA256SUMS
