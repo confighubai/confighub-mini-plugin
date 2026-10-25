@@ -196,7 +196,7 @@ Then type `/hooks` in Codex to approve its hooks, once. Read the record with `~/
 
 ## On every pull request
 
-`review/` is a GitHub Action that comments on each pull request with every configuration value it changes, from what to what, and why where a record says. A value no record explains is shown as such, so it is useful before anyone installs the plugin; the reasons come from the records agents keep in the repository (`CUB_MINI_RECORD_IN_REPO=1`). No hub, no account. [How to add it](review/README.md), as `uses: confighubai/confighub-mini-plugin/review@v0`. The same review in a terminal: `bin/confighub-mini mini review` from the plugin, in the repository.
+`review/` is a GitHub Action that comments on each pull request with every configuration value it changes, from what to what, and why where a record says. A value no record explains is shown as such, so it is useful before anyone installs the plugin; the reasons come from the records agents keep in the repository (`CUB_MINI_RECORD_IN_REPO=1`). It renders each Kustomize overlay, Flux HelmRelease and Argo CD Helm Application the change reaches, and says what each value becomes where it is deployed; and for each value it replaces, what the value was, the commit that set it and why. No hub, no account. [How to add it](review/README.md), as `uses: confighubai/confighub-mini-plugin/review@v0`. The same review in a terminal: `bin/confighub-mini mini review` from the plugin, in the repository.
 
 ## What it records, and what it does not
 
@@ -212,7 +212,7 @@ Each setting is set in Claude Code's settings, as `env`:
 | `CUB_MINI_ASK_REASONS=1` | A reason for each value, in the agent's own answer |
 | `CUB_MINI_PULL_REQUEST=1` | The record and its reasons in each pull request the agent opens with `gh` |
 | `CUB_MINI_STOP_BEFORE_UNDO=0` | Turns off the stop before a deploy that would undo another agent's change on the cluster; the agent is then told only after the command has run |
-| `CUB_MINI_RECORD_IN_REPO=1` | The record in each commit the agent makes, readable from any checkout; when the agent commits in the same command that changed a file, the record is staged for the next commit |
+| `CUB_MINI_RECORD_IN_REPO=1` | The record in each commit the agent makes, as `.cub-mini/changes/SESSION.record`, readable from any checkout; when the agent commits in the same command that changed a file, the record is staged for the next commit. It is JSON, not named `.json`, so Argo CD, Flux and `kubectl apply -R` do not take it for a manifest; records named `.json` by versions before 0.44.0 are still read, and in a repository synced from its root should be renamed with `git mv` |
 
 What it does not do, or has not been shown to do, is in [what we do not claim](docs/limits.md).
 

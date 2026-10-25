@@ -44,4 +44,29 @@ Agents set a sale's capacity in a repository with Kustomize overlays and a Flux 
 |---|---|---|
 | `HelmRelease/redis/spec.values.replica.replicaCount` | 1 → 2 | Black Friday, ~3x normal traffic |
 
-It says what each file holds as written. What a value becomes on each cluster, after the overlays are rendered, it does not yet say.
+It then renders each Kustomize overlay and Helm release the change reaches, before and after, and says what each value becomes where it is deployed: the memory limit is new in the overlay's patch file, but prod had 256Mi from the base, and the HelmRelease's `replicaCount` is the StatefulSet's replicas in the bitnami Redis chart:
+
+`apps/api/overlays/prod`
+
+| Value | Change | Why |
+|---|---|---|
+| `Deployment/api/spec.replicas` | 3 → 6 | Black Friday, ~3x normal traffic |
+| `Deployment/api/spec.template.spec.containers[api].resources.limits.memory` | 256Mi → 512Mi | Black Friday, ~3x normal traffic |
+
+`HelmRelease shop-prod/redis`
+
+| Value | Change | Why |
+|---|---|---|
+| `StatefulSet/redis-replicas/spec.replicas` | 1 → 2 | Black Friday, ~3x normal traffic |
+
+The chart makes these anew each time it renders, so they are not compared: `Secret/redis/data.redis-password`.
+
+Overlays are rendered with `kubectl kustomize` and charts with `helm template`, both on GitHub's runners. A Flux HelmRelease is rendered when its chart is in the repository or comes from a HelmRepository or OCIRepository defined in it; an Argo CD Application, when its chart is a folder of the repository or comes from a Helm repository, with its value files, values and parameters. Otherwise the comment says why it was not rendered, for example a source that needs credentials.
+
+## What a value was, and why
+
+When a pull request replaces a value, the comment also says what it was, the commit that set it, by whom, and why: from the record, from the commit message's Reasons section, or else the commit's subject. Weeks after the sale, someone without the plugin scales prod back:
+
+| Value | Change | Why | What it was, and why |
+|---|---|---|---|
+| `Deployment/api/spec.replicas` | 6 → 2 | no record | 6 since 0f426fd, …, 2026-10-24: Black Friday, ~3x normal traffic |
