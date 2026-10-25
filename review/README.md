@@ -63,6 +63,16 @@ The chart makes these anew each time it renders, so they are not compared: `Secr
 
 Overlays are rendered with `kubectl kustomize` and charts with `helm template`, both on GitHub's runners. A Flux HelmRelease is rendered when its chart is in the repository or comes from a HelmRepository or OCIRepository defined in it; an Argo CD Application, when its chart is a folder of the repository or comes from a Helm repository, with its value files, values and parameters. Applications are rendered with `helm template` as Argo CD applies those settings, tested on charts made for the tests, not yet on a real Argo CD estate. Otherwise the comment says why it was not rendered, for example a source that needs credentials.
 
+## What merging it would undo
+
+The comment opens with what merging the pull request would undo. A pull request that changes only the api's image, in a file that still says 2 replicas, after an agent scaled the api to 4 on the cluster for a sale with its record kept in the repository:
+
+> **This change undoes 1 earlier change(s):**
+>
+> - `deploy.yaml` has `Deployment/api/spec.replicas` at 2; an agent set it to 4 on the cluster with `kubectl -n shop scale deploy api --replicas=4`, 25 October 07:01. Deploying this puts it back. Why it was set: the commit with its record, accf5fd, Note live scale-up of api to 4 replicas for flash sale
+
+The pull request never touches the replicas; deploying it, by Argo CD or `kubectl apply`, puts the sale's 4 back to 2. A value put back to what it was before an earlier commit set it is flagged the same way.
+
 ## What a value was, and why
 
 When a pull request replaces a value, the comment also says what it was, the commit that set it, by whom, and why: from the record, from the commit message's Reasons section, or else the commit's subject. Weeks after the sale, someone without the plugin scales prod back:

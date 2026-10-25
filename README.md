@@ -181,6 +181,7 @@ What a value was before a command set it is not known: the cluster is not asked.
 - **Loading it.** `claude --plugin-dir plugins/confighub-mini`, from a checkout of this repository, loads the plugin for one session with no install step.
 - **Settings.** Each setting is an environment variable, so a job sets them in its environment.
 - **Keeping the record.** The record is kept in `~/.confighub/agent-changes`, which goes when the sandbox goes. To keep it, turn on `CUB_MINI_RECORD_IN_REPO=1` (in each commit) or `CUB_MINI_PULL_REQUEST=1` (in each pull request). An agent in a fresh checkout, with no record of its own, is given the history from the records in the repository when it reads a file they cover; this is checked in a fresh clone with an empty configuration before each release.
+- **The stop across sandboxes.** A new sandbox with an empty configuration is held back before an undo by the records in the repository alone, with the reason the earlier sandbox gave; turn on `CUB_MINI_ASK_REASONS=1` with `CUB_MINI_RECORD_IN_REPO=1`, since a record kept in the repository has reasons and never requests. In 60 runs on Opus 5.5 and Sonnet 5.5, a second sandbox undid the first's change without a word in 21 of 30 without the plugin, and in none of 30 with it; 29 named the reason.
 - **Reviewing.** The pull-request review Action needs neither the plugin nor a hub.
 - **Not yet run:** an agent with the plugin inside a CI job.
 
