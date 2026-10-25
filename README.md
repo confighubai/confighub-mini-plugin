@@ -68,7 +68,7 @@ With the plugin, the second session was told what the first had done, and said s
 
 Seen in real Claude Code sessions, with the plugin and without; the answers are quoted as the agent wrote them.
 
-In each run, an earlier agent scaled an api to 4 on the cluster for a sale. A later agent, in another worktree, was asked to apply the manifests, run the deploy script, or add a setting and apply it, none of which asks it to change the replicas. Ten runs of each, on two models:
+In each run, an earlier agent scaled an api to 4 on the cluster for a sale. A later agent, in another worktree, was asked to apply the manifests, run the deploy script, or add a setting and apply it, none of which asks it to change the replicas. Ten runs of each, in Claude Code 2.1.285 on its default model, Opus 5.5, and on Sonnet 5.5:
 
 | | Kept the 4 | Undid it, and said so | Undid it without a word |
 |---|---|---|---|
@@ -76,7 +76,7 @@ In each run, an earlier agent scaled an api to 4 on the cluster for a sale. A la
 | With the plugin before 0.43.0 (60 runs) | 30 | 9 | 21 |
 | With the plugin, stopping before an undo (60 runs) | 60 | 0 | 0 |
 
-Before 0.43.0, the plugin told the agent only after a command had run, so every run with the deploy script undid the change. From 0.43.0 it stops such a command once, before it runs, with the reason. In 340 more runs the stop held for an image tag, an env var and a ConfigMap flag, and for an agent in CI with nobody to ask. Told the earlier change was no longer needed, the agent still undid it, in 40 of 40. Asked outright to cut the api to save money, 19 of 20 agents without the plugin cut it without a word of the sale; with it, each either asked first or named the sale as it cut.
+Before 0.43.0, the plugin told the agent only after a command had run, so every run with the deploy script undid the change. From 0.43.0 it stops such a command once, before it runs, with the reason; run again, the command goes ahead. A second evaluation did the same with an image tag, an env var and a ConfigMap flag, and with an agent in CI with nobody to ask: in 130 more runs each way, 93 undid the change without a word without the plugin, and none with the stop. In all, 144 of 190 without the plugin, and none of 190 with the stop. Told the earlier change was no longer needed, the agent did as asked in 40 of 40; unattended in CI, 39 of 40 made no change and said why. Asked outright to cut the api to save money, 19 of 20 agents without the plugin cut it without a word of the sale; with it, each either asked first or named the sale as it cut.
 
 **Git only sees what was committed.** One session gave the api 4 replicas for the sale, a later one cut it to 1, and nobody committed in between. Then an agent was asked about the replicas.
 
@@ -212,7 +212,7 @@ Each setting is set in Claude Code's settings, as `env`:
 | `CUB_MINI_ASK_REASONS=1` | A reason for each value, in the agent's own answer |
 | `CUB_MINI_PULL_REQUEST=1` | The record and its reasons in each pull request the agent opens with `gh` |
 | `CUB_MINI_STOP_BEFORE_UNDO=0` | Turns off the stop before a deploy that would undo another agent's change on the cluster; the agent is then told only after the command has run |
-| `CUB_MINI_RECORD_IN_REPO=1` | The record in each commit the agent makes, as `.cub-mini/changes/SESSION.record`, readable from any checkout; when the agent commits in the same command that changed a file, the record is staged for the next commit. It is JSON, not named `.json`, so Argo CD, Flux and `kubectl apply -R` do not take it for a manifest; records named `.json` by versions before 0.44.0 are still read, and in a repository synced from its root should be renamed with `git mv` |
+| `CUB_MINI_RECORD_IN_REPO=1` | The record in each commit the agent makes, as `.cub-mini/changes/SESSION.record`, readable from any checkout; when the agent commits in the same command that changed a file, the record is staged for the next commit. It is JSON, not named `.json`, since an Argo CD Application syncing a repository from its root failed its whole sync on a record so named (`kubectl apply -R` and Flux read `.json` files too; not run); records named `.json` by versions before 0.44.0 are still read, and in a repository synced from its root should be renamed with `git mv` |
 
 What it does not do, or has not been shown to do, is in [what we do not claim](docs/limits.md).
 

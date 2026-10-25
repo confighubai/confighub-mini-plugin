@@ -20,4 +20,4 @@ Where the ConfigHub plugin and confighub mini do not do more than a careful team
   What held up beyond them:
   - a change made on a cluster is recorded even when the person said "only on the cluster";
   - why each value is set is kept by value, across sessions;
-  - an approval is given by a named person, of the exact revision.
+  - an approval is given by a named person, of the exact revision, in the hub; it gates what the hub delivers, and, written out for Git, can be required on the pull request with `cub mini copy --check-git --github-status`. Where Git is what deploys, CODEOWNERS gives an approval of an exact commit too.

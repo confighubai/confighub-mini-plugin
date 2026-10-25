@@ -61,7 +61,7 @@ It then renders each Kustomize overlay and Helm release the change reaches, befo
 
 The chart makes these anew each time it renders, so they are not compared: `Secret/redis/data.redis-password`.
 
-Overlays are rendered with `kubectl kustomize` and charts with `helm template`, both on GitHub's runners. A Flux HelmRelease is rendered when its chart is in the repository or comes from a HelmRepository or OCIRepository defined in it; an Argo CD Application, when its chart is a folder of the repository or comes from a Helm repository, with its value files, values and parameters. Otherwise the comment says why it was not rendered, for example a source that needs credentials.
+Overlays are rendered with `kubectl kustomize` and charts with `helm template`, both on GitHub's runners. A Flux HelmRelease is rendered when its chart is in the repository or comes from a HelmRepository or OCIRepository defined in it; an Argo CD Application, when its chart is a folder of the repository or comes from a Helm repository, with its value files, values and parameters. Applications are rendered with `helm template` as Argo CD applies those settings, tested on charts made for the tests, not yet on a real Argo CD estate. Otherwise the comment says why it was not rendered, for example a source that needs credentials.
 
 ## What a value was, and why
 
