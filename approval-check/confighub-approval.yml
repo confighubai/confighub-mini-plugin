@@ -1,7 +1,9 @@
-# Copy to .github/workflows/ in your repository. On each pull request that
-# touches DIR, the files there are compared with the hub's approved copy of
-# COMPONENT's VARIANT, value by value, and the result is set on the commit as
-# the status "ConfigHub: COMPONENT-VARIANT", which branch protection can require.
+# Copy to .github/workflows/ in your repository. On each pull request, the
+# files in DIR are compared with the hub's approved copy of COMPONENT's
+# VARIANT, value by value, and the result is set on the commit as the status
+# "ConfigHub: COMPONENT-VARIANT", which branch protection can require. It runs
+# on every pull request, not only those that touch DIR: a required status that
+# never reports would hold every other pull request back.
 #
 # Needs: the secret CONFIGHUB_KEY, the private key of a service account that may
 # only view the Component and its two Spaces, and the variable CONFIGHUB_SERVER,
@@ -9,14 +11,13 @@
 name: ConfigHub approval
 on:
   pull_request:
-    paths: [deploy/api/**]          # DIR
 permissions:
   contents: read
   statuses: write
 env:
   COMPONENT: api
   VARIANT: live
-  DIR: deploy/api
+  DIR: deploy/api                   # the folder cub mini copy --to-dir wrote; it holds one folder per Space
 jobs:
   approval:
     runs-on: ubuntu-latest
@@ -28,7 +29,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: confighubai/confighub-mini-plugin
-          ref: v0
+          ref: v0.48.0
           path: .confighub-plugin
       - name: cub, signed in with the view-only key
         env:
