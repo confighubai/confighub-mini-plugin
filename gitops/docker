@@ -1,0 +1,22 @@
+#!/bin/sh
+# For OrbStack: put this folder first on PATH before "cub cluster up".
+#
+# cub decides how a pod in a kind cluster reaches a hub on this machine by
+# asking "docker info" for the operating system: Docker Desktop gets
+# host.docker.internal, anything else gets the kind network's gateway. On
+# OrbStack the gateway does not reach a hub that listens on 127.0.0.1, as
+# confighub mini does; host.docker.internal does. This answers "Docker Desktop"
+# to that one question and passes every other call to the real docker. With
+# Docker Desktop it is not needed.
+if [ "$1" = info ] && [ "$2" = --format ] && [ "$3" = '{{.OperatingSystem}}' ]; then
+    real=$(PATH=$(printf '%s' "$PATH" | tr ':' '\n' | grep -vx "$(cd "$(dirname "$0")" && pwd)" | paste -sd: -) command -v docker)
+    os=$("$real" info --format '{{.OperatingSystem}}' 2>/dev/null)
+    case "$os" in
+        *OrbStack*) echo "Docker Desktop (OrbStack)" ;;
+        *) echo "$os" ;;
+    esac
+    exit 0
+fi
+here=$(cd "$(dirname "$0")" && pwd)
+PATH=$(printf '%s' "$PATH" | tr ':' '\n' | grep -vx "$here" | paste -sd: -)
+exec docker "$@"
