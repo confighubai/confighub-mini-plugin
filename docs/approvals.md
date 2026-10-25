@@ -1,6 +1,6 @@
 # Approvals, on ConfigHub today
 
-An agent can propose a change to production, and only the person you name can approve it. This works today on ConfigHub, hosted or on your own server (`cub server install`), with `cub` alone. Every command below was run on ConfigHub v0.9.0. confighub mini, when it is published, does the same on a laptop, and `cub mini require-approval` sets it up in one step.
+An agent can propose a change to production, and only the person you name can approve it. This works today on ConfigHub, hosted or on your own server (`cub server install`), with `cub` alone. Every command below was run, in order, on hosted ConfigHub and on a server of its own, both v0.9.0. confighub mini, when it is published, does the same on a laptop, and `cub mini require-approval` sets it up in one step.
 
 The example is a Component `api`, its base Space `api-base`, and its live copy `api-live`, made from the base with `cub variant create`.
 
