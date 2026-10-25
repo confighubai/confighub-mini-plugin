@@ -5,8 +5,10 @@ A plugin for Claude Code, and for Codex, that keeps a record of what an agent ch
 ConfigHub is the product, and this plugin is aimed at agents and AI use:
 
 1. **The ConfigHub plugin** gives a record, with no hub, and tells the next agent what earlier ones changed and why.
-2. **confighub mini** is ConfigHub, small, on a laptop: an agent can propose a change to production, and only the person you name can approve it. It is not yet published for download.
+2. **confighub mini** is ConfigHub, small, on a laptop. It is not yet published for download.
 3. **The company's ConfigHub** is where the work ends up ([ConfigHub](https://docs.confighub.com)).
+
+Approvals work today on ConfigHub, hosted or on your own server: an agent can propose a change to production, and only the person you name can approve it ([the steps](docs/approvals.md)).
 
 Every `cub mini` command runs ordinary ConfigHub commands, so nothing in the plugin or confighub mini is a separate product.
 
@@ -230,7 +232,7 @@ With the plugin alone, in your editor, where Git stays the source:
 | 2 | Why is this value set? Does the next agent know? | `/confighub-mini:why replicas`; the next agent is given the history when it reads the file |
 | 3 | Can my team ask why, from any checkout? | `CUB_MINI_RECORD_IN_REPO=1`: the record in the agent's commit and pull request |
 
-When you want more than a record, add a hub, where configuration is kept and changed: confighub mini, ConfigHub small enough for your laptop, which is built and tested but not yet downloadable. It keeps your own values when a vendor ships a chart's next version, holds a change until the person you name approves it (an agent with a key of its own cannot approve its own change), and lets a colleague start from your setup. When your team needs the work too, it moves to the company's [ConfigHub](https://docs.confighub.com).
+When you want more than a record, add a hub, where configuration is kept and changed: confighub mini, ConfigHub small enough for your laptop, which is built and tested but not yet downloadable. It keeps your own values when a vendor ships a chart's next version, holds a change until the person you name approves it, as ConfigHub does today ([the steps](docs/approvals.md)), and lets a colleague start from your setup. When your team needs the work too, it moves to the company's [ConfigHub](https://docs.confighub.com).
 
 ## What is in it
 
