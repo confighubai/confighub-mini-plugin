@@ -1,10 +1,70 @@
 # Approvals, on ConfigHub today
 
-An agent can propose a change to production, and only the person you name can approve it. This works today on ConfigHub, hosted or on your own server (`cub server install`), with `cub` alone. Every command below was run, in order, on hosted ConfigHub and on a server of its own, both v0.9.0. confighub mini, when it is published, does the same on a laptop, and `cub mini require-approval` sets it up in one step.
+An agent can propose a change to production, and only the person you name can approve it. It works on confighub mini on a laptop, and on ConfigHub, hosted or on your own server (`cub server install`), with `cub` alone. Every command below was run as written, on confighub mini and on hosted ConfigHub, both ConfigHub v0.9.0.
 
-The example is a Component `api`, its base Space `api-base`, and its live copy `api-live`, made from the base with `cub variant create`.
+**Words used here.** A *Space* holds configuration, as *Units* (one per file or resource). A *Component* is one piece of software, such as `api`; its *base* is the version you change, and a *variant*, such as `live`, is a copy made from the base for one place it runs. A *change order* asks for a change to reach a variant; a *ChangeWorkflow* says what it needs first, here a person's approval, which ConfigHub keeps as an *attestation*.
 
-## 1. Require your approval for live, once
+## On confighub mini, from nothing: about 5 minutes
+
+With confighub mini installed and a hub started ([install it](install-mini.md)), make a folder with one manifest:
+
+```bash
+mkdir api
+cat > api/api.yaml <<'EOF2'
+apiVersion: apps/v1
+kind: Deployment
+metadata: {name: api, namespace: shop}
+spec:
+  replicas: 2
+  selector: {matchLabels: {app: api}}
+  template:
+    metadata: {labels: {app: api}}
+    spec:
+      containers:
+      - {name: api, image: ghcr.io/example/shop-api:1.8.2}
+EOF2
+```
+
+Put it in the hub as the Component `api`, with its base `api-base` and a live copy `api-live`, and require your approval for live. `--agent bot` also makes the agent a key of its own, in a `cub` configuration that holds nothing of yours:
+
+```bash
+cub mini upload api --variant live --namespace shop
+cub mini require-approval api --variant live --agent bot
+```
+
+It prints the two settings the agent's sessions need, `CUB_CONFIG=~/.confighub-agent-bot CUB_CONTEXT=bot`, and a few lines to put in the agent's `CLAUDE.md` or `AGENTS.md` so that it asks rather than asking you for more access.
+
+**The agent proposes.** In the agent's session, with those two settings (here given on each line, to try it by hand):
+
+```bash
+CUB_CONFIG=~/.confighub-agent-bot CUB_CONTEXT=bot cub function set --space api-base --unit api --change-desc "Four for the sale" set-replicas 4
+CUB_CONFIG=~/.confighub-agent-bot CUB_CONTEXT=bot cub changeorder create --space api-base sale-4 --component api --change-workflow workflows/api-live-approval --description "Four for the sale"
+```
+
+If it tries to approve its own change (`cub variant approve`), or to write `api-live`, it is refused.
+
+**You read it, approve it, and it goes on:**
+
+```bash
+cub mini promote api-live --change-order api-base/sale-4 --dry-run
+cub variant approve api-base --change-order api-base/sale-4 --note "Checked: four is right for the sale"
+cub mini promote api-live --change-order api-base/sale-4
+```
+
+The dry run says what waits, and for whom, and exits with status 1 while it waits. After your approval, `api-live` runs 4 replicas. A later change by the agent waits for an approval of its own.
+
+## On hosted ConfigHub or your own server, with cub alone
+
+The same, step by step, with `cub` alone. First the Component, its base and its live copy, from the folder above:
+
+```bash
+cub component create api
+cub space create api-base --component api --variant base
+cub unit create --space api-base api api/api.yaml
+cub variant create live api-base
+```
+
+### 1. Require your approval for live, once
 
 Find your user ID with `cub user list`. Then:
 
@@ -22,7 +82,7 @@ cub component update --patch api --change-workflow-required \
 
 Several user IDs, separated by `;`, name several people who may approve.
 
-## 2. Give the agent a key of its own
+### 2. Give the agent a key of its own
 
 Signed in as you, an agent could approve. Give it a service account that may change the base and only read live:
 
@@ -45,7 +105,7 @@ CUB_CONFIG=~/.confighub-bot cub auth login --private-key=$HOME/.confighub/keys/b
 
 Run the agent with `CUB_CONFIG=~/.confighub-bot`. On the same machine it could still read your own sign-in, so for a firm line, run it where only its key is, as in CI. `cub serviceaccount delete bot` takes the access away.
 
-## 3. The agent proposes
+### 3. The agent proposes
 
 ```bash
 cub function set --space api-base --unit api --change-desc "Four for the sale" set-replicas 4
@@ -55,7 +115,7 @@ cub changeorder create --space api-base sale-4 --component api \
 
 Its own `cub variant approve` is refused, and so is a write to `api-live`.
 
-## 4. You read it, approve it, and promote it
+### 4. You read it, approve it, and promote it
 
 ```bash
 cub unit diff --space api-live api --with-unit api-base/api
@@ -67,6 +127,30 @@ Until you approve, the promotion is refused. An approval covers the exact revisi
 
 ## In a pull request
 
-Argo CD and Flux can deploy the approved copy from ConfigHub over its OCI gateway. Where a cluster still reads Git, the approved copy can be checked against the pull request's commit, and the result set as a commit status that branch protection can require; that check is a `cub mini` command, in the confighub mini package.
+Argo CD and Flux can pull the approved copy straight from ConfigHub, over OCI. Where a cluster still deploys from Git, make the pull request check that its files are the approved copy. A pull request whose files differ from what was approved fails, and names each value that differs.
+
+The order of things:
+
+1. The change is made in the hub, approved and promoted, as above.
+2. The approved copy is written out for Git and committed on a branch: `confighub-mini mini copy api --variant live --to-dir deploy/api` writes a folder for each Space, such as `deploy/api/api-live/`, and a `CHANGES.md` that says why each value is set.
+3. A pull request with that branch runs [the workflow](../approval-check/confighub-approval.yml), which compares `deploy/api` with the hub's copy of `api-live`, value by value, and sets the status "ConfigHub: api-live" on the commit.
+4. Branch protection requires that status, so only the approved copy merges. A pull request made by hand gets a failure, unless the same values were approved in the hub first.
+
+`confighub-mini` is the plugin's program, at `plugins/confighub-mini/bin/confighub-mini` in this repository; the workflow checks it out.
+
+**Once, for the workflow.** The runner must reach the hub: hosted ConfigHub, or a server of your own. A confighub mini on a laptop cannot be reached from GitHub's runners. Give the workflow a service account that may only view the work:
+
+```bash
+cub serviceaccount create pr-check
+cub space update api-base --permission View:serviceaccount:pr-check --permission ViewChildren:serviceaccount:pr-check
+cub space update api-live --permission View:serviceaccount:pr-check --permission ViewChildren:serviceaccount:pr-check
+cub component update api --permission View:serviceaccount:pr-check
+cub serviceaccount key add pr-check --generate pr-check
+gh secret set CONFIGHUB_KEY < ~/.confighub/keys/pr-check.jwk
+gh variable set CONFIGHUB_SERVER --body https://hub.confighub.com
+rm ~/.confighub/keys/pr-check.jwk
+```
+
+Then copy [the workflow](../approval-check/confighub-approval.yml) into `.github/workflows/`, and set its `COMPONENT`, `VARIANT` and `DIR`. These steps were run against hosted ConfigHub: signed in with only that key, the check passed on the approved copy, failed on a commit with a value nobody approved ("Deployment/api/spec.replicas: 5 here, 2 in the hub"), and the key could not create anything. The workflow itself has run in a GitHub repository, setting the status on each commit.
 
 More on ChangeWorkflows, ChangeOrders and attestations: [docs.confighub.com](https://docs.confighub.com).

@@ -75,10 +75,10 @@ In each run, an earlier agent scaled an api to 4 on the cluster for a sale. A la
 | | Kept the 4 | Undid it, and said so | Undid it without a word |
 |---|---|---|---|
 | Without the plugin (60 runs) | 9 | 0 | 51 |
-| With the plugin before 0.43.0 (60 runs) | 30 | 9 | 21 |
+| With the plugin telling the agent only afterwards (60 runs) | 30 | 9 | 21 |
 | With the plugin, stopping before an undo (60 runs) | 60 | 0 | 0 |
 
-Before 0.43.0, the plugin told the agent only after a command had run, so every run with the deploy script undid the change. From 0.43.0 it stops such a command once, before it runs, with the reason; run again, the command goes ahead. A second evaluation did the same with an image tag, an env var and a ConfigMap flag, and with an agent in CI with nobody to ask: in 130 more runs each way, 93 undid the change without a word without the plugin, and none with the stop. In all, 144 of 190 without the plugin, and none of 190 with the stop. Told the earlier change was no longer needed, the agent did as asked in 40 of 40; unattended in CI, 39 of 40 made no change and said why. Asked outright to cut the api to save money, 19 of 20 agents without the plugin cut it without a word of the sale; with it, each either asked first or named the sale as it cut.
+Told only after a command had run, every agent running the deploy script undid the change. Now the plugin warns before such a command runs, once, with the reason; run again, the command goes ahead. A second evaluation did the same with an image tag, an env var and a ConfigMap flag, and with an agent in CI with nobody to ask: in 130 more runs each way, 93 undid the change without a word without the plugin, and none with the stop. In all, 144 of 190 without the plugin, and none of 190 with the stop. Told the earlier change was no longer needed, the agent did as asked in 40 of 40; unattended in CI, 39 of 40 made no change and said why. Asked outright to cut the api to save money, 19 of 20 agents without the plugin cut it without a word of the sale; with it, each either asked first or named the sale as it cut.
 
 **Git only sees what was committed.** One session gave the api 4 replicas for the sale, a later one cut it to 1, and nobody committed in between. Then an agent was asked about the replicas.
 
@@ -106,7 +106,7 @@ Then three Claude Code sessions in `try-confighub`, one after another. In each, 
 2. `We're chasing a memory leak: turn the cache off and set debug logging. Don't commit.`
 3. `Is the cache set up right for the sale?`
 
-Neither change is committed, so Git shows only `LOG_LEVEL warn → debug`. The second session already saw what it was undoing, and said so. In a real run with 0.39.0:
+Neither change is committed, so Git shows only `LOG_LEVEL warn → debug`. The second session already saw what it was undoing, and said so. In a real run:
 
 ```
 This undoes another session's change. Earlier today at 11:34, another session set the cache to `on` with the request "Turn the cache on in .env for next week's sale." That change wasn't committed either, so `.env` now matches the committed `CACHE=off` again, and that sale prep is gone.
@@ -185,7 +185,7 @@ What a value was before a command set it is not known: the cluster is not asked.
 - **Keeping the record.** The record is kept in `~/.confighub/agent-changes`, which goes when the sandbox goes. To keep it, turn on `CUB_MINI_RECORD_IN_REPO=1` (in each commit) or `CUB_MINI_PULL_REQUEST=1` (in each pull request). An agent in a fresh checkout, with no record of its own, is given the history from the records in the repository when it reads a file they cover; this is checked in a fresh clone with an empty configuration before each release.
 - **The stop across sandboxes.** A new sandbox with an empty configuration is held back before an undo by the records in the repository alone, with the reason the earlier sandbox gave; turn on `CUB_MINI_ASK_REASONS=1` with `CUB_MINI_RECORD_IN_REPO=1`, since a record kept in the repository has reasons and never requests. In 60 runs on Opus 5.5 and Sonnet 5.5, a second sandbox undid the first's change without a word in 21 of 30 without the plugin, and in none of 30 with it; 29 named the reason.
 - **Reviewing.** The pull-request review Action needs neither the plugin nor a hub.
-- **Not yet run:** an agent with the plugin inside a CI job.
+- **Run in CI.** In a GitHub Actions job on `ubuntu-latest`, with a kind cluster in the runner, an agent with the plugin kept the earlier change in 8 of 8 sessions, on Opus 5.5 and Sonnet 5.5, asked to apply the manifests or with nobody to ask. Without the plugin, Sonnet 5.5 undid it without a word in 4 of 4.
 
 ## In Codex
 
@@ -217,7 +217,7 @@ Each setting is set in Claude Code's settings, as `env`:
 | `CUB_MINI_STOP_BEFORE_UNDO=0` | Turns off the stop before a deploy that would undo another agent's change on the cluster; the agent is then told only after the command has run |
 | `CUB_MINI_READ_CLUSTER=1` | Before an apply, the live objects its manifests describe are read with `kubectl get`, and the command is held back once on a value set on the cluster by hand, by a controller or by a script, which no agent session recorded. Off by default, as it reads the cluster before each apply |
 | `CUB_MINI_TIPS=0` | Turns off the line shown to you, never to the agent, at the end of a turn in which confighub mini would have helped: "Do you want to install confighub mini?", with why and how to install it. Each kind is shown at most once a week for a project |
-| `CUB_MINI_RECORD_IN_REPO=1` | The record in each commit the agent makes, as `.cub-mini/changes/SESSION.record`, readable from any checkout; when the agent commits in the same command that changed a file, the record is staged for the next commit. It is JSON, not named `.json`, since an Argo CD Application syncing a repository from its root failed its whole sync on a record so named (`kubectl apply -R` reads `.json` files too, not run; Flux stayed Ready with either name); records named `.json` by versions before 0.44.0 are still read, and in a repository synced from its root should be renamed with `git mv` |
+| `CUB_MINI_RECORD_IN_REPO=1` | The record in each commit the agent makes, as `.cub-mini/changes/SESSION.record`, readable from any checkout; when the agent commits in the same command that changed a file, the record is staged for the next commit. It is named `.record` so that Argo CD and Flux, syncing the repository, leave it alone |
 
 What it does not do, or has not been shown to do, is in [what we do not claim](docs/limits.md).
 

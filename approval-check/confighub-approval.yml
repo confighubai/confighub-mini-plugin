@@ -1,0 +1,51 @@
+# Copy to .github/workflows/ in your repository. On each pull request that
+# touches DIR, the files there are compared with the hub's approved copy of
+# COMPONENT's VARIANT, value by value, and the result is set on the commit as
+# the status "ConfigHub: COMPONENT-VARIANT", which branch protection can require.
+#
+# Needs: the secret CONFIGHUB_KEY, the private key of a service account that may
+# only view the Component and its two Spaces, and the variable CONFIGHUB_SERVER,
+# the hub's address, such as https://hub.confighub.com. The runner must reach it.
+name: ConfigHub approval
+on:
+  pull_request:
+    paths: [deploy/api/**]          # DIR
+permissions:
+  contents: read
+  statuses: write
+env:
+  COMPONENT: api
+  VARIANT: live
+  DIR: deploy/api
+jobs:
+  approval:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: actions/checkout@v4
+        with:
+          repository: confighubai/confighub-mini-plugin
+          ref: v0
+          path: .confighub-plugin
+      - name: cub, signed in with the view-only key
+        env:
+          CONFIGHUB_KEY: ${{ secrets.CONFIGHUB_KEY }}
+          CONFIGHUB_SERVER: ${{ vars.CONFIGHUB_SERVER }}
+        run: |
+          curl -fsSL "$CONFIGHUB_SERVER/cub/install.sh" | bash
+          echo "$HOME/.confighub/bin" >> "$GITHUB_PATH"
+          export PATH="$HOME/.confighub/bin:$PATH"
+          key="$RUNNER_TEMP/key.jwk"
+          printf '%s' "$CONFIGHUB_KEY" > "$key"
+          export CUB_CONFIG="$RUNNER_TEMP/cub"
+          cub auth login --new-context --private-key="$key" --server="$CONFIGHUB_SERVER"
+          rm -f "$key"
+          echo "CUB_CONFIG=$CUB_CONFIG" >> "$GITHUB_ENV"
+          echo "CUB_CONTEXT=$(cub context get -o json | python3 -I -c 'import json,sys; print(json.load(sys.stdin)["name"])')" >> "$GITHUB_ENV"
+      - name: The pull request against the approved copy
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: .confighub-plugin/plugins/confighub-mini/bin/confighub-mini mini copy "$COMPONENT" --variant "$VARIANT" --check-git "$DIR" --github-status

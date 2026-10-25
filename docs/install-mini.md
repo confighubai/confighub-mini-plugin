@@ -5,7 +5,7 @@ confighub mini is ConfigHub, small, for one machine: the ConfigHub server and it
 ## Download and unpack
 
 ```bash
-V=0.9.0-mini.2
+V=0.9.0-mini.3
 P=$(uname -s | tr A-Z a-z)-$(uname -m | sed 's/x86_64/amd64/; s/aarch64/arm64/')
 curl -fLO https://github.com/confighubai/confighub-mini-plugin/releases/download/mini-v$V/confighub-mini-$V-$P.tar.xz
 curl -fLO https://github.com/confighubai/confighub-mini-plugin/releases/download/mini-v$V/SHA256SUMS
@@ -39,6 +39,39 @@ cub space list
 `START-HERE.txt` in the package lists ten stories to run on it.
 
 To remove the hub and its data: `cub mini uninstall --delete-data`.
+
+## In a container or a CI job
+
+PostgreSQL will not run as root, nor as a user ID with no account, so run confighub mini as an ordinary user. On a machine or CI runner that runs as an ordinary user, the steps above work as written. In a container, this Dockerfile makes a plain Debian image with confighub mini in it, checked against `SHA256SUMS`:
+
+```dockerfile
+FROM debian:bookworm-slim
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates curl xz-utils \
+ && rm -rf /var/lib/apt/lists/*
+RUN useradd -m agent
+USER agent
+WORKDIR /home/agent
+ARG V=0.9.0-mini.3
+RUN P=linux-$(uname -m | sed 's/x86_64/amd64/; s/aarch64/arm64/') \
+ && curl -fsSLO https://github.com/confighubai/confighub-mini-plugin/releases/download/mini-v$V/confighub-mini-$V-$P.tar.xz \
+ && curl -fsSLO https://github.com/confighubai/confighub-mini-plugin/releases/download/mini-v$V/SHA256SUMS \
+ && grep " confighub-mini-$V-$P.tar.xz" SHA256SUMS | sha256sum -c \
+ && tar xf confighub-mini-$V-$P.tar.xz && rm confighub-mini-$V-$P.tar.xz SHA256SUMS \
+ && mv confighub-mini-$V-$P confighub-mini \
+ && confighub-mini/bin/cub plugin install ./confighub-mini >/dev/null \
+ && rm -rf confighub-mini
+ENV PATH=/home/agent/.confighub/plugins/confighub-mini/bin:$PATH
+```
+
+```bash
+docker build -t agent-sandbox .
+docker run --rm --network none agent-sandbox sh -c 'cub mini install && cub space list'
+```
+
+- **No network after the download.** A hub starts and works with the network off, as in the `docker run` above.
+- **Where its data is.** Each hub keeps its data under `~/.confighub/servers/`. Set `CUB_CONFIG=DIR` to keep the hub and `cub`'s settings in a folder of your choice instead, such as the task's workspace, so they stay with it or go with it.
+- **Telling the agent.** `cub --help` does not list plugin commands, so tell the agent `cub mini` is there. One line in its `CLAUDE.md` or `AGENTS.md` is enough: *This is a sandbox. Its cub has the cub mini commands (cub mini --help): the first one that needs a hub starts a hub of your own here, which is thrown away with the sandbox.*
+- **What it adds.** The image grows by about 300 MB once unpacked; each hub then uses about 30 MB of disk and 140 to 190 MB of memory.
 
 ## What it holds
 
