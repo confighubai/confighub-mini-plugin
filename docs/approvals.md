@@ -34,6 +34,14 @@ cub mini require-approval api --variant live --agent bot
 
 It prints the two settings the agent's sessions need, `CUB_CONFIG=~/.confighub-agent-bot CUB_CONTEXT=bot`, and a few lines to put in the agent's `CLAUDE.md` or `AGENTS.md` so that it asks rather than asking you for more access.
 
+**Start the agent's sessions on its key.** In the folder the agent works in, put the two settings in Claude Code's local settings, `.claude/settings.local.json`, which Git leaves out, with the full path `require-approval` printed:
+
+```json
+{"env": {"CUB_CONFIG": "/Users/you/.confighub-agent-bot", "CUB_CONTEXT": "bot"}}
+```
+
+Every Claude Code session started in that folder then runs `cub` as the agent. In a real session started this way, `cub context get` showed the agent's service account, not your account; the agent changed `api-base` and asked with a change order; its own approval was refused ("permission denied"), and so was its write to `api-live`.
+
 **The agent proposes.** In the agent's session, with those two settings (here given on each line, to try it by hand):
 
 ```bash
