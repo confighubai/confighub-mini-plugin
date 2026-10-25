@@ -21,3 +21,8 @@ Where the ConfigHub plugin and confighub mini do not do more than a careful team
   - a change made on a cluster is recorded even when the person said "only on the cluster";
   - why each value is set is kept by value, across sessions;
   - an approval is given by a named person, of the exact revision, in the hub; it gates what the hub delivers, and, written out for Git, can be required on the pull request with `cub mini copy --check-git --github-status`. Where Git is what deploys, CODEOWNERS gives an approval of an exact commit too.
+
+## What the plugin does not see
+
+A change on the cluster that no agent session made: a person's `kubectl edit` or `kubectl scale`, a controller's write, Argo CD's self-heal, or a change made through an MCP server. The plugin learns of cluster changes only from the commands it records, and never asks the cluster. Tested in 12 runs where a person or a controller had scaled the api to 4: the stop said nothing; Opus 5.5 found the 4 with `kubectl diff` and kept it, with the plugin or without; Sonnet 5.5 put it back to 2 every time, with the plugin or without. `bin/confighub-mini mini drift --dir DIR` lists what was set on the cluster outside Git, with who set it, by reading the cluster and changing nothing.
+
