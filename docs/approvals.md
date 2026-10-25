@@ -100,10 +100,10 @@ Make its key, and sign the agent in with it, in a cub configuration of its own, 
 
 ```bash
 cub serviceaccount key add bot --generate bot
-CUB_CONFIG=~/.confighub-bot cub auth login --private-key=$HOME/.confighub/keys/bot.jwk --server https://hub.confighub.com
+CUB_CONFIG=~/.confighub-agent-bot cub auth login --private-key=$HOME/.confighub/keys/bot.jwk --server https://hub.confighub.com
 ```
 
-Run the agent with `CUB_CONFIG=~/.confighub-bot`. On the same machine it could still read your own sign-in, so for a firm line, run it where only its key is, as in CI. `cub serviceaccount delete bot` takes the access away.
+Run the agent with `CUB_CONFIG=~/.confighub-agent-bot`, the same as on confighub mini. On the same machine it could still read your own sign-in, so for a firm line, run it where only its key is, as in CI. `cub serviceaccount delete bot` takes the access away.
 
 ### 3. The agent proposes
 
@@ -132,9 +132,9 @@ Argo CD and Flux can pull the approved copy straight from ConfigHub, over OCI. W
 The order of things:
 
 1. The change is made in the hub, approved and promoted, as above.
-2. The approved copy is written out for Git and committed on a branch: `confighub-mini mini copy api --variant live --to-dir deploy/api` writes a folder for each Space, such as `deploy/api/api-live/`, and a `CHANGES.md` that says why each value is set.
+2. The approved copy is written out for Git and committed on a branch, by the person who approved it: `confighub-mini mini copy api --variant live --to-dir deploy/api` writes a folder for each Space, such as `deploy/api/api-live/`, and a `CHANGES.md` that says why each value is set. Argo CD or Flux deploys `deploy/api/api-live/`; the check reads all of `deploy/api`.
 3. A pull request with that branch runs [the workflow](../approval-check/confighub-approval.yml), which compares `deploy/api` with the hub's copy of `api-live`, value by value, and sets the status "ConfigHub: api-live" on the commit.
-4. Branch protection requires that status, so only the approved copy merges. A pull request made by hand gets a failure, unless the same values were approved in the hub first.
+4. Branch protection requires that status, so only the approved copy merges. A pull request made by hand, with values the hub has not approved, fails and names each value. To make such a change, make it in the hub, have it approved, and write it out again; `cub mini copy --from-git` takes a commit's values into the hub, each with the commit's message as its reason.
 
 `confighub-mini` is the plugin's program, at `plugins/confighub-mini/bin/confighub-mini` in this repository; the workflow checks it out.
 
@@ -151,6 +151,6 @@ gh variable set CONFIGHUB_SERVER --body https://hub.confighub.com
 rm ~/.confighub/keys/pr-check.jwk
 ```
 
-Then copy [the workflow](../approval-check/confighub-approval.yml) into `.github/workflows/`, and set its `COMPONENT`, `VARIANT` and `DIR`. These steps were run against hosted ConfigHub: signed in with only that key, the check passed on the approved copy, failed on a commit with a value nobody approved ("Deployment/api/spec.replicas: 5 here, 2 in the hub"), and the key could not create anything. The workflow itself has run in a GitHub repository, setting the status on each commit.
+Then copy [the workflow](../approval-check/confighub-approval.yml) into `.github/workflows/`, and set its `COMPONENT`, `VARIANT` and `DIR`. It runs on every pull request, since a required status that never reports would hold other pull requests back, and it pins the plugin's version. **From a laptop instead:** where the runner cannot reach the hub, as with confighub mini, run the same check from your own machine, with the GitHub CLI signed in, and it sets the same status on the commit: `confighub-mini mini copy api --variant live --check-git deploy/api --github-status`. These steps were run against hosted ConfigHub: signed in with only that key, the check passed on the approved copy, failed on a commit with a value nobody approved ("Deployment/api/spec.replicas: 5 here, 2 in the hub"), and the key could not create anything. The workflow itself has run in a GitHub repository, setting the status on each commit.
 
 More on ChangeWorkflows, ChangeOrders and attestations: [docs.confighub.com](https://docs.confighub.com).
