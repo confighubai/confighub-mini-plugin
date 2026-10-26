@@ -221,6 +221,18 @@ Each setting is set in Claude Code's settings, as `env`:
 | `CUB_MINI_TIPS=0` | Turns off the line shown to you, never to the agent, at the end of a turn in which confighub mini would have helped: "Do you want to install confighub mini?", with why and how to install it. Each kind is shown at most once a week for a project |
 | `CUB_MINI_RECORD_IN_REPO=1` | The record in each commit the agent makes, as `.cub-mini/changes/SESSION.record`, readable from any checkout; when the agent commits in the same command that changed a file, the record is staged for the next commit. It is named `.record` so that Argo CD and Flux, syncing the repository, leave it alone |
 
+**Keeping the record out of the agent's reach.** Told plainly to delete its record, an agent will: in one run it deleted `.cub-mini` and committed the deletion. To stop that, deny the agent's writes to the record in Claude Code's settings. The plugin's hooks are not sandboxed, so they still keep it. Use the full path of your home folder:
+
+```json
+{
+  "sandbox": { "enabled": true, "filesystem": { "denyWrite": ["/Users/you/.confighub/agent-changes", "./.cub-mini"] } },
+  "permissions": { "deny": ["Edit(/Users/you/.confighub/agent-changes/**)", "Write(/Users/you/.confighub/agent-changes/**)",
+                            "Edit(./.cub-mini/**)", "Write(./.cub-mini/**)"] }
+}
+```
+
+With this, the same request failed with "Operation not permitted", both copies of the record stayed, and the agent said it would not look for a way around it. Not yet tried: `git rm --cached`, which takes a file out of Git without writing the folder.
+
 What it does not do, or has not been shown to do, is in [what we do not claim](docs/limits.md).
 
 ## What you can ask, and where it leads
