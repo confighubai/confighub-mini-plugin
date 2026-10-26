@@ -1,0 +1,59 @@
+# An agent in CI with the ConfigHub plugin and nothing else: no hub, no
+# account. It records each configuration value the agent changes, and why, in
+# the agent's commit, so the pull request, the next agent and the next person
+# can see why. Copy to .github/workflows/ and run it from the Actions tab with a
+# task. Needs the secret ANTHROPIC_API_KEY. For the job to open the pull
+# request itself, turn on "Allow GitHub Actions to create and approve pull
+# requests" in the repository's Actions settings; without it, the job pushes
+# the branch and its summary links to the pull request to open.
+name: Agent with the plugin
+on:
+  workflow_dispatch:
+    inputs:
+      task:
+        description: What the agent should do
+        required: true
+permissions:
+  contents: write
+  pull-requests: write
+env:
+  PLUGIN: v0.49.0
+  CLAUDE_CODE: 2.1.285
+jobs:
+  agent:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Claude Code and the plugin
+        run: |
+          npm install -g "@anthropic-ai/claude-code@$CLAUDE_CODE"
+          # Outside the checkout, so that nothing of it is committed.
+          git clone -q --depth 1 --branch "$PLUGIN" https://github.com/confighubai/confighub-mini-plugin "$RUNNER_TEMP/plugin"
+      - name: The agent
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          CUB_MINI_RECORD_IN_REPO: "1"
+          CUB_MINI_ASK_REASONS: "1"
+          TASK: ${{ inputs.task }}
+        run: |
+          git config user.name "Agent task"
+          git config user.email "agent-task@users.noreply.github.com"
+          git switch -c "agent/$GITHUB_RUN_ID"
+          claude -p "This is a CI job, and nobody can answer questions. When you are done, commit your changes on this branch, with a message that says why. The task: $TASK" \
+            --plugin-dir "$RUNNER_TEMP/plugin/plugins/confighub" --strict-mcp-config --permission-mode acceptEdits \
+            --allowedTools Read Edit Write "Bash(git:*)" "Bash(ls:*)" "Bash(cat:*)" > "$RUNNER_TEMP/answer.md"
+          cat "$RUNNER_TEMP/answer.md" >> "$GITHUB_STEP_SUMMARY"
+      - name: The pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TASK: ${{ inputs.task }}
+        run: |
+          if [ -z "$(git log --oneline "origin/$GITHUB_REF_NAME..HEAD")" ]; then echo "The agent committed nothing." >> "$GITHUB_STEP_SUMMARY"; exit 0; fi
+          git push -q -u origin HEAD
+          if ! gh pr create --base "$GITHUB_REF_NAME" --title "Agent: ${TASK:0:60}" --body-file "$RUNNER_TEMP/answer.md"; then
+            echo "Open the pull request: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/compare/$GITHUB_REF_NAME...agent/$GITHUB_RUN_ID?expand=1" >> "$GITHUB_STEP_SUMMARY"
+          fi

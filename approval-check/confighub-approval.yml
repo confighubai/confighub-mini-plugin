@@ -29,7 +29,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: confighubai/confighub-mini-plugin
-          ref: v0.48.0
+          ref: v0.49.0
           path: .confighub-plugin
       - name: cub, signed in with the view-only key
         env:
@@ -49,4 +49,4 @@ jobs:
       - name: The pull request against the approved copy
         env:
           GH_TOKEN: ${{ github.token }}
-        run: .confighub-plugin/plugins/confighub-mini/bin/confighub-mini mini copy "$COMPONENT" --variant "$VARIANT" --check-git "$DIR" --github-status
+        run: .confighub-plugin/plugins/confighub/bin/confighub mini copy "$COMPONENT" --variant "$VARIANT" --check-git "$DIR" --github-status

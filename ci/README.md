@@ -1,6 +1,6 @@
 # Agents in CI, with ConfigHub
 
-Two jobs to copy: one where the agent works in a ConfigHub of its own for the length of the job and hands back a pull request, and one where it proposes a change in your company's ConfigHub for a person to approve.
+Three jobs to copy: the plugin alone, keeping the record in the agent's commit; the agent working in a ConfigHub of its own for the length of the job and handing back a pull request; and the agent proposing a change in your company's ConfigHub for a person to approve.
 
 ## An agent in CI that keeps your team's reasons
 
@@ -58,3 +58,13 @@ rm ~/.confighub/keys/bot.jwk
 ```
 
 and copy [agent-proposes.yml](agent-proposes.yml) into `.github/workflows/`, with your `COMPONENT`, `VARIANT` and `WORKFLOW`.
+
+## An agent in CI with the plugin alone
+
+**Who.** A team that runs coding agents in CI on its configuration, with no hub, and reviews their work as pull requests.
+
+**What goes wrong without it.** The agent's commit says what changed, and the reason stays in a session that is gone when the job ends. The next agent, or the person reviewing, sees `replicas: 3` and not why.
+
+**What they get.** [agent-plugin-only.yml](agent-plugin-only.yml) runs the agent with the plugin, loaded with `--plugin-dir`, no install step, and `CUB_MINI_RECORD_IN_REPO=1`: each value the agent changes goes into its commit as a record under `.cub-mini/changes/`, with the reason. The next agent that reads the file is given it, and the [review Action](../review/README.md) shows it on the pull request. No hub, no account; the job needs only `ANTHROPIC_API_KEY`.
+
+Run on GitHub's runner, with the plugin 0.48.0 as it was then: asked to raise an api to 3 replicas for a launch, the agent changed the file and committed it in 36 seconds, and the commit carried the record "raised from 2 to 3 for Friday's launch".

@@ -48,7 +48,7 @@ It prints the two settings the agent's sessions need, `CUB_CONFIG=~/.confighub-a
 
 Every Claude Code session started in that folder then runs `cub` as the agent. In a real session started this way, `cub context get` showed the agent's service account, not your account; the agent changed `api-base` and asked with a change order; its own approval was refused ("permission denied"), and so was its write to `api-live`.
 
-**Many worktrees, background agents, and your own sign-in out of reach.** `.claude/settings.local.json` stays in the folder it is in, so a new worktree does not have it, and on the same disk an agent can still read your own `cub` configuration. One settings file outside the repository covers both: the agent's settings, and Claude Code's sandbox denying reads of your configuration. Put it beside the agent's configuration, with the full paths:
+**Many worktrees, background agents, and your own sign-in out of reach.** `.claude/settings.local.json` stays in the folder it is in, so a new worktree does not have it, and on the same disk an agent can still read your own `cub` configuration. One settings file outside the repository covers both: the agent's settings, and Claude Code's sandbox denying reads of your configuration. `cub mini require-approval --agent` writes it for you, as `claude-settings.json` beside the agent's configuration, and prints the line to start sessions with; on hosted ConfigHub, write it yourself, with the full paths:
 
 ```json
 {
@@ -62,7 +62,7 @@ Every Claude Code session started in that folder then runs `cub` as the agent. I
 }
 ```
 
-and start every agent session with it, in whichever worktree: `claude --settings ~/.confighub-agent-bot/claude-settings.json`. For hosted ConfigHub, add its address to `allowedDomains`. In a real session in auto mode, started this way in a new worktree, the agent ran as its service account; reading your configuration failed ("Operation not permitted"); it changed `api-base` and asked with a change order; and its approval was refused.
+and start every agent session with it, in whichever worktree: `claude --settings ~/.confighub-agent-bot/claude-settings.json`. In a real session in auto mode, started with the file `require-approval` wrote, from a folder of its own: the agent ran as its service account, could not read your configuration, proposed with a change order, and its approval was refused. For hosted ConfigHub, add its address to `allowedDomains`. In a real session in auto mode, started this way in a new worktree, the agent ran as its service account; reading your configuration failed ("Operation not permitted"); it changed `api-base` and asked with a change order; and its approval was refused.
 
 **The agent proposes.** In the agent's session, with those two settings (here given on each line, to try it by hand):
 
@@ -163,11 +163,11 @@ Argo CD and Flux can pull the approved copy straight from ConfigHub, over OCI. W
 The order of things:
 
 1. The change is made in the hub, approved and promoted, as above.
-2. The approved copy is written out for Git and committed on a branch, by the person who approved it: `confighub-mini mini copy api --variant live --to-dir deploy/api` writes a folder for each Space, such as `deploy/api/api-live/`, and a `CHANGES.md` that says why each value is set. Argo CD or Flux deploys `deploy/api/api-live/`; the check reads all of `deploy/api`.
+2. The approved copy is written out for Git and committed on a branch, by the person who approved it: `confighub mini copy api --variant live --to-dir deploy/api` writes a folder for each Space, such as `deploy/api/api-live/`, and a `CHANGES.md` that says why each value is set. Argo CD or Flux deploys `deploy/api/api-live/`; the check reads all of `deploy/api`.
 3. A pull request with that branch runs [the workflow](../approval-check/confighub-approval.yml), which compares `deploy/api` with the hub's copy of `api-live`, value by value, and sets the status "ConfigHub: api-live" on the commit.
 4. Branch protection requires that status, so only the approved copy merges. A pull request made by hand, with values the hub has not approved, fails and names each value. To make such a change, make it in the hub, have it approved, and write it out again; `cub mini copy --from-git` takes a commit's values into the hub, each with the commit's message as its reason.
 
-`confighub-mini` is the plugin's program, at `plugins/confighub-mini/bin/confighub-mini` in this repository; the workflow checks it out. Where confighub mini is installed, `cub mini copy` is the same command.
+`confighub` is the plugin's program, at `plugins/confighub/bin/confighub` in this repository; the workflow checks it out. Where confighub mini is installed, `cub mini copy` is the same command.
 
 **Once, for the workflow.** The runner must reach the hub: hosted ConfigHub, or a server of your own. A confighub mini on a laptop cannot be reached from GitHub's runners. Give the workflow a service account that may only view the work:
 

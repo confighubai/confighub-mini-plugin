@@ -6,7 +6,7 @@ Keeps a record of what the agent changes in configuration, and why. The agent is
 - **What it never keeps:** a command's output, a copy of a file, or a value that looks like a credential.
 - **Where:** in `~/.confighub/agent-changes`, outside the repository.
 
-Read it in a session with `/confighub-mini:changes`, and ask about one value with `/confighub-mini:why replicas`. In a terminal, `bin/confighub-mini mini changes` from this plugin does the same.
+Read it in a session with `/confighub:changes`, and ask about one value with `/confighub:why replicas`. In a terminal, `bin/confighub mini changes` from this plugin does the same.
 
 ## More, when you ask for it
 
@@ -24,10 +24,10 @@ Each is turned on in Claude Code's settings, as `env`:
 Codex keeps the same record, but not by installing this plugin there: Codex runs only the hooks in its own configuration, not those a plugin carries. From a copy of this plugin, the one Claude Code installed or a clone of its repository, run:
 
 ```
-bin/confighub-mini mini codex-setup
+bin/confighub mini codex-setup
 ```
 
-It copies the program to `~/.codex/confighub-mini` and adds the plugin's hooks to `~/.codex/hooks.json`, beside any hooks already there. Then open Codex and type `/hooks` to approve them, once. Read the record with `~/.codex/confighub-mini/bin/confighub-mini mini changes`. `codex-setup --dry-run` says what it would do, and `codex-setup --remove` takes it all out again.
+It copies the program to `~/.codex/confighub-mini` and adds the plugin's hooks to `~/.codex/hooks.json`, beside any hooks already there. Then open Codex and type `/hooks` to approve them, once. Read the record with `~/.codex/confighub-mini/bin/confighub mini changes`. `codex-setup --dry-run` says what it would do, and `codex-setup --remove` takes it all out again.
 
 ## What is in it
 

@@ -1,12 +1,11 @@
 {
-  "description": "confighub-mini: a record of what the agent changes in configuration, and why",
   "hooks": {
     "SessionStart": [
       {
         "hooks": [
           {
             "type": "command",
-            "command": "\"${PLUGIN_ROOT:-$CLAUDE_PLUGIN_ROOT}/bin/confighub-mini\" mini hook || true",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}/bin/confighub\" mini hook || true",
             "timeout": 10
           }
         ]
@@ -17,7 +16,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"${PLUGIN_ROOT:-$CLAUDE_PLUGIN_ROOT}/bin/confighub-mini\" mini hook || true",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}/bin/confighub\" mini hook || true",
             "timeout": 10
           }
         ]
@@ -25,11 +24,11 @@
     ],
     "PreToolUse": [
       {
-        "matcher": "^(Bash|apply_patch)$",
+        "matcher": "Bash",
         "hooks": [
           {
             "type": "command",
-            "command": "\"${PLUGIN_ROOT:-$CLAUDE_PLUGIN_ROOT}/bin/confighub-mini\" mini hook || true",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}/bin/confighub\" mini hook || true",
             "timeout": 10
           }
         ]
@@ -37,11 +36,23 @@
     ],
     "PostToolUse": [
       {
-        "matcher": "^(Bash|apply_patch)$",
+        "matcher": "Edit|Write|MultiEdit|Bash|Read|Grep",
         "hooks": [
           {
             "type": "command",
-            "command": "\"${PLUGIN_ROOT:-$CLAUDE_PLUGIN_ROOT}/bin/confighub-mini\" mini hook || true",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}/bin/confighub\" mini hook || true",
+            "timeout": 10
+          }
+        ]
+      }
+    ],
+    "PostToolUseFailure": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}/bin/confighub\" mini hook || true",
             "timeout": 10
           }
         ]
@@ -52,7 +63,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"${PLUGIN_ROOT:-$CLAUDE_PLUGIN_ROOT}/bin/confighub-mini\" mini hook || true",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}/bin/confighub\" mini hook || true",
             "timeout": 10
           }
         ]
@@ -63,7 +74,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"${PLUGIN_ROOT:-$CLAUDE_PLUGIN_ROOT}/bin/confighub-mini\" mini hook || true",
+            "command": "\"${CLAUDE_PLUGIN_ROOT}/bin/confighub\" mini hook || true",
             "timeout": 10
           }
         ]

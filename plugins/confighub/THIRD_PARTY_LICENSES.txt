@@ -1,4 +1,4 @@
-The confighub-mini program in this plugin is built with Go and the modules below. Their licenses follow.
+The ConfigHub plugin's program is built with Go and the modules below. Their licenses follow.
 
 ================================================================
 Go (LICENSE)

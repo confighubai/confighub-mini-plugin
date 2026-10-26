@@ -28,8 +28,8 @@ env:
   COMPONENT: shop
   HUB_FILE: ci/shop/shop.tar.gz
   DEPLOY_DIR: ci/shop/deploy
-  PLUGIN: v0.48.0
-  MINI: 0.9.0-mini.3
+  PLUGIN: v0.49.0
+  MINI: 0.9.0-mini.4
   CLAUDE_CODE: 2.1.285
 jobs:
   agent:
@@ -63,7 +63,7 @@ jobs:
           TASK: ${{ inputs.task }}
         run: |
           claude -p "This is a CI job, and nobody can answer questions. The configuration of $COMPONENT is in a ConfigHub hub here, used with cub: $COMPONENT-base is what every environment starts from, and each environment is a copy of it, such as $COMPONENT-prod. Make your change in the hub, not in the files: change the base with cub function set --space $COMPONENT-base --unit UNIT --change-desc WHY FUNCTION ARGS (cub function list lists the functions; cub unit list --space SPACE lists the units), or one environment with cub mini set $COMPONENT ... --variant ENV --change-desc WHY. See what an environment would take from the base with cub mini promote $COMPONENT-ENV --dry-run, and take it with cub mini promote $COMPONENT-ENV --change-desc WHY. A value an environment keeps was set there for a reason, which the dry run and $DEPLOY_DIR/CHANGES.md give; leave it unless the task says otherwise. Do not edit the files under $DEPLOY_DIR or commit: the job writes them from the hub when you are done. Finish with a short summary of what you changed and why. The task: $TASK" \
-            --plugin-dir "$RUNNER_TEMP/plugin/plugins/confighub-mini" --strict-mcp-config --permission-mode acceptEdits \
+            --plugin-dir "$RUNNER_TEMP/plugin/plugins/confighub" --strict-mcp-config --permission-mode acceptEdits \
             --allowedTools Read "Bash(cub:*)" "Bash(ls:*)" "Bash(cat:*)" > "$RUNNER_TEMP/answer.md"
           cat "$RUNNER_TEMP/answer.md" >> "$GITHUB_STEP_SUMMARY"
       - name: Written back from the hub

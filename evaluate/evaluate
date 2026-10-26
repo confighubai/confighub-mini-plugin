@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""How often a later agent undoes an earlier one's change, with the confighub-mini
+"""How often a later agent undoes an earlier one's change, with the ConfigHub
 plugin and without it, over many runs.
 
     ./evaluate OUT_DIR [--runs N] [--kinds replicas,image,env,flag] [--cases a,b] [--arms with,without] [--models default,sonnet] [--jobs J] [--setting NAME=VALUE] [--apart] [--first agent|person|controller|reverted]
@@ -59,7 +59,7 @@ import time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 # The plugin in this repository, unless CONFIGHUB_MINI_PLUGIN names another.
-PLUGIN = os.environ.get("CONFIGHUB_MINI_PLUGIN") or os.path.join(os.path.dirname(HERE), "plugins", "confighub-mini")
+PLUGIN = os.environ.get("CONFIGHUB_MINI_PLUGIN") or os.path.join(os.path.dirname(HERE), "plugins", "confighub")
 
 CLUSTER = "evaluate"
 API = """apiVersion: apps/v1

@@ -22,7 +22,7 @@ env:
   COMPONENT: shop
   VARIANT: live
   WORKFLOW: workflows/shop-live-approval
-  PLUGIN: v0.48.0
+  PLUGIN: v0.49.0
   CLAUDE_CODE: 2.1.285
 jobs:
   agent:
@@ -56,6 +56,6 @@ jobs:
         run: |
           C=$COMPONENT V=$VARIANT
           claude -p "This is a CI job, and nobody can answer questions. The configuration of $C is in ConfigHub, used with cub, which is signed in with a key of your own. $C-base is what every environment starts from; $C-$V is production, which changes only by a change order that a named person approves. Make your change in the base, with why: cub function set --space $C-base --unit UNIT --change-desc WHY FUNCTION ARGS (cub function list lists the functions; cub unit list --space $C-base lists the units). Then ask for it to reach production: cub changeorder create --space $C-base NAME --component $C --change-workflow $WORKFLOW --description \"WHAT AND WHY\". Do not approve it, ask for more access, or use anyone else's sign-in. Finish with a short summary of what you changed and why, and the commands the approver runs: cub variant approve $C-base --change-order $C-base/NAME --note WHY, then cub variant promote $C-$V --change-order $C-base/NAME, then cub release publish $C-$V --revision ChangeOrder:$C-base/NAME. The task: $TASK" \
-            --plugin-dir "$RUNNER_TEMP/plugin/plugins/confighub-mini" --strict-mcp-config --permission-mode acceptEdits \
+            --plugin-dir "$RUNNER_TEMP/plugin/plugins/confighub" --strict-mcp-config --permission-mode acceptEdits \
             --allowedTools "Bash(cub:*)" > "$RUNNER_TEMP/answer.md"
           cat "$RUNNER_TEMP/answer.md" >> "$GITHUB_STEP_SUMMARY"

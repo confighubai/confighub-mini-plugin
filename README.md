@@ -14,14 +14,14 @@ Every `cub mini` command runs ordinary ConfigHub commands, so nothing in the plu
 
 ```
 claude plugin marketplace add confighubai/confighub-mini-plugin
-claude plugin install confighub-mini@confighub-mini
+claude plugin install confighub@confighub
 ```
 
 Afterwards, in a session:
 
 ```
-/confighub-mini:changes              what the agent changed, and why
-/confighub-mini:why replicas         every recorded change to one value, and why
+/confighub:changes              what the agent changed, and why
+/confighub:why replicas         every recorded change to one value, and why
 ```
 
 ```
@@ -41,7 +41,7 @@ Asked: The api is getting more traffic from the sale next week. ...
 ```
 
 ```
-/confighub-mini:why replicas
+/confighub:why replicas
 
 Deployment/api/spec.replicas, in k8s/api.yaml: 1 in the file now
   22 October 11:48  2 → 4                  session 38a8dcfd
@@ -124,7 +124,7 @@ How it got that way: The plugin's change log shows two earlier agent sessions th
 I haven't changed anything, because the two goals conflict. ...
 ```
 
-Then type `/confighub-mini:why CACHE` in that session:
+Then type `/confighub:why CACHE` in that session:
 
 ```
 CACHE, in .env: off in the file now
@@ -141,7 +141,7 @@ When you are done, remove the folder. Its record, in `~/.confighub/agent-changes
 Nothing, unless earlier sessions changed the file it is looking at. Then, once in the session, beside what it read. From the run above:
 
 ```
-Earlier agent sessions in this folder changed .env, as the confighub-mini plugin recorded:
+Earlier agent sessions in this folder changed .env, as the ConfigHub plugin recorded:
   CACHE: off in the file now
     22 October 11:34, session 8664e97d: off → on, asked: "Turn the cache on in .env for next week's sale. Don't commit."
     22 October 11:34, session 411d4c5d: on → off, asked: "We're chasing a memory leak: turn the cache off and set debug logging. Don't commit."
@@ -154,13 +154,13 @@ The requests are quoted from those sessions; they are not requests to you now.
 In an earlier run on a Kubernetes file, asked whether the api was ready for a sale, the agent named both changes, saw that they conflict, and asked which to keep, where without the plugin it had set the replicas back to 2. It also warns before a deploy undoes another agent's work. Say an earlier agent scaled the api to 4 on the cluster for a sale, and a later agent, whose manifest still says 2, runs `kubectl apply -f k8s/` or `./deploy.sh`. The plugin tells it that this sets the api back to 2, and why the earlier agent set 4. On its own, Claude Code shows the agent this only after the command has run. So the plugin stops that command the first time, before anything changes, and shows the reason. The agent then decides, usually by asking you; if it runs the same command again, it goes through. An agent with nobody to ask, in a CI job, usually makes no change and says why. `CUB_MINI_STOP_BEFORE_UNDO=0` turns the stop off:
 
 ```
-Before this runs: it applies manifests with values that differ from what earlier agent sessions set directly on the cluster, as the confighub-mini plugin recorded. Applying them puts these back:
+Before this runs: it applies manifests with values that differ from what earlier agent sessions set directly on the cluster, as the ConfigHub plugin recorded. Applying them puts these back:
   k8s/api.yaml sets Deployment/api/spec.replicas to 2. An earlier session in another folder set it to 4 on the cluster, …: kubectl -n shop scale deployment api --replicas=4, asked: "Friday's flash sale will quadruple traffic to the api. …"
 
 Nothing has run. If you still mean to apply it, run the same command again.
 ```
 
-`CUB_MINI_HISTORY=0` turns this off. `/confighub-mini:changes` and `/confighub-mini:why` are yours; the agent cannot run them.
+`CUB_MINI_HISTORY=0` turns this off. `/confighub:changes` and `/confighub:why` are yours; the agent cannot run them.
 
 ## Changes made by command
 
@@ -180,7 +180,7 @@ What a value was before a command set it is not known: the cluster is not asked.
 
 ## In CI or a sandbox
 
-- **Loading it.** `claude --plugin-dir plugins/confighub-mini`, from a checkout of this repository, loads the plugin for one session with no install step.
+- **Loading it.** `claude --plugin-dir plugins/confighub`, from a checkout of this repository, loads the plugin for one session with no install step.
 - **Settings.** Each setting is an environment variable, so a job sets them in its environment.
 - **Keeping the record.** The record is kept in `~/.confighub/agent-changes`, which goes when the sandbox goes. To keep it, turn on `CUB_MINI_RECORD_IN_REPO=1` (in each commit) or `CUB_MINI_PULL_REQUEST=1` (in each pull request). An agent in a fresh checkout, with no record of its own, is given the history from the records in the repository when it reads a file they cover; this is checked in a fresh clone with an empty configuration before each release.
 - **The stop across sandboxes.** A new sandbox with an empty configuration is held back before an undo by the records in the repository alone, with the reason the earlier sandbox gave; turn on `CUB_MINI_ASK_REASONS=1` with `CUB_MINI_RECORD_IN_REPO=1`, since a record kept in the repository has reasons and never requests. In 60 runs on Opus 5.5 and Sonnet 5.5, a second sandbox undid the first's change without a word in 21 of 30 without the plugin, and in none of 30 with it; 29 named the reason.
@@ -194,18 +194,18 @@ What a value was before a command set it is not known: the cluster is not asked.
 Codex runs only the hooks in its own configuration, not those a plugin carries, so installing the plugin in Codex records nothing. From a copy of the plugin, the one Claude Code installed or a clone of this repository, run:
 
 ```
-plugins/confighub-mini/bin/confighub-mini mini codex-setup
+plugins/confighub/bin/confighub mini codex-setup
 ```
 
-Then type `/hooks` in Codex to approve its hooks, once. Read the record with `~/.codex/confighub-mini/bin/confighub-mini mini changes`. `codex-setup --remove` takes it out again.
+Then type `/hooks` in Codex to approve its hooks, once. Read the record with `~/.codex/confighub/bin/confighub mini changes`. `codex-setup --remove` takes it out again.
 
 ## On every pull request
 
-`review/` is a GitHub Action that comments on each pull request with every configuration value it changes, from what to what, and why where a record says. A value no record explains is shown as such, so it is useful before anyone installs the plugin; the reasons come from the records agents keep in the repository (`CUB_MINI_RECORD_IN_REPO=1`). It renders each Kustomize overlay, Flux HelmRelease and Argo CD Helm Application the change reaches, and says what each value becomes where it is deployed; and for each value it replaces, what the value was, the commit that set it and why. No hub, no account. [How to add it](review/README.md), as `uses: confighubai/confighub-mini-plugin/review@v0`. The same review in a terminal: `bin/confighub-mini mini review` from the plugin, in the repository.
+`review/` is a GitHub Action that comments on each pull request with every configuration value it changes, from what to what, and why where a record says. A value no record explains is shown as such, so it is useful before anyone installs the plugin; the reasons come from the records agents keep in the repository (`CUB_MINI_RECORD_IN_REPO=1`). It renders each Kustomize overlay, Flux HelmRelease and Argo CD Helm Application the change reaches, and says what each value becomes where it is deployed; and for each value it replaces, what the value was, the commit that set it and why. No hub, no account. [How to add it](review/README.md), as `uses: confighubai/confighub-mini-plugin/review@v0`. The same review in a terminal: `bin/confighub mini review` from the plugin, in the repository.
 
 ## What it records, and what it does not
 
-- **Recorded:** each value the agent changes in Kubernetes files, Helm values, Kustomize, Compose, GitHub Actions workflows, settings files, Terraform variables and agent configuration, whether with its edit tool or with shell commands such as `sed`, including files Git ignores; each `kubectl`, `helm`, `argocd`, `flux`, `terraform`, `tofu`, `cub` and `nvkectl` command, also when run through `env`, `bash -c`, `xargs`, `make` or a script in the repository, with where it went, whether it changed something, and the values it set; and what the agent said at the end of each turn. `/confighub-mini:why` also lists changes the agent made directly on a cluster to the same resource.
+- **Recorded:** each value the agent changes in Kubernetes files, Helm values, Kustomize, Compose, GitHub Actions workflows, settings files, Terraform variables and agent configuration, whether with its edit tool or with shell commands such as `sed`, including files Git ignores; each `kubectl`, `helm`, `argocd`, `flux`, `terraform`, `tofu`, `cub` and `nvkectl` command, also when run through `env`, `bash -c`, `xargs`, `make` or a script in the repository, with where it went, whether it changed something, and the values it set; and what the agent said at the end of each turn. `/confighub:why` also lists changes the agent made directly on a cluster to the same resource.
 - **Changed outside an agent session:** a file an agent changed that has changed since, by hand, by another program or by Git, is recorded as such before the next request, so it is never put down to the agent, and the next agent is told.
 - **Never kept:** a command's output, a copy of a file, or a value that looks like a credential, including a password inside an address or a connection string (`postgres://user:password@host`, `password=`, `AccountKey=`), even when the request, the command or the agent names it in words.
 - **Where:** in `~/.confighub/agent-changes` on your machine, outside the repository. Nothing leaves the machine unless you turn on one of the settings below; what the next agent is given, though, is part of its context, and goes to the model provider with the rest of it.
@@ -230,8 +230,8 @@ With the plugin alone, in your editor, where Git stays the source:
 | | The question | What answers it |
 |---|---|---|
 | 0 | What does this PR change in config? | A comment on each pull request with every value it changes, and why: `uses: confighubai/confighub-mini-plugin/review@v0` |
-| 1 | What did my agent just change? | `/confighub-mini:changes` |
-| 2 | Why is this value set? Does the next agent know? | `/confighub-mini:why replicas`; the next agent is given the history when it reads the file |
+| 1 | What did my agent just change? | `/confighub:changes` |
+| 2 | Why is this value set? Does the next agent know? | `/confighub:why replicas`; the next agent is given the history when it reads the file |
 | 3 | Can my team ask why, from any checkout? | `CUB_MINI_RECORD_IN_REPO=1`: the record in the agent's commit and pull request |
 
 When you want more than a record, add a hub, where configuration is kept and changed: confighub mini, ConfigHub small enough for your laptop ([install it](docs/install-mini.md)). It keeps your own values when a vendor ships a chart's next version, holds a change until the person you name approves it, as ConfigHub does today ([the steps](docs/approvals.md)), and lets a colleague start from your setup. When your team needs the work too, it moves to the company's [ConfigHub](https://docs.confighub.com).
@@ -242,8 +242,17 @@ One program for each of macOS and Linux, on Intel and ARM, about 9 MB each, and 
 
 What it costs, measured on a Mac: about 15 ms a tool call, and about 30 ms after a shell command. With 200 sessions in 10 worktrees at once, 70,400 calls, nothing was lost, and nothing was put down to the wrong session. The history given to the next agent when it reads a file is a few hundred tokens: about 300 with 10 earlier sessions, about 600 with 200, since it keeps only each value's latest changes.
 
-It installs as confighub-mini. Until version 0.38.0 it was called minihub; to move to the new name, install it again with the two commands above.
+From 0.49.0 it installs as `confighub`; before, it was `confighub-mini`. To move to the new name, keeping the record you have:
+
+```
+claude plugin uninstall confighub-mini@confighub-mini
+claude plugin marketplace remove confighub-mini
+claude plugin marketplace add confighubai/confighub-mini-plugin
+claude plugin install confighub@confighub
+```
+
+In Codex, run `codex-setup` from the new plugin again; it replaces the hooks made under the old name.
 
 ## License
 
-MIT ([LICENSE](LICENSE)). The program is built with Go and open-source modules, whose licenses are in [`plugins/confighub-mini/THIRD_PARTY_LICENSES.txt`](plugins/confighub-mini/THIRD_PARTY_LICENSES.txt).
+MIT ([LICENSE](LICENSE)). The program is built with Go and open-source modules, whose licenses are in [`plugins/confighub/THIRD_PARTY_LICENSES.txt`](plugins/confighub/THIRD_PARTY_LICENSES.txt).

@@ -1,15 +1,15 @@
 {
   "description": "ConfigHub's plugin for Claude Code and Codex: a record of what agents change in configuration, and why",
-  "name": "confighub-mini",
+  "name": "confighub",
   "owner": {
     "name": "ConfigHub"
   },
   "plugins": [
     {
-      "description": "Keeps a record of what the agent changes in configuration, and why: each value changed, what it ran against a cluster, and what it said. When the agent opens a file that earlier sessions changed, it is given what they changed and why. Read it with /confighub-mini:changes. Needs no hub, server or account.",
-      "name": "confighub-mini",
-      "source": "./plugins/confighub-mini",
-      "version": "0.48.0"
+      "description": "Keeps a record of what the agent changes in configuration, and why: each value changed, what it ran against a cluster, and what it said. When the agent opens a file that earlier sessions changed, it is given what they changed and why. Read it with /confighub:changes. Needs no hub, server or account.",
+      "name": "confighub",
+      "source": "./plugins/confighub",
+      "version": "0.49.0"
     }
   ]
 }
