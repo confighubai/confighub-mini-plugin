@@ -214,7 +214,7 @@ entire confighub why replicas
 | `entire confighub changes` | What an agent changed in its latest session (`--all` for every session) |
 | `entire confighub review` | Each configuration value this branch changes, and why |
 
-The checkpoint is found through the record kept in each commit, so turn on `CUB_MINI_RECORD_IN_REPO=1`. With both in one repository, every hook of each ran and exited cleanly, and each commit kept both tools' trailers. The plugin's review gives Entire's hooks in `.claude/settings.json` as one line, not one value each.
+Entire asks you to confirm the install, since this repository is not in its plugin index. The checkpoint is found through the record kept in each commit, so turn on `CUB_MINI_RECORD_IN_REPO=1`. With both in one repository, every hook of each ran and exited cleanly, and each commit kept both tools' trailers. The plugin's review gives Entire's hooks in `.claude/settings.json` as one line, not one value each.
 
 ## On every pull request
 
