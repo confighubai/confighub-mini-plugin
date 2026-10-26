@@ -1,5 +1,11 @@
 # GitOps over OCI: Flux and Argo CD deploying from ConfigHub
 
+**Who.** Dan's platform team runs Flux and Argo CD with self-heal on, and agents now propose changes to what they deploy.
+
+**What goes wrong without it.** What the cluster runs is whatever reaches the branch it watches. A person has to read every agent's diff to know whether it should ship, and nothing in Git says why a value is what it is.
+
+**What they get.** The cluster pulls only releases ConfigHub has approved, from ConfigHub's own registry. An agent's change waits until a named person approves it; then it is running within about 10 seconds. A change made by hand on the cluster is put back, and going back is an approved change like any other. Every release shows, in ConfigHub, what the cluster reported about it.
+
 With a hub, ConfigHub is the source of truth, and Flux or Argo CD pull each approved release from ConfigHub's OCI registry, as they would from any container registry, instead of from a Git repository. This is what Flux calls Gitless GitOps. You can keep writing and reviewing in Git; what the cluster runs is what was approved in ConfigHub.
 
 This page sets it up on confighub mini and a local kind cluster, then shows the four things a GitOps team asks about: a change that waits for a person's approval, self-heal, going back, and the cluster's status in ConfigHub. About 15 minutes. You need confighub mini ([install it](install-mini.md)), Docker, `kind` and `kubectl`, and for Flux, the `flux` CLI.

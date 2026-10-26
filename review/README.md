@@ -1,5 +1,11 @@
 # Configuration review
 
+**Who.** A team that reviews every configuration change as a pull request, more and more of them written by agents.
+
+**What goes wrong without it.** The diff shows `replicas: 4 → 1` in a Kustomize overlay, but not what that becomes in each environment, or that the 4 was set last week for a sale.
+
+**What they get.** A comment on each pull request with what each value becomes where it is deployed, why it was set, and what merging would undo. No hub, no account, nothing to install in the cluster.
+
 On each pull request, a comment with every configuration value the pull request changes, from what to what, and why, where the record the ConfigHub plugin keeps of what agents change says. A value no record explains is shown as such. It reads Kubernetes files, Helm values, Kustomize, Compose, GitHub Actions workflows, settings files, Terraform variables and agent configuration. No hub, no account, nothing leaves the runner but the comment.
 
 ```yaml
