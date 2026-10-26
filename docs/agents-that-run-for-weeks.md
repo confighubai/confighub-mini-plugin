@@ -59,7 +59,7 @@ Told plainly to delete its record, an agent did: it deleted the repository's cop
 
 Deleting an agent's service account refuses its key, but leaves its rights in place. In a run, a session it had already signed in went on writing; such a sign-in lasts up to 24 hours. Taking the rights away first stops that session at its next request: "space api-base not found".
 
-- On confighub mini: `cub mini revoke-agent bot`, from the next package.
+- On confighub mini: `cub mini revoke-agent bot`.
 - On hosted ConfigHub: the plain `cub` steps in [approvals](approvals.md).
 
 To stop everything at once on confighub mini, `cub mini stop` stops the hub; clusters that deploy from it keep running what they have.
@@ -75,7 +75,9 @@ Agent traces show what ran. The plugin's record adds why each value is what it i
 - the reason the agent gave;
 - who approved it, once it is in a hub.
 
-The record is filed under Claude Code's session ID, the same `session.id` Claude Code puts on its OpenTelemetry events, so a trace and the reasons can be joined. In a hub, the revisions are made by the agent's own identity, and it cannot rewrite them.
+With `CUB_MINI_OTEL=1` and `CUB_MINI_OTEL_ENDPOINT` set to your collector's OTLP/HTTP address, the plugin sends each value changed, each command that changed something, and each reason, as log events. They carry the same `session.id` as the events Claude Code sends with its own telemetry on. In a real session, both arrived at one collector under one `session.id`: `confighub.value_changed` with `replicas` 2 → 4, then `confighub.reason`, "Friday flash sale expected to quadruple api traffic". The request is sent only with `OTEL_LOG_USER_PROMPTS=1`, as Claude Code sends prompts, and a credential's values never.
+
+Once the changes are in a hub, the revisions are made by the agent's own identity, and the agent cannot rewrite them.
 
 ## What it does not do
 

@@ -17,6 +17,7 @@ Each is turned on in Claude Code's settings, as `env`:
 | `CUB_MINI_ASK_REASONS=1` | A reason for each value, in the agent's own answer |
 | `CUB_MINI_PULL_REQUEST=1` | The record and its reasons in each pull request the agent opens with `gh` |
 | `CUB_MINI_RECORD_IN_REPO=1` | The record in each commit the agent makes, readable from any checkout |
+| `CUB_MINI_OTEL=1` | Each value changed, each command that changed something, and each reason, sent at the end of each turn to an OpenTelemetry collector as log events, with Claude Code's `session.id`. Set `CUB_MINI_OTEL_ENDPOINT` to the collector's OTLP/HTTP address, such as `http://localhost:4318` |
 | `CUB_MINI_KEEP_IN_HUB=1` | Each change kept in a hub, so that it survives a vendor's next version. This needs the confighub-mini package and a hub; the plugin alone carries none |
 
 ## In Codex
