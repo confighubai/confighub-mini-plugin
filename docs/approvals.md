@@ -135,7 +135,7 @@ cub serviceaccount key add bot --generate bot
 CUB_CONFIG=~/.confighub-agent-bot cub auth login --private-key=$HOME/.confighub/keys/bot.jwk --server https://hub.confighub.com
 ```
 
-Run the agent with `CUB_CONFIG=~/.confighub-agent-bot`, the same as on confighub mini. On the same machine it could still read your own sign-in, so for a firm line, run it where only its key is, as in CI. `cub serviceaccount delete bot` takes the access away.
+Run the agent with `CUB_CONFIG=~/.confighub-agent-bot`, the same as on confighub mini. On the same machine it could still read your own sign-in, so for a firm line, run it where only its key is, as in CI. To take its access away at once, take away its rights first, then delete it: `--permission=-Edit:serviceaccount:bot` and so on, for each right step 2 gave it, with `cub space update api-base`, `cub space update api-live`, `cub space update workflows` and `cub component update api`; then `cub serviceaccount delete bot`. Deleting it alone refuses its key, but leaves its rights in place, so a session it has already signed in keeps working for up to 24 hours. On confighub mini, `cub mini revoke-agent bot` does all of it, from the next package.
 
 ### 3. The agent proposes
 
