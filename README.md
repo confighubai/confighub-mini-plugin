@@ -8,7 +8,7 @@ ConfigHub is the product, and this plugin is aimed at agents and AI use:
 2. **confighub mini** is ConfigHub, small, on a laptop, for macOS and Linux ([install it](docs/install-mini.md); [a first run, about 15 minutes](docs/try-confighub-mini.md); [your own Helm chart](docs/your-own-chart.md); [Flux and Argo CD deploying from it](docs/gitops-over-oci.md); [its commands as plain `cub`](docs/cub-mini-and-cub.md)).
 3. **The company's ConfigHub** is where the work ends up ([ConfigHub](https://docs.confighub.com)).
 
-Approvals work today on ConfigHub, hosted or on your own server: an agent can propose a change to production, and only the person you name can approve it ([the steps](docs/approvals.md)).
+Approvals work today on ConfigHub, hosted or on your own server: an agent can propose a change to production, and only the person you name can approve it ([the steps](docs/approvals.md)). For agents that run for weeks: who acted, who agreed, a record the agent cannot change, and how to stop it at once ([the page](docs/agents-that-run-for-weeks.md)).
 
 Every `cub mini` command runs ordinary ConfigHub commands, so nothing in the plugin or confighub mini is a separate product.
 
