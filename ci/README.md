@@ -57,4 +57,4 @@ gh variable set CONFIGHUB_SERVER --body https://hub.confighub.com
 rm ~/.confighub/keys/bot.jwk
 ```
 
-and copy [agent-proposes.yml](agent-proposes.yml) into `.github/workflows/`, with your `COMPONENT` and `WORKFLOW`.
+and copy [agent-proposes.yml](agent-proposes.yml) into `.github/workflows/`, with your `COMPONENT`, `VARIANT` and `WORKFLOW`.

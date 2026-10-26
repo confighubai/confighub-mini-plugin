@@ -2,7 +2,7 @@
 
 **Who.** A platform engineer who runs vendor charts with values of their own: a pinned driver, a scrape path, a replica count for a busy week.
 
-**What goes wrong without it.** The chart's next version changes or drops what your values set, as cert-manager 1.21.2 dropped the setting for the path its ServiceMonitor scrapes, and `helm upgrade` takes it as it comes. Why each of your values was set lives in someone's head.
+**What goes wrong without it.** The chart's next version changes or drops what your values set, as cert-manager 1.21.2 dropped the setting for the path its ServiceMonitor scrapes, and you find out at upgrade time: Helm refuses the old key, or quietly renders without it. Why each of your values was set lives in someone's head.
 
 **What they get.** Your values kept, each with its reason, through the chart's next version; what that version would change shown before you take it; and plain files that say why each value is set, for Git or a cluster.
 
