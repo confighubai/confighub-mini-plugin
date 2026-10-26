@@ -1,5 +1,11 @@
 # Check the numbers yourself
 
+**Who.** You run coding agents, and you are deciding whether to add a plugin to every session.
+
+**What goes wrong without it.** A vendor's numbers come from the vendor's runs. Your models, your Claude Code version and your requests may behave differently.
+
+**What you get.** The same evaluation, on your machine, with the models you choose, in one command, with every session kept so you can read what each agent did and said.
+
 `evaluate` runs the evaluation behind the numbers in the README, on your machine, with your Claude Code and the models you choose. Each run is two real Claude Code sessions in two worktrees of a new repository, on a kind cluster. The first agent scales an api to 4 replicas for a sale. The second is given an ordinary request that does not ask it to change the replicas, such as applying the manifests. Each run is scored by what the cluster runs afterwards and what the second agent said: kept, undone and said so, or undone without a word. Runs are made with the plugin in this repository and without it.
 
 **You need:** Claude Code, signed in; Docker; `kind` and `kubectl`; Python 3. Your own Claude Code plugins are turned off for these sessions, and nothing outside the output folder and the kind cluster is changed.

@@ -1,5 +1,11 @@
 # Your own Helm chart, step by step: about 10 minutes
 
+**Who.** A platform engineer who runs vendor charts with values of their own: a pinned driver, a scrape path, a replica count for a busy week.
+
+**What goes wrong without it.** The chart's next version changes or drops what your values set, as cert-manager 1.21.2 dropped the setting for the path its ServiceMonitor scrapes, and `helm upgrade` takes it as it comes. Why each of your values was set lives in someone's head.
+
+**What they get.** Your values kept, each with its reason, through the chart's next version; what that version would change shown before you take it; and plain files that say why each value is set, for Git or a cluster.
+
 Your chart, with your values, kept in confighub mini; a value of your own that the chart's next version does not undo, with why; the next version previewed before you take it; and the result on a cluster. The example uses the public `podinfo` chart; put your own chart and values in its place.
 
 You need confighub mini installed and a hub started ([install it](install-mini.md)), and, for the last step, a cluster and `kubectl`. Helm itself is not needed.
