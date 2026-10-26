@@ -22,7 +22,7 @@ env:
   COMPONENT: shop
   VARIANT: live
   WORKFLOW: workflows/shop-live-approval
-  PLUGIN: v0.51.0
+  PLUGIN: v0.51.1
   CLAUDE_CODE: 2.1.285
 jobs:
   agent:

@@ -1,0 +1,4 @@
+# For Entire's CLI: entire plugin install https://github.com/confighubai/confighub-mini-plugin
+# installs the plugin as `entire confighub`, from this repository's releases.
+name: confighub
+description: Why each configuration value is what it is, from the record the ConfigHub plugin keeps of what agents change
