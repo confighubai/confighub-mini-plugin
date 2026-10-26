@@ -34,7 +34,7 @@ cp georges-next-version/startpage.yaml published/
 
 ## 4. Optional: an agent that proposes and a person who approves
 
-The [approval steps](approvals.md) work on this hub as they do on hosted ConfigHub. It takes about 10 minutes.
+The [approval steps](approvals.md) work on this hub as they do on hosted ConfigHub. It takes about 5 minutes.
 
 ## 5. Remove it
 
