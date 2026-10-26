@@ -85,7 +85,7 @@ The dry run says what waits, and for whom, and exits with status 1 while it wait
 
 ## On hosted ConfigHub or your own server, with cub alone
 
-The same, step by step, with `cub` alone. First the Component, its base and its live copy, from the folder above:
+The same, step by step, with `cub` alone. With confighub mini installed, `cub mini require-approval` does steps 1 and 2 in one, against hosted ConfigHub too. First the Component, its base and its live copy, from the folder above:
 
 ```bash
 cub component create api
@@ -151,9 +151,10 @@ Its own `cub variant approve` is refused, and so is a write to `api-live`.
 cub unit diff --space api-live api --with-unit api-base/api
 cub variant approve api-base --change-order api-base/sale-4 --note "Checked: four is right for the sale"
 cub variant promote api-live --change-order api-base/sale-4
+cub release publish api-live --revision ChangeOrder:api-base/sale-4
 ```
 
-Until you approve, the promotion is refused. An approval covers the exact revision: if the agent changes the value again, the new change waits for an approval of its own. Who approved, when and why is kept (`cub attestation list --space api-base`).
+The last line sends it to a cluster, when `api-live` is aimed at one ([GitOps over OCI](gitops-over-oci.md)); `cub mini promote`, on confighub mini, does the promotion and the release in one. Until you approve, the promotion is refused. An approval covers the exact revision: if the agent changes the value again, the new change waits for an approval of its own. Who approved, when and why is kept (`cub attestation list --space api-base`).
 
 ## In a pull request
 
