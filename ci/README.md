@@ -26,6 +26,8 @@ Roll out shop-api 1.9.0 to every environment; it fixes the checkout timeout.
 
 ### Your own configuration
 
+The `cub mini` commands here are plain `cub` with the rest filled in ([which](../docs/cub-mini-and-cub.md)).
+
 Make the two files from your own manifests with confighub mini ([install it](../docs/install-mini.md)), one folder per environment's copy:
 
 ```bash
