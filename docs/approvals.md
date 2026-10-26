@@ -144,7 +144,7 @@ The order of things:
 3. A pull request with that branch runs [the workflow](../approval-check/confighub-approval.yml), which compares `deploy/api` with the hub's copy of `api-live`, value by value, and sets the status "ConfigHub: api-live" on the commit.
 4. Branch protection requires that status, so only the approved copy merges. A pull request made by hand, with values the hub has not approved, fails and names each value. To make such a change, make it in the hub, have it approved, and write it out again; `cub mini copy --from-git` takes a commit's values into the hub, each with the commit's message as its reason.
 
-`confighub-mini` is the plugin's program, at `plugins/confighub-mini/bin/confighub-mini` in this repository; the workflow checks it out.
+`confighub-mini` is the plugin's program, at `plugins/confighub-mini/bin/confighub-mini` in this repository; the workflow checks it out. Where confighub mini is installed, `cub mini copy` is the same command.
 
 **Once, for the workflow.** The runner must reach the hub: hosted ConfigHub, or a server of your own. A confighub mini on a laptop cannot be reached from GitHub's runners. Give the workflow a service account that may only view the work:
 

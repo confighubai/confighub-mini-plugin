@@ -11,7 +11,7 @@ cub cluster up shop --controller flux
 source ~/.confighub/clusters/shop.env
 ```
 
-`cub cluster up` makes a kind cluster, installs Flux, and connects it to the hub: an `OCIRepository` and `Kustomization` that pull the cluster's apps from ConfigHub, and k8sbot, ConfigHub's small bot in the cluster, which asks Flux to reconcile as soon as a release is published and reports each one's sync and health back. `--controller argo` installs Argo CD in its place. The `source` line sets `KUBECONFIG` and the `cub` context for the cluster.
+`cub cluster up` makes a kind cluster, installs Flux, and connects it to the hub: an `OCIRepository` and `Kustomization` that pull the cluster's apps from ConfigHub, and k8sbot, ConfigHub's small bot in the cluster (`cub`'s messages still call it by its old name, argobot), which asks Flux to reconcile as soon as a release is published and reports each one's sync and health back. `--controller argo` installs Argo CD in its place. The `source` line sets `KUBECONFIG` and the `cub` context for the cluster.
 
 **On OrbStack**, put [gitops/docker](../gitops/docker) first on your `PATH` for this step: `cub` otherwise points the cluster at an address that does not reach a hub listening on 127.0.0.1. With Docker Desktop it is not needed.
 
@@ -119,7 +119,7 @@ spec:
     automated: {selfHeal: true, allowEmpty: true}
 ```
 
-Steps 2 to 6 are the same, without the `flux reconcile`. With Argo CD, the approved change ran about 4 seconds after the promotion, going back about 4 seconds after its promotion, and every release read Synced and Healthy. Argo CD's UI is at the address `cub cluster up` prints.
+The other steps are the same, except that step 4 needs no `flux reconcile`. With Argo CD, the approved change ran about 4 seconds after the promotion, going back about 4 seconds after its promotion, and every release read Synced and Healthy. Argo CD's UI is at the address `cub cluster up` prints.
 
 ## 6. What runs, in ConfigHub
 
@@ -131,7 +131,7 @@ NUM    TAG                              CHANGEORDER           PUBLISHED    SYNC 
 1      release-1                                              true         OutOfSync    Unknown
 ```
 
-Each release, the change order that made it, and what k8sbot last reported from the cluster.
+Each release, the change order that made it, and what k8sbot last reported from the cluster. Only the release running now reads Synced; earlier ones read OutOfSync once a later one has replaced them.
 
 ## Afterwards
 
