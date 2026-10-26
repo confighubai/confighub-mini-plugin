@@ -64,6 +64,10 @@ kubectl apply -n podinfo -f deploy/podinfo-live/
 
 `deploy/podinfo-live/` holds one file per resource, and `deploy/CHANGES.md` says why each of your values is set. Commit `deploy/` instead, and Argo CD or Flux deploys it from Git. This chart writes no namespace into its manifests, so it is given with `-n`; a chart that does keeps its own.
 
+## The same in plain `cub`
+
+`cub mini set podinfo replicas 3 --variant live` is `cub function set --space podinfo-live --unit podinfo set-replicas 3`, with the value marked as kept and the reason recorded; `cub mini promote podinfo-live` is `cub variant promote podinfo-live` with values in its preview; and `cub mini copy --to-dir` has no `cub` equivalent yet ([all of them](cub-mini-and-cub.md)).
+
 ## What is different from Helm
 
 - **No Helm release on the cluster.** `helm list` shows nothing, and `helm rollback` is not used: each change is a revision in ConfigHub, with its reason.

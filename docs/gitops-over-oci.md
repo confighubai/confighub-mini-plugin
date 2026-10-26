@@ -12,6 +12,9 @@ This page sets it up on confighub mini and a local kind cluster, then shows the 
 
 ## 1. The cluster, with Flux and k8sbot
 
+The `cub mini` commands on this page are plain `cub` with the rest filled in ([which](cub-mini-and-cub.md)); on your own cluster with hosted ConfigHub, below, the same is shown with `cub` alone.
+
+
 ```bash
 cub cluster up shop --controller flux
 source ~/.confighub/clusters/shop.env

@@ -12,6 +12,8 @@ An agent can propose a change to production, and only the person you name can ap
 
 ## On confighub mini, from nothing: about 5 minutes
 
+Each `cub mini` command here is plain `cub` with the rest filled in ([which](cub-mini-and-cub.md)); the next section does the same with `cub` alone.
+
 With confighub mini installed and a hub started ([install it](install-mini.md)), make a folder with one manifest:
 
 ```bash
