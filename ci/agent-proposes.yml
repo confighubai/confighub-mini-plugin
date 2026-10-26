@@ -1,0 +1,59 @@
+# An agent in CI that proposes a change to production in your ConfigHub, with
+# a key that cannot approve it. A person you name approves it in ConfigHub, and
+# Argo CD or Flux deploys it from there. Copy to .github/workflows/ and run it
+# from the Actions tab with a task.
+#
+# Needs: the secret ANTHROPIC_API_KEY; the secret CONFIGHUB_AGENT_KEY, the
+# private key of the agent's service account, which may change COMPONENT-base
+# and ask with a change order, and only read production (see
+# docs/approvals.md); and the variable CONFIGHUB_SERVER, such as
+# https://hub.confighub.com. Set COMPONENT and WORKFLOW below.
+name: Agent proposes
+on:
+  workflow_dispatch:
+    inputs:
+      task:
+        description: What the agent should change
+        required: true
+permissions:
+  contents: read
+env:
+  COMPONENT: shop
+  WORKFLOW: workflows/shop-prod-approval
+  PLUGIN: v0.48.0
+  CLAUDE_CODE: 2.1.285
+jobs:
+  agent:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Claude Code, the plugin and cub, signed in with the agent's key
+        env:
+          CONFIGHUB_AGENT_KEY: ${{ secrets.CONFIGHUB_AGENT_KEY }}
+          CONFIGHUB_SERVER: ${{ vars.CONFIGHUB_SERVER }}
+        run: |
+          npm install -g "@anthropic-ai/claude-code@$CLAUDE_CODE"
+          git clone -q --depth 1 --branch "$PLUGIN" https://github.com/confighubai/confighub-mini-plugin "$RUNNER_TEMP/plugin"
+          curl -fsSL "$CONFIGHUB_SERVER/cub/install.sh" | bash
+          echo "$HOME/.confighub/bin" >> "$GITHUB_PATH"
+          export PATH="$HOME/.confighub/bin:$PATH"
+          key="$RUNNER_TEMP/agent.jwk"
+          printf '%s' "$CONFIGHUB_AGENT_KEY" > "$key"
+          export CUB_CONFIG="$RUNNER_TEMP/cub"
+          cub auth login --new-context --private-key="$key" --server="$CONFIGHUB_SERVER"
+          rm -f "$key"
+          echo "CUB_CONFIG=$CUB_CONFIG" >> "$GITHUB_ENV"
+          echo "CUB_CONTEXT=$(cub context get -o json | python3 -I -c 'import json,sys; print(json.load(sys.stdin)["name"])')" >> "$GITHUB_ENV"
+      - name: The agent proposes
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          TASK: ${{ inputs.task }}
+        run: |
+          C=$COMPONENT
+          claude -p "This is a CI job, and nobody can answer questions. The configuration of $C is in ConfigHub, used with cub, which is signed in with a key of your own. $C-base is what every environment starts from; $C-prod is production, which changes only by a change order that a named person approves. Make your change in the base, with why: cub function set --space $C-base --unit UNIT --change-desc WHY FUNCTION ARGS (cub function list lists the functions; cub unit list --space $C-base lists the units). Then ask for it to reach production: cub changeorder create --space $C-base NAME --component $C --change-workflow $WORKFLOW --description \"WHAT AND WHY\". Do not approve it, ask for more access, or use anyone else's sign-in. Finish with a short summary of what you changed and why, and the commands the approver runs: cub variant approve $C-base --change-order $C-base/NAME --note WHY, then cub variant promote $C-prod --change-order $C-base/NAME, then cub release publish $C-prod --revision ChangeOrder:$C-base/NAME. The task: $TASK" \
+            --plugin-dir "$RUNNER_TEMP/plugin/plugins/confighub-mini" --strict-mcp-config --permission-mode acceptEdits \
+            --allowedTools "Bash(cub:*)" > "$RUNNER_TEMP/answer.md"
+          cat "$RUNNER_TEMP/answer.md" >> "$GITHUB_STEP_SUMMARY"
