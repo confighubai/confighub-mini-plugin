@@ -199,6 +199,23 @@ plugins/confighub/bin/confighub mini codex-setup
 
 Then type `/hooks` in Codex to approve its hooks, once. Read the record with `~/.codex/confighub/bin/confighub mini changes`. `codex-setup --remove` takes it out again.
 
+## If you use Entire
+
+[Entire](https://entire.io) keeps each agent session with the commit it made. The plugin keeps why each configuration value is what it is. `entire confighub` asks the second from Entire's CLI, and says which of Entire's checkpoints holds each session:
+
+```
+entire plugin install https://github.com/confighubai/confighub-mini-plugin
+entire confighub why replicas
+```
+
+| Command | What it answers |
+|---|---|
+| `entire confighub why VALUE` | Every recorded change to a value, and why, with the Entire checkpoint of each session |
+| `entire confighub changes` | What an agent changed in its latest session (`--all` for every session) |
+| `entire confighub review` | Each configuration value this branch changes, and why |
+
+The checkpoint is found through the record kept in each commit, so turn on `CUB_MINI_RECORD_IN_REPO=1`. With both in one repository, every hook of each ran and exited cleanly, and each commit kept both tools' trailers. The plugin's review gives Entire's hooks in `.claude/settings.json` as one line, not one value each.
+
 ## On every pull request
 
 `review/` is a GitHub Action that comments on each pull request with every configuration value it changes, from what to what, and why where a record says. A value no record explains is shown as such, so it is useful before anyone installs the plugin; the reasons come from the records agents keep in the repository (`CUB_MINI_RECORD_IN_REPO=1`). It renders each Kustomize overlay, Flux HelmRelease and Argo CD Helm Application the change reaches, and says what each value becomes where it is deployed; and for each value it replaces, what the value was, the commit that set it and why. No hub, no account. [How to add it](review/README.md), as `uses: confighubai/confighub-mini-plugin/review@v0`. The same review in a terminal: `bin/confighub mini review` from the plugin, in the repository.
