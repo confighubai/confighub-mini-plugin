@@ -17,7 +17,7 @@ permissions:
   contents: write
   pull-requests: write
 env:
-  PLUGIN: v0.49.1
+  PLUGIN: v0.50.0
   CLAUDE_CODE: 2.1.285
 jobs:
   agent:

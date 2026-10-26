@@ -5,7 +5,7 @@ confighub mini is ConfigHub, small, for one machine: the ConfigHub server and it
 ## Download and unpack
 
 ```bash
-V=0.9.0-mini.4
+V=0.9.0-mini.5
 P=$(uname -s | tr A-Z a-z)-$(uname -m | sed 's/x86_64/amd64/; s/aarch64/arm64/')
 curl -fLO https://github.com/confighubai/confighub-mini-plugin/releases/download/mini-v$V/confighub-mini-$V-$P.tar.xz
 curl -fLO https://github.com/confighubai/confighub-mini-plugin/releases/download/mini-v$V/SHA256SUMS
@@ -51,7 +51,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates
 RUN useradd -m agent
 USER agent
 WORKDIR /home/agent
-ARG V=0.9.0-mini.4
+ARG V=0.9.0-mini.5
 RUN P=linux-$(uname -m | sed 's/x86_64/amd64/; s/aarch64/arm64/') \
  && curl -fsSLO https://github.com/confighubai/confighub-mini-plugin/releases/download/mini-v$V/confighub-mini-$V-$P.tar.xz \
  && curl -fsSLO https://github.com/confighubai/confighub-mini-plugin/releases/download/mini-v$V/SHA256SUMS \
