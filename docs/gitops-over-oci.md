@@ -100,6 +100,18 @@ cub mini promote api-live --change-order api-base/back-to-2
 
 The cluster runs 2 again, about 10 seconds after the promotion. `cub variant demote` restores the earlier revision in the hub, but where approval is required, ConfigHub releases only what a change order with an approval covers, so the way back is the change order above.
 
+## 6. What runs, in ConfigHub
+
+```
+$ cub release list --space api-live
+NUM    TAG                              CHANGEORDER           PUBLISHED    SYNC         HEALTH
+3      api-base/back-to-2-co-publish    api-base/back-to-2    true         Synced       Healthy
+2      api-base/sale-4-co-publish       api-base/sale-4       true         OutOfSync    Unknown
+1      release-1                                              true         OutOfSync    Unknown
+```
+
+Each release, the change order that made it, and what k8sbot last reported from the cluster. Only the release running now reads Synced; earlier ones read OutOfSync once a later one has replaced them.
+
 ## With Argo CD
 
 `cub cluster up shop --controller argo` installs Argo CD in place of Flux, with each deployment an Application that reads the hub's OCI registry, auto-sync and self-heal on:
@@ -121,17 +133,36 @@ spec:
 
 The other steps are the same, except that step 4 needs no `flux reconcile`. With Argo CD, the approved change ran about 4 seconds after the promotion, going back about 4 seconds after its promotion, and every release read Synced and Healthy. Argo CD's UI is at the address `cub cluster up` prints.
 
-## 6. What runs, in ConfigHub
+## Your own cluster, with hosted ConfigHub
 
-```
-$ cub release list --space api-live
-NUM    TAG                              CHANGEORDER           PUBLISHED    SYNC         HEALTH
-3      api-base/back-to-2-co-publish    api-base/back-to-2    true         Synced       Healthy
-2      api-base/sale-4-co-publish       api-base/sale-4       true         OutOfSync    Unknown
-1      release-1                                              true         OutOfSync    Unknown
+The same works with a cluster you already have and hosted ConfigHub, or a ConfigHub server of your own. Signed in to it with `cub auth login`, and with `kubectl` pointed at the cluster:
+
+```bash
+cub cluster attach my-cluster
 ```
 
-Each release, the change order that made it, and what k8sbot last reported from the cluster. Only the release running now reads Synced; earlier ones read OutOfSync once a later one has replaced them.
+`cub cluster attach` wires the cluster your kubeconfig points at into ConfigHub, and creates no cluster. An Argo CD already in the `argocd` namespace is left as it is; otherwise it is installed. Argo CD v3.1 or later is needed, for `oci://` sources. It adds a credential Argo CD pulls with, a token of a service account made for the cluster, a root Application, and k8sbot. Then the app, its live copy aimed at the cluster, and its first release:
+
+```bash
+cub component create api
+cub space create api-base --component api --variant base
+cub unit create --space api-base namespace api/namespace.yaml
+cub unit create --space api-base api api/api.yaml
+cub variant create live api-base --target my-cluster/target
+cub release publish api-live
+```
+
+Argo CD pulls it from `oci://oci.hub.confighub.com:443/space/api-live`. The approval gate is set up with `cub` alone, as in [approvals](approvals.md#on-hosted-confighub-or-your-own-server-with-cub-alone); after the approval, the change is promoted and released by its change order:
+
+```bash
+cub variant approve api-base --change-order api-base/sale-4 --note "Checked: four is right for the sale"
+cub variant promote api-live --change-order api-base/sale-4
+cub release publish api-live --revision ChangeOrder:api-base/sale-4
+```
+
+Run against hosted ConfigHub, with a kind cluster on which Argo CD v3.1.9 was installed first: attach left that Argo CD in place; the first release ran 2 replicas; before the approval the promotion was refused ("requires approval: … 0 of 1") and the cluster still ran 2; after it, the cluster ran 4, 9 seconds after the promotion; a hand-made scale to 7 was put back by Argo CD within 3 seconds; and `cub release list` showed the running release Synced and Healthy.
+
+To remove it: `cub cluster detach my-cluster` leaves the cluster as it is and unwires it, and the Spaces `my-cluster`, `my-cluster-argo-apps`, `argobot-my-cluster` and `argobot-base`, the Component `argobot` and the service account `argo-my-cluster` are deleted with `cub space delete --recursive`, `cub component delete` and `cub serviceaccount delete`.
 
 ## Afterwards
 
