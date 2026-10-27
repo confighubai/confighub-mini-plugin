@@ -1,8 +1,32 @@
-# The ConfigHub plugin for Claude Code and Codex
+# ConfigHub for AI agents: the ConfigHub plugin and confighub mini
 
 When an AI agent changes your configuration, such as the replicas in a Kubernetes file or a setting in `.env`, the plugin writes down what it changed and why. We call this the record. When a later agent opens the same file, or is about to deploy over the change, the plugin tells it what the earlier agent did and why, before it acts.
 
 You don't change your prompts or add instructions. The record stays on your machine.
+
+## What this is
+
+This is the open-source way in to [ConfigHub](https://docs.confighub.com) for people who work with AI agents. ConfigHub keeps configuration with every change, who made it and why, and lets a person approve what reaches production. There are three parts:
+
+| Part | What it is | How you start |
+|---|---|---|
+| **The ConfigHub plugin**, for Claude Code and Codex | Records what agents change in configuration, and why, and tells the next agent before it undoes a change | Two commands, [below](#install) |
+| **confighub mini** | ConfigHub itself, packaged lean: the same server, built from ConfigHub's source, running as two processes on your laptop. No Docker, no cluster, no account; a download of 44 to 67 MB | `/confighub:install-mini` in Claude Code |
+| **`cub mini`** | A plugin for `cub`, ConfigHub's command-line tool, that fills in the rest of each request so the commands stay short. What you learn with it works unchanged on your organization's ConfigHub | Comes with confighub mini |
+
+**The problems it solves**
+
+1. **Agents undo each other's changes.** A later agent puts back a value an earlier one set for a reason, and nobody is told. In our tests this happened three times in four without the plugin, and never silently with it ([the problem, step by step](#the-problem-it-solves)).
+2. **Nothing stands between an agent and production.** An agent working under your sign-in can approve its own change.
+3. **A vendor's next version overwrites your changes,** such as the values you set in their Helm chart.
+4. **Nobody knows what a repository deploys** before they, or an agent, change it.
+
+**The journeys.** Each is a step further, and you can stop at any of them ([one team's path, step by step](docs/from-plugin-to-confighub.md)):
+
+1. **The plugin:** a record of what agents change and why; the next agent told first; what a repository deploys; a review of each pull request.
+2. **confighub mini:** your values kept through a vendor's next version; your agents on keys of their own, proposing changes that you approve.
+3. **Your organization's ConfigHub:** one place for the team, kept in step with each laptop; a colleague you name approves each change to production.
+4. **Agents that run unattended:** records signed with each agent's own identity; rights taken away at once; model use kept with each change.
 
 ## Install
 
