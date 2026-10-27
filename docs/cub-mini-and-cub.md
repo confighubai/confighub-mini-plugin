@@ -1,6 +1,6 @@
 # `cub mini` and plain `cub`
 
-What you do with confighub mini on your laptop works the same on your company's ConfigHub, because it is the same ConfigHub server and the same `cub`, ConfigHub's command-line tool. Each `cub mini` command runs `cub`'s own commands and fills in the rest of the request for you. So, except where the table says "Nothing yet", you can do everything shown with `cub mini` in plain `cub`, on any ConfigHub. The table lists which `cub` commands each `cub mini` command stands for.
+What you do with confighub mini on your laptop works the same on your organization's ConfigHub, because it is the same ConfigHub server and the same `cub`, ConfigHub's command-line tool. Each `cub mini` command runs `cub`'s own commands and fills in the rest of the request for you. So, except where the table says "Nothing yet", you can do everything shown with `cub mini` in plain `cub`, on any ConfigHub. The table lists which `cub` commands each `cub mini` command stands for.
 
 | `cub mini` | Plain `cub` | What `cub mini` fills in |
 |---|---|---|
@@ -10,7 +10,7 @@ What you do with confighub mini on your laptop works the same on your company's 
 | `cub mini promote COMPONENT-V` | `cub variant promote COMPONENT-V`, then `cub release publish COMPONENT-V` | The preview shows each value taken and each value kept. The result is released to the cluster |
 | `cub mini require-approval COMPONENT --variant V --agent NAME` | `cub changeworkflow create`, `cub component update`, `cub serviceaccount create` and `key add`, and permissions on each Space | The whole approval gate in one step, plus the agent's own `cub` configuration and its Claude Code settings. [Approvals](approvals.md) shows the same steps with plain `cub` |
 | `cub mini copy --to-dir`, `--from-git`, `--to-file`, `--from-file` | Nothing yet | Writes the work out as plain files, with a `CHANGES.md` that says why each value is set. Reads it back in from Git, with each commit's reason. Moves it between hubs |
-| `cub mini connect`, `offer`, `offers` | Nothing yet | Makes the company's ConfigHub the parent of a confighub mini's work, and offers changes up to it |
+| `cub mini connect`, `offer`, `offers` | Nothing yet | Makes the organization's ConfigHub the parent of a confighub mini's work, and offers changes up to it |
 
 Where the table says "Nothing yet", plain `cub` has no equivalent, and only `cub mini` does it for now.
 

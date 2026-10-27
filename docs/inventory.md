@@ -34,7 +34,7 @@ Kustomize overlays
 
 Helm releases
   shop-prod/redis: chart redis 18.1.0 from https://charts.bitnami.com/bitnami (infra/redis/helmrelease.yaml)
-      deployed by: nothing in this repository; perhaps an Argo CD Application kept elsewhere, kubectl, a script or CI
+      deployed by: nothing in this repository (perhaps kubectl, CI, or something in another repository)
 
 Argo CD
   Application argocd/payments: apps/payments in https://github.com/example/shop-gitops at main, to https://kubernetes.default.svc namespace payments (argocd/payments.yaml)
@@ -43,7 +43,7 @@ Plain manifests
   apps/payments/: ConfigMap payments-config
       deployed by: Argo CD Application argocd/payments (argocd/payments.yaml)
   k8s-tools/: CronJob cleanup
-      deployed by: nothing in this repository; perhaps an Argo CD Application kept elsewhere, kubectl, a script or CI
+      deployed by: nothing in this repository (perhaps kubectl, CI, or something in another repository)
 
 Values that differ between environments
   The overlays built on apps/api/base:

@@ -112,11 +112,12 @@ You set each setting in Claude Code's settings, under `env`.
 | `CUB_MINI_SIGN=0` | Turns off signing the record. Signing is on by default: each turn is signed, at a cost of about a millisecond ([signed records](signed-records.md)). | When you do not need to check that the record was not changed. |
 | `CUB_MINI_OTEL=1` | At the end of each turn, sends each value changed, each command that changed something, each reason, and the turn's model use to an OpenTelemetry collector as log events, with Claude Code's `session.id`. Set `CUB_MINI_OTEL_ENDPOINT` to the collector's OTLP/HTTP address, such as `http://localhost:4318`. The request itself is sent only with `OTEL_LOG_USER_PROMPTS=1`. | When you want these events in an OpenTelemetry collector. |
 | `CUB_MINI_USAGE=0` | Turns off keeping each turn's model use. It is on by default ([model use](#model-use)). | When you do not want model use in the record. |
+| `CUB_MINI_COUNT=0` | Turns off counting, on this machine, how often you use each part of the plugin. The count is never sent anywhere. | When you do not want even a local count. |
 | `CUB_MINI_TIPS=0` | Turns off tips. A tip is a line shown to you, never to the agent, at the end of a turn in which confighub mini would have helped (see below). | When you do not want the tips. |
 
 **About tips.** ConfigHub is a hub: a place where your configuration is kept, with every change, who made it and why ([ConfigHub docs](https://docs.confighub.com)). confighub mini is ConfigHub, small, for one machine ([install confighub mini](install-mini.md)). A tip appears after a turn in which confighub mini would have helped. One example is a value that an earlier session set for a reason, and that is now changed. The tip asks "Do you want to install confighub mini?", says why, and ends with `/confighub:install-mini`.
 
-Each kind of tip is shown at most once a week for a project. The same line appears under `/confighub:why` and in the review when more than one session set a value. `bin/confighub mini changes --tips`, run from the plugin, counts the tips on this machine. Nothing is sent anywhere.
+Each kind of tip is shown at most once a week for a project. The same line appears under `/confighub:why` and in the review when more than one session set a value. `bin/confighub mini changes --tips`, run from the plugin, counts the tips on this machine. It also says how often you used each part of the plugin, such as `/confighub:why` or `/confighub:inventory`, and when you last did. Nothing is sent anywhere.
 
 ## Model use
 
@@ -129,7 +130,7 @@ Each kind of tip is shown at most once a week for a project. The same line appea
 - `/confighub:changes` ends each session with a line such as:
 
   ```
-  Model use: 3 model calls to claude-opus-5-5: 97,258 tokens in, 86,246 of them read from the cache, and 593 tokens out.
+  Model use: claude-opus-5-5, 3 calls; 97,258 tokens in (86,246 from the cache), 593 out.
   ```
 
   The record added to a pull request has the same line.
