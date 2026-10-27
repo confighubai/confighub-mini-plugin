@@ -30,6 +30,8 @@ It does the following, in about 25 seconds on a Mac:
 
 If you run it again, it starts the hub if the hub is stopped.
 
+When it is done, it prints the line that puts the package's `cub` on your `PATH`, and what to do next: put a repository's record into the hub with `cub mini copy --from-record` ([how](try-confighub-mini.md#step-4-put-your-agents-record-into-the-hub)), or follow [a first run](try-confighub-mini.md).
+
 In a terminal, or in Codex, run `bin/confighub mini get` from the plugin. It does the same.
 
 ## Install by hand

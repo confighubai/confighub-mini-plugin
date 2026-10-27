@@ -116,7 +116,7 @@ A hub is a place where your configuration is kept, with every change, who made i
 |---|---|---|
 | A comment on every pull request listing each configuration value it changes, and why | Add the review GitHub Action ([how](review/README.md)). Nobody needs to install anything. | One step in a workflow file |
 | To keep your own values when a vendor ships the next version of a Helm chart | Type `/confighub:install-mini` in Claude Code, then follow [a first run](docs/try-confighub-mini.md) | About 25 seconds to install; 15 minutes for the first run |
-| Agents that propose changes to production, which only a person you name can approve | Use your company's ConfigHub ([approvals](docs/approvals.md)) | A ConfigHub organization |
+| Agents that propose changes to production, which only a person you name can approve | For your own agents, on confighub mini; for a team, on your organization's ConfigHub ([approvals](docs/approvals.md)) | One command on confighub mini; a ConfigHub organization for a team |
 | Agents that run unattended for days, with a key of their own and a way to stop them at once | See [agents that run for weeks](docs/agents-that-run-for-weeks.md) | A ConfigHub organization |
 
 confighub mini uses the same commands as ConfigHub, so what you learn on your laptop works the same on your company's ConfigHub ([how the commands map](docs/cub-mini-and-cub.md)). [From the plugin to ConfigHub](docs/from-plugin-to-confighub.md) follows one team through each step.
