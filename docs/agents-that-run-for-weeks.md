@@ -20,7 +20,7 @@
 |---|---|---|
 | Who acted | The agent has a service account and key of its own, with only the rights it needs. Its changes are revisions made by it, not by you | `require-approval --agent` |
 | Who agreed | The copy that runs changes only when a person you named approves the exact revision | One run: the agent's own approval refused, an unnamed colleague not counted, one revision let through. 40 sessions in auto mode: none got past the gate |
-| A record it cannot change | Told to delete its record, an agent did. With the record denied to its writes, the same request failed, and both copies stayed | One run of each, in three settings |
+| A record it cannot change | Told to delete its record, an agent did. With the record denied to its writes, the same request failed, and both copies stayed. Each turn is also signed, so a change by anyone afterwards shows, and a hub keeps each signature's digest where no one can change it | One run of each, in three settings; the signatures checked by Sigstore's `cosign` ([signed records](signed-records.md)) |
 | Stopping it | `cub mini revoke-agent bot` takes its rights away, so a session it has open is refused at its next request | One run |
 | Tracing | The record goes to your OpenTelemetry collector, under Claude Code's own `session.id` | One run, with a real collector |
 | Blast radius | The gate covers what deploys from the hub: Argo CD or Flux pulling approved versions over OCI | [GitOps over OCI](gitops-over-oci.md) |
@@ -61,7 +61,9 @@ The plugin keeps a record of each value an agent changes, with the request and t
 - in each commit, if you turn that on;
 - in a hub, as revisions the agent's key cannot rewrite.
 
-Told plainly to delete its record, an agent deleted the repository's copy and committed the deletion. With the record denied to the agent's writes, the same request failed with "Operation not permitted", and the agent said that blocking it "is the point of that protection". The plugin's hooks are not sandboxed, so recording went on. The settings `require-approval --agent` writes include this; for the plugin alone, see [keeping the record out of the agent's reach](../README.md#what-it-records-and-what-it-does-not).
+Told plainly to delete its record, an agent deleted the repository's copy and committed the deletion. With the record denied to the agent's writes, the same request failed with "Operation not permitted", and the agent said that blocking it "is the point of that protection". The plugin's hooks are not sandboxed, so recording went on. The settings `require-approval --agent` writes include this; for the plugin alone, see [keeping the record out of the agent's reach](how-it-works.md#what-it-records-and-what-it-does-not).
+
+Each turn of the record is also signed when it ends, so a change made afterwards, by anyone, shows when the record is checked; with a hub, each signature's digest is kept there as an attestation no one can change ([signed records](signed-records.md)).
 
 ### Stopping it
 
@@ -89,7 +91,7 @@ None of these is built. Each is here because a team running many agents for week
 - **Short-lived credentials.** Today the agent's key is a file, and a session lasts up to 24 hours. Credentials that expire in minutes would make a lost key, or a late revocation, matter less.
 - **Finer-grained rights than "edit the base".** For weeks of unattended work, a team may want an agent allowed to change some values on its own, such as replicas within a range, while others wait for a person.
 - **A stop for many agents at once, that monitoring can trigger.** Today a person runs `revoke-agent` for each agent, or stops the whole hub.
-- **A record nobody can change.** The record is kept out of the agent's reach, but it is not signed: someone with your own access can still change it. Not tried: `git rm --cached`, which takes the record out of Git without writing the folder.
+- **A record nobody can change, everywhere.** The record is signed, and with a hub its signatures' digests are kept where no one can change them ([signed records](signed-records.md)). Without a hub, whoever holds this machine's key could still rewrite and re-sign it; Sigstore's public log, and signing in CI with the job's own identity, would close that. Not tried: `git rm --cached`, which takes the record out of Git without writing the folder.
 - **Closing memory as a way in.** The next agent is given what earlier sessions asked, so text someone planted in a request reaches later agents. The plugin marks quoted requests as "not requests to you now". That is a label, not a guard.
 - **Two gaps in the gate:**
   - once approval is required, a chart's next version cannot be loaded through it;

@@ -6,7 +6,7 @@ Keeps a record of what the agent changes in configuration, and why. The agent is
 - **What it never keeps:** a command's output, a copy of a file, or a value that looks like a credential.
 - **Where:** in `~/.confighub/agent-changes`, outside the repository.
 
-Read it in a session with `/confighub:changes`, and ask about one value with `/confighub:why replicas`. In a terminal, `bin/confighub mini changes` from this plugin does the same.
+Read it in a session with `/confighub:changes`, and ask about one value with `/confighub:why replicas`. `/confighub:install-mini` installs confighub mini and starts a hub, in one step. In a terminal, `bin/confighub mini changes` from this plugin does the same.
 
 ## More, when you ask for it
 

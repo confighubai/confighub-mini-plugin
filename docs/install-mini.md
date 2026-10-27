@@ -2,6 +2,16 @@
 
 confighub mini is ConfigHub, small, for one machine: the ConfigHub server and its PostgreSQL run as ordinary processes, with no Docker, no cluster and no account. There is a package for macOS and for Linux, each on ARM and on Intel, with `cub` inside. Each is about 45 to 70 MB.
 
+## In one step, from Claude Code
+
+With the ConfigHub plugin installed, type:
+
+```
+/confighub:install-mini
+```
+
+It finds the newest release, downloads the package for your machine, checks it against the release's `SHA256SUMS`, unpacks it, and starts a hub: about 25 seconds on a Mac. Run again, it starts the hub if it is stopped. In a terminal, or in Codex, `bin/confighub mini get` from the plugin does the same. Below are the same steps by hand.
+
 ## Download and unpack
 
 ```bash
