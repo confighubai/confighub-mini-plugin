@@ -1,35 +1,49 @@
 # The ConfigHub plugin, for Claude Code and Codex
 
-Keeps a record of what the agent changes in configuration, and why. The agent is asked for nothing; when it opens a file that earlier sessions changed, it is given what they changed and why. Nothing in the repository changes unless you turn that on.
+The plugin keeps a record of what an AI agent changes in your configuration, and why. You don't ask the agent to do anything differently. When the agent opens a file that earlier sessions changed, the plugin tells it what they changed and why, before it makes changes of its own.
 
-- **What it records:** each value the agent changes in Kubernetes files, Helm values, Kustomize, Compose, workflows, settings files, Terraform variables and agent configuration; each `kubectl`, `helm`, `argocd`, `flux`, `terraform` and `cub` command, with where it went, whether it changed something, and the values it set, such as `--replicas=5` or `helm --set`; and what the agent said at the end of each turn.
-- **What it never keeps:** a command's output, a copy of a file, or a value that looks like a credential.
-- **Where:** in `~/.confighub/agent-changes`, outside the repository.
+## What it records
 
-Read it in a session with `/confighub:changes`, and ask about one value with `/confighub:why replicas`. `/confighub:install-mini` installs confighub mini and starts a hub, in one step. In a terminal, `bin/confighub mini changes` from this plugin does the same.
+- **Values the agent changes** in Kubernetes files, Helm values, Kustomize, Compose, GitHub Actions workflows, settings files, Terraform variables and agent configuration.
+- **Commands the agent runs** with `kubectl`, `helm`, `argocd`, `flux`, `terraform` or `cub`: where each one went, whether it changed something, and the values it set, such as `--replicas=5` or `helm --set`.
+- **What the agent said** at the end of each turn.
 
-## More, when you ask for it
+It never keeps a command's output, a copy of a file, or anything that looks like a password, key or token. The record is kept in `~/.confighub/agent-changes`, outside your repository. Nothing in the repository changes unless you turn that on.
 
-Each is turned on in Claude Code's settings, as `env`:
+## Reading the record
+
+In a Claude Code session:
+
+- `/confighub:changes` shows what the agent changed in its latest session, and why.
+- `/confighub:why replicas` shows every recorded change to one value, and why.
+- `/confighub:install-mini` installs confighub mini, which is ConfigHub made small enough to run on your laptop, and starts it.
+
+In a terminal, `bin/confighub mini changes`, run from this plugin's folder, shows the same record as `/confighub:changes`.
+
+## Settings
+
+Each setting is off unless you turn it on, in Claude Code's settings file under `env`:
 
 | Setting | What it adds |
 |---|---|
-| `CUB_MINI_ASK_REASONS=1` | A reason for each value, in the agent's own answer |
-| `CUB_MINI_PULL_REQUEST=1` | The record and its reasons in each pull request the agent opens with `gh` |
-| `CUB_MINI_RECORD_IN_REPO=1` | The record in each commit the agent makes, readable from any checkout |
-| `CUB_MINI_OTEL=1` | Each value changed, each command that changed something, and each reason, sent at the end of each turn to an OpenTelemetry collector as log events, with Claude Code's `session.id`. Set `CUB_MINI_OTEL_ENDPOINT` to the collector's OTLP/HTTP address, such as `http://localhost:4318` |
-| `CUB_MINI_KEEP_IN_HUB=1` | Each change kept in a hub, so that it survives a vendor's next version. This needs the confighub-mini package and a hub; the plugin alone carries none |
+| `CUB_MINI_ASK_REASONS=1` | The agent gives a reason for each value it changes, in its answer to you. |
+| `CUB_MINI_PULL_REQUEST=1` | The record and its reasons are added to each pull request the agent opens with `gh`. |
+| `CUB_MINI_RECORD_IN_REPO=1` | The record is added to each commit the agent makes, so anyone with a checkout can read it. |
+| `CUB_MINI_OTEL=1` | Each changed value, each command that changed something, and each reason are sent to your OpenTelemetry collector at the end of each turn, as log events tagged with Claude Code's `session.id`. Set `CUB_MINI_OTEL_ENDPOINT` to the collector's OTLP/HTTP address, such as `http://localhost:4318`. |
+| `CUB_MINI_KEEP_IN_HUB=1` | Each change is also kept in confighub mini, so that it survives a vendor's next version. This needs confighub mini installed; the plugin on its own does not include it. |
 
 ## In Codex
 
-Codex keeps the same record, but not by installing this plugin there: Codex runs only the hooks in its own configuration, not those a plugin carries. From a copy of this plugin, the one Claude Code installed or a clone of its repository, run:
+Codex runs only the hooks in its own configuration, so installing this plugin in Codex records nothing. Instead, from a copy of this plugin (the one Claude Code installed, or a clone of its repository), run:
 
 ```
 bin/confighub mini codex-setup
 ```
 
-It copies the program to `~/.codex/confighub-mini` and adds the plugin's hooks to `~/.codex/hooks.json`, beside any hooks already there. Then open Codex and type `/hooks` to approve them, once. Read the record with `~/.codex/confighub-mini/bin/confighub mini changes`. `codex-setup --dry-run` says what it would do, and `codex-setup --remove` takes it all out again.
+This copies the program into `~/.codex/confighub` and adds the plugin's hooks to `~/.codex/hooks.json`, next to any hooks you already have. Then open Codex and type `/hooks` to approve them. You only need to do this once.
+
+To read the record, run `~/.codex/confighub/bin/confighub mini changes`. To see what `codex-setup` would do without doing it, add `--dry-run`. To remove it, run `codex-setup --remove`.
 
 ## What is in it
 
-One program for each of macOS and Linux, on Intel and ARM, and `bin/confighub-mini`, which runs the one for this machine. The program is the same one that runs `cub mini` in the confighub-mini package. The plugin has no ConfigHub server, no PostgreSQL and no `cub`, and needs no account.
+The plugin contains one program for each of macOS and Linux, on Intel and ARM, and `bin/confighub`, which runs the right one for your machine. It has no server and no database, and needs no account.
