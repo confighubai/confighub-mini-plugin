@@ -1,6 +1,11 @@
 # Documentation
 
-By what you are doing. Each page opens with who it is for and what they get.
+The pages are grouped by what you are doing. Each page starts by saying who it is for and what you get from it.
+
+A few words used throughout:
+- **The record** is what the plugin writes down about each change an agent makes to your configuration: the value, from what to what, and why.
+- **A hub** is a place where configuration is kept, with every change, who made it and why. **ConfigHub** is that hub.
+- **confighub mini** is ConfigHub made small enough to run on your laptop.
 
 ## Using the plugin
 
