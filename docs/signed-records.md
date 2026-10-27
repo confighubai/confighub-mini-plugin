@@ -18,7 +18,7 @@ You will see something like:
 
 ```
 The records of /work/shop:
-  ok   session 255c6769: 1 turn(s) signed, unchanged since (key e6ce0a1eb16e)
+  ok   session 255c6769: 1 turn signed, unchanged since (key e6ce0a1eb16e)
   ok   .cub-mini/changes/255c6769-eb67-4f4f-bdfd-a57103ecd696.record: signed, unchanged since (key e6ce0a1eb16e)
 ```
 
@@ -70,13 +70,13 @@ On a laptop, the machine's key is enough: one person, one machine. An agent that
 1. **Which agent made this change?** One night the agent raises the workers from 4 to 6. In the morning Marco, who is on call, runs `--verify`. It names the agent, and checks that the cluster's own authority issued its identity:
 
    ```
-   ok   session night-1: 1 turn(s) signed, unchanged since, by spiffe://example.org/ns/agents/sa/nightly-tuner
+   ok   session night-1: 1 turn signed, unchanged since, by spiffe://example.org/ns/agents/sa/nightly-tuner
    ```
 
 2. **Priya withdraws the agent.** The agent's changes start to look wrong, so Priya removes its SPIRE registration. SPIRE stops renewing its certificate, and the certificate expires. The agent, still running, makes one more change, from 6 to 8. That change is recorded, with the request behind it, but it is not signed, and the check says why and fails:
 
    ```
-   ok   session night-1: 1 turn(s) signed, unchanged since, by spiffe://example.org/ns/agents/sa/nightly-tuner
+   ok   session night-1: 1 turn signed, unchanged since, by spiffe://example.org/ns/agents/sa/nightly-tuner
    NOT  session night-2: not signed since 27 October 10:41: the workload identity expired at 2026-10-27T10:38:26Z
    ```
 

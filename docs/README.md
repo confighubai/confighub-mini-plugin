@@ -37,7 +37,7 @@ A few words used throughout:
 
 | Page | What it answers |
 |---|---|
-| [Approvals](approvals.md) | An agent proposes a change to production; only the person you name approves it. On ConfigHub, hosted or your own |
+| [Approvals](approvals.md) | An agent proposes a change to production; only the person you name approves it. On confighub mini for your own agents, or on your organization's ConfigHub for a team |
 | [Agents that run for weeks](agents-that-run-for-weeks.md) | Who acted, who agreed, a record the agent cannot change, how to stop it at once; what we might still need, and what ConfigHub does not need to do |
 | [Agents in CI](../ci/README.md) | An agent in a job that keeps your team's reasons, and one that proposes while a person approves |
 | [What we do not claim](limits.md) | What it does not do, or has not been shown to do |

@@ -13,9 +13,11 @@ You need no Docker, no cluster and no account.
 
 ## Step 1: Install confighub mini and start a hub
 
-Follow [the install steps](install-mini.md) up to and including `cub space list`.
+**If you typed `/confighub:install-mini` in Claude Code,** confighub mini is already running. Run the `export PATH=...` line it printed, in the terminal you use for the steps below. The package folder those steps start from is `~/.confighub/mini/confighub-mini-VERSION-PLATFORM`, for example `~/.confighub/mini/confighub-mini-0.9.0-mini.5-darwin-arm64`.
 
-Note how long `cub mini install` took. We ask for it at the end.
+**Otherwise,** follow [the install steps](install-mini.md) up to and including `cub space list`.
+
+Note how long the install took. We ask for it at the end.
 
 ## Step 2: Check the claims made for it
 
@@ -83,11 +85,39 @@ In this story, George made a start page for his team. You run your own copy of i
 
 `examples/startpage/README.md` tells the whole story.
 
-## Step 4 (optional): An agent proposes, and a person approves
+## Step 4: Put your agents' record into the hub
+
+If you have used the ConfigHub plugin in a repository, its record of what agents changed can go into the hub. Each recorded change becomes a revision, with the request or reason behind it.
+
+1. Go to the repository, and see what would be written, without writing it:
+
+   ```bash
+   cub mini copy --from-record --dry-run
+   ```
+
+   In the repository from the [five-minute try](../README.md#try-it-in-five-minutes), it printed:
+
+   ```
+   .env, as try-confighub-env:
+     would make try-confighub-env-base, the file as it was before the first recorded change, and try-confighub-env-local
+     would set CACHE off → on: Asked: Turn the cache on in .env for next week's sale. Don't commit. (agent session e7a0a61a, 27 October 2026 14:31)
+     would set CACHE on → off: Asked: We're chasing a memory leak: turn the cache off and set debug logging. Don't commit. (agent session f3e8ff28, 27 October 2026 14:32)
+     would set LOG_LEVEL warn → debug: Asked: We're chasing a memory leak: turn the cache off and set debug logging. Don't commit. (agent session f3e8ff28, 27 October 2026 14:32)
+   ```
+
+2. Write it:
+
+   ```bash
+   cub mini copy --from-record
+   ```
+
+   Each file becomes a Component. Its base is the file as it was before the first recorded change, and each recorded change is a revision of its local copy. Running it again writes only what was recorded since.
+
+## Step 5 (optional): An agent proposes, and a person approves
 
 In this step an agent proposes a change, and only you can approve it. Follow [the approval steps](approvals.md). They work on this hub as they do on hosted ConfigHub. This takes about 5 minutes.
 
-## Step 5: Remove it
+## Step 6: Remove it
 
 This removes the hub and its data:
 

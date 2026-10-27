@@ -50,10 +50,11 @@ claude plugin install confighub@confighub
 - Each change kept with who made it and why. The plugin's record can be copied in with `cub mini copy --from-record`.
 - The next version of a chart or an app taken in with your changes kept ([your own Helm chart](your-own-chart.md)).
 - Flux or Argo CD deploying the copy the hub holds, over OCI ([GitOps over OCI](gitops-over-oci.md)).
+- Your agents on keys of their own, proposing changes to production that only you can approve: `cub mini require-approval COMPONENT --variant live --agent bot` ([approvals](approvals.md#on-confighub-mini-from-nothing-about-5-minutes)).
 
 confighub mini uses the same `cub` commands as ConfigHub, so nothing you learn here is wasted ([how the commands map](cub-mini-and-cub.md)).
 
-**When you need the next step.** confighub mini is yours alone. Your teammates cannot see it, and an agent working under your sign-in can do anything you can, including approve its own change.
+**When you need the next step.** confighub mini is yours alone. Your teammates cannot see it, and nobody but you can approve your agents' changes.
 
 ## Step 3: your organization's ConfigHub
 
@@ -70,7 +71,7 @@ confighub mini uses the same `cub` commands as ConfigHub, so nothing you learn h
 
 - **One place for the team.** Everyone sees the same base, the same copies, and every change with who made it and why.
 - **A key for each agent.** An agent's changes are recorded as its own, not yours. Its rights are set per Space: for example, it may change the base and read production, but not write it.
-- **Approval of the exact change.** A change reaches production only when a person you named approves that revision. An agent's own approval is refused ([approvals](approvals.md)).
+- **Approval by a colleague.** A change reaches production only when the colleague you named approves that revision. An agent's own approval is refused, and so is anyone else's ([approvals](approvals.md#on-hosted-confighub-or-your-own-server-with-cub-alone)).
 - **Agents in CI.** A job signs in with the agent's key, proposes a change with its reason, and waits for a person ([agents in CI](../ci/README.md)).
 - **Secrets stay in your secret store.** ConfigHub never takes in secret values, and neither does the record. Your configuration refers to secrets in the tool that holds them, such as Vault or External Secrets. Copying from Git into a hub leaves secrets out.
 
