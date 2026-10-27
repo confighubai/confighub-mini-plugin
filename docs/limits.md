@@ -24,6 +24,10 @@ The **plugin** runs in your Claude Code or Codex sessions and keeps a **record**
 
 - **A signed record proves it was not changed afterwards, not that it is complete.** The signature shows that nobody changed the record since each turn ended, and which key signed it. It cannot show that the plugin's hooks saw everything the agent did. An agent that acts through something the plugin does not watch leaves nothing to sign. Without a hub, whoever holds the machine's key could rewrite the record and sign it again ([signed records](signed-records.md)).
 
+- **A record signed with an agent's identity names the identity, not everything the agent did.** On a cluster, the agent's certificate key is a file its container can read, so a program there could sign with it. Withdrawing the identity takes effect when its certificate expires ([signing with the agent's own identity](signed-records.md#signing-with-the-agents-own-identity)).
+
+- **The inventory reads one repository's files.** A folder deployed from another repository shows as deployed by nothing, and the inventory says what the files ask for, not what is running. Some ApplicationSet generators are listed but not followed ([what it does not do](inventory.md#what-it-does-not-do)).
+
 - **ConfigHub's approval holds against what is deployed only when the cluster deploys from the hub.** When Argo CD or Flux deploys from Git, branch protection and CODEOWNERS on that repository are the gate. They already give an approval of an exact commit by a named person.
 
 - **A careful setup can match part of each example.** In our own adversarial testing, each of these did part of the job without ConfigHub:

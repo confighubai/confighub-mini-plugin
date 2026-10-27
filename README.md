@@ -18,6 +18,7 @@ Then, in any Claude Code session, you can ask:
 ```
 /confighub:changes              what the agent changed, and why
 /confighub:why replicas         every recorded change to one value, and why
+/confighub:inventory            what this repository deploys, and what deploys it
 ```
 
 There is no account to create and no server to run. The plugin is MIT-licensed.
@@ -98,7 +99,7 @@ When you are done, delete the folder. Its record is kept in `~/.confighub/agent-
 - **Commands that change a cluster or a deployment**: `kubectl`, `helm`, `argocd`, `flux`, `terraform`, `tofu`, `cub` and `nvkectl`, with the values they set.
 - **Why**: the request the agent was given, and the reason it gave, when you ask agents to give one.
 
-Each turn of the record is signed when it ends, so you can check later that nobody changed it ([signed records](docs/signed-records.md)).
+Each turn of the record is signed when it ends, so you can check later that nobody changed it. An agent on a cluster can sign with its own workload identity, so the record names the agent that made each change ([signed records](docs/signed-records.md)).
 
 It never keeps a command's output, a copy of a file, or anything that looks like a password, key or token. It adds about 15 milliseconds to each tool call. Nothing leaves your machine unless you turn on a setting that sends it somewhere, such as a pull request or your OpenTelemetry collector.
 
@@ -117,7 +118,7 @@ A hub is a place where your configuration is kept, with every change, who made i
 | Agents that propose changes to production, which only a person you name can approve | Use your company's ConfigHub ([approvals](docs/approvals.md)) | A ConfigHub organization |
 | Agents that run unattended for days, with a key of their own and a way to stop them at once | See [agents that run for weeks](docs/agents-that-run-for-weeks.md) | A ConfigHub organization |
 
-confighub mini uses the same commands as ConfigHub, so what you learn on your laptop works the same on your company's ConfigHub ([how the commands map](docs/cub-mini-and-cub.md)).
+confighub mini uses the same commands as ConfigHub, so what you learn on your laptop works the same on your company's ConfigHub ([how the commands map](docs/cub-mini-and-cub.md)). [From the plugin to ConfigHub](docs/from-plugin-to-confighub.md) follows one team through each step.
 
 ## Documentation
 
