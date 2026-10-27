@@ -10,7 +10,7 @@ A *hub* is one running ConfigHub server, with the database that holds your confi
 
 You work with a hub through `cub`, ConfigHub's command-line tool. The package includes `cub`.
 
-There is a package for macOS and one for Linux, each for ARM and for Intel. Each package is about 45 to 70 MB.
+There is a package for macOS and one for Linux, each for ARM and for Intel. Each package is about 44 to 67 MB.
 
 ## Install in one step, from Claude Code
 

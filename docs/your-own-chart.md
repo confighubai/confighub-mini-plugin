@@ -135,7 +135,7 @@ If you use Argo CD or Flux, which deploy to a cluster what is in a Git repositor
 
 ## The same in plain `cub`
 
-On the company's ConfigHub, you can do the same with plain `cub`:
+On the organization's ConfigHub, you can do the same with plain `cub`:
 
 - `cub mini set podinfo replicas 3 --variant live` is `cub function set --space podinfo-live --unit podinfo set-replicas 3`. `cub mini set` also marks the value as kept, and records the reason.
 - `cub mini promote podinfo-live` is `cub variant promote podinfo-live`. `cub mini promote` also shows the values in its preview.

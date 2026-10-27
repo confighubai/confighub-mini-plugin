@@ -55,6 +55,6 @@ This was run on GitHub. The agent was asked to roll out a new image to every env
 
 ## An agent in CI that proposes, and a person who approves
 
-See [ci/agent-proposes.yml](../ci/README.md#an-agent-in-ci-that-proposes-and-a-person-who-approves). This runs on the company's ConfigHub. The agent has a key of its own. With it, the agent can change the base, which is the version of the configuration you change, and ask for approval. It can never approve. The person you name approves in ConfigHub, and Argo CD or Flux deploys the change. The words are explained in [approvals](approvals.md).
+See [ci/agent-proposes.yml](../ci/README.md#an-agent-in-ci-that-proposes-and-a-person-who-approves). This runs on the organization's ConfigHub. The agent has a key of its own. With it, the agent can change the base, which is the version of the configuration you change, and ask for approval. It can never approve. The person you name approves in ConfigHub, and Argo CD or Flux deploys the change. The words are explained in [approvals](approvals.md).
 
 This was run against hosted ConfigHub from GitHub. The agent proposed 3 replicas. Production stayed at 2 until the approval, and then ran 3, 12 seconds after it.

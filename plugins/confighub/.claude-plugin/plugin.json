@@ -5,5 +5,5 @@
   "description": "Keeps a record of what the agent changes in configuration, and why: each value changed, what it ran against a cluster, and what it said. When the agent opens a file that earlier sessions changed, it is given what they changed and why. Read it with /confighub:changes. Needs no hub, server or account.",
   "license": "MIT",
   "name": "confighub",
-  "version": "0.55.0"
+  "version": "0.56.0"
 }
