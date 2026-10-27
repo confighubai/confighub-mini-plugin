@@ -34,6 +34,7 @@ claude plugin install confighub@confighub
 - `/confighub:inventory`: what the repository deploys, and what deploys it ([inventory](inventory.md)).
 - A comment on each pull request with every value it changes, and why ([the review](../review/README.md)).
 - The record signed at the end of each turn, so nobody can change it unseen ([signed records](signed-records.md)).
+- What each turn cost in model calls and tokens, kept beside its changes ([model use](how-it-works.md#model-use)).
 
 **When you need the next step.** The record says what happened. It does not keep your values safe. When a vendor ships the next version of a Helm chart, or a teammate regenerates a file, your changes can be lost, and the record only tells you afterwards.
 
@@ -87,6 +88,7 @@ confighub mini uses the same `cub` commands as ConfigHub, so nothing you learn h
 **What you get.**
 
 - A record that names the agent that made each change, checked against your cluster's own authority.
+- What each night's work cost: `bin/confighub mini changes --usage` lists the agent's sessions with their model calls and tokens, latest first.
 - An agent stopped at its next request when its rights are taken away.
 
 ## Where each step stops

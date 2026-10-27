@@ -98,6 +98,7 @@ When you are done, delete the folder. Its record is kept in `~/.confighub/agent-
 - **Values in configuration files**: Kubernetes files, Helm values, Kustomize, Compose, GitHub Actions workflows, settings files such as `.env`, Terraform variables, and agent configuration such as `CLAUDE.md`. It records the change whether the agent used its edit tool or a shell command such as `sed`.
 - **Commands that change a cluster or a deployment**: `kubectl`, `helm`, `argocd`, `flux`, `terraform`, `tofu`, `cub` and `nvkectl`, with the values they set.
 - **Why**: the request the agent was given, and the reason it gave, when you ask agents to give one.
+- **What it cost**: each turn's model calls and tokens, so you can see what a change cost and which sessions cost the most ([model use](docs/how-it-works.md#model-use)).
 
 Each turn of the record is signed when it ends, so you can check later that nobody changed it. An agent on a cluster can sign with its own workload identity, so the record names the agent that made each change ([signed records](docs/signed-records.md)).
 
