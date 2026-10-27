@@ -91,6 +91,8 @@ The stop is manual. A person runs it, for one agent at a time, or for the whole 
 
 The agent's request is sent only with `OTEL_LOG_USER_PROMPTS=1`, the same setting Claude Code uses for prompts. A credential's values are never sent.
 
+Each turn's model use, its model, calls and tokens, is sent too, as `confighub.model_use`, and kept in the record ([model use](how-it-works.md#model-use)).
+
 In a real session with a real collector, both kinds of event arrived under one `session.id`. First came `confighub.value_changed` with `replicas` 2 → 4, then `confighub.reason`, "Friday flash sale expected to quadruple api traffic".
 
 ### Limiting what an agent can reach

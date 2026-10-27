@@ -83,6 +83,7 @@ With `CUB_MINI_ASK_REASONS=1`, the agent is asked why it set these values too. T
 - Each `kubectl`, `helm`, `argocd`, `flux`, `terraform`, `tofu`, `cub` and `nvkectl` command. For each, the plugin records where it went, whether it changed something, and the values it set.
 - Each `curl` that writes to NVKE's API. Its request files are read as values too, by cluster and node pool.
 - What the agent said at the end of each turn.
+- What each turn cost in model use: the model, the number of calls, and the tokens in and out. The plugin reads these counts from Claude Code's own record of the session, and keeps nothing else from it ([model use](#model-use)).
 
 Commands are recorded also when they run through `env`, `bash -c`, `xargs`, `make` or a script in the repository. `/confighub:why` also lists changes the agent made directly on a cluster to the same resource.
 
@@ -109,12 +110,37 @@ You set each setting in Claude Code's settings, under `env`.
 | `CUB_MINI_STOP_BEFORE_UNDO=0` | Turns off the stop before a deploy that would undo another agent's change on the cluster. The agent is then told only after the command has run. | When you do not want commands held back. |
 | `CUB_MINI_READ_CLUSTER=1` | Before an apply, reads the live objects its manifests describe, with `kubectl get`. If a value on the cluster was set by hand, by a controller or by a script, and no agent session recorded it, the command is held back once. | When values on the cluster are also changed outside agent sessions. It is off by default because it reads the cluster before each apply. |
 | `CUB_MINI_SIGN=0` | Turns off signing the record. Signing is on by default: each turn is signed, at a cost of about a millisecond ([signed records](signed-records.md)). | When you do not need to check that the record was not changed. |
-| `CUB_MINI_OTEL=1` | At the end of each turn, sends each value changed, each command that changed something, and each reason to an OpenTelemetry collector as log events, with Claude Code's `session.id`. Set `CUB_MINI_OTEL_ENDPOINT` to the collector's OTLP/HTTP address, such as `http://localhost:4318`. The request itself is sent only with `OTEL_LOG_USER_PROMPTS=1`. | When you want these events in an OpenTelemetry collector. |
+| `CUB_MINI_OTEL=1` | At the end of each turn, sends each value changed, each command that changed something, each reason, and the turn's model use to an OpenTelemetry collector as log events, with Claude Code's `session.id`. Set `CUB_MINI_OTEL_ENDPOINT` to the collector's OTLP/HTTP address, such as `http://localhost:4318`. The request itself is sent only with `OTEL_LOG_USER_PROMPTS=1`. | When you want these events in an OpenTelemetry collector. |
+| `CUB_MINI_USAGE=0` | Turns off keeping each turn's model use. It is on by default ([model use](#model-use)). | When you do not want model use in the record. |
 | `CUB_MINI_TIPS=0` | Turns off tips. A tip is a line shown to you, never to the agent, at the end of a turn in which confighub mini would have helped (see below). | When you do not want the tips. |
 
 **About tips.** ConfigHub is a hub: a place where your configuration is kept, with every change, who made it and why ([ConfigHub docs](https://docs.confighub.com)). confighub mini is ConfigHub, small, for one machine ([install confighub mini](install-mini.md)). A tip appears after a turn in which confighub mini would have helped. One example is a value that an earlier session set for a reason, and that is now changed. The tip asks "Do you want to install confighub mini?", says why, and ends with `/confighub:install-mini`.
 
 Each kind of tip is shown at most once a week for a project. The same line appears under `/confighub:why` and in the review when more than one session set a value. `bin/confighub mini changes --tips`, run from the plugin, counts the tips on this machine. Nothing is sent anywhere.
+
+## Model use
+
+**Why it is there.** When you read what an agent changed, you may also want to know what the change cost, and which sessions cost the most. The record keeps each turn's model use beside the changes the turn made.
+
+**What is kept.** At the end of each turn, the plugin reads the turn's model calls from the transcript Claude Code keeps of the session. For each turn it keeps the models, the number of calls, the input tokens, and the output tokens. Input tokens are counted in three parts: those read from the prompt cache, those written to it, and the rest. Nothing else from the transcript is kept: no prompt, no answer, no tool output.
+
+**Where you see it.**
+
+- `/confighub:changes` ends each session with a line such as:
+
+  ```
+  Model use: 3 model calls to claude-opus-5-5: 97,258 tokens in, 86,246 of them read from the cache, and 593 tokens out.
+  ```
+
+  The record added to a pull request has the same line.
+- `bin/confighub mini changes --usage`, run from the plugin's folder, lists each session kept for the repository, latest first, with its model use and its first request, and the total.
+- With `CUB_MINI_OTEL=1`, each turn's use is sent as a `confighub.model_use` event, with the counts as attributes.
+
+**How it counts.** Claude Code writes a line for each part of an answer. Each call is counted once. In a test, the record's numbers for a session were the same as the ones Claude Code itself reported for it.
+
+**Not counted yet:** the calls of subagents, which Claude Code keeps in transcripts of their own; and Codex sessions. The plugin counts tokens, not money, since prices differ by model and by contract.
+
+`CUB_MINI_USAGE=0` turns it off.
 
 ## Keeping the record out of the agent's reach
 
