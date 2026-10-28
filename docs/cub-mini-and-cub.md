@@ -12,7 +12,7 @@ What you do with confighub mini on your laptop works the same on your organizati
 | `cub mini copy --to-dir`, `--from-git`, `--to-file`, `--from-file` | Nothing yet | Writes the work out as plain files, with a `CHANGES.md` that says why each value is set. Reads it back in from Git, with each commit's reason. Moves it between hubs |
 | `cub mini connect`, `offer`, `offers` | Nothing yet | Makes the organization's ConfigHub the parent of a confighub mini's work, and offers changes up to it |
 
-Where the table says "Nothing yet", plain `cub` has no equivalent, and only `cub mini` does it for now. These are the commands that carry work between hubs: out to files and Git, and up from a hub of your own to your organization's ConfigHub. They are meant to become part of `cub` itself, so that a team on hosted ConfigHub can use them with no local server; until then, `cub mini` provides them against any ConfigHub.
+Where the table says "Nothing yet", plain `cub` has no equivalent, and only `cub mini` does it for now. These are the commands that carry work between hubs: out to files and Git, and up from a hub of your own to your organization's ConfigHub.
 
 ## Words used in the table
 

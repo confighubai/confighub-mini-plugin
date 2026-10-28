@@ -47,7 +47,7 @@ claude plugin install confighub@confighub
 **What you get.**
 
 - Your agents on keys of their own, proposing changes to production that only you can approve: `cub mini require-approval COMPONENT --variant live --agent bot` ([approvals](approvals.md#on-confighub-mini-from-nothing-about-5-minutes)). In 40 sessions in auto mode, no agent got past the gate.
-- A hub in each sandbox or CI job, started with the network off, thrown away with the job, its changes handed back as a pull request with their reasons ([agents in CI](../ci/README.md), [in CI or a sandbox](ci-and-sandboxes.md)).
+- A hub in each sandbox or CI job, thrown away with the job, its changes handed back as a pull request with their reasons ([agents in CI](../ci/README.md), [in CI or a sandbox](ci-and-sandboxes.md)).
 - Your configuration kept as a base, with a copy for each place it runs, such as staging and production. The plugin's record goes in with `cub mini copy --from-record`, each change as a revision with its reason.
 - The next version of a chart or an app taken in with your changes kept, and what it changes shown first ([your own Helm chart](your-own-chart.md)).
 - Flux or Argo CD deploying the copy the hub holds, over OCI ([GitOps over OCI](gitops-over-oci.md)).
