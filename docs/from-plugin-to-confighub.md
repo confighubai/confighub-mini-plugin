@@ -52,6 +52,8 @@ claude plugin install confighub@confighub
 - The next version of a chart or an app taken in with your changes kept, and what it changes shown first ([your own Helm chart](your-own-chart.md)).
 - Flux or Argo CD deploying the copy the hub holds, over OCI ([GitOps over OCI](gitops-over-oci.md)).
 
+You do not need a cluster for any of this. The hub is the source for whatever reads from it, in the order most people meet them: an app that reads its settings from the hub, a CI job or a sandbox with a hub of its own, a service on a VM, and last a cluster that deploys from the hub over OCI. The gate is the same at each.
+
 confighub mini uses the same `cub` commands as ConfigHub, so nothing you learn here is wasted ([how the commands map](cub-mini-and-cub.md)).
 
 **When you need the next step.** confighub mini is yours alone. Your teammates cannot see it, and nobody but you can approve your agents' changes.
