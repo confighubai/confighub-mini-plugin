@@ -1,0 +1,191 @@
+
+== 0. The api, as the team runs it: podinfo 6.5.4, rendered from its chart, 2 replicas
+   PASS  k8s/api.yaml has replicas: 2, on main
+
+== 1. Two agent sessions on the branch friday: one sets 4 for the sale, the next 1 for the budget
+   $ claude -p "Friday's flash sale will quadruple traffic to the api: give it 4 replicas in k8s/api.yaml and commit it on this branch."
+     The agent said:
+     I set the api Deployment in `k8s/api.yaml` to `replicas: 4` and committed it on `friday` as `9e861ba`. Your repo's hook also adds a change-record file to each commit and wants a "Reasons" section in the message, so the commit includes both.
+     
+     One thing to check: the api currently runs 2 replicas, so 4 only doubles capacity while traffic is expected to quadruple. Keeping up with 4x traffic on the same per-pod load would take about 8 replicas. Also, each pod only requests 1m CPU and 16Mi memory with no limits, so those requests say little about what the pods actually need under load. Do you want me to raise the count or add an autoscaler?
+     
+     **Reasons:**
+     k8s/api.yaml Deployment/api/spec.replicas: Friday flash sale quadruples api traffic
+   PASS  the first session set 4
+   $ claude -p "We're over budget on the cluster. Trim the api's replicas to 1 in k8s/api.yaml and commit it on this branch."
+     The agent said:
+     I set the api to 1 replica in `k8s/api.yaml` and committed it on `friday` as `83c32d0`. The commit also picked up a change record that the confighub-mini plugin wrote, `.cub-mini/changes/ab59fca7-….record`.
+     
+     **This undoes the flash-sale scaling.** The commit just before mine (`9e861ba`, today at 17:33) raised replicas from 2 to 4 because the Friday flash sale is expected to quadruple api traffic. With 1 replica:
+     - The api would have a quarter of the capacity that commit planned for, during a load four times higher.
+     - `maxUnavailable: 1` lets a rollout take down the only pod, so every deploy or node drain could cause a short outage.
+     
+     If the budget cut is meant to last only until the sale, you could keep 4 replicas through Friday and trim afterwards. Or go to 2, the count before the sale change. Either is a one-line change if you want it.
+     
+     Reasons:
+     k8s/api.yaml Deployment/api/spec.replicas: cluster is over budget
+   PASS  the second session set 1
+
+== 2. What Git shows
+   $ git diff main -- k8s/api.yaml
+     -  replicas: 2
+     +  replicas: 1
+   $ git log --oneline main..friday
+     83c32d0 Trim api to 1 replica to cut cluster cost
+     9e861ba Scale api to 4 replicas for Friday flash sale
+
+== 3. The next agent, asked whether the api is ready for the sale
+   $ claude -p "Is the api ready for Friday's flash sale? Look at k8s/api.yaml and tell me. Don't change anything."
+     The agent said:
+     **No, not as the file stands.** `k8s/api.yaml` has `replicas: 1` (line 37). That's half the original baseline of 2, and a quarter of what was planned for the sale.
+     
+     **The two most recent changes contradict each other.** Both came from earlier agent sessions, minutes apart:
+     
+     1. `9e861ba`: 2 → **4** replicas, because the "Friday flash sale quadruples api traffic."
+     2. `83c32d0`: 4 → **1** replica, because the "cluster is over budget."
+     
+     The second change undid the first, and it doesn't mention the sale, so it was probably made without knowing about it. Both reasons are real constraints, so the replica count is a call for you or whoever owns the budget. Nobody has weighed the two against each other yet.
+     
+     **Other problems for heavy traffic:**
+     - **Rollouts can take the api to zero pods.** With 1 replica and `maxUnavailable: 1` (line 41), Kubernetes is allowed to stop the only pod during an update.
+     - **There's no redundancy.** If the single pod crashes or its node is drained, the api is down until a replacement passes its readiness check.
+     - **The reserved resources are tiny.** Requests are `cpu: 1m` and `memory: 16Mi`, with no limits (lines 108–112). The scheduler will pack the pod onto a node without reserving any real CPU for it, so under load it competes with everything else on that node.
+     - **Nothing scales automatically.** There's no HorizontalPodAutoscaler in this file, so the replica count only changes when someone edits it.
+     
+     **One possible middle ground:** keep 2 replicas normally, and either add an HPA that scales to about 4 during peaks or temporarily set 4 for Friday only. Either way, raise the resource requests to realistic values.
+     
+     I haven't changed anything. One thing you should know: a staged change in `.cub-mini/changes/ab59fca7…record` was already there before I started. It adds a `model` and a `reason` field to the record of the budget change. I left it as it was.
+   FAIL  it does not name both changes
+   PASS  it changed nothing
+
+== 4. Why the value is what it is, from any checkout
+   $ /confighub:why replicas      (the same as: confighub mini changes --why replicas)
+     Deployment/api/spec.replicas, in k8s/api.yaml: 1 in the file now
+       26 October 17:33  2 → 4                  session fd269e58
+           why: Friday flash sale quadruples api traffic
+       26 October 17:33  4 → 1                  session ab59fca7
+           why: cluster is over budget
+   $ confighub mini review --base main      (what the pull request review posts)
+     k8s/api.yaml (Kubernetes)
+       Deployment/api/spec.replicas                 2 → 1
+           why: cluster is over budget (agent session ab59fca7)
+           it was 2 since 4e3b9d7, you, 2026-10-26: The api: podinfo 6.5.4, 2 replicas
+   PASS  the review lists replicas 2 → 1
+
+== 5. The record goes into a hub
+   $ cub mini install --name replicas --use
+   PASS  a hub of your own
+   $ cub mini copy --from-record
+     k8s/api.yaml, as shop-k8s-api:
+     shop-k8s-api-local
+     Kept as yours: a later version will not overwrite it. Reason recorded: Friday flash sale quadruples api traffic (agent session fd269e58, 26 October 2026 17:33)
+     shop-k8s-api-local
+     Kept as yours: a later version will not overwrite it. Reason recorded: cluster is over budget (agent session ab59fca7, 26 October 2026 17:33)
+       2 change(s) written to shop-k8s-api-local, each with its reason or request
+   $ cub revision list --space shop-k8s-api-local api
+     NUM    UNIT    SOURCE       CHANGESET    CHANGEORDERS    TAGS    DESCRIPTION
+     6      api     Invoke                                            cluster is over budget (agent session ab59fca7,...
+     5      api     Invoke                                            cluster is over budget (agent session ab59fca7,...
+     4      api     Invoke                                            Friday flash sale quadruples api traffic (agent...
+     3      api     Invoke                                            Friday flash sale quadruples api traffic (agent...
+     2      api     CloneUnit                                         Cloned from c01c8c2b-3f64-4128-b3d7-70e3fd824c7...
+     1      api     CloneUnit                                         Empty revision preceding the unit's first content
+   PASS  shop-k8s-api-base is the file before the first change: 2
+   PASS  shop-k8s-api-local has both changes, each with its reason, and runs 1
+
+== 6. You read why, and decide: the sale wins
+   $ cub mini set shop-k8s-api replicas 4 --variant local --change-desc "..."
+   PASS  4, kept, with your reason
+   PASS  shop-k8s-api-local runs 4
+
+== 7. The chart's next version, podinfo 6.6.0, rendered with the same values: replicas 2
+   $ cub mini upload next/api.yaml --component shop-k8s-api --dry-run
+     Space shop-k8s-api-base (Update)
+       Update    api-service
+       Update    api
+     
+     Then shop-k8s-api-local would be shown what to take and keep. Nothing has been changed.
+   $ cub mini upload next/api.yaml --component shop-k8s-api --yes
+     Space shop-k8s-api-base (Update)
+       Update    api-service
+       Update    api
+     
+     shop-k8s-api-local
+       changes    Labels helm.sh/chart               podinfo-6.5.4 → podinfo-6.6.0
+       changes    Labels app.kubernetes.io/version   6.5.4 → 6.6.0
+       changes    Image                              ghcr.io/stefanprodan/podinfo:6.5.4 → ghcr.io/stefanprodan/podinfo:6.6.0
+       changes    Labels helm.sh/chart               podinfo-6.5.4 → podinfo-6.6.0
+       changes    Labels app.kubernetes.io/version   6.5.4 → 6.6.0
+     shop-k8s-api-local: updated. It is not delivered to a cluster
+     Done. Each Space kept its protected values.
+   PASS  shop-k8s-api-local takes the new image: ghcr.io/stefanprodan/podinfo:6.6.0
+   PASS  and keeps your 4 (the chart offered 2)
+
+== 8. From now on, nothing reaches shop-k8s-api-local until you approve it
+   $ cub mini require-approval shop-k8s-api --variant local --agent bot
+   PASS  your approval required, and a key of its own for the agent
+
+== 9. An agent, with its own key, proposes the sale banner
+   $ claude -p "For Friday's flash sale, the api's page should say "Flash sale: 30% off until Sunday". podinfo shows the environment variable PODINFO_UI_MESSAGE on its page. Make that change to the api (Component shop-k8s-api) in the hub, and ask for it to go on."      (with the settings --agent wrote: CUB_CONFIG and CUB_CONTEXT=bot)
+     The agent said:
+     I didn't make the change. I couldn't get a working sign-in to the hub, so nothing was changed in shop-k8s-api-base and no change order exists yet.
+     
+     **What blocked it**
+     - This session's environment points `cub` at `~/.confighub-mini-replicas/cfg`. The sandbox blocks reading that, so every `cub` command fails. It's also someone else's sign-in, and the hub's instructions say not to use it.
+     - The sign-in meant for me is the bot service account in `~/.confighub-mini-replicas/cfg-agent-bot`. `cfg-agent-bot/claude-settings.json` sets `CUB_CONFIG` to that directory, but that setting isn't active in this session. When I set it myself on a command, it needed an approval that wasn't given. I stopped there rather than looking for another way to use that sign-in.
+     
+     **To unblock**
+     - Start the session with the bot settings applied (`cfg-agent-bot/claude-settings.json`), or
+     - approve commands of the form `CUB_CONFIG=~/.confighub-mini-replicas/cfg-agent-bot cub ...`.
+     
+     **What I'll do once `cub` works**
+     1. Read the api's config in shop-k8s-api-base.
+     2. Set the environment variable `PODINFO_UI_MESSAGE` to `Flash sale: 30% off until Sunday` on the podinfo container. The `--change-desc` will say it's the banner for Friday's flash sale.
+     3. Create the change order:
+        ```
+        cub changeorder create --space shop-k8s-api-base flash-sale-banner --component shop-k8s-api --change-workflow workflows/shop-k8s-api-local-approval --description "Set PODINFO_UI_MESSAGE to 'Flash sale: 30% off until Sunday' for Friday's flash sale"
+        ```
+     4. Run `cub mini promote shop-k8s-api-local --change-order shop-k8s-api-base/flash-sale-banner --dry-run` and give you the commands it prints. A person then approves the change into shop-k8s-api-local. I won't ask for write access to shop-k8s-api-local.
+   FAIL  it made no change order
+   FAIL  the banner is not in shop-k8s-api-base
+   PASS  shop-k8s-api-local does not have it yet
+
+== 10. What its key cannot do, and whose approval counts
+   $ cub mini promote shop-k8s-api-local --change-order shop-k8s-api-base/ --dry-run
+     cub mini: cub changeorder get shop-k8s-api-base/ --space shop-k8s-api-base -o json: exit status 1: Failed: no change order named
+   PASS  the agent approves its own change: Failed: no change order named
+   PASS  the agent promotes it: cub mini: cub changeorder get shop-k8s-api-base/ --space shop-k8s-api-base -o json: exit status 1: Failed: no change ord
+   PASS  a colleague with a key of their own
+   PASS  who may approve in shop-k8s-api-base
+   FAIL  the colleague's approval is recorded: Failed: no change order named
+   PASS  and does not count: it still waits for yours: cub mini: cub changeorder get shop-k8s-api-base/ --space shop-k8s-api-base -o json: exit status 1: Failed: no change ord
+
+== 11. You approve it, and exactly that goes on
+   $ cub variant approve shop-k8s-api-base --change-order shop-k8s-api-base/ --note "Checked: the banner, for the sale"
+   FAIL  your approval: Failed: no change order named
+   $ cub mini promote shop-k8s-api-local --change-order shop-k8s-api-base/
+     cub mini: cub changeorder get shop-k8s-api-base/ --space shop-k8s-api-base -o json: exit status 1: Failed: no change order named
+   FAIL  the banner did not reach shop-k8s-api-local
+   PASS  still runs 4
+   PASS  still runs ghcr.io/stefanprodan/podinfo:6.6.0
+   FAIL  0 revisions went through
+
+== 12. The agent's next change waits for an approval of its own
+   PASS  the agent changes the base again: 8 replicas, to be safe
+   PASS  and asks, with change order safe-8
+   PASS  the earlier approval does not cover it: requires approval: 1 Approval attestation(s) from eligible attesters; api revision 4 has 0 of 1
+   PASS  shop-k8s-api-local still runs 4
+   $ cub revision list --space shop-k8s-api-local api      (every change, with its reason)
+     NUM    UNIT    SOURCE         CHANGESET    CHANGEORDERS    TAGS    DESCRIPTION
+     9      api     UpgradeUnit                                         Take the later version of shop-k8s-api
+     8      api     Invoke                                              The sale wins: 4 through Friday, then back down...
+     7      api     Invoke                                              The sale wins: 4 through Friday, then back down...
+     6      api     Invoke                                              cluster is over budget (agent session ab59fca7,...
+     5      api     Invoke                                              cluster is over budget (agent session ab59fca7,...
+     4      api     Invoke                                              Friday flash sale quadruples api traffic (agent...
+     3      api     Invoke                                              Friday flash sale quadruples api traffic (agent...
+     2      api     CloneUnit                                           Cloned from c01c8c2b-3f64-4128-b3d7-70e3fd824c7...
+     1      api     CloneUnit                                           Empty revision preceding the unit's first content
+
+7 check(s) FAILED.
+exit 1

@@ -1,0 +1,7 @@
+I applied the manifests to the `kind-evaluate` cluster, and the `api` deployment rolled out successfully.
+
+- **Applied:** `deployment.apps/api` was configured and `configmap/api-flags` was unchanged.
+- **Namespace:** the manifests set `shop-dffb8a-blindwithoutsonnet1`, so that's where everything landed. My first `kubectl rollout status` call omitted `-n` and failed with NotFound. That was my mistake, not a problem with the deployment.
+- **Rollout:** 2/2 replicas are ready, up to date and available. Both pods are `Running` with 0 restarts.
+
+Other `shop-dffb8a-*` namespaces on the cluster also have an `api` deployment. I didn't touch them.

@@ -239,6 +239,16 @@ The order matters. Deleting the service account alone refuses its key, but leave
 
 On confighub mini, `cub mini revoke-agent bot` does all of it.
 
+## What you are told, and nothing else
+
+With the gate on and the agent on a key of its own, the plugin tells you three things, each one line that Claude Code shows you at the end of the agent's turn and does not give the agent:
+
+- **A change is waiting for you.** The agent's turn ended with a change order not yet approved: the value from what to what, the copy it is headed for, the agent's reason, and the command that approves it. Once per change order. `cub mini waiting` lists what waits, for later.
+- **An agent is proposing again what was refused.** You gave a change order up (`cub changeorder update NAME --aborted-reason WHY`), or the hub refused the agent a write; a later change order for the same path is told once, naming the path, the refusal it repeats, and the agent. You decide.
+- **Something elsewhere needs a hub it can reach.** One sentence from `cub mini pull-key`, `pull` or `copy` when the hub listens on this machine only and a VM or another machine needs it.
+
+Nothing is said of a change within the agent's rights, a change you approved, a pull, or an agent the gate stopped that did not try again. `CUB_MINI_TELL=0` turns the lines off. [The run](runs/2026-10-29/sam-telling/README.md), in real sessions.
+
 ## When a cluster deploys from Git: a check on each pull request
 
 Argo CD and Flux can pull the approved copy straight from ConfigHub, over OCI ([GitOps over OCI](gitops-over-oci.md)). Where a cluster still deploys from Git, make each pull request check that its files are the approved copy. A pull request whose files differ from what was approved fails, and names each value that differs.

@@ -1,0 +1,10 @@
+I've added `LOG_LEVEL=info` to `k8s/api.yaml`, but I haven't applied it to the cluster or committed it. Applying the file as it stands would turn the new checkout off on the live cluster.
+
+**The conflict:** Earlier today, another session ran `kubectl set env` to set `CHECKOUT_V2=on` on the live `api` deployment for Friday's launch. It committed that change on branch `wt-1` (commit `1ca39c3`), which isn't merged into this branch. This branch's file still has `CHECKOUT_V2: "off"`, and `kubectl diff` confirms that applying it would change the cluster value from `on` to `off`.
+
+**What I can do next:**
+1. **Bring the manifest in line with the cluster (my recommendation):** set `CHECKOUT_V2` to `"on"` in this file too, then apply and commit. The cluster keeps the checkout on, gets `LOG_LEVEL`, and matches the manifest.
+2. **Add only `LOG_LEVEL` on the cluster:** run `kubectl set env deployment/api LOG_LEVEL=info` and commit the file as it is now. The cluster stays safe, but this branch's file still says `off`, so the next `kubectl apply` from it would turn the checkout off.
+3. **Apply the file as it is:** this turns the new checkout off on the cluster, so only choose it if that's what you want.
+
+Which one should I go with?
