@@ -17,6 +17,19 @@ A change someone makes by hand on the cluster is put back. Going back to an earl
 
 You can keep writing and reviewing changes in Git. What the cluster runs is what was approved in ConfigHub. Flux calls this Gitless GitOps.
 
+## From Git to the hub, one step at a time, and back
+
+You do not have to move delivery off Git to get anything on this page. Each step below is reversible, and you can stop at any of them.
+
+| Step | What changes | What you get | To go back |
+|---|---|---|---|
+| 1. The plugin | the record in agent sessions; [the review](../review/README.md) on pull requests | every configuration value a pull request changes, per cluster, and why; the next agent told before it undoes an earlier change; Git still delivers | uninstall the plugin |
+| 2. A hub beside Git | `cub mini copy --from-git` takes the repository's rendered configuration into a hub, which keeps each value's reason and protects the ones you choose; the hub's approval appears on each pull request as a status, and your branch rule requires that status | approvals of exact values; values kept through a chart's next version; Git still delivers. The branch rule requiring the status is what makes the approval one that Git cannot bypass | stop the hub; Git is untouched |
+| 3. The hub as the source for one app | that app's Flux source or Argo CD Application is pointed at the hub's OCI gateway instead of the Git path; Git keeps everything else | the hub's approval is the only way a change reaches that app; an agent's `kubectl` change is set back by the next sync, and the hub says what differed | `cub mini copy --to-dir` writes plain files and a `CHANGES.md`; commit them, point the source back at Git, stop the hub |
+| 4. The hub as the source for everything | the clusters deploy from the hub; Git holds rendered files written back for people to read and diff | one source, with Git still legible | as step 3, app by app |
+
+Steps 1 to 3 have run; the rest of this page is step 3. Step 4's write-back to Git is not built. Nothing on this page is a migration: a GitOps team meets the hub as the source for one app, beside its Git, and goes back by committing files.
+
 ## Words used here
 
 - **Flux** and **Argo CD** are GitOps controllers. They run in a cluster and keep it matching configuration they pull from a source, usually a Git repository. *Self-heal* means the controller puts back a change made on the cluster by hand.

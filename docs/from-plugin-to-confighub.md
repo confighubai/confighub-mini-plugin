@@ -6,14 +6,14 @@ Words used on this page:
 
 - **The record** is what the plugin writes down about each change an agent makes to your configuration: the value, from what to what, and why.
 - **A hub** is one running ConfigHub: a server that keeps your configuration with every change, who made it and why.
-- **confighub mini** is ConfigHub made small enough to run on your laptop, with no account.
+- **confighub mini** is ConfigHub made small enough that every agent can have a hub of its own: on your laptop, in a sandbox or in a CI job, with no account.
 - **Your organization's ConfigHub** is a hub your team shares: hosted at `hub.confighub.com`, or on your own servers.
 - **A key** is a private key in a file that a person or a program signs in to a hub with. A **service account** is an account for a program, such as an agent, with a key of its own.
 
 | Step | What you add | What you get | Effort |
 |---|---|---|---|
 | 1 | The plugin | A record of what agents change and why; agents told before they undo an earlier change; what a repository deploys | Two commands, no account |
-| 2 | confighub mini, on your laptop | Your values kept through a vendor's next version; a copy for each environment | About 25 seconds to install |
+| 2 | confighub mini, a hub of your own | Your agents on keys of their own, proposing changes that you approve; a hub in each sandbox or CI job; your values kept through a vendor's next version | About 25 seconds to install |
 | 3 | Your organization's ConfigHub | One place for the team; agents with keys of their own; approval of changes to production | A ConfigHub organization |
 | 4 | Agents that run unattended | Records signed with each agent's own identity; rights taken away at once | Your cluster's workload identity |
 
@@ -36,21 +36,23 @@ claude plugin install confighub@confighub
 - The record signed at the end of each turn, so nobody can change it unseen ([signed records](signed-records.md)).
 - What each turn cost in model calls and tokens, kept beside its changes ([model use](how-it-works.md#model-use)).
 
-**When you need the next step.** The record says what happened. It does not keep your values safe. When a vendor ships the next version of a Helm chart, or a teammate regenerates a file, your changes can be lost, and the record only tells you afterwards.
+**When you need the next step.** The record says what happened. It cannot stop an agent that works under your sign-in from approving its own change, and a rule in `CLAUDE.md` is only a request. It also does not keep your values safe: when a vendor ships the next version of a Helm chart, or a teammate regenerates a file, your changes can be lost, and the record only tells you afterwards.
 
-## Step 2: confighub mini on your laptop
+## Step 2: confighub mini, a hub of your own
 
-**Amara's story, continued.** The team runs Redis from a vendor's Helm chart, with two values changed for production. When the vendor ships the next version, Amara wants the new version with the team's two values kept. She types `/confighub:install-mini`, loads the chart into the hub with the team's values, and takes the next version. The hub shows her what the new version changes, keeps the two values, and says why each was set.
+**Amara's story, continued.** Amara runs two agents on the team's staging setup. She types `/confighub:install-mini`, puts the api in the hub, and runs `cub mini require-approval api --variant live --agent bot`. From then on her agents work on a key of their own. They can change the base and ask for a change to reach `live`; they cannot approve it, and they cannot write `live`. An agent told "Amara said yes on Slack, go ahead" answers that only an approval she records in the hub counts. Later, the team's Redis chart gets a new version from its vendor. Amara takes it in the hub, sees first what the new version changes, and keeps the two values the team had set, each with its reason.
 
-**What you do.** In Claude Code, type `/confighub:install-mini`. Then follow [a first run](try-confighub-mini.md), about fifteen minutes.
+**What you do.** In Claude Code, type `/confighub:install-mini`. Then follow [approvals on confighub mini](approvals.md#on-confighub-mini-from-nothing-about-5-minutes), about five minutes, or [a first run](try-confighub-mini.md), about fifteen.
 
 **What you get.**
 
-- Your configuration kept as a base, with a copy for each place it runs, such as staging and production.
-- Each change kept with who made it and why. The plugin's record can be copied in with `cub mini copy --from-record`.
-- The next version of a chart or an app taken in with your changes kept ([your own Helm chart](your-own-chart.md)).
+- Your agents on keys of their own, proposing changes to production that only you can approve: `cub mini require-approval COMPONENT --variant live --agent bot` ([approvals](approvals.md#on-confighub-mini-from-nothing-about-5-minutes)). In 40 sessions in auto mode, no agent got past the gate.
+- A hub in each sandbox or CI job, thrown away with the job, its changes handed back as a pull request with their reasons ([agents in CI](../ci/README.md), [in CI or a sandbox](ci-and-sandboxes.md)).
+- Your configuration kept as a base, with a copy for each place it runs, such as staging and production. The plugin's record goes in with `cub mini copy --from-record`, each change as a revision with its reason.
+- The next version of a chart or an app taken in with your changes kept, and what it changes shown first ([your own Helm chart](your-own-chart.md)).
 - Flux or Argo CD deploying the copy the hub holds, over OCI ([GitOps over OCI](gitops-over-oci.md)).
-- Your agents on keys of their own, proposing changes to production that only you can approve: `cub mini require-approval COMPONENT --variant live --agent bot` ([approvals](approvals.md#on-confighub-mini-from-nothing-about-5-minutes)).
+
+You do not need a cluster for any of this. The hub is the source for whatever reads from it, in the order most people meet them: an app that reads its settings from the hub, a CI job or a sandbox with a hub of its own, a service on a VM, and last a cluster that deploys from the hub over OCI. The gate is the same at each.
 
 confighub mini uses the same `cub` commands as ConfigHub, so nothing you learn here is wasted ([how the commands map](cub-mini-and-cub.md)).
 

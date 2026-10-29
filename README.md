@@ -4,6 +4,8 @@ When an AI agent changes your configuration, such as the replicas in a Kubernete
 
 You don't change your prompts or add instructions. The record stays on your machine.
 
+It is the same record wherever your agents run: in Claude Code, in Codex, in a CI job, in a sandbox, and for commands such as `kubectl` and `helm` that change a cluster directly. It is not tied to one agent product. And when you add a hub, each recorded change goes in as a revision with its reason (`cub mini copy --from-record`), so nothing is retyped.
+
 ## What this is
 
 This is the open-source way in to [ConfigHub](https://docs.confighub.com) for people who work with AI agents. ConfigHub keeps configuration with every change, who made it and why, and lets a person approve what reaches production. There are three parts:
@@ -11,20 +13,20 @@ This is the open-source way in to [ConfigHub](https://docs.confighub.com) for pe
 | Part | What it is | How you start |
 |---|---|---|
 | **The ConfigHub plugin**, for Claude Code and Codex | Records what agents change in configuration, and why, and tells the next agent before it undoes a change | Two commands, [below](#install) |
-| **confighub mini** | ConfigHub itself, packaged lean: the same server, built from ConfigHub's source, running as two processes on your laptop. No Docker, no cluster, no account; a download of 44 to 67 MB | `/confighub:install-mini` in Claude Code |
+| **confighub mini** | A hub of your own: ConfigHub itself, packaged lean, as two processes on your laptop, in an agent's sandbox or in a CI job. No Docker, no cluster, no account, and it works with the network off. A download of 44 to 67 MB | `/confighub:install-mini` in Claude Code |
 | **`cub mini`** | A plugin for `cub`, ConfigHub's command-line tool, that fills in the rest of each request so the commands stay short. What you learn with it works unchanged on your organization's ConfigHub | Comes with confighub mini |
 
 **The problems it solves**
 
 1. **Agents undo each other's changes.** A later agent puts back a value an earlier one set for a reason, and nobody is told. In our tests this happened three times in four without the plugin, and never silently with it ([the problem, step by step](#the-problem-it-solves)).
-2. **Nothing stands between an agent and production.** An agent working under your sign-in can approve its own change.
-3. **A vendor's next version overwrites your changes,** such as the values you set in their Helm chart.
-4. **Nobody knows what a repository deploys** before they, or an agent, change it.
+2. **Nothing stands between an agent and production.** An agent working under your sign-in can approve its own change, and a rule in `CLAUDE.md` is only a request. With a hub, the agent proposes on a key of its own, and only the person you name can approve ([approvals](docs/approvals.md)).
+3. **Nobody knows what a repository deploys** before they, or an agent, change it.
+4. **A vendor's next version overwrites your changes,** such as the values you set in their Helm chart.
 
 **The journeys.** Each is a step further, and you can stop at any of them ([one team's path, step by step](docs/from-plugin-to-confighub.md)):
 
 1. **The plugin:** a record of what agents change and why; the next agent told first; what a repository deploys; a review of each pull request.
-2. **confighub mini:** your values kept through a vendor's next version; your agents on keys of their own, proposing changes that you approve.
+2. **confighub mini:** a hub for each agent. Your agents on keys of their own, proposing changes that you approve, in five minutes on your laptop; a hub in each sandbox or CI job that hands back a pull request; your values kept through a vendor's next version.
 3. **Your organization's ConfigHub:** one place for the team, kept in step with each laptop; a colleague you name approves each change to production.
 4. **Agents that run unattended:** records signed with each agent's own identity; rights taken away at once; model use kept with each change.
 
@@ -132,15 +134,16 @@ It never keeps a command's output, a copy of a file, or anything that looks like
 
 ## When you want more than a record
 
-The record tells you and your agents what happened. Some teams also want to keep certain values safe through later changes, and to approve what agents change before it reaches production. For that, you add a hub.
+The record tells you and your agents what happened. It cannot stop an agent that holds your keys, and it cannot approve anything. For that, you add a hub.
 
-A hub is a place where your configuration is kept, with every change, who made it and why. ConfigHub is that hub. confighub mini is ConfigHub made small enough to run on your laptop, with no account and no Docker.
+A hub is a place where your configuration is kept, with every change, who made it and why, and where a change to production waits for the person you name. ConfigHub is that hub. confighub mini is ConfigHub made small enough that every agent can have one: on your laptop, in a sandbox, or in a CI job, with no account and no Docker. The plugin's record goes into it with `cub mini copy --from-record`, each change as a revision with its reason.
 
 | What you want | What to do | Effort |
 |---|---|---|
 | A comment on every pull request listing each configuration value it changes, and why | Add the review GitHub Action ([how](review/README.md)). Nobody needs to install anything. | One step in a workflow file |
-| To keep your own values when a vendor ships the next version of a Helm chart | Type `/confighub:install-mini` in Claude Code, then follow [a first run](docs/try-confighub-mini.md) | About 25 seconds to install; 15 minutes for the first run |
-| Agents that propose changes to production, which only a person you name can approve | For your own agents, on confighub mini; for a team, on your organization's ConfigHub ([approvals](docs/approvals.md)) | One command on confighub mini; a ConfigHub organization for a team |
+| Agents that propose changes to production, which only a person you name can approve | For your own agents, on confighub mini; for a team, on your organization's ConfigHub ([approvals](docs/approvals.md)) | One command on confighub mini, about 5 minutes; a ConfigHub organization for a team |
+| An agent in a sandbox or CI job with a hub of its own, that hands back a pull request with its reasons | See [agents in CI](ci/README.md) and [in CI or a sandbox](docs/ci-and-sandboxes.md) | One workflow file |
+| To keep your own values when a vendor ships the next version of a Helm chart, and see first what the new version changes | Type `/confighub:install-mini` in Claude Code, then follow [a first run](docs/try-confighub-mini.md) | About 25 seconds to install; 15 minutes for the first run |
 | Agents that run unattended for days, with a key of their own and a way to stop them at once | See [agents that run for weeks](docs/agents-that-run-for-weeks.md) | A ConfigHub organization |
 
 confighub mini uses the same commands as ConfigHub, so what you learn on your laptop works the same on your organization's ConfigHub ([how the commands map](docs/cub-mini-and-cub.md)). [From the plugin to ConfigHub](docs/from-plugin-to-confighub.md) follows one team through each step.
