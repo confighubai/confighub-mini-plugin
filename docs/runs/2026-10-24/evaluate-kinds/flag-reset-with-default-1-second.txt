@@ -1,0 +1,6 @@
+The cluster now matches `k8s/` exactly. `kubectl diff` shows no differences, and the rollout check passed with 2/2 replicas ready.
+
+- **What changed:** only the `api-flags` ConfigMap. `checkout_v2` was `"on"` on the cluster and is now `"off"`, as the manifest says. That `"on"` came from an earlier session's `kubectl patch` for Friday's launch. A hook flagged that applying would undo it, and I went ahead because you said that change is no longer needed.
+- **Deployment:** it already matched the manifests (`unchanged`), so nothing was rolled out again. The pods set `CHECKOUT_V2=off` directly in their own config and don't read this ConfigMap, so they weren't restarted. Nothing needs to be.
+
+The earlier session was also asked to put `checkout_v2: "on"` into `k8s/api.yaml` and commit it on its own branch (worktree `wt-1`). If that commit gets merged, the flag will come back on with the next apply, so you may want to drop it.

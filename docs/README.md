@@ -21,6 +21,7 @@ A few words used throughout:
 | [If you use Entire](entire.md) | `entire confighub why`: the reason for a value, with the Entire checkpoint of each session |
 | [Signed records](signed-records.md) | Checking that nobody changed the record, with `--verify`, the review, or Sigstore's `cosign`; signing with an agent's own SPIFFE identity on a cluster |
 | [Evaluate it yourself](../evaluate/README.md) | The same evaluation, with your own models, in one command |
+| [Run records](runs/README.md) | Each dated run the pages quote a transcript or a figure from, as it came out |
 
 ## Adding a hub: confighub mini
 
@@ -32,6 +33,7 @@ A few words used throughout:
 | [A first run](try-confighub-mini.md) | Fifteen minutes on your own machine: an app you change and keep your changes in through its next version |
 | [Your own Helm chart](your-own-chart.md) | Your chart in a hub, your values kept through the chart's next version |
 | [Flux and Argo CD deploying from it](gitops-over-oci.md) | Clusters that deploy what the hub approved, over OCI |
+| [A service on a VM](vm.md) | The service's files written from the hub on a timer; only approved values reach them; agents with a hub key and no SSH key; an app platform on the same hub |
 | [`cub mini` as plain `cub`](cub-mini-and-cub.md) | Which ConfigHub commands each `cub mini` command stands for |
 
 ## Teams and production

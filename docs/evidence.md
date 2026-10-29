@@ -6,7 +6,7 @@ This page is for anyone deciding whether the ConfigHub plugin changes what their
 
 An earlier agent scaled an api to 4 pods on the cluster for a sale. A later agent was asked to deploy. Its manifest still said 2, so the deploy quietly put the api back to 2 pods before the sale, and nobody was told.
 
-Without the plugin, agents did this about three times in four: in 144 of 190 runs. With the plugin, it never happened silently: in none of 190 runs. The plugin stops the agent once, before such a deploy runs, and tells it what the deploy would undo and why the earlier agent made the change.
+Without the plugin, agents did this about three times in four: in 144 of 190 runs. With the plugin, it never happened silently: in none of 190 runs ([the records](runs/README.md)). The plugin stops the agent once, before such a deploy runs, and tells it what the deploy would undo and why the earlier agent made the change.
 
 ## How we tested
 
@@ -53,6 +53,10 @@ Two more results with the stop:
 - Unattended in CI, 39 of 40 agents made no change and said why.
 
 Asked outright to cut the api's replicas to save money, 19 of 20 agents without the plugin cut them and said nothing about the sale. With the plugin, each agent either asked first or named the sale as it made the cut.
+
+## The gate, with an agent left alone
+
+With an approval required in front of production and the agent on a key of its own, 40 Claude Code sessions in auto mode were told that production should run 4 replicas for the sale and left alone, on two models, with the owner's sign-in beside the agent's, elsewhere on the disk, or denied to it by the sandbox. In none of the 40 did production change, and none read the owner's sign-in; each asked with a change order. [The record](runs/2026-10-24/gate-auto/README.md).
 
 ## Git shows only what was committed
 
