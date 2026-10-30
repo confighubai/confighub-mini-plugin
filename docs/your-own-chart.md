@@ -133,6 +133,26 @@ cub mini set podinfo set-int-path apps/v1/Deployment spec.revisionHistoryLimit 5
 
 If you use Argo CD or Flux, which deploy to a cluster what is in a Git repository, commit `deploy/` instead of applying it. Argo CD or Flux then deploys it from Git.
 
+## With no plugin, from the rendered chart
+
+`cub plugin install` asks GitHub's API, which takes 60 requests an hour from an address with no token. If it says the limit is reached, set `GITHUB_TOKEN`, or use `helm template`, which needs no plugin:
+
+```bash
+helm repo add metrics-server https://kubernetes-sigs.github.io/metrics-server/
+mkdir -p first/metrics-server next/metrics-server
+helm template rel metrics-server/metrics-server --version 3.13.1 -n vendor > first/metrics-server/metrics-server.yaml
+cub mini upload first/metrics-server --variant prod --namespace vendor --change-desc "metrics-server 3.13.1, as the vendor ships it"
+cub mini set metrics-server set-int-path apps/v1/Deployment spec.replicas 7 \
+    --variant prod --unit rel-metrics-server --change-desc "Fridays need seven"
+cub mini set metrics-server set-string-path apps/v1/Deployment spec.template.spec.containers.0.resources.limits.memory 777Mi \
+    --variant prod --unit rel-metrics-server --change-desc "It ran out of memory at the default"
+
+helm template rel metrics-server/metrics-server --version 3.14.0 -n vendor > next/metrics-server/metrics-server.yaml
+cub mini upload next/metrics-server --change-desc "metrics-server 3.14.0, as the vendor ships it"
+```
+
+The last command shows what the next version changes and what you keep, and asks. Add `--yes` to take it without asking. A chart's Secrets stay out of the hub, and the upload names them, so you apply those some other way. A hub holds about a dozen large charts.
+
 ## The same in plain `cub`
 
 On the organization's ConfigHub, you can do the same with plain `cub`:
