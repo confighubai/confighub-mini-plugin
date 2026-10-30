@@ -6,6 +6,8 @@ You don't change your prompts or add instructions. The record stays on your mach
 
 It is the same record wherever your agents run: in Claude Code, in Codex, in a CI job, in a sandbox, and for commands such as `kubectl` and `helm` that change a cluster directly. It is not tied to one agent product. And when you add a hub, each recorded change goes in as a revision with its reason (`cub mini copy --from-record`), so nothing is retyped.
 
+One page shows the first two problems below in real runs, where approval holds, and what is available today: [ConfigHub for AI agents](https://confighub.github.io/helm-expt/ai-agents/).
+
 ## What this is
 
 This is the open-source way in to [ConfigHub](https://docs.confighub.com) for people who work with AI agents. ConfigHub keeps configuration with every change, who made it and why, and lets a person approve what reaches production. There are three parts:
