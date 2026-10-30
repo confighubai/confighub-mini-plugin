@@ -45,6 +45,7 @@ Then, in any Claude Code session, you can ask:
 /confighub:changes              what the agent changed, and why
 /confighub:why replicas         every recorded change to one value, and why
 /confighub:inventory            what this repository deploys, and what deploys it
+/confighub:to-hub               the same record, into the ConfigHub your cub is signed in to
 ```
 
 There is no account to create and no server to run. The plugin is MIT-licensed.
@@ -141,6 +142,7 @@ A hub is a place where your configuration is kept, with every change, who made i
 | What you want | What to do | Effort |
 |---|---|---|
 | A comment on every pull request listing each configuration value it changes, and why | Add the review GitHub Action ([how](review/README.md)). Nobody needs to install anything. | One step in a workflow file |
+| What your agents changed, and why, in your organization's ConfigHub, with no hub on your laptop | Sign in with `cub auth login`, then type `/confighub:to-hub` ([Git, GitHub and a hub](docs/git-and-github.md)) | Two commands |
 | Agents that propose changes to production, which only a person you name can approve | For your own agents, on confighub mini; for a team, on your organization's ConfigHub ([approvals](docs/approvals.md)) | One command on confighub mini, about 5 minutes; a ConfigHub organization for a team |
 | An agent in a sandbox or CI job with a hub of its own, that hands back a pull request with its reasons | See [agents in CI](ci/README.md) and [in CI or a sandbox](docs/ci-and-sandboxes.md) | One workflow file |
 | To keep your own values when a vendor ships the next version of a Helm chart, and see first what the new version changes | Type `/confighub:install-mini` in Claude Code, then follow [a first run](docs/try-confighub-mini.md) | About 25 seconds to install; 15 minutes for the first run |
