@@ -42,6 +42,13 @@ GitHub's runners must reach the hub to run the check in the pull request's own j
 
 Or let the clusters deploy from the hub itself, over OCI, and keep Git for people to read ([GitOps over OCI](gitops-over-oci.md)).
 
-## What has not been shown
+## How it was tested
 
-- A merge refused by branch protection because the status failed. The status itself has been set, success and failure, on real pull requests.
+In [a scratch repository](https://github.com/monadic/branch-rule-check) whose `main` requires "ConfigHub: api-live", for administrators too, with the check run from the approver's laptop:
+
+| Pull request | Its status | The merge |
+|---|---|---|
+| The approved copy, written out from the hub | success | merged |
+| The same, with 6 replicas typed in by hand | failure: `Deployment/api/spec.replicas is 6 here, 4 in the hub` | refused |
+| A change the check never ran on | none | refused |
+| The 6 replicas again, merged by the repository's owner with administrator rights | failure | refused: `Required status check "ConfigHub: api-live" is failing.` |
