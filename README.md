@@ -47,6 +47,7 @@ Then, in any Claude Code session, you can ask:
 /confighub:changes              what the agent changed, and why
 /confighub:why replicas         every recorded change to one value, and why
 /confighub:inventory            what this repository deploys, and what deploys it
+/confighub:permissions          what your agents may run, which rules were used, and a narrower set
 /confighub:to-hub               the same record, into the ConfigHub your cub is signed in to
 ```
 
@@ -124,9 +125,10 @@ When you are done, delete the folder. Its record is kept in `~/.confighub/agent-
 
 ## What it records
 
-- **Values in configuration files**: Kubernetes files, Helm values, Kustomize, Compose, GitHub Actions workflows, settings files such as `.env`, Terraform variables, and agent configuration such as `CLAUDE.md`. It records the change whether the agent used its edit tool or a shell command such as `sed`.
-- **Commands that change a cluster or a deployment**: `kubectl`, `helm`, `argocd`, `flux`, `terraform`, `tofu`, `cub` and `nvkectl`, with the values they set.
+- **Values in configuration files**: Kubernetes files, Helm values, Kustomize, Compose, GitHub Actions workflows, settings files such as `.env`, Terraform files and variables, Dockerfiles, and agent configuration such as `CLAUDE.md`. For a `.tf` file or a Dockerfile, the record says the file changed, not each value. It records the change whether the agent used its edit tool or a shell command such as `sed`.
+- **Commands that change a cluster or a deployment**: `kubectl`, `helm`, `argocd`, `flux`, `terraform`, `tofu`, `cub` and `nvkectl`, with the values they set, and changes made with `aws`, `gcloud`, `az`, `docker`, `gh` and `vercel`.
 - **Why**: the request the agent was given, and the reason it gave, when you ask agents to give one.
+- **What agents may do**: one line tells you when a permission rule, an MCP server, a hook or an instruction file changes, including when you click "don't ask again".
 - **What it cost**: each turn's model calls and tokens, so you can see what a change cost and which sessions cost the most ([model use](docs/how-it-works.md#model-use)).
 
 Each turn of the record is signed when it ends, so you can check later that nobody changed it. An agent on a cluster can sign with its own workload identity, so the record names the agent that made each change ([signed records](docs/signed-records.md)).
