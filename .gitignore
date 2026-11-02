@@ -1,0 +1,2 @@
+plugins/confighub/bin/confighub-*-*
+!plugins/confighub/bin/confighub-*-*.gz

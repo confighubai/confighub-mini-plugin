@@ -8,8 +8,23 @@ case "$(uname -m)" in
   arm64|aarch64) arch=arm64 ;;
   *) arch=$(uname -m) ;;
 esac
-if [ -x "$here/confighub-$os-$arch" ]; then
-  exec "$here/confighub-$os-$arch" "$@"
+program=$here/confighub-$os-$arch
+# The programs are kept compressed, four platforms being carried for the one that
+# runs. This machine's is unpacked once, beside them or, where the plugin's folder
+# cannot be written, in the person's own configuration.
+if [ ! -x "$program" ] && [ -f "$program.gz" ]; then
+  if ! { gzip -dc "$program.gz" > "$program.$$" && chmod +x "$program.$$" && mv -f "$program.$$" "$program"; } 2>/dev/null; then
+    rm -f "$program.$$" 2>/dev/null
+    sum=$(cksum < "$program.gz" | cut -d' ' -f1)
+    dir=${CUB_CONFIG:-$HOME/.confighub}/plugin-programs
+    program=$dir/confighub-$os-$arch-$sum
+    if [ ! -x "$program" ]; then
+      mkdir -p "$dir" && gzip -dc "$here/confighub-$os-$arch.gz" > "$program.$$" && chmod +x "$program.$$" && mv -f "$program.$$" "$program"
+    fi
+  fi
+fi
+if [ -x "$program" ]; then
+  exec "$program" "$@"
 fi
 if [ -x "$here/../../bin/confighub-mini-app" ]; then
   exec "$here/../../bin/confighub-mini-app" "$@"
