@@ -24,6 +24,16 @@
     ],
     "PreToolUse": [
       {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "[ ! -e \"${CUB_MINI_HALT_FILE:-$HOME/.confighub/halt}\" ] || printf '%s' '{\"continue\": false, \"stopReason\": \"Stopped by the person: ~/.confighub/halt exists. Stop this work. The person removes that file to let agents run again; if the person asks for something later, try it, and this hook refuses if the stop is still on.\", \"hookSpecificOutput\": {\"hookEventName\": \"PreToolUse\", \"permissionDecision\": \"deny\", \"permissionDecisionReason\": \"Stopped by the person: ~/.confighub/halt exists. Stop this work. The person removes that file to let agents run again; if the person asks for something later, try it, and this hook refuses if the stop is still on.\"}}'",
+            "timeout": 5
+          }
+        ]
+      },
+      {
         "matcher": "Bash",
         "hooks": [
           {

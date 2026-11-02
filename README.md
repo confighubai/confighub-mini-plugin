@@ -47,6 +47,7 @@ Then, in any Claude Code session, you can ask:
 /confighub:changes              what the agent changed, and why
 /confighub:why replicas         every recorded change to one value, and why
 /confighub:inventory            what this repository deploys, and what deploys it
+/confighub:permissions          what your agents may run, which rules were used, and a narrower set
 /confighub:to-hub               the same record, into the ConfigHub your cub is signed in to
 ```
 
@@ -122,16 +123,25 @@ You need Claude Code and Git.
 
 When you are done, delete the folder. Its record is kept in `~/.confighub/agent-changes` and removed after 30 days without use.
 
+To stop every Claude Code session with the plugin at its next tool call, make a file from any terminal, and remove it to let them run again:
+
+```
+touch ~/.confighub/halt
+```
+
+A process an agent already started keeps running, and credentials on your machine stay valid.
+
 ## What it records
 
-- **Values in configuration files**: Kubernetes files, Helm values, Kustomize, Compose, GitHub Actions workflows, settings files such as `.env`, Terraform variables, and agent configuration such as `CLAUDE.md`. It records the change whether the agent used its edit tool or a shell command such as `sed`.
-- **Commands that change a cluster or a deployment**: `kubectl`, `helm`, `argocd`, `flux`, `terraform`, `tofu`, `cub` and `nvkectl`, with the values they set.
+- **Values in configuration files**: Kubernetes files, Helm values, Kustomize, Compose, GitHub Actions workflows, settings files such as `.env`, Terraform files and variables, Dockerfiles, and agent configuration such as `CLAUDE.md`. For a `.tf` file or a Dockerfile, the record says the file changed, not each value. It records the change whether the agent used its edit tool or a shell command such as `sed`.
+- **Commands that change a cluster or a deployment**: `kubectl`, `helm`, `argocd`, `flux`, `terraform`, `tofu`, `cub` and `nvkectl`, with the values they set, and changes made with `aws`, `gcloud`, `az`, `docker`, `gh` and `vercel`.
 - **Why**: the request the agent was given, and the reason it gave, when you ask agents to give one.
+- **What agents may do**: one line tells you when a permission rule, an MCP server, a hook or an instruction file changes, including when you click "don't ask again".
 - **What it cost**: each turn's model calls and tokens, so you can see what a change cost and which sessions cost the most ([model use](docs/how-it-works.md#model-use)).
 
 Each turn of the record is signed when it ends, so you can check later that nobody changed it. An agent on a cluster can sign with its own workload identity, so the record names the agent that made each change ([signed records](docs/signed-records.md)).
 
-It never keeps a command's output, a copy of a file, or anything that looks like a password, key or token. It adds about 15 milliseconds to each tool call. Nothing leaves your machine unless you turn on a setting that sends it somewhere, such as a pull request or your OpenTelemetry collector.
+It never keeps a command's output, a copy of a file, or anything that looks like a password, key or token. It adds about 15 milliseconds to each tool call. Nothing leaves your machine unless you turn on a setting that sends it somewhere, such as a pull request or your OpenTelemetry collector. A log of which features you used on which days stays here too, and `/confighub:to-hub --usage` shows it and loads it into a hub if you choose.
 
 [How it works](docs/how-it-works.md) covers what the agent is told and when, every setting, and how to keep the record out of the agent's reach. [What we do not claim](docs/limits.md) covers what it does not do.
 

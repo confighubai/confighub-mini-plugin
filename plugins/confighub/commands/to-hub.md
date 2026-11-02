@@ -1,7 +1,7 @@
 ---
 description: Copy what agents changed here, and why, into the ConfigHub your cub is signed in to
 disable-model-invocation: true
-argument-hint: "[--yes] [--context NAME]"
+argument-hint: "[--usage] [--yes] [--context NAME]"
 allowed-tools: Bash("${CLAUDE_PLUGIN_ROOT}/bin/confighub":*)
 ---
 
