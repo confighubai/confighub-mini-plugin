@@ -123,6 +123,14 @@ You need Claude Code and Git.
 
 When you are done, delete the folder. Its record is kept in `~/.confighub/agent-changes` and removed after 30 days without use.
 
+To stop every Claude Code session with the plugin at its next tool call, make a file from any terminal, and remove it to let them run again:
+
+```
+touch ~/.confighub/halt
+```
+
+A process an agent already started keeps running, and credentials on your machine stay valid.
+
 ## What it records
 
 - **Values in configuration files**: Kubernetes files, Helm values, Kustomize, Compose, GitHub Actions workflows, settings files such as `.env`, Terraform files and variables, Dockerfiles, and agent configuration such as `CLAUDE.md`. For a `.tf` file or a Dockerfile, the record says the file changed, not each value. It records the change whether the agent used its edit tool or a shell command such as `sed`.
