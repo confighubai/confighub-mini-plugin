@@ -49,7 +49,7 @@ Then, in any Claude Code session, you can ask:
 /confighub:inventory            what this repository deploys, and what deploys it
 /confighub:permissions          what your agents may run, which rules were used, and a narrower set
 /confighub:checks               how closely MCP tool calls are watched: off, log, warn, repeats or ask
-/confighub:to-hub               the same record, into the ConfigHub your cub is signed in to
+/confighub:to-hub               the same record, MCP calls too, into the ConfigHub your cub is signed in to
 ```
 
 There is no account to create and no server to run. The plugin is MIT-licensed.
