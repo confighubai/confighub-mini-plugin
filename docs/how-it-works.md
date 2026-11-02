@@ -46,6 +46,24 @@ The agent then decides what to do. Usually it asks you. If it runs the same comm
 
 `CUB_MINI_STOP_BEFORE_UNDO=0` turns the stop off.
 
+## How closely MCP calls are watched
+
+An agent can change things through an MCP tool with no file or shell command to show for it: a refund, a database row, an issue. `/confighub:checks` shows how much the plugin does about these calls in this folder, and `/confighub:checks LEVEL` changes it. Each level adds to the one before:
+
+| Level | What happens |
+|---|---|
+| `off` | Nothing is kept of MCP calls. |
+| `log` | Each call is in the record, with the request behind it. This is where you start. |
+| `warn` | You also see one line when a call changes something. |
+| `repeats` | An agent about to repeat an earlier change is also held back once, and told when it was made and what was asked. If it should still be made, the agent makes the same call again. |
+| `ask` | You are also asked before each call that changes something, and shown any earlier one, even if a rule allows the tool. |
+
+What to expect from it:
+
+- Whether a tool changes something is told from its name. A name that does not clearly read counts as a change, and a tool named as a read that writes is missed.
+- `repeats` recognizes only identical arguments, apart from credentials and free text such as a reason. It works on a tool that takes a charge and an amount. It often misses a tool that takes a shell command or SQL, because an agent words these differently each time, and a refund of another amount is not a repeat.
+- These checks help a willing agent and inform you. An agent able to change the setting or turn off hooks can get past them. They do not cover Codex.
+
 ## Changes made by commands
 
 A value set on the command line is recorded too. It is recorded under the name it would have in a file. The plugin reads values from these commands:
@@ -107,6 +125,7 @@ You set each setting in Claude Code's settings, under `env`.
 | `CUB_MINI_ASK_REASONS=1` | Asks the agent for a reason for each value it sets, in its own answer. | When you want a reason beside every value, including values set by commands. Turn it on with `CUB_MINI_RECORD_IN_REPO=1`, since a record kept in the repository has reasons but never the requests. |
 | `CUB_MINI_PULL_REQUEST=1` | Adds the record and its reasons to each pull request the agent opens with `gh`. | When reviewers should see what the agent changed and why, or the record must outlive a sandbox. |
 | `CUB_MINI_RECORD_IN_REPO=1` | Adds the record to each commit the agent makes, as `.cub-mini/changes/SESSION.record`, readable from any checkout. When the agent commits in the same command that changed a file, the record is staged for the next commit. The file ends in `.record` so that Argo CD and Flux, syncing the repository, leave it alone. | When the record must outlive a sandbox, or be read from other checkouts, by the [pull-request review](../review/README.md) or by [Entire](entire.md). |
+| `CUB_MINI_CHECKS=LEVEL` | Sets [how closely MCP calls are watched](#how-closely-mcp-calls-are-watched) in every folder, over a folder's own choice: `off`, `log`, `warn`, `repeats` or `ask`. | When you want one level everywhere |
 | `CUB_MINI_STOP_BEFORE_UNDO=0` | Turns off the stop before a deploy that would undo another agent's change on the cluster. The agent is then told only after the command has run. | When you do not want commands held back. |
 | `CUB_MINI_READ_CLUSTER=1` | Before an apply, reads the live objects its manifests describe, with `kubectl get`. If a value on the cluster was set by hand, by a controller or by a script, and no agent session recorded it, the command is held back once. | When values on the cluster are also changed outside agent sessions. It is off by default because it reads the cluster before each apply. |
 | `CUB_MINI_SIGN=0` | Turns off signing the record. Signing is on by default: each turn is signed, at a cost of about a millisecond ([signed records](signed-records.md)). | When you do not need to check that the record was not changed. |
