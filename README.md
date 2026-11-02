@@ -48,6 +48,7 @@ Then, in any Claude Code session, you can ask:
 /confighub:why replicas         every recorded change to one value, and why
 /confighub:inventory            what this repository deploys, and what deploys it
 /confighub:permissions          what your agents may run, which rules were used, and a narrower set
+/confighub:checks               how closely MCP tool calls are watched: off, log, warn, repeats or ask
 /confighub:to-hub               the same record, into the ConfigHub your cub is signed in to
 ```
 
@@ -131,8 +132,11 @@ touch ~/.confighub/halt
 
 A process an agent already started keeps running, and credentials on your machine stay valid.
 
+To say how closely MCP calls are watched in a folder, use `/confighub:checks`. At `repeats`, an agent about to repeat an earlier change, such as refunding a charge again, is held back once and told of it. At `ask`, you are asked before each call that changes something. See [how it works](docs/how-it-works.md#how-closely-mcp-calls-are-watched).
+
 ## What it records
 
+- **MCP tool calls**: the server, the tool and its arguments, with credentials taken out and the request behind it. A refund or a database change is in the record, though no file changed. The tool's output is not kept.
 - **Values in configuration files**: Kubernetes files, Helm values, Kustomize, Compose, GitHub Actions workflows, settings files such as `.env`, Terraform files and variables, Dockerfiles, and agent configuration such as `CLAUDE.md`. For a `.tf` file or a Dockerfile, the record says the file changed, not each value. It records the change whether the agent used its edit tool or a shell command such as `sed`.
 - **Commands that change a cluster or a deployment**: `kubectl`, `helm`, `argocd`, `flux`, `terraform`, `tofu`, `cub` and `nvkectl`, with the values they set, and changes made with `aws`, `gcloud`, `az`, `docker`, `gh` and `vercel`.
 - **Why**: the request the agent was given, and the reason it gave, when you ask agents to give one.

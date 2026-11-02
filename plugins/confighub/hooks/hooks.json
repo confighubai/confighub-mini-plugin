@@ -34,7 +34,7 @@
         ]
       },
       {
-        "matcher": "Bash",
+        "matcher": "Bash|mcp__.*",
         "hooks": [
           {
             "type": "command",
@@ -46,7 +46,7 @@
     ],
     "PostToolUse": [
       {
-        "matcher": "Edit|Write|MultiEdit|Bash|Read|Grep",
+        "matcher": "Edit|Write|MultiEdit|Bash|Read|Grep|mcp__.*",
         "hooks": [
           {
             "type": "command",
@@ -58,7 +58,7 @@
     ],
     "PostToolUseFailure": [
       {
-        "matcher": "Bash",
+        "matcher": "Bash|mcp__.*",
         "hooks": [
           {
             "type": "command",
