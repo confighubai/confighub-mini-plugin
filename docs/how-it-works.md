@@ -55,13 +55,15 @@ An agent can change things through an MCP tool with no file or shell command to 
 | `off` | Nothing is kept of MCP calls. |
 | `log` | Each call is in the record, with the request behind it. This is where you start. |
 | `warn` | You also see one line when a call changes something. |
-| `repeats` | An agent about to repeat an earlier change is also held back once, and told when it was made and what was asked. If it should still be made, the agent makes the same call again. |
+| `repeats` | The first call this session to a tool earlier sessions changed things with is also held back once, and the agent is told when and what was asked. If it should still be made, the agent makes the call again. |
 | `ask` | You are also asked before each call that changes something, and shown any earlier one, even if a rule allows the tool. |
 
 What to expect from it:
 
 - Whether a tool changes something is told from its name. A name that does not clearly read counts as a change, and a tool named as a read that writes is missed.
-- `repeats` recognizes only identical arguments, apart from credentials and free text such as a reason. It works on a tool that takes a charge and an amount. It often misses a tool that takes a shell command or SQL, because an agent words these differently each time, and a refund of another amount is not a repeat.
+- At every level from `log`, an agent's first call to a server is followed by what earlier sessions changed through it.
+- `repeats` tells a willing agent and does not forbid. With a tool that takes a shell command or SQL, half of the agents went ahead once told, each saying so. To decide yourself, use `ask`.
+- `/confighub:permissions` narrows a rule for a whole server, such as `mcp__payments__*`, to the tools that read and were used. That holds in Claude Code's default permission mode. In auto mode, Claude Code's own check decides and a rule taken away does not stop a call, so use `ask`.
 - These checks help a willing agent and inform you. An agent able to change the setting or turn off hooks can get past them. They do not cover Codex.
 
 ## Changes made by commands
