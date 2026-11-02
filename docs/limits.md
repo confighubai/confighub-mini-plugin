@@ -42,6 +42,8 @@ The **plugin** runs in your Claude Code or Codex sessions and keeps a **record**
   - Why each value is set is kept by value, across sessions.
   - An approval is given in the hub by a named person, of the exact revision. It gates what the hub delivers. Written out for Git, it can be required on the pull request with `cub mini copy --check-git --github-status`. Where Git is what deploys, CODEOWNERS gives an approval of an exact commit too.
 
+- **`CUB_MINI_ASK_REASONS=1` can show a message that reads like an error.** When an agent leaves out its reasons, the plugin's Stop hook asks for them, and Claude Code shows that as "Stop hook error". Nothing has gone wrong, and the reasons are kept. This happened once in five runs.
+
 ## What the plugin does not see
 
 **A change on the cluster that no agent session made.** That includes a person's `kubectl edit` or `kubectl scale`, a controller's write, Argo CD's self-heal, and a change made through an MCP server. By default, the plugin learns of cluster changes only from the commands it records. It does not read the cluster.
