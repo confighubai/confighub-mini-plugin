@@ -17,6 +17,7 @@ A few words used throughout:
 | [The evidence](evidence.md) | What agents did with the plugin and without it, in hundreds of real sessions, quoted as they wrote it |
 | [The pull-request review](../review/README.md) | A comment on each pull request with every configuration value it changes, and why; no install, no account |
 | [Git, GitHub and a hub](git-and-github.md) | What the plugin does with Git and GitHub, a hub with no confighub mini (`/confighub:to-hub`), and a hub beside Git with branch protection |
+| [Working with the tools you already have](integrations.md) | What the plugin does with each tool, how to set it up, and how far it has been run |
 | [In CI or a sandbox](ci-and-sandboxes.md) | The plugin in a job or a container, and keeping its record when the sandbox goes |
 | [In Codex](codex.md) | Setting it up in Codex, which runs only the hooks in its own configuration |
 | [If you use Entire](entire.md) | `entire confighub why`: the reason for a value, with the Entire checkpoint of each session |
