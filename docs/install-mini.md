@@ -45,7 +45,7 @@ On Linux you need `curl` and `xz`. On Debian or Ubuntu, install them with `apt-g
 1. Set the version, and work out the package name for your machine. Run the next steps in the same shell, since they use `V` and `P`:
 
    ```bash
-   V=0.9.0-mini.21
+   V=0.9.0-mini.22
    P=$(uname -s | tr A-Z a-z)-$(uname -m | sed 's/x86_64/amd64/; s/aarch64/arm64/')
    ```
 
