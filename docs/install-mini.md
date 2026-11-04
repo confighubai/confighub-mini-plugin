@@ -128,7 +128,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates
 RUN useradd -m agent
 USER agent
 WORKDIR /home/agent
-ARG V=0.9.0-mini.10
+ARG V=0.9.0-mini.23
 RUN P=linux-$(uname -m | sed 's/x86_64/amd64/; s/aarch64/arm64/') \
  && curl -fsSLO https://github.com/confighubai/confighub-mini-plugin/releases/download/mini-v$V/confighub-mini-$V-$P.tar.xz \
  && curl -fsSLO https://github.com/confighubai/confighub-mini-plugin/releases/download/mini-v$V/SHA256SUMS \
