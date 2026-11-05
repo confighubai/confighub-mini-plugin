@@ -169,19 +169,20 @@ These are the same steps with `cub` alone. If confighub mini is installed, `cub 
 
    To let several people approve, give several user IDs, separated by `;`.
 
-3. Give the agent a service account of its own. Signed in as you, an agent could approve its own change. This service account may change the base, and may only read the live copy:
+3. Give the agent a service account of its own. Signed in as you, an agent could approve its own change. This service account may change the base. On the live copy it may read, and send a change order, which is all `Use` gives it: it still cannot write the live copy, approve, or promote:
 
    ```bash
    cub serviceaccount create bot
    cub space update api-base --permission Edit:serviceaccount:bot --permission EditChildren:serviceaccount:bot \
      --permission View:serviceaccount:bot --permission ViewChildren:serviceaccount:bot
-   cub space update api-live --permission View:serviceaccount:bot --permission ViewChildren:serviceaccount:bot
+   cub space update api-live --permission View:serviceaccount:bot --permission ViewChildren:serviceaccount:bot \
+     --permission Use:serviceaccount:bot --permission UseChildren:serviceaccount:bot
    cub space update workflows --permission View:serviceaccount:bot --permission ViewChildren:serviceaccount:bot \
      --permission UseChildren:serviceaccount:bot
    cub component update api --permission View:serviceaccount:bot
    ```
 
-4. Make the agent's key, and sign the agent in with it, in a `cub` configuration of its own. Its sessions then cannot use yours:
+4. Make the agent's key, and sign the agent in with it, in a `cub` configuration of its own. Its sessions then cannot use yours. On hosted ConfigHub, use `cub` v0.10.7 or later: an earlier `cub` cannot sign in with a key there:
 
    ```bash
    cub serviceaccount key add bot --generate bot
@@ -232,8 +233,8 @@ An approval covers the exact revision. If the agent changes the value again, the
 
 To take the agent's access away at once, remove its rights first, then delete its service account.
 
-1. Remove each right that step 3 gave it, with `--permission=-Edit:serviceaccount:bot` and so on. Use `cub space update api-base`, `cub space update api-live`, `cub space update workflows` and `cub component update api`.
-2. Delete the service account with `cub serviceaccount delete bot`.
+1. Remove each right that step 3 gave it, with `--permission=-Edit:serviceaccount:bot` and so on. Use `cub space update api-base`, `cub space update api-live`, `cub space update workflows` and `cub component update api`. A session the agent already has open is refused from its next request.
+2. Delete the service account with `cub serviceaccount delete bot`. Its key can no longer sign in. Do step 1 first: deleting the service account alone leaves a session it already has open able to write until that session expires.
 
 The order matters. Deleting the service account alone refuses its key, but leaves its rights in place. A session it has already signed in then keeps working for up to 24 hours.
 
@@ -307,6 +308,6 @@ confighub-mini mini copy api --variant live --check-git deploy/api --github-stat
 
 ## How these steps were tested
 
-Every command on this page was run as written, on confighub mini and on hosted ConfigHub, both ConfigHub v0.9.0. The pull-request check was run against hosted ConfigHub, signed in with only its view key. It passed on the approved copy, and failed on a commit with a value nobody approved. The key could not create anything. The workflow has also run in a GitHub repository, setting the status on each commit.
+Every command on this page was run as written, on confighub mini (ConfigHub v0.9.0) and on hosted ConfigHub (v0.10.7, with `cub` v0.10.7). On hosted ConfigHub, 16 ways around the approval were also tried, from the agent approving itself to it forcing past the gate, and each was refused. The pull-request check was run against hosted ConfigHub, signed in with only its view key. It passed on the approved copy, and failed on a commit with a value nobody approved. The key could not create anything. The workflow has also run in a GitHub repository, setting the status on each commit.
 
 More on ChangeWorkflows, change orders and attestations: [docs.confighub.com](https://docs.confighub.com).
