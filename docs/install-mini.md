@@ -169,6 +169,8 @@ Things to know:
 
 Each package has a `provenance.json` file. It names the ConfigHub release the package was built from, and the PostgreSQL build inside it, with that build's SHA-256.
 
+The package includes `cub` v0.10.7, and every `cub mini` command runs that one, whichever `cub` comes first on your `PATH`. If you type plain `cub` commands with a `cub` of your own, v0.9.0 or later works with a hub from this package. To sign in with a key to hosted ConfigHub, which runs v0.10.7, use v0.10.7: v0.9.0 is refused there with "Not Found".
+
 The features of a hub are ConfigHub's own, not a separate version of them. That includes approvals, and ChangeWorkflows, which say what a change needs before it goes ahead, such as a person's approval. The steps for approvals are in [approvals.md](approvals.md).
 
 ## Report a problem
