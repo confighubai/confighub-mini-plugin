@@ -170,3 +170,13 @@ Things to know:
 Each package has a `provenance.json` file. It names the ConfigHub release the package was built from, and the PostgreSQL build inside it, with that build's SHA-256.
 
 The features of a hub are ConfigHub's own, not a separate version of them. That includes approvals, and ChangeWorkflows, which say what a change needs before it goes ahead, such as a person's approval. The steps for approvals are in [approvals.md](approvals.md).
+
+## Report a problem
+
+Open an issue in [confighubai/confighub-mini-plugin](https://github.com/confighubai/confighub-mini-plugin/issues). It helps to include:
+
+- the package folder's name, which gives its version and platform, such as `confighub-mini-0.10.7-mini.2-darwin-arm64`;
+- what `cub version` prints, which names the hub's server version too;
+- the command you ran, and what it printed.
+
+Leave out keys, tokens and passwords. `cub version` prints none.
