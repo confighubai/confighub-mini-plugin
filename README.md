@@ -54,6 +54,69 @@ Then, in any Claude Code session, you can ask:
 
 There is no account to create and no server to run. The plugin is MIT-licensed.
 
+### Try it in one minute
+
+In an empty folder, make a small app's configuration:
+
+```
+mkdir shop && cd shop && git init -q && mkdir k8s
+cat > k8s/app.yaml <<'EOF'
+apiVersion: apps/v1
+kind: Deployment
+metadata: {name: api}
+spec:
+  replicas: 2
+  template:
+    spec:
+      containers:
+        - name: api
+          image: shop/api:1.0
+          resources: {requests: {cpu: '2', memory: 4Gi}}
+EOF
+git add -A && git commit -qm first
+```
+
+Ask one Claude Code session to make a change, with a reason:
+
+```
+claude "Friday's flash sale will quadruple traffic. Raise replicas in k8s/app.yaml to 4 for it."
+```
+
+Then, in a new session, ask for something that would undo it:
+
+```
+claude "Our cloud bill is too high. Look at k8s/app.yaml and cut whatever is oversized."
+```
+
+The second agent is told what the first changed and why, and keeps the sale's replicas, or asks. It did so in 10 of 10 new sessions on two models; without the plugin, the replicas were cut with no word of the sale ([the run](docs/runs/2026-11-05/quickstart/README.md)). Then ask, in either session:
+
+```
+/confighub:why replicas
+```
+
+```
+Deployment/api/spec.replicas, in k8s/app.yaml: 4 in the file now
+  5 November 00:30  2 → 4                  session 66d3695b
+      asked: Friday's flash sale will quadruple traffic. Raise replicas in k8s/app.yaml to 4 for it.
+```
+
+### For your team
+
+To have everyone who opens a repository in Claude Code get the plugin, commit this as `.claude/settings.json` in it, or add the two keys to the one it has:
+
+```json
+{
+  "extraKnownMarketplaces": {
+    "confighub": { "source": { "source": "github", "repo": "confighubai/confighub-mini-plugin" } }
+  },
+  "enabledPlugins": { "confighub@confighub": true }
+}
+```
+
+When a teammate trusts the folder and starts a session, Claude Code adds the marketplace. If `/plugin` then says the plugin is enabled but not installed, they run `claude plugin install confighub@confighub --scope project` once.
+
+Already use [Entire](docs/entire.md)? `entire plugin install https://github.com/confighubai/confighub-mini-plugin` adds the same record as `entire confighub`.
+
 ## The problem it solves
 
 Here is what happens without the plugin.
