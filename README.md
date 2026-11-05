@@ -210,18 +210,18 @@ A hub is a place where your configuration is kept, with every change, who made i
 
 | What you want | What to do | Effort |
 |---|---|---|
-| A comment on every pull request listing each configuration value it changes, and why | Add the review GitHub Action ([how](review/README.md)). Nobody needs to install anything. | One step in a workflow file |
+| A comment on every pull request listing each configuration value it changes, and why | Add the review GitHub Action ([how](review/README.md)) | One step in a workflow file |
 | What your agents changed, and why, in your organization's ConfigHub, with no hub on your laptop | Sign in with `cub auth login`, then type `/confighub:to-hub` ([Git, GitHub and a hub](docs/git-and-github.md)) | Two commands |
 | Agents that propose changes to production, which only a person you name can approve | For your own agents, on confighub mini; for a team, on your organization's ConfigHub ([approvals](docs/approvals.md)) | One command on confighub mini, about 5 minutes; a ConfigHub organization for a team |
 | An agent in a sandbox or CI job with a hub of its own, that hands back a pull request with its reasons | See [agents in CI](ci/README.md) and [in CI or a sandbox](docs/ci-and-sandboxes.md) | One workflow file |
-| To keep your own values when a vendor ships the next version of a Helm chart, and see first what the new version changes | Type `/confighub:install-mini` in Claude Code, then follow [a first run](docs/try-confighub-mini.md) | About 25 seconds to install; 15 minutes for the first run |
+| To keep your own values through a vendor's next version of a Helm chart, and see first what it changes | Type `/confighub:install-mini` in Claude Code, then follow [a first run](docs/try-confighub-mini.md) | About 25 seconds to install; 15 minutes for the first run |
 | Agents that run unattended for days, with a key of their own and a way to stop them at once | See [agents that run for weeks](docs/agents-that-run-for-weeks.md) | A ConfigHub organization |
 
-confighub mini uses the same commands as ConfigHub, so what you learn on your laptop works the same on your organization's ConfigHub ([how the commands map](docs/cub-mini-and-cub.md)). [From the plugin to ConfigHub](docs/from-plugin-to-confighub.md) follows one team through each step.
+confighub mini uses the same commands as ConfigHub, so what you learn on your laptop works on your organization's ConfigHub too ([how the commands map](docs/cub-mini-and-cub.md)). [From the plugin to ConfigHub](docs/from-plugin-to-confighub.md) follows one team through each step.
 
 ## Documentation
 
-Every page, grouped by what you are doing, is listed in [docs/README.md](docs/README.md).
+Every page, grouped by what you are doing, is listed in [docs/README.md](docs/README.md). Report a problem as [an issue](https://github.com/confighubai/confighub-mini-plugin/issues): what you ran, and what it printed.
 
 ## License
 
