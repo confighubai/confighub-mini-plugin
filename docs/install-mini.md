@@ -45,7 +45,7 @@ On Linux you need `curl` and `xz`. On Debian or Ubuntu, install them with `apt-g
 1. Set the version, and work out the package name for your machine. Run the next steps in the same shell, since they use `V` and `P`:
 
    ```bash
-   V=0.9.0-mini.23
+   V=0.10.7-mini.1
    P=$(uname -s | tr A-Z a-z)-$(uname -m | sed 's/x86_64/amd64/; s/aarch64/arm64/')
    ```
 
@@ -107,6 +107,17 @@ On Linux you need `curl` and `xz`. On Debian or Ubuntu, install them with `apt-g
 
 The package's `START-HERE.txt` lists ten stories you can run on the hub. For a guided first run, see [Try confighub mini](try-confighub-mini.md).
 
+To update to a later confighub mini, do steps 1 to 5 with the new version. Then, in the new package's folder, swap the `cub mini` commands for its own, and put its `cub` first on your path:
+
+```bash
+./bin/cub plugin list
+./bin/cub plugin uninstall confighub-mini-OLD-VERSION-PLATFORM
+./bin/cub plugin install .
+export PATH="$PWD/bin:$PATH"
+```
+
+Use the plugin name `cub plugin list` shows. The next `cub mini` command moves your hub onto the new package's server. Your work, its history and your approvals are kept. A copy of the hub's data from before the move is kept in the hub's folder, as `pgdata-before-...`. If you installed with `/confighub:install-mini`, type it again: it does all of this for you.
+
 To remove the hub and its data:
 
 ```bash
@@ -128,7 +139,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates
 RUN useradd -m agent
 USER agent
 WORKDIR /home/agent
-ARG V=0.9.0-mini.23
+ARG V=0.10.7-mini.1
 RUN P=linux-$(uname -m | sed 's/x86_64/amd64/; s/aarch64/arm64/') \
  && curl -fsSLO https://github.com/confighubai/confighub-mini-plugin/releases/download/mini-v$V/confighub-mini-$V-$P.tar.xz \
  && curl -fsSLO https://github.com/confighubai/confighub-mini-plugin/releases/download/mini-v$V/SHA256SUMS \

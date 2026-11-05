@@ -4,7 +4,7 @@ When an AI agent changes your configuration, such as the replicas in a Kubernete
 
 You don't change your prompts or add instructions. The record stays on your machine.
 
-It is the same record wherever your agents run: in Claude Code, in Codex, in a CI job, in a sandbox, and for commands such as `kubectl` and `helm` that change a cluster directly. It is not tied to one agent product. And when you add a hub, each recorded change goes in as a revision with its reason (`cub mini copy --from-record`), so nothing is retyped.
+It is the same record wherever your agents run: in Claude Code, in Codex, in a CI job, in a sandbox, and for commands such as `kubectl` and `helm` that change a cluster directly. And when you add a hub, each recorded change goes in as a revision with its reason (`cub mini copy --from-record`), so nothing is retyped.
 
 One page shows the first two problems below in real runs, where approval holds, and what is available today: [ConfigHub for AI agents](https://confighub.github.io/helm-expt/ai-agents/).
 
@@ -137,7 +137,7 @@ With the plugin, the second agent was told about the 4 before it made its change
 
 > **This change undoes an earlier one.** The file already had an uncommitted change that raised replicas from 2 to 4. A session earlier today made it, with this request: *"Friday's flash sale will quadruple traffic to the api: give it 4 replicas."* So 1 replica is below even the committed value of 2, and it would leave the api with a single pod on Friday.
 
-The same thing happens on a cluster. An agent asked only to deploy, or to add a setting and apply it, will quietly put back values that another agent changed for a reason. In our tests that happened three times in four. In the sale example, the api went back to 2 pods before the sale, and nobody was told. With the plugin it never happened silently. The plugin stopped the deploy once and said why the 4 was there. The agent then asked you, or, with nobody to ask, left the value alone and said why. [How we tested this](docs/evidence.md).
+The same thing happens on a cluster. An agent asked only to deploy, or to add a setting and apply it, puts back values another agent changed for a reason: three times in four in our tests, with nobody told. With the plugin it never happened silently: the agent asked you, or, with nobody to ask, left the value alone and said why. [How we tested this](docs/evidence.md).
 
 ## Try it in five minutes
 
@@ -163,17 +163,7 @@ You need Claude Code and Git.
 
    `Is the cache set up right for the sale?`
 
-   Git shows only `LOG_LEVEL warn → debug`, so without the plugin the agent could not know about the sale. In our run it answered:
-
-   ```
-   No. `.env` currently has `CACHE=off`.
-
-   How it got that way: The plugin's change log shows two earlier agent sessions this morning (22 Oct, 11:34) that worked against each other:
-   1. Session `8664e97d` turned the cache on for next week's sale.
-   2. Session `411d4c5d` then turned it back off to chase a memory leak. It also changed `LOG_LEVEL` from `warn` to `debug`.
-   ...
-   I haven't changed anything, because the two goals conflict. ...
-   ```
+   Git shows only `LOG_LEVEL warn → debug`, so without the plugin the agent could not know about the sale. In our run it answered no: the cache is off, because a later session turned it back off to chase a memory leak. It changed nothing, since the two goals conflict.
 
 5. In the same session, type `/confighub:why CACHE` to see both changes and the requests behind them:
 
@@ -216,7 +206,7 @@ It never keeps a command's output, a copy of a file, or anything that looks like
 
 The record tells you and your agents what happened. It cannot stop an agent that holds your keys, and it cannot approve anything. For that, you add a hub.
 
-A hub is a place where your configuration is kept, with every change, who made it and why, and where a change to production waits for the person you name. ConfigHub is that hub. confighub mini is ConfigHub made small enough that every agent can have one: on your laptop, in a sandbox, or in a CI job, with no account and no Docker. The plugin's record goes into it with `cub mini copy --from-record`, each change as a revision with its reason.
+A hub is a place where your configuration is kept, with every change, who made it and why, and where a change to production waits for the person you name. ConfigHub is that hub. confighub mini is ConfigHub made small enough that every agent can have one: on your laptop, in a sandbox, or in a CI job. The plugin's record goes into it with `cub mini copy --from-record`, each change as a revision with its reason.
 
 | What you want | What to do | Effort |
 |---|---|---|
