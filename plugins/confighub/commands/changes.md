@@ -4,6 +4,6 @@ disable-model-invocation: true
 allowed-tools: Bash("${CLAUDE_PLUGIN_ROOT}/bin/confighub":*)
 ---
 
-!`"${CLAUDE_PLUGIN_ROOT}/bin/confighub" mini changes`
+!`"${CLAUDE_PLUGIN_ROOT}/bin/confighub" mini changes --summary`
 
 Show the person the record above exactly as it is, in a code block, and add nothing to it.
