@@ -27,9 +27,11 @@ In an earlier run on a Kubernetes file, an agent was asked whether the api was r
 
 `CUB_MINI_HISTORY=0` turns this history off.
 
-**The sessions before the plugin.** Claude Code keeps a transcript of each session for thirty days. The first time the plugin works in a folder, it reads that folder's earlier transcripts and records what they changed in configuration files, with the request behind each change, as if it had been there; nothing leaves the machine, and only edits made with Claude Code's own edit tools are read. So the first agent is told the reasons for changes made before the plugin was installed, and the end of the first turn tells you how many it found: "ConfigHub plugin: found 3 changes your agents made to configuration here in the last 30 days, from Claude Code's history, each with its request." `/confighub:changes` shows them.
+**The sessions before the plugin.** Claude Code keeps a transcript of each session for thirty days. The first time the plugin works in a folder, it reads that folder's earlier transcripts and records what they changed in configuration files, with the request behind each change, as if it had been there; nothing leaves the machine, and only edits made with Claude Code's own edit tools are read. So the first agent is told the reasons for changes made before the plugin was installed, and the first session in the folder opens with what was found, each value by file with the request behind it, cut to a screen: "ConfigHub plugin: what your agents changed here in the last 30 days, each with your request." Values set with commands, such as `kubectl scale` or `vercel env add`, are read too. `/confighub:changes --summary` shows it again.
 
-**When the answer used what the plugin kept.** An agent that was told the history says "it was raised for your launch" without saying how it knew. So when its answer repeats the earlier request, or names the value it was given, the end of the turn says so, once a week for each value in a folder: "ConfigHub plugin: the agent was told why RATE_LIMIT_PER_MIN is 600: an earlier session set it, asked "We launch on Product Hunt on Tuesday; raise the rate limit." Every change to it: /confighub:why RATE_LIMIT_PER_MIN". A request quoted in any line is its first sentence, whole.
+**When the answer used what the plugin kept.** An agent that was told the history says "it was raised for your launch" without saying how it knew. So when its answer repeats the earlier request, or names the value it was given, the end of the turn says so, once a week for each value in a folder: "ConfigHub plugin: the agent was told why RATE_LIMIT_PER_MIN is 600: an earlier session set it, asked "We launch on Product Hunt on Tuesday; raise the rate limit." Every change to it: /confighub:why RATE_LIMIT_PER_MIN". A request quoted in any line is as many whole sentences as fit in two hundred characters, since the reason is often in the second. The line says what the agent did with what it knew, "the agent left RATE_LIMIT_PER_MIN at 600, knowing why" or "changed RATE_LIMIT_PER_MIN from 600 knowing why it was set", and comes at most once a day for a folder.
+
+**When a change reaches more than one environment.** When an agent changes a value in a file that several environments read, a Kustomize base, a shared Helm values file or a shared Terraform var file, the end of the turn says so, and names the file that would change one environment only: "ConfigHub plugin: memory_mb 2048 → 1024 in common.tfvars reaches staging and prod. staging.tfvars would change staging only." It is not shown when the agent's own answer already named that file, and comes at most once a week for a file. A `git checkout`, `stash`, `pull` or `reset` the agent runs is recorded as git's doing, never as an agent undoing an earlier change.
 
 `/confighub:changes` and `/confighub:why` are for you. The agent cannot run them.
 
@@ -60,7 +62,7 @@ An agent can change things through an MCP tool with no file or shell command to 
 | `log` | Each call is in the record, with the request behind it. This is where you start. |
 | `warn` | You also see one line when a call changes something. |
 | `repeats` | The first call this session to a tool earlier sessions changed things with is also held back once, and the agent is told when and what was asked. If it should still be made, the agent makes the call again. |
-| `ask` | You are also asked before each call that changes something, and shown any earlier one, even if a rule allows the tool. |
+| `ask` | You are also asked before each call that changes something, and shown any earlier one, even if a rule allows the tool. And before an edit to a file that would put back a value an earlier session set for a reason, Claude Code asks you, with the value, the earlier request and that this undoes it; the agent is told nothing beyond what you decide. In twelve simulated weeks at `ask`, this prompt came once, and the person refused the undo. |
 
 What to expect from it:
 
@@ -75,7 +77,8 @@ What to expect from it:
 A value set on the command line is recorded too. It is recorded under the name it would have in a file. The plugin reads values from these commands:
 
 - `kubectl scale`, `set image`, `set env`, `label`, `annotate` and `patch`;
-- `helm install` and `upgrade` with `--set`.
+- `helm install` and `upgrade` with `--set`;
+- `vercel env add` and `rm`, `supabase secrets set` and `unset`, `fly secrets set` and `unset`, `railway variables set`, `gh secret set` and `gh variable set`, `aws ssm put-parameter`, and `terraform apply` with `-var` and `-var-file`. A value set this way is recorded under the service and the environment, `Vercel/production/RATE_LIMIT_PER_MIN`, so `/confighub:why RATE_LIMIT_PER_MIN` or `/confighub:why Vercel/production` answers; the value of a secret is never kept, only its name and the request. The next agent is told of such a change when it lists or sets the same name, or reads a file that sets it.
 
 In real Codex sessions, two agents scaled the api with `kubectl` and edited no file. `why` still shows both changes:
 
