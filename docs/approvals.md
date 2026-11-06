@@ -32,7 +32,18 @@ With the setup on this page, the agent proposed the change in ConfigHub instead.
 - A **release** sends a variant to a cluster, when the variant is aimed at one.
 - A **service account** is an account for a program rather than a person. Its **key** is a private key in a file, which the program signs in with.
 
-## On confighub mini, from nothing: about 5 minutes
+## On confighub mini: ask for it, in about a minute
+
+In Claude Code, in the repository your agents work in:
+
+1. Type `/confighub:install-mini`. A hub is running about 25 seconds later.
+2. Ask, in your own words: *"Make changes to production wait for my approval; agents may only propose them."* The agent puts the repository's files in the hub and requires your approval for the live copy. From then on, every Claude Code session in this repository runs on the agent's own key: it can propose, and it cannot approve.
+3. Ask for changes as you always have. The agent edits the files, then proposes them. At the end of its turn you see one line: *"A change is waiting for you: … To approve and promote it: cub mini approve …"*
+4. In a terminal, approve it: `cub mini approve`. It shows what the change would do and asks you first. Or refuse it: `cub mini refuse --reason "why"`. Once you approve, the files are what production runs.
+
+You learn no command until the moment you need it. The steps below are the same, by hand.
+
+## On confighub mini, by hand: about 5 minutes
 
 Each `cub mini` command here is plain `cub` with the rest filled in ([which](cub-mini-and-cub.md)). The next section does the same with `cub` alone.
 
@@ -73,14 +84,14 @@ Each `cub mini` command here is plain `cub` with the rest filled in ([which](cub
 
 5. Start the agent's sessions with plain `claude`, in that repository. Every Claude Code session started there from now on runs `cub` as the agent: in one, `cub context get` shows the agent's service account, not your account. It can propose, and cannot approve. You approve in a terminal, outside any agent's reach. For agents in other worktrees or in the background, see [the next section](#several-worktrees-background-agents-and-your-own-sign-in-out-of-reach).
 
-6. The agent proposes a change. It changes the base, then asks for the change to reach the live copy with a change order. To try it by hand, give the two settings on each line:
+6. The agent proposes a change. It edits the file, as it always would, then proposes it. The proposal sets the changed values in the base, with the reason, and asks for them to reach the live copy; they wait for you. To try it by hand, as the agent:
 
    ```bash
-   CUB_CONFIG=~/.confighub-agent-bot CUB_CONTEXT=bot cub function set --space api-base --unit api --change-desc "Four for the sale" set-replicas 4
-   CUB_CONFIG=~/.confighub-agent-bot CUB_CONTEXT=bot cub changeorder create --space api-base sale-4 --component api --change-workflow workflows/api-live-approval --description "Four for the sale"
+   sed -i.bak 's/replicas: 2/replicas: 4/' api/api.yaml && rm api/api.yaml.bak
+   CUB_CONFIG=~/.confighub-agent-bot CUB_CONTEXT=bot cub mini upload api --change-desc "Four for the sale"
    ```
 
-   If the agent tries to approve its own change (`cub variant approve`), or to write `api-live`, it is refused ("permission denied").
+   It prints the change order that waits, and the command that approves it. If the agent tries to approve its own change, or to write `api-live`, it is refused.
 
 7. You approve it, with a note that says why:
 

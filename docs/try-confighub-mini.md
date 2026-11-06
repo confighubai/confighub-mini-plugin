@@ -113,9 +113,9 @@ If you have used the ConfigHub plugin in a repository, its record of what agents
 
    Each file becomes a Component. Its base is the file as it was before the first recorded change, and each recorded change is a revision of its local copy. Running it again writes only what was recorded since.
 
-## Step 5 (optional): An agent proposes, and a person approves
+## Step 5: An agent proposes, and you approve
 
-In this step an agent proposes a change, and only you can approve it. Follow [the approval steps](approvals.md). They work on this hub as they do on hosted ConfigHub. This takes about 5 minutes.
+In Claude Code, in a repository with configuration in it, ask: *"Make changes to production wait for my approval; agents may only propose them."* Then ask an agent for a change to production, as you would. Its turn ends with one line saying a change is waiting for you; approve it in a terminal with `cub mini approve`, which shows the change and asks first. About a minute. [The approval steps](approvals.md) do the same by hand, and work on hosted ConfigHub too.
 
 ## Step 6: Remove it
 
