@@ -1,12 +1,12 @@
 # ConfigHub for AI agents: the ConfigHub plugin and confighub mini
 
-When an AI agent changes your configuration, such as the replicas in a Kubernetes file or a setting in `.env`, the plugin writes down what it changed and why. We call this the record. When a later agent opens the same file, or is about to deploy over the change, the plugin tells it what the earlier agent did and why, before it acts.
+You build with coding agents, and every setting they touch has a reason: the rate limit raised for a launch, the memory given to staging, the replicas for a sale. By the next session the reason is gone, and the next agent, asked to cut costs, puts the value back without a word. The plugin keeps the reason and tells the next agent before it changes the value again.
 
-You don't change your prompts or add instructions. The record stays on your machine.
+You install it and keep working as you do: nothing changes in how you prompt. From the first session, each value an agent sets is recorded with your request behind it, in your files and in the services your production lives in (Vercel, Supabase, Fly, Railway, GitHub, AWS SSM, `terraform apply`, as well as `kubectl` and `helm`), and you can ask why any value is what it is. Agents stop undoing each other's work, and you stop re-explaining. The record stays on your machine, and it is the same record wherever your agents run: Claude Code, Codex, a CI job, a sandbox.
 
-It is the same record wherever your agents run: in Claude Code, in Codex, in a CI job, in a sandbox, and for commands such as `kubectl` and `helm` that change a cluster directly. And when you add a hub, each recorded change goes in as a revision with its reason (`cub mini copy --from-record`), so nothing is retyped.
+In simulated weeks with people who had never heard of ConfigHub, run in real interactive Claude Code sessions, no agent undid an earlier change silently, and 13 of 15 people credited the plugin ([the runs](docs/evidence.md)).
 
-One page shows the first two problems below in real runs, where approval holds, and what is available today: [ConfigHub for AI agents](https://confighub.github.io/helm-expt/ai-agents/).
+When you want more, confighub mini is ConfigHub small enough for a laptop: it takes the app with the staging and production files you already keep as each copy's own, staging takes your agents' changes at once, live waits for you, and your values are kept through the next version of whatever you started from. One page shows it in real runs: [ConfigHub for AI agents](https://confighub.github.io/helm-expt/ai-agents/).
 
 ## Install
 
