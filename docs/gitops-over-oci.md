@@ -164,19 +164,13 @@ spec:
 
    The agent's change waits. Nothing is released, and the cluster still runs 2 replicas.
 
-4. As yourself, approve the change:
+4. As yourself, approve the change and promote it to the live copy:
 
    ```bash
-   cub variant approve api-base --change-order api-base/sale-4 --note "Checked: four is right for the sale"
+   cub mini approve api-live --note "Checked: four is right for the sale"
    ```
 
-5. Promote it to the live copy:
-
-   ```bash
-   cub mini promote api-live --change-order api-base/sale-4
-   ```
-
-   ConfigHub releases the change, and k8sbot asks Flux to deploy it. About 10 seconds later, the cluster runs 4 replicas.
+   It shows the change and asks first. ConfigHub releases the change, and k8sbot asks Flux to deploy it. About 10 seconds later, the cluster runs 4 replicas.
 
 ## Step 4: Self-heal
 
@@ -212,16 +206,10 @@ Going back is a change like any other, so it waits for an approval too.
    cub changeorder create --space api-base back-to-2 --component api --change-workflow workflows/api-live-approval --description "The sale is over"
    ```
 
-3. Approve it:
+3. Approve and promote it:
 
    ```bash
-   cub variant approve api-base --change-order api-base/back-to-2 --note "Back to two"
-   ```
-
-4. Promote it:
-
-   ```bash
-   cub mini promote api-live --change-order api-base/back-to-2
+   cub mini approve api-base/back-to-2 --note "Back to two"
    ```
 
    About 10 seconds later, the cluster runs 2 replicas again.

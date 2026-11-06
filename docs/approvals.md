@@ -88,27 +88,15 @@ Each `cub mini` command here is plain `cub` with the rest filled in ([which](cub
 
    If the agent tries to approve its own change (`cub variant approve`), or to write `api-live`, it is refused ("permission denied").
 
-7. You see what waits, and for whom:
+7. You approve it, with a note that says why:
 
    ```bash
-   cub mini promote api-live --change-order api-base/sale-4 --dry-run
+   cub mini approve api-live --note "Checked: four is right for the sale"
    ```
 
-   The dry run exits with status 1 while the change waits for approval.
+   It shows what the change would do to `api-live`, asks you, and then approves and promotes it. What you were shown is kept with the approval, and the promotion is refused if `api-live` changed after you read it. `api-live` now runs 4 replicas. A later change by the agent waits for an approval of its own.
 
-8. You approve it, with a note that says why:
-
-   ```bash
-   cub variant approve api-base --change-order api-base/sale-4 --note "Checked: four is right for the sale"
-   ```
-
-9. You promote it:
-
-   ```bash
-   cub mini promote api-live --change-order api-base/sale-4
-   ```
-
-   `api-live` now runs 4 replicas. A later change by the agent waits for an approval of its own.
+   To say no instead: `cub mini refuse api-live --reason "Two is enough"`. The agent can read your reason.
 
 ### Several worktrees, background agents, and your own sign-in out of reach
 
@@ -245,7 +233,7 @@ On confighub mini, `cub mini revoke-agent bot` does all of it.
 With the gate on and the agent on a key of its own, the plugin tells you three things, each one line that Claude Code shows you at the end of the agent's turn and does not give the agent:
 
 - **A change is waiting for you.** The agent's turn ended with a change order not yet approved: the value from what to what, the copy it is headed for, the agent's reason, and the command that approves it. Once per change order. `cub mini waiting` lists what waits, for later.
-- **An agent is proposing again what was refused.** You gave a change order up (`cub changeorder update NAME --aborted-reason WHY`), or the hub refused the agent a write; a later change order for the same path is told once, naming the path, the refusal it repeats, and the agent. You decide.
+- **An agent is proposing again what was refused.** You refused a change order (`cub mini refuse BASE/ORDER --reason WHY`), or the hub refused the agent a write; a later change order for the same path is told once, naming the path, the refusal it repeats, and the agent. You decide.
 - **Something elsewhere needs a hub it can reach.** One sentence from `cub mini pull-key`, `pull` or `copy` when the hub listens on this machine only and a VM or another machine needs it.
 
 Nothing is said of a change within the agent's rights, a change you approved, a pull, or an agent the gate stopped that did not try again. `CUB_MINI_TELL=0` turns the lines off. [The run](runs/2026-10-29/sam-telling/README.md), in real sessions.
