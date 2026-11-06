@@ -8,30 +8,6 @@ It is the same record wherever your agents run: in Claude Code, in Codex, in a C
 
 One page shows the first two problems below in real runs, where approval holds, and what is available today: [ConfigHub for AI agents](https://confighub.github.io/helm-expt/ai-agents/).
 
-## What this is
-
-This is the open-source way in to [ConfigHub](https://docs.confighub.com) for people who work with AI agents. ConfigHub keeps configuration with every change, who made it and why, and lets a person approve what reaches production. There are three parts:
-
-| Part | What it is | How you start |
-|---|---|---|
-| **The ConfigHub plugin**, for Claude Code and Codex | Records what agents change in configuration, and why, and tells the next agent before it undoes a change | Two commands, [below](#install) |
-| **confighub mini** | A hub of your own: ConfigHub itself, packaged lean, as two processes on your laptop, in an agent's sandbox or in a CI job. No Docker, no cluster, no account, and it works with the network off. A download of 44 to 67 MB | `/confighub:install-mini` in Claude Code |
-| **`cub mini`** | A plugin for `cub`, ConfigHub's command-line tool, that fills in the rest of each request so the commands stay short. What you learn with it works unchanged on your organization's ConfigHub | Comes with confighub mini |
-
-**The problems it solves**
-
-1. **Agents undo each other's changes.** A later agent puts back a value an earlier one set for a reason, and nobody is told. In our tests this happened three times in four without the plugin, and never silently with it ([the problem, step by step](#the-problem-it-solves)).
-2. **Nothing stands between an agent and production.** An agent working under your sign-in can approve its own change, and a rule in `CLAUDE.md` is only a request. With a hub, the agent proposes on a key of its own, and only the person you name can approve ([approvals](docs/approvals.md)).
-3. **Nobody knows what a repository deploys** before they, or an agent, change it.
-4. **A vendor's next version overwrites your changes,** such as the values you set in their Helm chart.
-
-**The journeys.** Each is a step further, and you can stop at any of them ([one team's path, step by step](docs/from-plugin-to-confighub.md)):
-
-1. **The plugin:** a record of what agents change and why; the next agent told first; what a repository deploys; a review of each pull request.
-2. **confighub mini:** a hub for each agent. Your agents on keys of their own, proposing changes that you approve, in five minutes on your laptop; a hub in each sandbox or CI job that hands back a pull request; your values kept through a vendor's next version.
-3. **Your organization's ConfigHub:** one place for the team, kept in step with each laptop; a colleague you name approves each change to production.
-4. **Agents that run unattended:** records signed with each agent's own identity; rights taken away at once; model use kept with each change.
-
 ## Install
 
 In a terminal:
@@ -116,6 +92,30 @@ To have everyone who opens a repository in Claude Code get the plugin, commit th
 When a teammate trusts the folder and starts a session, Claude Code adds the marketplace. If `/plugin` then says the plugin is enabled but not installed, they run `claude plugin install confighub@confighub --scope project` once.
 
 Already use [Entire](docs/entire.md)? `entire plugin install https://github.com/confighubai/confighub-mini-plugin` adds the same record as `entire confighub`.
+
+## What this is
+
+This is the open-source way in to [ConfigHub](https://docs.confighub.com) for people who work with AI agents. ConfigHub keeps configuration with every change, who made it and why, and lets a person approve what reaches production. There are three parts:
+
+| Part | What it is | How you start |
+|---|---|---|
+| **The ConfigHub plugin**, for Claude Code and Codex | Records what agents change in configuration, and why, and tells the next agent before it undoes a change | Two commands, [above](#install) |
+| **confighub mini** | A hub of your own: ConfigHub itself, packaged lean, as two processes on your laptop, in an agent's sandbox or in a CI job. No Docker, no cluster, no account, and it works with the network off. A download of 44 to 67 MB | `/confighub:install-mini` in Claude Code |
+| **`cub mini`** | A plugin for `cub`, ConfigHub's command-line tool, that fills in the rest of each request so the commands stay short. What you learn with it works unchanged on your organization's ConfigHub | Comes with confighub mini |
+
+**The problems it solves**
+
+1. **Agents undo each other's changes.** A later agent puts back a value an earlier one set for a reason, and nobody is told. In our tests this happened three times in four without the plugin, and never silently with it ([the problem, step by step](#the-problem-it-solves)).
+2. **Nothing stands between an agent and production.** An agent working under your sign-in can approve its own change, and a rule in `CLAUDE.md` is only a request. With a hub, the agent proposes on a key of its own, and only the person you name can approve ([approvals](docs/approvals.md)).
+3. **Nobody knows what a repository deploys** before they, or an agent, change it.
+4. **A vendor's next version overwrites your changes,** such as the values you set in their Helm chart.
+
+**The journeys.** Each is a step further, and you can stop at any of them ([one team's path, step by step](docs/from-plugin-to-confighub.md)):
+
+1. **The plugin:** a record of what agents change and why; the next agent told first; what a repository deploys; a review of each pull request.
+2. **confighub mini:** a hub for each agent. Your agents on keys of their own, proposing changes that you approve, in five minutes on your laptop; a hub in each sandbox or CI job that hands back a pull request; your values kept through a vendor's next version.
+3. **Your organization's ConfigHub:** one place for the team, kept in step with each laptop; a colleague you name approves each change to production.
+4. **Agents that run unattended:** records signed with each agent's own identity; rights taken away at once; model use kept with each change.
 
 ## The problem it solves
 
