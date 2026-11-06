@@ -17,7 +17,7 @@ In a Claude Code session:
 - `/confighub:changes` shows what the agent changed in its latest session, and why.
 - `/confighub:why replicas` shows every recorded change to one value, and why.
 - `/confighub:permissions` shows what your settings files allow agents to run, which rules were used, and a narrower set you can apply and undo. A line tells you when permissions, hooks or instructions change.
-- `/confighub:checks` sets how much is done about MCP tool calls in this folder: `off`, `log` (where you start), `warn`, `repeats` or `ask`. At `repeats`, an agent about to repeat an earlier change is held back once and told of it. At `ask`, you are asked first.
+- `/confighub:checks` sets how much is done about MCP tool calls in this folder: `off`, `log` (where you start), `warn`, `repeats` or `ask`. At `repeats`, an agent about to repeat an earlier change is held back once and told of it. At `ask`, you are asked first, and also before an edit that undoes a value an earlier session set for a reason.
 - `/confighub:inventory` shows what the repository deploys: each Kustomize overlay, Helm release and Argo CD Application, and what deploys it; the values that differ between environments; and the values agents changed. It reads only the repository's files.
 - `/confighub:install-mini` installs confighub mini, which is ConfigHub made small enough to run on your laptop, and starts it.
 - `/confighub:to-hub` copies what agents changed here, and why, into the ConfigHub your `cub` is signed in to: your organization's, with no confighub mini, or your own. It names the hub and lists what it would write; `/confighub:to-hub --yes` writes it.
