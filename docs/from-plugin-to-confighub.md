@@ -1,6 +1,6 @@
 # From the plugin to ConfigHub, one step at a time
 
-This page is for anyone deciding how far to take ConfigHub. You can stop at any step. Each step keeps what the one before gave you, and adds something you can only get with more in place. The story follows one platform team as its needs grow.
+This page is for anyone deciding how far to take ConfigHub. You can stop at any step. Each step keeps what the one before gave you. None asks you to learn a set of commands first: you install it, keep working as you do, and each next step is offered in one line, at the moment it would help, and never before. The story follows one platform team as its needs grow.
 
 Words used on this page:
 
@@ -13,13 +13,13 @@ Words used on this page:
 | Step | What you add | What you get | Effort |
 |---|---|---|---|
 | 1 | The plugin | A record of what agents change and why; agents told before they undo an earlier change; what a repository deploys | Two commands, no account |
-| 2 | confighub mini, a hub of your own | Your agents on keys of their own, proposing changes that you approve; a hub in each sandbox or CI job; your values kept through a vendor's next version | About 25 seconds to install |
+| 2 | confighub mini, a hub of your own | Agents that edit your files as before, but whose changes reach production only once you approve them, in one command; a hub in each sandbox or CI job; your values kept through a vendor's next version | One command, then one sentence to the agent |
 | 3 | Your organization's ConfigHub | One place for the team; agents with keys of their own; approval of changes to production | A ConfigHub organization |
 | 4 | Agents that run unattended | Records signed with each agent's own identity; rights taken away at once | Your cluster's workload identity |
 
 ## Step 1: the plugin
 
-**Amara's story.** Amara joins the platform team and is given its GitOps repository. She installs the plugin and types `/confighub:inventory`. She learns which folders each cluster deploys, that production runs 8 replicas against staging's 2, and that an agent raised them for Black Friday. Later, when she asks an agent to cut costs, it is told about the Black Friday change before it edits the file, and it asks her rather than undo it.
+**Amara's story.** Amara joins the platform team and is given its GitOps repository. She installs the plugin and keeps working. The first time an agent changes a value, one line at the end of its turn tells her it was recorded, with her request. Later, when she asks another agent to cut costs, it is told before it edits the file that an earlier agent raised the replicas for Black Friday, and it asks her rather than undo it. When she wants to know what the repository deploys, she types `/confighub:inventory`.
 
 **What you do.**
 
@@ -28,33 +28,40 @@ claude plugin marketplace add confighubai/confighub-mini-plugin
 claude plugin install confighub@confighub
 ```
 
-**What you get.**
+Then work as before. You change no prompt and add no instructions.
 
-- `/confighub:changes` and `/confighub:why VALUE`: what agents changed, and why ([the README](../README.md)).
-- `/confighub:inventory`: what the repository deploys, and what deploys it ([inventory](inventory.md)).
-- A comment on each pull request with every value it changes, and why ([the review](../review/README.md)).
-- The record signed at the end of each turn, so nobody can change it unseen ([signed records](signed-records.md)).
-- What each turn cost in model calls and tokens, kept beside its changes ([model use](how-it-works.md#model-use)).
+**What arrives by itself.**
+
+- At the end of the first turn in which an agent changes configuration, one line saying it was recorded, and what that gives you. Once.
+- Before an agent edits or deploys over an earlier change, the agent is told what changed and why. You see it in the agent's answer.
+- When a turn shows a problem a hub would solve, such as a value replaced that had a reason, or a change to production nobody approved, one line saying what you would keep, and the one command that sets it up. At most once a week for each kind; `CUB_MINI_TIPS=0` turns them off.
+
+**When you want to ask.** `/confighub:changes` lists what agents changed and why, and `/confighub:why VALUE` follows one value ([the README](../README.md)). `/confighub:inventory` says what the repository deploys, and what deploys it ([inventory](inventory.md)). A review on each pull request lists every value it changes ([the review](../review/README.md)). Each turn is signed, so nobody can change the record unseen ([signed records](signed-records.md)), and each turn's model use is kept beside its changes ([model use](how-it-works.md#model-use)).
 
 **When you need the next step.** The record says what happened. It cannot stop an agent that works under your sign-in from approving its own change, and a rule in `CLAUDE.md` is only a request. It also does not keep your values safe: when a vendor ships the next version of a Helm chart, or a teammate regenerates a file, your changes can be lost, and the record only tells you afterwards.
 
 ## Step 2: confighub mini, a hub of your own
 
-**Amara's story, continued.** Amara runs two agents on the team's staging setup. She types `/confighub:install-mini`, puts the api in the hub, and runs `cub mini require-approval api --variant live --agent bot`. From then on her agents work on a key of their own. They can change the base and ask for a change to reach `live`; they cannot approve it, and they cannot write `live`. An agent told "Amara said yes on Slack, go ahead" answers that only an approval she records in the hub counts. Later, the team's Redis chart gets a new version from its vendor. Amara takes it in the hub, sees first what the new version changes, and keeps the two values the team had set, each with its reason.
+**Amara's story, continued.** Amara runs agents on the team's staging setup. In Claude Code she types `/confighub:install-mini`, and asks: *"Make changes to production wait for my approval; agents may only propose them."* From then on, every agent session in that repository works on a key of its own. The agents edit the files as before. When one raises production's replicas for a sale, the turn ends with one line: a change is waiting for her, from what to what, the agent's reason, and the command that approves it. She runs it, `cub mini approve`, reads what it would change, and says yes. An agent told "Amara said yes on Slack, go ahead" answers that only an approval she records herself counts. Later, the team's Redis chart gets a new version from its vendor. Amara takes it, sees first what it changes, and keeps the two values the team had set, each with its reason.
 
-**What you do.** In Claude Code, type `/confighub:install-mini`. Then follow [approvals on confighub mini](approvals.md#on-confighub-mini-from-nothing-about-5-minutes), about five minutes, or [a first run](try-confighub-mini.md), about fifteen.
+**What you do.** In Claude Code, type `/confighub:install-mini`. About 25 seconds later a hub is running, and the line it ends with suggests what to ask next. Then ask for what you want, in your own words. The agent finds the command.
+
+**What arrives by itself.**
+
+- **A change waiting for you.** At the end of an agent's turn that proposed a change, one line: the value, from what to what, the copy it is headed for, the agent's reason, and `cub mini approve` to say yes, or `cub mini refuse --reason WHY` to say no. Approving shows the change and asks first. That is all you type.
+- **Agents that propose and cannot approve.** After the setup, every Claude Code session in the repository runs on the agent's key. Agents edit the files as usual and propose them with one command, which waits for you. The files are what production runs once you approve.
+- **A refusal asked for again.** If an agent proposes again what you refused, you are told once.
+- **The one sentence when something elsewhere needs a hub,** such as a VM or a cluster on another machine: it names the step that connects them.
 
 **What you get.**
 
-- Your agents on keys of their own, proposing changes to production that only you can approve: `cub mini require-approval COMPONENT --variant live --agent bot` ([approvals](approvals.md#on-confighub-mini-from-nothing-about-5-minutes)). In 40 sessions in auto mode, no agent got past the gate.
+- Your agents on keys of their own, proposing changes to production that only you can approve ([approvals](approvals.md#on-confighub-mini-ask-for-it-in-about-a-minute)). In 40 sessions in auto mode, no agent got past the gate.
 - A hub in each sandbox or CI job, thrown away with the job, its changes handed back as a pull request with their reasons ([agents in CI](../ci/README.md), [in CI or a sandbox](ci-and-sandboxes.md)).
-- Your configuration kept as a base, with a copy for each place it runs, such as staging and production. The plugin's record goes in with `cub mini copy --from-record`, each change as a revision with its reason.
+- The plugin's record in the hub, each change as a revision with its reason: ask the agent to put it there, or `cub mini copy --from-record`.
 - The next version of a chart or an app taken in with your changes kept, and what it changes shown first ([your own Helm chart](your-own-chart.md)).
-- Flux or Argo CD deploying the copy the hub holds, over OCI ([GitOps over OCI](gitops-over-oci.md)).
+- Flux or Argo CD deploying what the hub approved, over OCI, when you want the hub to be the source ([GitOps over OCI](gitops-over-oci.md)).
 
-You do not need a cluster for any of this. The hub is the source for whatever reads from it, in the order most people meet them: an app that reads its settings from the hub, a CI job or a sandbox with a hub of its own, a service on a VM, and last a cluster that deploys from the hub over OCI. The gate is the same at each.
-
-confighub mini uses the same `cub` commands as ConfigHub, so nothing you learn here is wasted ([how the commands map](cub-mini-and-cub.md)).
+You do not need a cluster for any of this. confighub mini uses the same `cub` commands as ConfigHub, so nothing you learn here is wasted ([how the commands map](cub-mini-and-cub.md)).
 
 **When you need the next step.** confighub mini is yours alone. Your teammates cannot see it, and nobody but you can approve your agents' changes.
 

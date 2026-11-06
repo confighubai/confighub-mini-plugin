@@ -31,7 +31,7 @@ A few words used throughout:
 |---|---|
 | [From the plugin to ConfigHub](from-plugin-to-confighub.md) | One team's path from the plugin to confighub mini to the organization's ConfigHub, with what each step adds and when you need it |
 | [Install confighub mini](install-mini.md) | `/confighub:install-mini`, or the steps by hand, and in a container |
-| [Approvals on confighub mini](approvals.md#on-confighub-mini-from-nothing-about-5-minutes) | Five minutes: your agents on keys of their own, proposing changes that only you can approve |
+| [Approvals on confighub mini](approvals.md#on-confighub-mini-ask-for-it-in-about-a-minute) | About a minute, asked for in your own words: agents on keys of their own, proposing changes that only you can approve |
 | [A first run](try-confighub-mini.md) | Fifteen minutes on your own machine: an app you change and keep your changes in through its next version |
 | [Your own Helm chart](your-own-chart.md) | Your chart in a hub, your values kept through the chart's next version |
 | [Flux and Argo CD deploying from it](gitops-over-oci.md) | Clusters that deploy what the hub approved, over OCI |
