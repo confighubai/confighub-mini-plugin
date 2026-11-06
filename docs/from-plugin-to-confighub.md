@@ -33,8 +33,9 @@ Then work as before. You change no prompt and add no instructions.
 **What arrives by itself.**
 
 - At the end of the first turn in which an agent changes configuration, one line saying it was recorded, and what that gives you. Once.
-- Before an agent edits or deploys over an earlier change, the agent is told what changed and why. You see it in the agent's answer.
-- When a turn shows a problem a hub would solve, such as a value replaced that had a reason, or a change to production nobody approved, one line saying what you would keep, and the one command that sets it up. At most once a week for each kind; `CUB_MINI_TIPS=0` turns them off.
+- In a folder with earlier Claude Code sessions, what they changed in configuration in the last thirty days, read from Claude Code's own transcripts with the request behind each, so the first agent is told the reasons for changes made before the plugin was installed. The end of the first turn says how many it found.
+- Before an agent edits or deploys over an earlier change, the agent is told what changed and why. You see it in the agent's answer, and when the answer used it, one line at the end of the turn says so, with the earlier request.
+- When a turn shows a problem a hub would solve, such as a value replaced that had a reason, or a change to production nobody approved, one line saying what you would keep, and the one command that sets it up. At most once a week for each kind, and never in a folder's first week; `CUB_MINI_TIPS=0` turns them off.
 
 **When you want to ask.** `/confighub:changes` lists what agents changed and why, and `/confighub:why VALUE` follows one value ([the README](../README.md)). `/confighub:inventory` says what the repository deploys, and what deploys it ([inventory](inventory.md)). A review on each pull request lists every value it changes ([the review](../review/README.md)). Each turn is signed, so nobody can change the record unseen ([signed records](signed-records.md)), and each turn's model use is kept beside its changes ([model use](how-it-works.md#model-use)).
 

@@ -27,6 +27,10 @@ In an earlier run on a Kubernetes file, an agent was asked whether the api was r
 
 `CUB_MINI_HISTORY=0` turns this history off.
 
+**The sessions before the plugin.** Claude Code keeps a transcript of each session for thirty days. The first time the plugin works in a folder, it reads that folder's earlier transcripts and records what they changed in configuration files, with the request behind each change, as if it had been there; nothing leaves the machine, and only edits made with Claude Code's own edit tools are read. So the first agent is told the reasons for changes made before the plugin was installed, and the end of the first turn tells you how many it found: "ConfigHub plugin: found 3 changes your agents made to configuration here in the last 30 days, from Claude Code's history, each with its request." `/confighub:changes` shows them.
+
+**When the answer used what the plugin kept.** An agent that was told the history says "it was raised for your launch" without saying how it knew. So when its answer repeats the earlier request, or names the value it was given, the end of the turn says so, once a week for each value in a folder: "ConfigHub plugin: the agent was told why RATE_LIMIT_PER_MIN is 600: an earlier session set it, asked "We launch on Product Hunt on Tuesday; raise the rate limit." Every change to it: /confighub:why RATE_LIMIT_PER_MIN". A request quoted in any line is its first sentence, whole.
+
 `/confighub:changes` and `/confighub:why` are for you. The agent cannot run them.
 
 ## The stop before a deploy that would undo a change
@@ -136,9 +140,9 @@ You set each setting in Claude Code's settings, under `env`.
 | `CUB_MINI_COUNT=0` | Turns off counting, on this machine, how often you use each part of the plugin. The count is never sent anywhere. | When you do not want even a local count. |
 | `CUB_MINI_TIPS=0` | Turns off tips. A tip is a line shown to you, never to the agent, at the end of a turn in which confighub mini would have helped (see below). | When you do not want the tips. |
 
-**About tips.** ConfigHub is a hub: a place where your configuration is kept, with every change, who made it and why ([ConfigHub docs](https://docs.confighub.com)). confighub mini is ConfigHub, small, for one machine ([install confighub mini](install-mini.md)). A tip appears after a turn in which confighub mini would have helped. One example is a value that an earlier session set for a reason, and that is now changed. The tip asks "Do you want to install confighub mini?", says why, and ends with `/confighub:install-mini`.
+**About tips.** ConfigHub is a hub: a place where your configuration is kept, with every change, who made it and why ([ConfigHub docs](https://docs.confighub.com)). confighub mini is ConfigHub, small, for one machine ([install confighub mini](install-mini.md)). A tip appears after a turn in which confighub mini would have helped. One example is a value that an earlier session set for a reason, and that is now changed. The tip begins "ConfigHub plugin:", says what happened in your own values and file names, and ends with `/confighub:install-mini`. With no confighub mini installed, no tip is shown in a folder's first week: the plugin has to have done something for you before it suggests more.
 
-Each kind of tip is shown at most once a week for a project. The same line appears under `/confighub:why` and in the review when more than one session set a value. `bin/confighub mini changes --tips`, run from the plugin, counts the tips on this machine. It also says how often you used each part of the plugin, such as `/confighub:why` or `/confighub:inventory`, and when you last did. Nothing is sent anywhere.
+Each kind of tip is shown at most once a week for a project, and a line about one value at most once a week for the folder. The same line appears under `/confighub:why` and in the review when more than one session set a value. `bin/confighub mini changes --tips`, run from the plugin, counts the tips on this machine. It also says how often you used each part of the plugin, such as `/confighub:why` or `/confighub:inventory`, and when you last did. Nothing is sent anywhere.
 
 ## Model use
 
