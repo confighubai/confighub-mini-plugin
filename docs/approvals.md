@@ -69,15 +69,9 @@ Each `cub mini` command here is plain `cub` with the rest filled in ([which](cub
    cub mini require-approval api --variant live --agent bot
    ```
 
-   `--agent bot` puts the agent's key in a `cub` configuration of its own, which holds nothing of yours. The command prints the two settings the agent's sessions need, `CUB_CONFIG=~/.confighub-agent-bot CUB_CONTEXT=bot`. It also prints a few lines to put in the agent's `CLAUDE.md` or `AGENTS.md`. They tell the agent to propose a change, rather than ask you for more access.
+   `--agent bot` puts the agent's key in a `cub` configuration of its own, which holds nothing of yours. Run in a Git repository, it also writes the agent's settings into the repository's `.claude/settings.local.json`, keeping what that file already holds. The settings are the agent's sign-in, and Claude Code's sandbox keeping sessions from reading your own configuration. Git is told to leave the file out. The command also prints a few lines to put in the agent's `CLAUDE.md` or `AGENTS.md`, which tell the agent to propose a change rather than ask you for more access.
 
-5. Start the agent's sessions on its key. In the folder the agent works in, put the two settings in `.claude/settings.local.json`. That is Claude Code's file for local settings, and Git leaves it out. Use the full path that `require-approval` printed:
-
-   ```json
-   {"env": {"CUB_CONFIG": "/Users/you/.confighub-agent-bot", "CUB_CONTEXT": "bot"}}
-   ```
-
-   Every Claude Code session started in that folder then runs `cub` as the agent. In such a session, `cub context get` shows the agent's service account, not your account. If agents work in several worktrees or in the background, use the settings file in [the next section](#several-worktrees-background-agents-and-your-own-sign-in-out-of-reach) instead.
+5. Start the agent's sessions with plain `claude`, in that repository. Every Claude Code session started there from now on runs `cub` as the agent: in one, `cub context get` shows the agent's service account, not your account. It can propose, and cannot approve. You approve in a terminal, outside any agent's reach. For agents in other worktrees or in the background, see [the next section](#several-worktrees-background-agents-and-your-own-sign-in-out-of-reach).
 
 6. The agent proposes a change. It changes the base, then asks for the change to reach the live copy with a change order. To try it by hand, give the two settings on each line:
 
@@ -100,9 +94,9 @@ Each `cub mini` command here is plain `cub` with the rest filled in ([which](cub
 
 ### Several worktrees, background agents, and your own sign-in out of reach
 
-`.claude/settings.local.json` has two gaps. It stays in the folder it is in, so a new worktree does not have it. And on the same disk, an agent can still read your own `cub` configuration.
+The repository's `.claude/settings.local.json` stays in that folder, so a new worktree does not have it.
 
-One settings file outside the repository closes both. It gives the agent's settings, and it turns on Claude Code's sandbox to deny reads of your configuration. `cub mini require-approval --agent` writes this file for you, as `claude-settings.json` beside the agent's configuration, and prints the line to start sessions with. On hosted ConfigHub, write it yourself, with the full paths:
+The same settings in a file outside the repository work in any worktree. `cub mini require-approval --agent` writes this file for you too, as `claude-settings.json` beside the agent's configuration, and prints the line to start sessions with. On hosted ConfigHub, write it yourself, with the full paths, and put the same in the repository's `.claude/settings.local.json`:
 
 ```json
 {
