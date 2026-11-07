@@ -70,6 +70,16 @@ Asked for an app "using ConfigHub" with a staging and a production setup, an age
 
 A session asked to rotate a production password ended with the value nowhere in its output or its files: it gave the person the `cub mini secret set` command, and asked for no value.
 
+## A copy first, a service, a shared setup
+
+These were measured the same way: non-interactive Claude Code sessions (`claude -p`), with the end state, the Spaces on the hub and the files on disk, read by a program, not from what the session said ([what each gives you](from-plugin-to-confighub.md#try-a-change-in-a-copy-first)).
+
+| What was asked | What the end state showed |
+|---|---|
+| Try a change "in a copy first, without touching production" | In 8 of 8 sessions, the agent tried the change in a copy, and staging and live were unchanged |
+| "Add a Postgres to this app" | Done in 31 seconds, with no password anywhere |
+| Make an app of your own from a setup someone shared | In 8 of 8 sessions, a second person's agent made their own app from the setup |
+
 ## Git shows only what was committed
 
 One session gave the api 4 replicas for the sale. A later session cut it to 1. Nobody committed in between. Then an agent was asked about the replicas.
