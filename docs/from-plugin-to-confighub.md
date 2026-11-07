@@ -13,7 +13,7 @@ Words used on this page:
 | Step | What you add | What you get | Effort |
 |---|---|---|---|
 | 1 | The plugin | A record of what agents change and why; agents told before they undo an earlier change; what a repository deploys | Two commands, no account |
-| 2 | confighub mini, a hub of your own | Agents that edit your files as before, but whose changes reach production only once you approve them, in one command; an app with its staging and production copies in one request, or the app you have with the files it keeps; a hub in each sandbox or CI job; your values kept through a vendor's next version | One command, then one sentence to the agent; or one request for the app |
+| 2 | confighub mini, a hub of your own | Agents that edit your files as before, but whose changes reach production only once you approve them, in one command; an app with its staging and production copies in one request, or the app you have with the files it keeps; a change tried in a copy first; the services an app needs, and an app from a setup a teammate shared; a hub in each sandbox or CI job; your values kept through a vendor's next version | One command, then one sentence to the agent; or one request for the app |
 | 3 | Your organization's ConfigHub | One place for the team; agents with keys of their own; approval of changes to production | A ConfigHub organization |
 | 4 | Agents that run unattended | Records signed with each agent's own identity; rights taken away at once | Your cluster's workload identity |
 
@@ -83,6 +83,61 @@ Ask: *"attach ConfigHub to this app and keep my staging and production values."*
 - A Kustomize repository: `base/`, as kustomize renders it, becomes the base. What `overlays/staging` changes becomes staging's own values, field by field, and what the prod, production or live overlay changes, or the one an Argo CD Application deploys, becomes live's.
 
 `cub mini adopt APP-FOLDER --dry-run` says what it would make, and makes nothing. A value that looks like a password or token is left out and named; keep it out of the file, and name where to read it instead (`DB_PASSWORD_FILE`). Adopt writes `.confighub-app` into the folder, a note of what the files match in the hub. Commit it with the app, so that `cub mini upload` from any clone proposes only what that clone changed.
+
+When the files change later, the agent proposes them:
+
+```bash
+cub mini upload APP-FOLDER --component APP --change-desc "WHY" --dry-run   # what it would propose; changes nothing
+cub mini upload APP-FOLDER --component APP --change-desc "WHY"
+```
+
+The upload sets each changed value in the base with the reason. Staging has it at once. Live is asked for under a change order of this upload's own, which waits for your `cub mini approve`.
+
+### Try a change in a copy first
+
+Ask the agent to *"try it in a copy first, without touching production."* It makes a copy of the app for the try, changes it there, and tells you what differs:
+
+```bash
+cub mini try APP NAME                                              # APP-try-NAME, a copy of staging
+cub mini set APP KEY=VALUE --variant try-NAME --change-desc "WHY"  # the change, in the copy only
+cub mini tries APP                                                 # each try: its age, what it came from, what it holds differently
+```
+
+The copy takes about a tenth of a second to make. NAME is one word for the try, such as `limit`. `--from live` copies what live holds instead of staging. Nothing in the copy reaches staging or live. Then you choose one of two ways out:
+
+```bash
+cub mini try APP NAME --keep --change-desc "WHY"   # staging has it now; live waits for your approval
+cub mini try APP NAME --drop                        # the copy is removed, with a line saying what it held
+```
+
+With `--keep`, the change is set in the base with the reason, staging takes it at once, and live waits under a change order that `cub mini waiting` shows. The copy is then removed. Agents asked to try a change in a copy first, without touching production, did so in 8 of 8 measured sessions, with staging and live unchanged ([the evidence](evidence.md#a-copy-first-a-service-a-shared-setup)).
+
+### A service the app needs
+
+A Postgres, a Redis, an S3 bucket or a mail sender is registered once, as a provider, for staging or for live. Then the app says it needs one:
+
+```bash
+cub mini provide db-staging postgres DATABASE_URL=postgres://app@127.0.0.1:5432/app --for staging --change-desc "Staging database"
+cub mini provide db-live postgres DATABASE_URL=postgres://app@db.internal:5432/app --for live --change-desc "Live database"
+cub mini need APP postgres --change-desc "WHY"
+cub mini needs APP
+```
+
+The kinds are `postgres` (`DATABASE_URL`), `redis` (`REDIS_URL`), `s3` (`S3_BUCKET`, `S3_ENDPOINT`) and `mail` (`SMTP_URL`). Each copy takes the settings of the provider registered for it, as its own: `APP-staging` the staging database, `APP-live` the live one. When a provider is registered again with new values, every copy that takes it follows, and a later version of the base does not overwrite them. A copy with no provider yet says what it needs, and `cub mini needs` lists what each copy takes, from which provider, and what is still unmet. `provide` and `need` say what they would do with `--dry-run`.
+
+A provider's values are settings, not secrets. A value that holds a password or a token is refused, and the refusal names `cub mini secret set`: the address goes in the provider, the password in a secret ([a secret for live](#a-secret-for-live-that-no-agent-can-read)). Asked to *"add a Postgres to this app"*, an agent did so in 31 seconds, with no password anywhere ([the evidence](evidence.md#a-copy-first-a-service-a-shared-setup)).
+
+### An app from a setup someone shared
+
+A teammate can share an app's setup as a file: `cub mini copy APP --to-file APP-setup.tar.gz` writes its base, staging and live copies, with every kept value's reason, whole however long, and no secrets. To make an app of your own from it, on your hub:
+
+```bash
+cub mini copy --from-file APP-setup.tar.gz --name SHARED --dry-run   # what it would copy; changes nothing
+cub mini copy --from-file APP-setup.tar.gz --name SHARED
+cub mini adopt APP-FOLDER --pattern SHARED
+```
+
+The copy is made under the name you give, as `SHARED-base`, `SHARED-staging` and `SHARED-live`, and its last line names the adopt command. It must come from a hub other than yours. A copy that fails leaves nothing behind. Adopt then makes your app from `SHARED-base`: it keeps your own values from your `.env`, takes the shared values for the rest, with their reasons, and takes what the shared setup changes next, with `cub mini upgrade SHARED-base/app`. A service the setup needs comes as a need, unmet until your hub has a provider for it. A second person's agent, given a shared setup, made their own app from it in 8 of 8 measured sessions ([the evidence](evidence.md#a-copy-first-a-service-a-shared-setup)).
 
 ### A secret for live that no agent can read
 
