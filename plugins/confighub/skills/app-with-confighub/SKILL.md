@@ -13,7 +13,10 @@ command below was run as written; do not read `cub --help` first.
 ## 1. Find a hub, or start one
 
 Run `cub space list`. If it answers with a table, use that hub. If it fails, or `cub` is not
-installed, run:
+installed, and the person asked for a staging and a production setup without naming
+ConfigHub, first say in one line what you are starting: confighub mini, ConfigHub on this
+machine, which keeps the app's settings as a staging copy and a live copy that changes only
+when they approve; a download of about 60 MB. Then run:
 
 ```
 "${CLAUDE_PLUGIN_ROOT}/bin/confighub" mini get
@@ -35,7 +38,8 @@ environment), with `.env.staging` and `.env.production` beside it if they keep t
 Terraform folder's `common.tfvars` with `staging.tfvars` and `prod.tfvars`. A Kustomize
 repository with overlays (a `base/`, `overlays/staging`, `overlays/prod`) is adopted as it is:
 its rendered base becomes the base, and what each overlay changes becomes that copy's own
-values. Then, from the folder above the app's:
+values; `cub mini upload` on the repository's folder takes a later change the same way. Then,
+from the folder above the app's:
 
 ```
 cub mini adopt APP-FOLDER --dry-run
@@ -87,7 +91,8 @@ cub mini require-approval APP --variant live --agent APP-agent
 ```
 
 Adopt already makes live wait for the person's approval. This adds a key of its own for the
-agent: it can change the base and ask, and cannot approve, promote or write live. It prints
+agent: it can change the base and staging, so its uploads reach staging at once, and ask for
+live; it cannot approve, promote or write live. It prints
 the line that starts the agent's sessions on that key (`claude --settings ...`); give that
 line to the person as it is.
 
@@ -113,10 +118,12 @@ value, make one up, or put one on a command line: give the person that command, 
 
 A service the app needs (a Postgres, a Redis, an S3 bucket, a mail sender):
 `cub mini need APP KIND`, with KIND one of `postgres`, `redis`, `s3`, `mail`. If the hub has a
-provider of it, its settings (`DATABASE_URL`, `REDIS_URL`, ...) land in the copies as their
-own, each copy from the provider registered for it; otherwise the copies say what they need,
-and `cub mini needs APP` lists it. Do not write the service's address into `.env` yourself,
-and never its password: that is the person's, with `cub mini secret set`.
+provider of it, its settings (`DATABASE_URL`, `REDIS_URL`, ...) land in staging at once, as its
+own, each copy from the provider registered for it; live, or any copy behind approval, takes
+them only when the person approves the change order `need` prints (`cub mini waiting` lists it),
+so tell the person it waits and give them that `cub mini approve` command. Otherwise the copies
+say what they need, and `cub mini needs APP` lists it. Do not write the service's address into
+`.env` yourself, and never its password: that is the person's, with `cub mini secret set`.
 
 ## 4. Try a change in a copy first
 
