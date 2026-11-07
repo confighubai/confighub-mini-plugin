@@ -43,6 +43,10 @@ In Claude Code, in the repository your agents work in:
 
 You learn no command until the moment you need it. The steps below are the same, by hand.
 
+Several agents can propose against one app at once. Each upload makes a change order of its own that describes only its own change, two in the same second included, and `cub mini waiting` shows what each proposes apart from what promoting it would also carry. An upload proposes only what its folder changed: `.confighub-app`, which `cub mini adopt` writes and you commit with the app, notes what the files last matched in the hub, so a clone taken before other agents' uploads proposes what it changed and sets nothing of theirs back ([the app you have](from-plugin-to-confighub.md#the-app-you-have)).
+
+A secret for live, such as a database password, is yours to set, in a terminal: `cub mini secret set APP KEY --variant live --change-desc "WHY"`, with the value read from standard input. It is kept where an agent's key has no right to read it, the app's settings name it as `KEY_FILE=/run/secrets/APP/KEY`, and `cub mini secret files` writes it where the app runs ([a secret for live](from-plugin-to-confighub.md#a-secret-for-live-that-no-agent-can-read)). An agent asked to rotate it gives you that command, and never the value.
+
 ## On confighub mini, by hand: about 5 minutes
 
 Each `cub mini` command here is plain `cub` with the rest filled in ([which](cub-mini-and-cub.md)). The next section does the same with `cub` alone.
@@ -80,7 +84,7 @@ Each `cub mini` command here is plain `cub` with the rest filled in ([which](cub
    cub mini require-approval api --variant live --agent bot
    ```
 
-   `--agent bot` puts the agent's key in a `cub` configuration of its own, which holds nothing of yours. Run in a Git repository, it also writes the agent's settings into the repository's `.claude/settings.local.json`, keeping what that file already holds. The settings are the agent's sign-in, and Claude Code's sandbox keeping sessions from reading your own configuration. Git is told to leave the file out. The command also prints a few lines to put in the agent's `CLAUDE.md` or `AGENTS.md`, which tell the agent to propose a change rather than ask you for more access.
+   `--agent bot` puts the agent's key in a `cub` configuration of its own, which holds nothing of yours. Run in a Git repository, it also writes the agent's settings into the repository's `.claude/settings.local.json`, keeping what that file already holds. The settings are the agent's sign-in, and Claude Code's sandbox keeping sessions from reading your own configuration, except the confighub mini package in it, so that they run `cub` and `cub mini` from where `cub mini get` put them, with no copy of their own. Git is told to leave the file out. The command also prints a few lines to put in the agent's `CLAUDE.md` or `AGENTS.md`, which tell the agent to propose a change rather than ask you for more access.
 
 5. Start the agent's sessions with plain `claude`, in that repository. Every Claude Code session started there from now on runs `cub` as the agent: in one, `cub context get` shows the agent's service account, not your account. It can propose, and cannot approve. You approve in a terminal, outside any agent's reach. For agents in other worktrees or in the background, see [the next section](#several-worktrees-background-agents-and-your-own-sign-in-out-of-reach).
 
