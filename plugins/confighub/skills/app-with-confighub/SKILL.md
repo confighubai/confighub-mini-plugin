@@ -1,6 +1,6 @@
 ---
 name: app-with-confighub
-description: Use when the person asks for an app "using ConfigHub" or "with confighub", asks to attach or add ConfigHub to an existing app or folder, wants a staging and a production setup where the agent proposes changes to production and cannot change it without the person, or asks to set, change or rotate a password, key, token or other secret of an app whose folder has a .confighub-app file. Starts a hub on this machine if none answers, and makes the base, staging and production copies with cub mini.
+description: Use when the person asks for an app "using ConfigHub" or "with confighub", asks to attach or add ConfigHub to an existing app or folder, wants a staging and a production setup where the agent proposes changes to production and cannot change it without the person, asks to try a change "first", "in a copy" or "without touching production" on an app a hub holds, asks to start an app from a setup someone shared (a NAME-setup.tar.gz file or an OCI reference from cub mini copy), or asks to set, change or rotate a password, key, token or other secret of an app whose folder has a .confighub-app file. Starts a hub on this machine if none answers, and makes the base, staging and production copies with cub mini.
 ---
 
 # An app with ConfigHub: base, staging, production
@@ -62,6 +62,24 @@ It gets the first's base as its own base, keeps its own values, and takes what t
 changes next (`cub mini upgrade APP-base/app`). Use it whenever the person asks for another
 app "like" one that is here, or with "the same setup"; `cub space list` shows which apps are.
 
+### An app from a setup someone shared
+
+A setup someone shared is a file `NAME-setup.tar.gz` (from `cub mini copy APP --to-file`) or
+an OCI reference (from `--to-oci`): an app's base, staging and live copies, with the reason
+for each value, and no secrets. Take it in under a name of its own, then make the person's
+app from it, as the second app above:
+
+```
+cub mini copy --from-file FILE --name SHARED        # or --from-oci REF --name SHARED
+cub mini adopt APP-FOLDER --pattern SHARED
+```
+
+The copy's last line names the adopt command. The person's app is then `APP-base`,
+`APP-staging` and `APP-live`, made from `SHARED-base`: it keeps its own values from its
+`.env`, takes the shared values for the rest with their reasons, and takes what the shared
+setup changes next. Do not stop at the copy: `SHARED-*` is the shared setup under the first
+person's values, not the person's app. Then step 3 for the person's app.
+
 ## 3. Production only with the person
 
 ```
@@ -77,7 +95,7 @@ To change a copy later:
 
 ```
 cub mini set APP KEY=VALUE --variant staging --change-desc "WHY"      # staging, at once
-cub mini upload APP-FOLDER --component APP --change-desc "WHY"        # the files as edited; live waits
+cub mini upload APP-FOLDER --component APP --change-desc "WHY"        # the files as edited; staging now, live waits
 cub mini waiting                                                      # what waits, and the approve command
 ```
 
@@ -93,13 +111,45 @@ value, make one up, or put one on a command line: give the person that command, 
 `.env` names, and say that the machine that runs the app reads it with
 `cub mini secret files APP --variant live --dir /run/secrets/APP`.
 
+A service the app needs (a Postgres, a Redis, an S3 bucket, a mail sender):
+`cub mini need APP KIND`, with KIND one of `postgres`, `redis`, `s3`, `mail`. If the hub has a
+provider of it, its settings (`DATABASE_URL`, `REDIS_URL`, ...) land in the copies as their
+own, each copy from the provider registered for it; otherwise the copies say what they need,
+and `cub mini needs APP` lists it. Do not write the service's address into `.env` yourself,
+and never its password: that is the person's, with `cub mini secret set`.
+
+## 4. Try a change in a copy first
+
+When the person asks to "try" a change "first", "in a copy", or "without touching
+production", change neither staging nor live. Make a copy of the app for the try, change
+it there, and read what differs:
+
+```
+cub mini try APP NAME                                                  # APP-try-NAME, from staging, in a second
+cub mini set APP KEY=VALUE --variant try-NAME --change-desc "WHY"      # the change, in the copy only
+cub mini tries APP                                                     # what the copy holds differently
+```
+
+NAME is a word for the try (`limit`). `--from live` makes the copy from what runs instead.
+`cub mini copies APP --to DIR` writes the copy as a file, to run the app on it. Then there
+are two ways out, and only the person chooses:
+
+```
+cub mini try APP NAME --keep --change-desc "WHY"    # staging now, live once the person approves; the copy removed
+cub mini try APP NAME --drop                        # the copy removed, with a line saying what it held
+```
+
+Unless the person said to keep it or to drop it, leave the copy. End with what the copy
+holds differently from staging, that staging and live are unchanged, and the two
+commands above.
+
 ## Do not
 
 - Write a setup script to run later. Run the commands, now, and show their output.
 - Ask the person to sign in anywhere. Step 1 signs `cub` in.
 - Print, store or put in the hub a password, key or token.
 - Use `cub variant create`, `cub function set --protect` or `cub changeorder create` by hand
-  for what adopt, set and upload do above.
+  for what adopt, set, upload and try do above.
 
 ## End with
 
