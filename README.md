@@ -95,7 +95,7 @@ Already use [Entire](docs/entire.md)? `entire plugin install https://github.com/
 
 ## What this is
 
-This is the open-source way in to [ConfigHub](https://docs.confighub.com) for people who work with AI agents. ConfigHub keeps configuration with every change, who made it and why, and lets a person approve what reaches production. There are three parts:
+This is the way in to [ConfigHub](https://docs.confighub.com) for people who work with AI agents; the plugin and this repository are MIT-licensed. ConfigHub keeps configuration with every change, who made it and why, and lets a person approve what reaches production. There are three parts:
 
 | Part | What it is | How you start |
 |---|---|---|
