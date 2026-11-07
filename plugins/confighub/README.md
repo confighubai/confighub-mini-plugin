@@ -24,6 +24,10 @@ In a Claude Code session:
 
 In a terminal, `bin/confighub mini changes`, run from this plugin's folder, shows the same record as `/confighub:changes`.
 
+## Asking for an app with ConfigHub
+
+Ask for an app "using ConfigHub", or ask the agent to attach ConfigHub to the app you have. The plugin's skill tells the agent what to run. It writes the app and its settings file, starts a hub on your machine if none answers (the plugin's own `confighub mini get`: no account, no sign-in), and makes three copies of the settings with `cub mini adopt`: a base, a staging copy that takes changes at once, and a live copy, your production, which changes only when you run the `cub mini approve` command it prints. If you keep `.env.staging` or `.env.production`, each becomes that copy's own values from the start. With `cub mini require-approval --agent`, the agent gets a key that can propose and cannot approve.
+
 ## Settings
 
 Each setting is off unless you turn it on, in Claude Code's settings file under `env`:

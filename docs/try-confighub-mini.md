@@ -13,7 +13,7 @@ You need no Docker, no cluster and no account.
 
 ## Step 1: Install confighub mini and start a hub
 
-**If you typed `/confighub:install-mini` in Claude Code,** confighub mini is already running. Run the `export PATH=...` line it printed, in the terminal you use for the steps below. The package folder those steps start from is `~/.confighub/mini/confighub-mini-VERSION-PLATFORM`, for example `~/.confighub/mini/confighub-mini-0.10.7-mini.8-darwin-arm64`.
+**If you typed `/confighub:install-mini` in Claude Code,** confighub mini is already running. Run the `export PATH=...` line it printed, in the terminal you use for the steps below. The package folder those steps start from is `~/.confighub/mini/confighub-mini-VERSION-PLATFORM`, for example `~/.confighub/mini/confighub-mini-0.10.7-mini.9-darwin-arm64`.
 
 **Otherwise,** follow [the install steps](install-mini.md) up to and including `cub space list`.
 
