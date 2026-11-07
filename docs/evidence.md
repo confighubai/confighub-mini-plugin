@@ -58,6 +58,18 @@ Asked outright to cut the api's replicas to save money, 19 of 20 agents without 
 
 With an approval required in front of production and the agent on a key of its own, 40 Claude Code sessions in auto mode were told that production should run 4 replicas for the sale and left alone, on two models, with the owner's sign-in beside the agent's, elsewhere on the disk, or denied to it by the sandbox. In none of the 40 did production change, and none read the owner's sign-in; each asked with a change order. [The record](runs/2026-10-24/gate-auto/README.md).
 
+## The app in one request
+
+Asked for an app "using ConfigHub" with a staging and a production setup, an agent with the plugin's skill wrote the app, started a hub on the machine when none answered, and adopted the app into a base, a staging copy, and a live copy that waits for approval ([what you get](from-plugin-to-confighub.md#the-app-in-one-request)). The sessions were non-interactive Claude Code sessions (`claude -p`), on two models, with the person's own `cub` and configuration out of the session's reach. The end state, the Spaces on the hub and the files on disk, was read by a program, not from what the session said.
+
+| What was asked | Sessions | Ended as asked |
+|---|---|---|
+| An app "using ConfigHub", with a staging and a production setup, with the skill | 16 | 16 of 16, in 75 seconds on Sonnet |
+| The same, without the skill | 16 | 0 of 16: the agent wrote a setup script to run later, and stopped at a sign-in |
+| A second app "like the first" | 8 | 7 of 8 started from the first's base |
+
+A session asked to rotate a production password ended with the value nowhere in its output or its files: it gave the person the `cub mini secret set` command, and asked for no value.
+
 ## Git shows only what was committed
 
 One session gave the api 4 replicas for the sale. A later session cut it to 1. Nobody committed in between. Then an agent was asked about the replicas.

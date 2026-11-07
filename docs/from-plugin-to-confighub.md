@@ -13,7 +13,7 @@ Words used on this page:
 | Step | What you add | What you get | Effort |
 |---|---|---|---|
 | 1 | The plugin | A record of what agents change and why; agents told before they undo an earlier change; what a repository deploys | Two commands, no account |
-| 2 | confighub mini, a hub of your own | Agents that edit your files as before, but whose changes reach production only once you approve them, in one command; a hub in each sandbox or CI job; your values kept through a vendor's next version | One command, then one sentence to the agent |
+| 2 | confighub mini, a hub of your own | Agents that edit your files as before, but whose changes reach production only once you approve them, in one command; an app with its staging and production copies in one request, or the app you have with the files it keeps; a hub in each sandbox or CI job; your values kept through a vendor's next version | One command, then one sentence to the agent; or one request for the app |
 | 3 | Your organization's ConfigHub | One place for the team; agents with keys of their own; approval of changes to production | A ConfigHub organization |
 | 4 | Agents that run unattended | Records signed with each agent's own identity; rights taken away at once | Your cluster's workload identity |
 
@@ -65,6 +65,36 @@ Then work as before. You change no prompt and add no instructions.
 - Flux or Argo CD deploying what the hub approved, over OCI, when you want the hub to be the source ([GitOps over OCI](gitops-over-oci.md)).
 
 You do not need a cluster for any of this. confighub mini uses the same `cub` commands as ConfigHub, so nothing you learn here is wasted ([how the commands map](cub-mini-and-cub.md)).
+
+### The app in one request
+
+**Amara's story, continued.** Amara wants a small service beside the api. In an empty folder she asks Claude Code: *"vibe code me a baseline app using ConfigHub: a small web service with a health endpoint, a configurable greeting, and a staging and a production setup."* The agent writes the service and its `.env`, starts a hub on her machine since none answers, and ends with three copies of its settings: `greeter-base`; `greeter-staging`, which took the file's values at once; and `greeter-live`, which takes them only when she runs the `cub mini approve` command it printed. A week later she asks for a second service "like the first", and it starts from the first's base.
+
+**What you do.** Ask for an app "using ConfigHub", or for "a staging and a production setup". The plugin's skill tells the agent what to run; you give it no command. If no hub answers, the agent runs the plugin's own `confighub mini get`, which downloads confighub mini and starts a hub, with no account and no sign-in. It writes the app, then runs `cub mini adopt APP-FOLDER`. For a second app, ask for one "like the first": `cub mini adopt APP-FOLDER --pattern FIRST` gives it the first's base as its own, keeps its own values, and takes what the first changes next, with `cub mini upgrade FIRST-base/app`.
+
+**What you get.** The app, and a base, a staging copy that takes your agents' changes at once, and a live copy that changes only when you approve, in the time it takes to write the app: 75 seconds on Sonnet, in 16 of 16 measured sessions. Without the skill, in 0 of 16: the agent wrote a setup script to run later and stopped at a sign-in ([the evidence](evidence.md#the-app-in-one-request)). A second app "like the first" started from the first's base in 7 of 8. To put the agent on a key of its own, which can propose and cannot approve, it runs `cub mini require-approval APP --variant live --agent APP-agent` and gives you the line that starts its sessions on that key. Those sessions find `cub mini` where `confighub mini get` put it, with no copy of their own.
+
+### The app you have
+
+Ask: *"attach ConfigHub to this app and keep my staging and production values."* The agent runs `cub mini adopt APP-FOLDER`, which reads what the app reads at start and changes none of your files:
+
+- `.env`, or `app.env`, a compose file's environment, `.env.example`, and the settings the code reads, with their defaults. A `.env.staging` or `.env.production` beside it is that copy's own values from the start.
+- A Terraform folder: `common.tfvars`, the var file every environment reads, with `staging.tfvars` as staging's own values and `prod.tfvars` as live's.
+- A Kustomize repository: `base/`, as kustomize renders it, becomes the base. What `overlays/staging` changes becomes staging's own values, field by field, and what the prod, production or live overlay changes, or the one an Argo CD Application deploys, becomes live's.
+
+`cub mini adopt APP-FOLDER --dry-run` says what it would make, and makes nothing. A value that looks like a password or token is left out and named; keep it out of the file, and name where to read it instead (`DB_PASSWORD_FILE`). Adopt writes `.confighub-app` into the folder, a note of what the files match in the hub. Commit it with the app, so that `cub mini upload` from any clone proposes only what that clone changed.
+
+### A secret for live that no agent can read
+
+A password, a key or a token is yours to set, in a terminal:
+
+```bash
+cub mini secret set APP KEY --variant live --change-desc "WHY"
+```
+
+With no `=VALUE`, the value is read from standard input, so that it is on no command line. It is kept in a Space of its own, `APP-live-secrets`, which no agent's key is given a right to: the agent that `require-approval --agent` made can change the base and propose, and cannot read it. The app's settings name the secret, never its value: `KEY_FILE=/run/secrets/APP/KEY`. Where the app runs, `cub mini secret files APP --variant live --dir /run/secrets/APP` writes each secret as a file readable by that user only, with a key from `cub mini pull-key NAME APP --variant live --secrets`. `cub mini secret list APP --variant live` names the secrets and who may read them, and never prints a value.
+
+An agent asked to rotate a production password gives you the `secret set` command with the key's name, and asks for no value. A measured session asked to do so ended with the value nowhere in its output or its files.
 
 **When you need the next step.** confighub mini is yours alone. Your teammates cannot see it, and nobody but you can approve your agents' changes.
 

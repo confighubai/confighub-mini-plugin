@@ -32,7 +32,7 @@ If you run it again, it starts the hub if the hub is stopped.
 
 When it is done, it prints the line that puts the package's `cub` on your `PATH`, and what to do next: put a repository's record into the hub with `cub mini copy --from-record` ([how](try-confighub-mini.md#step-4-put-your-agents-record-into-the-hub)), or follow [a first run](try-confighub-mini.md).
 
-In a terminal, or in Codex, run `bin/confighub mini get` from the plugin. It does the same.
+In a terminal, or in Codex, run `bin/confighub mini get` from the plugin. It does the same. The plugin on its own carries no server, so `bin/confighub mini install` run from it with no confighub mini downloaded says to run `confighub mini get` instead.
 
 The one-step install needs nothing else on the machine: no `tar`, `xz` or `curl`, and no system certificates. It works on Linux distributions that use glibc, such as Debian, Ubuntu, Fedora, Rocky and Amazon Linux, including their slim images. Alpine uses musl, and the bundled PostgreSQL does not run on it, so the install stops before it downloads anything and says so. Use a glibc image instead. In a container, run it as a user that has an account, since PostgreSQL will not start for a user ID without one.
 

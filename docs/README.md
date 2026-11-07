@@ -14,7 +14,7 @@ A few words used throughout:
 | [The README](../README.md) | What the plugin does, how to install it, and a five-minute try |
 | [What a repository deploys](inventory.md) | `/confighub:inventory`: each app and chart, what deploys it, what nothing deploys, how environments differ, and what agents changed |
 | [How it works](how-it-works.md) | What the agent is given and when, the stop before an undo, what is recorded and what never is, every setting, and keeping the record out of the agent's reach |
-| [The evidence](evidence.md) | What agents did with the plugin and without it, in hundreds of real sessions, quoted as they wrote it |
+| [The evidence](evidence.md) | What agents did with the plugin and without it, in hundreds of real sessions, quoted as they wrote it; and what a request for an app with ConfigHub gave, in measured sessions |
 | [The pull-request review](../review/README.md) | A comment on each pull request with every configuration value it changes, and why; no install, no account |
 | [Git, GitHub and a hub](git-and-github.md) | What the plugin does with Git and GitHub, a hub with no confighub mini (`/confighub:to-hub`), and a hub beside Git with branch protection |
 | [Working with the tools you already have](integrations.md) | What the plugin does with each tool, how to set it up, and how far it has been run |
@@ -30,19 +30,20 @@ A few words used throughout:
 | Page | What it answers |
 |---|---|
 | [From the plugin to ConfigHub](from-plugin-to-confighub.md) | One team's path from the plugin to confighub mini to the organization's ConfigHub, with what each step adds and when you need it |
+| [The app in one request](from-plugin-to-confighub.md#the-app-in-one-request) | Ask for an app "using ConfigHub" and get its base, staging and live copies on a hub the agent starts; [the app you have](from-plugin-to-confighub.md#the-app-you-have), with its `.env.staging`, its tfvars or its Kustomize overlays, attached the same way; [a secret for live](from-plugin-to-confighub.md#a-secret-for-live-that-no-agent-can-read) that no agent can read |
 | [Install confighub mini](install-mini.md) | `/confighub:install-mini`, or the steps by hand, and in a container |
 | [Approvals on confighub mini](approvals.md#on-confighub-mini-ask-for-it-in-about-a-minute) | About a minute, asked for in your own words: agents on keys of their own, proposing changes that only you can approve |
 | [A first run](try-confighub-mini.md) | Fifteen minutes on your own machine: an app you change and keep your changes in through its next version |
 | [Your own Helm chart](your-own-chart.md) | Your chart in a hub, your values kept through the chart's next version |
 | [Flux and Argo CD deploying from it](gitops-over-oci.md) | Clusters that deploy what the hub approved, over OCI |
 | [A service on a VM](vm.md) | The service's files written from the hub on a timer; only approved values reach them; agents with a hub key and no SSH key; an app platform on the same hub |
-| [`cub mini` as plain `cub`](cub-mini-and-cub.md) | Which ConfigHub commands each `cub mini` command stands for |
+| [`cub mini` as plain `cub`](cub-mini-and-cub.md) | Which ConfigHub commands each `cub mini` command stands for, `adopt`, `upload` and `secret` included |
 
 ## Teams and production
 
 | Page | What it answers |
 |---|---|
-| [Approvals](approvals.md) | An agent proposes a change to production; only the person you name approves it. On confighub mini for your own agents, or on your organization's ConfigHub for a team |
+| [Approvals](approvals.md) | An agent proposes a change to production; only the person you name approves it. On confighub mini for your own agents, or on your organization's ConfigHub for a team. Several agents proposing at once, each with an order of its own; a secret for live that the agent cannot read |
 | [Agents that run for weeks](agents-that-run-for-weeks.md) | Who acted, who agreed, a record the agent cannot change, how to stop it at once; what we might still need, and what ConfigHub does not need to do |
 | [Agents in CI](../ci/README.md) | An agent in a job that keeps your team's reasons, and one that proposes while a person approves |
 | [What we do not claim](limits.md) | What it does not do, or has not been shown to do |
