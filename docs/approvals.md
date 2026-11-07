@@ -47,6 +47,8 @@ Several agents can propose against one app at once. Each upload makes a change o
 
 To see a change before anyone proposes it, ask for it *"in a copy first, without touching production"*: `cub mini try APP NAME` makes a copy of staging of its own, and `cub mini try APP NAME --keep` later gives staging the change and puts it behind a change order for live, the same as an upload ([try a change in a copy first](from-plugin-to-confighub.md#try-a-change-in-a-copy-first)).
 
+A service the app needs works the same way. `cub mini need APP postgres` gives staging the settings of the provider registered for it at once, and proposes live's with a change order that `cub mini waiting` lists and `cub mini approve` puts in. A provider registered again with new values is proposed to live again; live keeps what you approved until then. You register the providers with `cub mini provide`: the agent's key can propose with `need`, and cannot register a provider or approve ([a service the app needs](from-plugin-to-confighub.md#a-service-the-app-needs)).
+
 A secret for live, such as a database password, is yours to set, in a terminal: `cub mini secret set APP KEY --variant live --change-desc "WHY"`, with the value read from standard input. It is kept where an agent's key has no right to read it, the app's settings name it as `KEY_FILE=/run/secrets/APP/KEY`, and `cub mini secret files` writes it where the app runs ([a secret for live](from-plugin-to-confighub.md#a-secret-for-live-that-no-agent-can-read)). An agent asked to rotate it gives you that command, and never the value.
 
 ## On confighub mini, by hand: about 5 minutes
@@ -85,6 +87,8 @@ Each `cub mini` command here is plain `cub` with the rest filled in ([which](cub
    ```bash
    cub mini require-approval api --variant live --agent bot
    ```
+
+   On its key the agent may change the base and each copy that takes changes at once, such as staging, and propose a change to live. It cannot write, approve or promote into live, or read a secret. That holds whatever order you put copies behind approval in. On an app with a staging copy, such as one `cub mini adopt` made, put staging behind approval later, with `cub mini require-approval APP --variant staging --agent bot`, and the agent changes staging only by a change order too; the command says it no longer can change staging at once. The command says which copies the agent may change, and `cub mini reach bot` lists, right by right, what its key reaches in the hub.
 
    `--agent bot` puts the agent's key in a `cub` configuration of its own, which holds nothing of yours. Run in a Git repository, it also writes the agent's settings into the repository's `.claude/settings.local.json`, keeping what that file already holds. The settings are the agent's sign-in, and Claude Code's sandbox keeping sessions from reading your own configuration, except the confighub mini package in it, so that they run `cub` and `cub mini` from where `cub mini get` put them, with no copy of their own. Git is told to leave the file out. The command also prints a few lines to put in the agent's `CLAUDE.md` or `AGENTS.md`, which tell the agent to propose a change rather than ask you for more access.
 

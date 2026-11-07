@@ -32,15 +32,15 @@ A few words used throughout:
 | [From the plugin to ConfigHub](from-plugin-to-confighub.md) | One team's path from the plugin to confighub mini to the organization's ConfigHub, with what each step adds and when you need it |
 | [The app in one request](from-plugin-to-confighub.md#the-app-in-one-request) | Ask for an app "using ConfigHub" and get its base, staging and live copies on a hub the agent starts; [the app you have](from-plugin-to-confighub.md#the-app-you-have), with its `.env.staging`, its tfvars or its Kustomize overlays, attached the same way; [a secret for live](from-plugin-to-confighub.md#a-secret-for-live-that-no-agent-can-read) that no agent can read |
 | [Try a change in a copy first](from-plugin-to-confighub.md#try-a-change-in-a-copy-first) | `cub mini try`: a copy of staging or live in a tenth of a second, then `--keep` for staging now and live once you approve, or `--drop` |
-| [A service the app needs](from-plugin-to-confighub.md#a-service-the-app-needs) | `cub mini provide` and `cub mini need`: a Postgres, a Redis, an S3 bucket or a mail sender, each copy taking its own provider's settings, with no password in them |
+| [A service the app needs](from-plugin-to-confighub.md#a-service-the-app-needs) | `cub mini provide` and `cub mini need`: a Postgres, a Redis, an S3 bucket or a mail sender, staging taking its provider's settings at once and live once you approve, with no password in them |
 | [An app from a setup someone shared](from-plugin-to-confighub.md#an-app-from-a-setup-someone-shared) | `cub mini copy --from-file FILE --name NAME`, then `cub mini adopt FOLDER --pattern NAME`: your own app from a teammate's setup, with its reasons |
-| [Install confighub mini](install-mini.md) | `/confighub:install-mini`, or the steps by hand, and in a container |
-| [Approvals on confighub mini](approvals.md#on-confighub-mini-ask-for-it-in-about-a-minute) | About a minute, asked for in your own words: agents on keys of their own, proposing changes that only you can approve |
+| [Install confighub mini](install-mini.md) | `/confighub:install-mini`, or the steps by hand, and in a container; [moving to a newer one](install-mini.md#move-to-a-newer-confighub-mini) with everything kept |
+| [Approvals on confighub mini](approvals.md#on-confighub-mini-ask-for-it-in-about-a-minute) | About a minute, asked for in your own words: agents on keys of their own, changing staging at once and proposing changes to live that only you can approve |
 | [A first run](try-confighub-mini.md) | Fifteen minutes on your own machine: an app you change and keep your changes in through its next version |
 | [Your own Helm chart](your-own-chart.md) | Your chart in a hub, your values kept through the chart's next version |
 | [Flux and Argo CD deploying from it](gitops-over-oci.md) | Clusters that deploy what the hub approved, over OCI |
 | [A service on a VM](vm.md) | The service's files written from the hub on a timer; only approved values reach them; agents with a hub key and no SSH key; an app platform on the same hub |
-| [`cub mini` as plain `cub`](cub-mini-and-cub.md) | Which ConfigHub commands each `cub mini` command stands for, `adopt`, `upload`, `try`, `provide`, `need` and `secret` included |
+| [`cub mini` as plain `cub`](cub-mini-and-cub.md) | Which ConfigHub commands each `cub mini` command stands for, `adopt`, `upload`, `try`, `provide`, `need`, `secret` and `reach` included |
 
 ## Teams and production
 
