@@ -2,13 +2,13 @@
 
 You build with coding agents, and every setting they touch has a reason: the rate limit raised for a launch, the memory given to staging, the replicas for a sale. By the next session the reason is gone, and the next agent, asked to cut costs, puts the value back without a word. The plugin keeps the reason and tells the next agent before it changes the value again.
 
-You install it and keep working as you do: nothing changes in how you prompt. From the first session, each value an agent sets is recorded with your request behind it, in your files and in the services your production lives in (Vercel, Supabase, Fly, Railway, GitHub, AWS SSM, `terraform apply`, as well as `kubectl` and `helm`), and you can ask why any value is what it is. Agents stop undoing each other's work, and you stop re-explaining. The record stays on your machine, and it is the same record wherever your agents run: Claude Code, Codex, a CI job, a sandbox.
+You install it and keep working as you do. From the first session, each value an agent sets is recorded with your request behind it, in your files and in the services your production lives in (Vercel, Supabase, Fly, Railway, GitHub, AWS SSM, `terraform apply`, `kubectl`, `helm`). Agents stop undoing each other's work, and you stop re-explaining. The record stays on your machine, the same wherever your agents run.
 
-In simulated weeks with people who had never heard of ConfigHub, run in real interactive Claude Code sessions, no agent undid an earlier change silently, and 13 of 15 people credited the plugin ([the runs](docs/evidence.md)).
+In simulated weeks with people new to ConfigHub, no agent undid an earlier change silently, and 13 of 15 credited the plugin ([the runs](docs/evidence.md)).
 
 When you want more, confighub mini is ConfigHub small enough for a laptop: it takes the app with the staging and production files you already keep as each copy's own, staging takes your agents' changes at once, live waits for you, and your values are kept through the next version of whatever you started from. One page shows it in real runs: [ConfigHub for AI agents](https://confighub.github.io/helm-expt/ai-agents/).
 
-Or ask for the app with its platform in one request. "Vibe code me a baseline app using ConfigHub, with a staging and a production setup" gives you the app, a base, a staging copy that takes your agents' changes at once and a live copy that changes only when you approve, on a hub the agent starts on your machine if none answers: 75 seconds on Sonnet, in 16 of 16 measured sessions, where without the plugin's skill the agent wrote a setup script and stopped at a sign-in. A second app "like the first" starts from the first's base in 54 seconds. An app you already have, with its `.env.staging`, its tfvars or its Kustomize overlays, is attached the same way: "attach ConfigHub to this app and keep my staging and production values". Your agent makes the platform; the hub keeps it.
+Or [ask for the app with its platform in one request](#or-ask-for-the-app): the app, a base, a staging copy and a live copy that waits for you, on a hub the agent starts on your machine, in 75 seconds in 16 of 16 measured sessions. An app you already have, with its `.env.staging`, its tfvars or its Kustomize overlays, is attached the same way. Your agent makes the platform; the hub keeps it.
 
 ## Install
 
@@ -41,7 +41,7 @@ vibe code me a baseline app using ConfigHub: a small web service with a health e
 a configurable greeting, and a staging and a production setup
 ```
 
-The agent writes the app, starts confighub mini on your machine if no hub answers, and ends with the three copies and the command that approves a change to live. Ask for a second app "like the first" and it starts from the first's base.
+The agent writes the app, starts confighub mini on your machine if no hub answers, and ends with the three copies and the command that approves a change to live. Before you run that command, run the `export PATH=...` line the agent gives you in the same terminal: `cub` comes with confighub mini and is not on your path yet. Ask for a second app "like the first" and it starts from the first's base.
 
 ### Try it in one minute
 
@@ -116,19 +116,7 @@ This is the way in to [ConfigHub](https://docs.confighub.com) for people who wor
 | **confighub mini** | A hub of your own: ConfigHub itself, packaged lean, as two processes on your laptop, in an agent's sandbox or in a CI job. No Docker, no cluster, no account, and it works with the network off. A download of 44 to 67 MB | `/confighub:install-mini` in Claude Code |
 | **`cub mini`** | A plugin for `cub`, ConfigHub's command-line tool, that fills in the rest of each request so the commands stay short. What you learn with it works unchanged on your organization's ConfigHub | Comes with confighub mini |
 
-**The problems it solves**
-
-1. **Agents undo each other's changes.** A later agent puts back a value an earlier one set for a reason, and nobody is told. In our tests this happened three times in four without the plugin, and never silently with it ([the problem, step by step](#the-problem-it-solves)).
-2. **Nothing stands between an agent and production.** An agent working under your sign-in can approve its own change, and a rule in `CLAUDE.md` is only a request. With a hub, the agent proposes on a key of its own, and only the person you name can approve ([approvals](docs/approvals.md)).
-3. **Nobody knows what a repository deploys** before they, or an agent, change it.
-4. **A vendor's next version overwrites your changes,** such as the values you set in their Helm chart.
-
-**The journeys.** Each is a step further, and you can stop at any of them ([one team's path, step by step](docs/from-plugin-to-confighub.md)):
-
-1. **The plugin:** a record of what agents change and why; the next agent told first; what a repository deploys; a review of each pull request.
-2. **confighub mini:** a hub for each agent. Your agents on keys of their own, proposing changes that you approve, in five minutes on your laptop; a hub in each sandbox or CI job that hands back a pull request; your values kept through a vendor's next version.
-3. **Your organization's ConfigHub:** one place for the team, kept in step with each laptop; a colleague you name approves each change to production.
-4. **Agents that run unattended:** records signed with each agent's own identity; rights taken away at once; model use kept with each change.
+It solves four problems: agents undo each other's changes ([step by step](#the-problem-it-solves)); nothing stands between an agent and production, since a rule in `CLAUDE.md` is only a request, while with a hub the agent proposes on a key of its own and only the person you name approves ([approvals](docs/approvals.md)); nobody knows what a repository deploys before they change it; and a vendor's next version overwrites your changes. Each step from the plugin to your organization's ConfigHub is [one team's path, step by step](docs/from-plugin-to-confighub.md).
 
 ## The problem it solves
 
@@ -150,7 +138,7 @@ With the plugin, the second agent was told about the 4 before it made its change
 
 > **This change undoes an earlier one.** The file already had an uncommitted change that raised replicas from 2 to 4. A session earlier today made it, with this request: *"Friday's flash sale will quadruple traffic to the api: give it 4 replicas."* So 1 replica is below even the committed value of 2, and it would leave the api with a single pod on Friday.
 
-The same thing happens on a cluster. An agent asked only to deploy, or to add a setting and apply it, puts back values another agent changed for a reason: three times in four in our tests, with nobody told. With the plugin it never happened silently: the agent asked you, or, with nobody to ask, left the value alone and said why. [How we tested this](docs/evidence.md).
+The same happens on a cluster: three times in four in our tests without the plugin, never silently with it ([how we tested this](docs/evidence.md)).
 
 ## Try it in five minutes
 
@@ -219,7 +207,7 @@ It never keeps a command's output, a copy of a file, or anything that looks like
 
 The record tells you and your agents what happened. It cannot stop an agent that holds your keys, and it cannot approve anything. For that, you add a hub.
 
-A hub is a place where your configuration is kept, with every change, who made it and why, and where a change to production waits for the person you name. ConfigHub is that hub. confighub mini is ConfigHub made small enough that every agent can have one: on your laptop, in a sandbox, or in a CI job. The plugin's record goes into it with `cub mini copy --from-record`, each change as a revision with its reason.
+A hub keeps your configuration with every change, who made it and why, and holds a change to production for the person you name. confighub mini is ConfigHub small enough for every agent to have one, on your laptop, in a sandbox or in a CI job; the plugin's record goes into it with `cub mini copy --from-record`.
 
 | What you want | What to do | Effort |
 |---|---|---|
@@ -230,7 +218,7 @@ A hub is a place where your configuration is kept, with every change, who made i
 | To keep your own values through a vendor's next version of a Helm chart, and see first what it changes | Type `/confighub:install-mini` in Claude Code, then follow [a first run](docs/try-confighub-mini.md) | About 25 seconds to install; 15 minutes for the first run |
 | Agents that run unattended for days, with a key of their own and a way to stop them at once | See [agents that run for weeks](docs/agents-that-run-for-weeks.md) | A ConfigHub organization |
 
-confighub mini uses the same commands as ConfigHub, so what you learn on your laptop works on your organization's ConfigHub too ([how the commands map](docs/cub-mini-and-cub.md)). [From the plugin to ConfigHub](docs/from-plugin-to-confighub.md) follows one team through each step.
+What you learn on your laptop works on your organization's ConfigHub too ([how the commands map](docs/cub-mini-and-cub.md)).
 
 ## Documentation
 
