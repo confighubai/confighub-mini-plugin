@@ -28,11 +28,11 @@ It does the following, in about 25 seconds on a Mac:
 4. It unpacks the package.
 5. It starts a hub.
 
-If you run it again, it starts the hub if the hub is stopped.
+If you run it again, it starts the hub if the hub is stopped, and moves it onto a newer release if there is one ([how](#move-to-a-newer-confighub-mini)).
 
 When it is done, it prints the line that puts the package's `cub` on your `PATH`, and what to do next: put a repository's record into the hub with `cub mini copy --from-record` ([how](try-confighub-mini.md#step-4-put-your-agents-record-into-the-hub)), or follow [a first run](try-confighub-mini.md).
 
-In a terminal, or in Codex, run `bin/confighub mini get` from the plugin. It does the same. The plugin on its own carries no server, so `bin/confighub mini install` run from it with no confighub mini downloaded says to run `confighub mini get` instead.
+In a terminal, or in Codex, run `bin/confighub mini get` from the plugin. It does the same. The plugin on its own carries no server, so any `cub mini` command run as `bin/confighub mini COMMAND`, such as `bin/confighub mini install` or `bin/confighub mini need`, says it needs confighub mini when none is downloaded, and names `confighub mini get`.
 
 The one-step install needs nothing else on the machine: no `tar`, `xz` or `curl`, and no system certificates. It works on Linux distributions that use glibc, such as Debian, Ubuntu, Fedora, Rocky and Amazon Linux, including their slim images. Alpine uses musl, and the bundled PostgreSQL does not run on it, so the install stops before it downloads anything and says so. Use a glibc image instead. In a container, run it as a user that has an account, since PostgreSQL will not start for a user ID without one.
 
@@ -107,7 +107,15 @@ On Linux you need `curl` and `xz`. On Debian or Ubuntu, install them with `apt-g
 
 The package's `START-HERE.txt` lists ten stories you can run on the hub. For a guided first run, see [Try confighub mini](try-confighub-mini.md).
 
-To update to a later confighub mini, do steps 1 to 5 with the new version. Then, in the new package's folder, swap the `cub mini` commands for its own, and put its `cub` first on your path:
+## Move to a newer confighub mini
+
+Type `/confighub:install-mini` again in Claude Code, or run `bin/confighub mini get` from the plugin in a terminal. It downloads the newest release, checks it against `SHA256SUMS`, and moves the hub onto it. Every Space, revision, change order still waiting and secret is kept. Each agent that `cub mini require-approval --agent` set up runs `cub mini` from the new package from then on, and its Claude Code settings may read it. The command's last lines print the new `export PATH=...` line for its `cub`. `--version VERSION` gets one release in particular.
+
+A repository's `.claude/settings.local.json` is not changed for you. When one runs its sessions as an agent, the move prints the new package's folder to add to that file's `sandbox.filesystem.allowRead`.
+
+When the confighub mini installed is older than the one the plugin was released with, the plugin says so, at most once a day.
+
+To move by hand, do steps 1 to 5 above with the new version. Then, in the new package's folder, swap the `cub mini` commands for its own, and put its `cub` first on your path:
 
 ```bash
 ./bin/cub plugin list
@@ -116,7 +124,9 @@ To update to a later confighub mini, do steps 1 to 5 with the new version. Then,
 export PATH="$PWD/bin:$PATH"
 ```
 
-Use the plugin name `cub plugin list` shows. The next `cub mini` command moves your hub onto the new package's server. Your work, its history and your approvals are kept. A copy of the hub's data from before the move is kept in the hub's folder, as `pgdata-before-...`. If you installed with `/confighub:install-mini`, type it again: it does all of this for you.
+Use the plugin name `cub plugin list` shows. The next `cub mini` command moves your hub onto the new package's server. Your work, its history and your approvals are kept. A copy of the hub's data from before the move is kept in the hub's folder, as `pgdata-before-...`.
+
+## Remove the hub
 
 To remove the hub and its data:
 
