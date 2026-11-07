@@ -8,6 +8,8 @@ In simulated weeks with people who had never heard of ConfigHub, run in real int
 
 When you want more, confighub mini is ConfigHub small enough for a laptop: it takes the app with the staging and production files you already keep as each copy's own, staging takes your agents' changes at once, live waits for you, and your values are kept through the next version of whatever you started from. One page shows it in real runs: [ConfigHub for AI agents](https://confighub.github.io/helm-expt/ai-agents/).
 
+Or ask for the app with its platform in one request. "Vibe code me a baseline app using ConfigHub, with a staging and a production setup" gives you the app, a base, a staging copy that takes your agents' changes at once and a live copy that changes only when you approve, on a hub the agent starts on your machine if none answers: 75 seconds on Sonnet, in 16 of 16 measured sessions, where without the plugin's skill the agent wrote a setup script and stopped at a sign-in. A second app "like the first" starts from the first's base in 54 seconds. An app you already have, with its `.env.staging`, its tfvars or its Kustomize overlays, is attached the same way: "attach ConfigHub to this app and keep my staging and production values". Your agent makes the platform; the hub keeps it.
+
 ## Install
 
 In a terminal:
@@ -29,6 +31,17 @@ Then, in any Claude Code session, you can ask:
 ```
 
 There is no account to create and no server to run. The plugin is MIT-licensed.
+
+### Or ask for the app
+
+In an empty folder, with the plugin installed, ask Claude Code:
+
+```
+vibe code me a baseline app using ConfigHub: a small web service with a health endpoint,
+a configurable greeting, and a staging and a production setup
+```
+
+The agent writes the app, starts confighub mini on your machine if no hub answers, and ends with the three copies and the command that approves a change to live. Ask for a second app "like the first" and it starts from the first's base.
 
 ### Try it in one minute
 
