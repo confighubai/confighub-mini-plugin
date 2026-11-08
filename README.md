@@ -1,14 +1,11 @@
 # ConfigHub for AI agents: the ConfigHub plugin and confighub mini
 
-You build with coding agents, and every setting they touch has a reason: the rate limit raised for a launch, the memory given to staging, the replicas for a sale. By the next session the reason is gone, and the next agent, asked to cut costs, puts the value back without a word. The plugin keeps the reason and tells the next agent before it changes the value again.
+You are in Claude Code, making a new app or changing one you have. Install the plugin, and the app gets what a platform used to give you, around it:
 
-You install it and keep working as you do. From the first session, each value an agent sets is recorded with your request behind it, in your files and in the services your production lives in (Vercel, Supabase, Fly, Railway, GitHub, AWS SSM, `terraform apply`, `kubectl`, `helm`). Agents stop undoing each other's work, and you stop re-explaining. The record stays on your machine, the same wherever your agents run.
+- **A new app:** ask for it with "a staging and a production setup". The agent writes it and leaves a staging copy that takes changes at once and a live copy that changes only when you approve, on a hub it starts on your machine: 75 seconds, in 16 of 16 measured sessions. A second app "like the first" starts from it. [How to ask](#or-ask-for-the-app).
+- **An app you have:** a folder with `.env.staging`, Terraform var files, or a Kustomize repository that Argo CD or Flux deploys. "Attach ConfigHub to this app" keeps your values exactly as they are and puts production behind your approval: 32 of 32 sessions.
 
-In simulated weeks with people new to ConfigHub, no agent undid an earlier change silently, and 13 of 15 credited the plugin ([the runs](docs/evidence.md)).
-
-When you want more, confighub mini is ConfigHub small enough for a laptop: it takes the app with the staging and production files you already keep as each copy's own, staging takes your agents' changes at once, live waits for you, and your values are kept through the next version of whatever you started from. One page shows it in real runs: [ConfigHub for AI agents](https://confighub.github.io/helm-expt/ai-agents/).
-
-Or [ask for the app with its platform in one request](#or-ask-for-the-app): the app, a base, a staging copy and a live copy that waits for you, on a hub the agent starts on your machine, in 75 seconds in 16 of 16 measured sessions. An app you already have, with its `.env.staging`, its tfvars or its Kustomize overlays, is attached the same way. Your agent makes the platform; the hub keeps it.
+Your agent makes the platform; the hub keeps it. From the first session, each value an agent sets is also recorded with your request behind it, in your files and in the services your production lives in (Vercel, Supabase, Fly, Railway, GitHub, AWS SSM, `terraform apply`, `kubectl`, `helm`), so the next agent is told why before it changes it, and you stop re-explaining. In simulated weeks with people new to ConfigHub, no agent undid an earlier change silently ([the runs](docs/evidence.md)). One page shows it in real runs: [ConfigHub for AI agents](https://confighub.github.io/helm-expt/ai-agents/).
 
 ## Install
 
