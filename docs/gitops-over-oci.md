@@ -1,6 +1,6 @@
 # GitOps over OCI: Flux and Argo CD deploying from ConfigHub
 
-This page is for a platform team that runs Flux or Argo CD, and whose agents now propose changes to what those tools deploy. It shows how to make the cluster deploy only changes a named person has approved, with the reason for each value kept. It takes about 15 minutes on your laptop.
+This page is for a platform team that runs Flux or Argo CD, and whose agents now propose changes to what those tools deploy. It shows how to make the cluster deploy only changes a named person has approved, with the reason for each value kept. It takes about 15 minutes on your laptop. To move an app that Argo CD or Flux already deploys from your Git, and hand it back, see [an app that Argo CD or Flux deploys](journeys/gitops-app.md).
 
 ## What "deploying from the hub over OCI" means
 

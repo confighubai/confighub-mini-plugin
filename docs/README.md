@@ -1,6 +1,18 @@
 # Documentation
 
-The pages are grouped by what you are doing. Each page starts by saying who it is for and what you get from it. To see how the plugin, confighub mini and your organization's ConfigHub fit together, start with [from the plugin to ConfigHub](from-plugin-to-confighub.md).
+The pages are grouped by what you are doing. Each page starts by saying who it is for and what you get from it. To see how the plugin, confighub mini and your organization's ConfigHub fit together, start with [from the plugin to ConfigHub](from-plugin-to-confighub.md). For an AI agent, [`llms.txt`](../llms.txt) lists every page with the question it answers.
+
+## What are you doing?
+
+| You are | Start here | You end with |
+|---|---|---|
+| In Claude Code, making a new app | [A new app](journeys/new-app.md) | The app, a staging copy that takes changes at once, and a live copy that changes only when you approve; a second app made from the first |
+| In Claude Code, changing an app you already have: `.env` files, Terraform var files, a Kustomize repository or Helm values | [An app you already have](journeys/existing-app.md) | Your staging and production values kept exactly as they are, your files unchanged, and production behind your approval |
+| Running an app that Argo CD or Flux deploys from Git | [An app that Argo CD or Flux deploys](journeys/gitops-app.md) | The hub beside Git, a check on each pull request, or the hub as the app's source; and the way back to Git |
+| Using software that came with ConfigHub inside it | [Software with ConfigHub inside](journeys/bundled.md) | What exists today, what does not, and how to keep your changes through its next version |
+| Letting agents change configuration, and wanting them to stop undoing each other | [The README](../README.md) | A record of what each agent changed and why, told to the next agent; no hub, no account |
+| Growing from your laptop to your team | [From the plugin to ConfigHub](from-plugin-to-confighub.md) | Each step from the plugin to confighub mini to your organization's ConfigHub, with what it adds |
+| Undoing a step, or leaving | [Going back](journeys/going-back.md) | Your apps as plain files with each reason, and each part removed |
 
 A few words used throughout:
 - **The record** is what the plugin writes down about each change an agent makes to your configuration: the value, from what to what, and why.
