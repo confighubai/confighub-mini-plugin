@@ -1,0 +1,141 @@
+#!/usr/bin/env python3
+"""Copy a fixture from real Vault KV to ConfigHub without giving the proposer a secret."""
+import argparse, json, os, secrets, shutil, stat, subprocess, tempfile, time, uuid
+from pathlib import Path
+from urllib.request import Request, urlopen
+from urllib.error import HTTPError, URLError
+p = argparse.ArgumentParser(description=__doc__)
+p.add_argument('package', type=Path)
+p.add_argument('out', type=Path)
+p.add_argument('--image', required=True, help='Vault image pinned by digest')
+a = p.parse_args()
+a.package = a.package.resolve()
+a.out = a.out.resolve()
+a.out.mkdir(parents=True, exist_ok=False)
+work = Path(tempfile.mkdtemp(prefix='.confighub-vault-', dir=Path.home()))
+cfg = work / 'owner'
+cfg.mkdir()
+app = 'vaultapp-' + uuid.uuid4().hex[:8]
+hub = 'vault-proof-' + uuid.uuid4().hex[:8]
+name = 'minihub-vault-' + uuid.uuid4().hex[:10]
+source = work / app
+source.mkdir()
+(source / 'app.env').write_text('PORT=8080\nLOG_LEVEL=info\nDATABASE_PASSWORD_FILE=/run/secrets/' + app + '/DATABASE_PASSWORD\n')
+env = {k: v for k, v in os.environ.items() if not k.startswith(('CUB_', 'CLAUDE_', 'VAULT_'))}
+env.update(CUB_CONFIG=str(cfg), PATH=str(a.package / 'bin') + os.pathsep + os.environ['PATH'])
+token = secrets.token_urlsafe(32)
+(work / 'vault.env').write_text('VAULT_DEV_ROOT_TOKEN_ID=' + token + '\nVAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200\n')
+(work / 'vault.env').chmod(384)
+checks = []
+created = False
+install_attempted = False
+complete = False
+version = 'unknown'
+
+def run(words, data=None, environment=None, allowed=False):
+    q = subprocess.run(list(map(str, words)), input=data, capture_output=True, text=True, env=environment or env, cwd=work, timeout=120)
+    if q.returncode and (not allowed):
+        error = q.stderr
+        for key in ('token', 'first', 'second', 'value'):
+            secret = globals().get(key)
+            if isinstance(secret, str) and secret:
+                error = error.replace(secret, '<fixture redacted>')
+        (a.out / 'failed-command.txt').write_text(error)
+        raise RuntimeError('command ' + str(words[0]) + ' failed, status ' + str(q.returncode))
+    return q
+
+def cub(*words, data=None, who='owner', allowed=False):
+    e = dict(env)
+    if who == 'agent':
+        e.update(CUB_CONFIG=str(cfg) + '-agent-proposer', CUB_CONTEXT='proposer')
+    if who == 'reader':
+        e['CUB_CONFIG'] = str(work / 'reader')
+    return run([a.package / 'bin/cub', *words], data=data, environment=e, allowed=allowed)
+
+def check(text, passed):
+    checks.append({'check': text, 'pass': bool(passed)})
+    print(('PASS ' if passed else 'FAIL ') + text, flush=True)
+    if not passed:
+        raise RuntimeError(text)
+
+def vault(path, data=None, auth=True):
+    headers = {'Content-Type': 'application/json'}
+    if auth:
+        headers['X-Vault-Token'] = token
+    req = Request(endpoint + path, data=None if data is None else json.dumps(data).encode(), headers=headers)
+    with urlopen(req, timeout=3) as response:
+        return json.load(response)
+
+def ready():
+    until = time.monotonic() + 30
+    while time.monotonic() < until:
+        try:
+            vault('/v1/sys/health', auth=False)
+            return True
+        except (URLError, HTTPError, ConnectionError, TimeoutError):
+            time.sleep(0.1)
+    return False
+try:
+    run(['docker', 'run', '-d', '--name', name, '--env-file', work / 'vault.env', '-p', '127.0.0.1::8200', a.image, 'server', '-dev'])
+    created = True
+    port = int(run(['docker', 'port', name, '8200/tcp']).stdout.strip().rsplit(':', 1)[1])
+    endpoint = 'http://127.0.0.1:' + str(port)
+    check('the real Vault development server is healthy', ready())
+    version = run(['docker', 'exec', name, 'vault', 'version']).stdout.strip()
+    print(version, flush=True)
+    run([a.package / 'bin/confighub-mini-app', 'mini', 'install-plugin', cfg])
+    install_attempted = True
+    cub('mini', 'install', '--name', hub, '--use')
+    cub('mini', 'adopt', source)
+    cub('mini', 'approve', app + '-base/adopt', '--yes', '--note', 'Scripted initial fixture before agent provisioning')
+    cub('mini', 'require-approval', app, '--variant', 'live', '--agent', 'proposer', '--dir', source)
+    first = 'fixture-' + secrets.token_urlsafe(24)
+    written = vault('/v1/secret/data/' + app, {'data': {'password': first}})
+    check('Vault KV stores the first version', written['data']['version'] == 1)
+    refused = False
+    try:
+        vault('/v1/secret/data/' + app, auth=False)
+    except HTTPError as e:
+        refused = e.code == 403
+    check('Vault refuses a request without its token', refused)
+    value = vault('/v1/secret/data/' + app)['data']['data']['password']
+    said = cub('mini', 'secret', 'set', app, 'DATABASE_PASSWORD', '--variant', 'live', '--change-desc', 'Owner copied Vault KV version 1 via standard input', data=value + '\n').stdout
+    check('the owner handoff prints no secret value', first not in said)
+    ordinary = ''.join((cub('unit', 'data', '--space', app + '-' + v, 'app').stdout for v in ('base', 'staging', 'live')))
+    check('ordinary app configuration contains references, not the secret', first not in ordinary and 'DATABASE_PASSWORD_FILE=' in ordinary)
+    blocked = cub('unit', 'data', '--space', app + '-live-secrets', 'secrets', who='agent', allowed=True)
+    check('the proposal key cannot read the hub secret', blocked.returncode != 0 and first not in blocked.stdout + blocked.stderr)
+    blocked = cub('mini', 'secret', 'set', app, 'DATABASE_PASSWORD', '--variant', 'live', '--change-desc', 'Agent must not rotate it', data='agents-choice\n', who='agent', allowed=True)
+    check('the proposal key cannot rotate the secret', blocked.returncode != 0)
+    cub('mini', 'pull-key', 'runtime-reader', app, '--variant', 'live', '--secrets')
+    server = json.loads(cub('context', 'get', '-o', 'json').stdout)['coordinate']['serverURL']
+    run([a.package / 'bin/confighub-mini-app', 'mini', 'install-plugin', work / 'reader'])
+    cub('auth', 'login', '--new-context', '--private-key=' + str(cfg / 'keys/runtime-reader.jwk'), '--server', server, who='reader')
+    destination = work / 'runtime-secrets'
+    cub('mini', 'secret', 'files', app, '--variant', 'live', '--dir', destination, who='reader')
+    target = destination / 'DATABASE_PASSWORD'
+    check('the runtime key writes the Vault value to a private file', target.read_text().strip() == first and stat.S_IMODE(target.stat().st_mode) == 384)
+    second = 'rotated-fixture-' + secrets.token_urlsafe(24)
+    written = vault('/v1/secret/data/' + app, {'data': {'password': second}})
+    check('Vault KV records the rotation as version 2', written['data']['version'] == 2)
+    value = vault('/v1/secret/data/' + app)['data']['data']['password']
+    cub('mini', 'secret', 'set', app, 'DATABASE_PASSWORD', '--variant', 'live', '--change-desc', 'Owner copied Vault KV version 2 via standard input', data=value + '\n')
+    cub('mini', 'secret', 'files', app, '--variant', 'live', '--dir', destination, who='reader')
+    check('the runtime receives the rotated value on its next explicit fetch', target.read_text().strip() == second)
+    blocked = cub('mini', 'secret', 'set', app, 'DATABASE_PASSWORD', '--variant', 'live', '--change-desc', 'Reader must not rotate it', data='reader-choice\n', who='reader', allowed=True)
+    check('the runtime key cannot rotate the secret', blocked.returncode != 0)
+    complete = True
+finally:
+    clean = True
+    if install_attempted:
+        try:
+            cub('mini', 'uninstall', '--name', hub, '--delete-data')
+        except Exception:
+            clean = False
+    if created and run(['docker', 'rm', '-f', name], allowed=True).returncode:
+        clean = False
+    if clean:
+        shutil.rmtree(work)
+    checks.append({'check': 'only this test hub, Vault container, keys and working files removed', 'pass': clean})
+    (a.out / 'result.json').write_text(json.dumps({'image': a.image, 'vault_version': version, 'real_agent': False, 'complete': complete, 'checks': checks, 'passed': sum((x['pass'] for x in checks)), 'failed': sum((not x['pass'] for x in checks)) + int(not complete and all((x['pass'] for x in checks))), 'cleanup': clean, 'scope': 'local Vault dev mode and scripted owner/agent/runtime calls; not production Vault policy or hostile host access'}, indent=2) + '\n')
+raise SystemExit(0 if complete and all((x['pass'] for x in checks)) else 1)

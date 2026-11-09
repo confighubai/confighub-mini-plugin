@@ -40,6 +40,8 @@ a configurable greeting, and a staging and a production setup
 
 The agent writes the app, starts confighub mini on your machine if no hub answers, and ends with the three copies and the command that approves a change to live. Before you run that command, run the `export PATH=...` line the agent gives you in the same terminal: `cub` comes with confighub mini and is not on your path yet. Ask for a second app "like the first" and it starts from the first's base. [Step by step](docs/journeys/new-app.md).
 
+Codex can use a scoped proposal key with a separate launcher; [setup and limits](docs/approvals.md#codex-sessions-on-the-proposal-key).
+
 ### Try it in one minute
 
 In an empty folder, make a small app's configuration:

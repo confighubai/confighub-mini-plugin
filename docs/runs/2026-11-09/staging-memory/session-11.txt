@@ -1,0 +1,360 @@
+Request: The memory-11 service is running out of memory in staging. Give staging 2048 MiB (MEMORY_MB=2048), leaving production and the shared defaults alone. Make only this configuration change, with a reason; there should be nothing for me to approve for production.
+
+Set `MEMORY_MB=2048` in `memory-11-staging`, with the recorded reason: “Staging service is running out of memory; raise its limit to 2048 MiB.”
+
+Verified `memory-11-base` and `memory-11-live` remain at `512`. No production approval was created.
+
+Reading additional input from stdin...
+OpenAI Codex v0.163.0
+--------
+workdir: $HOME/.confighub-staging-memory-bkofmq5d/memory-11
+model: gpt-6-sol
+provider: openai
+approval: never
+sandbox: workspace-write [workdir, /tmp, $TMPDIR] (network access enabled)
+reasoning effort: none
+reasoning summaries: none
+session id: 01a1c211-ab64-7842-89ec-930ad3e67360
+--------
+user
+The memory-11 service is running out of memory in staging. Give staging 2048 MiB (MEMORY_MB=2048), leaving production and the shared defaults alone. Make only this configuration change, with a reason; there should be nothing for me to approve for production.
+warning: `--dangerously-bypass-hook-trust` is enabled. Enabled hooks may run without review for this invocation.
+warning: `--dangerously-bypass-hook-trust` is enabled. Enabled hooks may run without review for this invocation.
+hook: SessionStart
+hook: SessionStart Completed
+hook: UserPromptSubmit
+hook: UserPromptSubmit Completed
+codex
+I’ll read the ConfigHub workflow, check the staging unit, and set only `MEMORY_MB=2048` there with the reason you gave. Then I’ll verify the shared baseline and live unit are unchanged.
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+/bin/zsh -lc 'cat .agents/skills/app-with-confighub/SKILL.md' in $HOME/.confighub-staging-memory-bkofmq5d/memory-11
+ succeeded in 0ms:
+---
+name: app-with-confighub
+description: Use when the person asks for an app "using ConfigHub" or "with confighub", asks to attach or add ConfigHub to an existing app or folder, wants a staging and a production setup where the agent proposes changes to production and cannot change it without the person, asks to try a change "first", "in a copy" or "without touching production" on an app a hub holds, asks to start an app from a setup someone shared (a NAME-setup.tar.gz file or an OCI reference from cub mini copy), or asks to set, change or rotate a password, key, token or other secret of an app whose folder has a .confighub-app file. Starts a hub on this machine if none answers, and makes the base, staging and production copies with cub mini.
+---
+
+# An app with ConfigHub: base, staging, production
+
+A hub is a ConfigHub server. Here it runs on this machine, as two processes, with no account.
+The app's settings live there as a base, a staging copy that takes changes at once, and a
+live copy (the person's production) that changes only when the person approves. Every
+command below was run as written; do not read `cub --help` first.
+
+## 1. Find a hub, or start one
+
+Run `cub space list`. If it answers with a table, use that hub. If it fails, or `cub` is not
+installed, and the person asked for a staging and a production setup without naming
+ConfigHub, first say in one line what you are starting: confighub mini, ConfigHub on this
+machine, which keeps the app's settings as a staging copy and a live copy that changes only
+when they approve; a download of about 60 MB. Then run:
+
+```
+"${CLAUDE_PLUGIN_ROOT}/bin/confighub" mini get
+```
+
+It downloads confighub mini (about 60 MB), starts a hub on this machine and signs `cub` in to
+it, in under a minute. Its last lines print the `export PATH="...:$PATH"` line for its `cub`;
+run that line in each later command, or use the path directly:
+`${CUB_CONFIG:-$HOME/.confighub}/mini/confighub-mini-<version>-<os>-<arch>/bin/cub`.
+Do not run `cub auth login`, and do not send the person to hub.confighub.com. Run it again
+after a restart to start the hub again.
+
+## 2. Make the app's copies
+
+The app's settings are an env file in its folder: `.env`, with `KEY=VALUE` lines. For a new
+app, write the code and its `.env` first (`PORT`, `GREETING`, `LOG_LEVEL`, and so on). For an
+existing app, use the files the person has: `.env` (or `app.env`, a compose file's
+environment), with `.env.staging` and `.env.production` beside it if they keep them, or a
+Terraform folder's `common.tfvars` with `staging.tfvars` and `prod.tfvars`. A Kustomize
+repository with overlays (a `base/`, `overlays/staging`, `overlays/prod`) is adopted as it is:
+its rendered base becomes the base, and what each overlay changes becomes that copy's own
+values; `cub mini upload` on the repository's folder takes a later change the same way. Then,
+from the folder above the app's:
+
+```
+cub mini adopt APP-FOLDER --dry-run
+cub mini adopt APP-FOLDER
+```
+
+This makes `APP-base`, `APP-staging` with the file's values now, and `APP-live`, which takes
+them only once the person approves. A `.env.staging` or `.env.production` becomes that copy's
+own values from the start. A value that looks like a password or token is left out and named;
+leave it out of the file too, and name where to read it instead (`DB_PASSWORD_FILE`). The
+app's name is the folder's; `--name NAME` sets another (lowercase letters, digits, dashes).
+`cub space list` shows the three copies; `cub unit data --space APP-staging app` shows one.
+Adopt writes `.confighub-app` into the folder, a note of what its files match in the hub;
+commit it with the app, so that `cub mini upload` from any clone proposes only what that
+clone changed.
+
+A second app on a hub that already has one starts from the first, not from nothing:
+
+```
+cub mini adopt APP-FOLDER --pattern FIRST-APP
+```
+
+It gets the first's base as its own base, keeps its own values, and takes what the first
+changes next (`cub mini upgrade APP-base/app`). Use it whenever the person asks for another
+app "like" one that is here, or with "the same setup"; `cub space list` shows which apps are.
+
+### An app from a setup someone shared
+
+A setup someone shared is a file `NAME-setup.tar.gz` (from `cub mini copy APP --to-file`) or
+an OCI reference (from `--to-oci`): an app's base, staging and live copies, with the reason
+for each value, and no secrets. Take it in under a name of its own, then make the person's
+app from it, as the second app above:
+
+```
+cub mini copy --from-file FILE --name SHARED        # or --from-oci REF --name SHARED
+cub mini adopt APP-FOLDER --pattern SHARED
+```
+
+The copy's last line names the adopt command. The person's app is then `APP-base`,
+`APP-staging` and `APP-live`, made from `SHARED-base`: it keeps its own values from its
+`.env`, takes the shared values for the rest with their reasons, and takes what the shared
+setup changes next. Do not stop at the copy: `SHARED-*` is the shared setup under the first
+person's values, not the person's app. Then step 3 for the person's app.
+
+## 3. Production only with the person
+
+```
+cub mini require-approval APP --variant live --agent APP-agent
+```
+
+Adopt already makes live wait for the person's approval. This adds a key of its own for the
+agent: it can change the base and staging, so its uploads reach staging at once, and ask for
+live; it cannot approve, promote or write live. It prints
+the line that starts Claude Code on that key (`claude --settings ...`) and a `run-codex`
+launcher for Codex CLI. Give the person the line for the agent they use. Codex's launcher
+uses separate settings and native command permissions, with the owner's sign-in out of
+reach. These settings protect new sessions; a session that started on the owner's key
+still has that authority, so do not treat changing settings as changing this session's identity.
+
+To change a copy later:
+
+```
+cub mini set APP KEY=VALUE --variant staging --change-desc "WHY"      # staging, at once
+cub mini upload APP-FOLDER --component APP --change-desc "WHY"        # the files as edited; staging now, live waits
+cub mini waiting                                                      # what waits, and the approve command
+```
+
+The person approves in a terminal with `cub mini approve APP-base/ORDER`, which `cub mini
+waiting` prints. Never run `cub mini approve` yourself, and never ask for the right to write
+`APP-live`.
+
+A secret (a password, a key, a token) is kept by the person, in a terminal, with
+`cub mini secret set APP KEY --variant live --change-desc "WHY"`, which puts it where your
+key cannot read it, and the app's settings name it as `KEY_FILE=/run/secrets/APP/KEY`, so
+KEY is the name in `.env` without its `_FILE`. Asked to set or rotate one, do not ask for its
+value, make one up, or put one on a command line: give the person that command, with the KEY
+`.env` names, and say that the machine that runs the app reads it with
+`cub mini secret files APP --variant live --dir /run/secrets/APP`.
+
+A service the app needs (a Postgres, a Redis, an S3 bucket, a mail sender):
+`cub mini need APP KIND`, with KIND one of `postgres`, `redis`, `s3`, `mail`. If the hub has a
+provider of it, its settings (`DATABASE_URL`, `REDIS_URL`, ...) land in staging at once, as its
+own, each copy from the provider registered for it; live, or any copy behind approval, takes
+them only when the person approves the change order `need` prints (`cub mini waiting` lists it),
+so tell the person it waits and give them that `cub mini approve` command. Otherwise the copies
+say what they need, and `cub mini needs APP` lists it. Do not write the service's address into
+`.env` yourself, and never its password: that is the person's, with `cub mini secret set`.
+
+## 4. Try a change in a copy first
+
+When the person asks to "try" a change "first", "in a copy", or "without touching
+production", change neither staging nor live. Make a copy of the app for the try, change
+it there, and read what differs:
+
+```
+cub mini try APP NAME                                                  # APP-try-NAME, from staging, in a second
+cub mini set APP KEY=VALUE --variant try-NAME --change-desc "WHY"      # the change, in the copy only
+cub mini tries APP                                                     # what the copy holds differently
+```
+
+NAME is a word for the try (`limit`). `--from live` makes the copy from what runs instead.
+`cub mini copies APP --to DIR` writes the copy as a file, to run the app on it. Then there
+are two ways out, and only the person chooses:
+
+```
+cub mini try APP NAME --keep --change-desc "WHY"    # staging now, live once the person approves; the copy removed
+cub mini try APP NAME --drop                        # the copy removed, with a line saying what it held
+```
+
+Unless the person said to keep it or to drop it, leave the copy. End with what the copy
+holds differently from staging, that staging and live are unchanged, and the two
+commands above.
+
+## Do not
+
+- Write a setup script to run later. Run the commands, now, and show their output.
+- Ask the person to sign in anywhere. Step 1 signs `cub` in.
+- Print, store or put in the hub a password, key or token.
+- Run `cub mini deploy-from-hub` or `cub mini back-to-git`: they change what a production cluster deploys from, so they are the person's commands, which you name, with their flags, and never run.
+- Use `cub variant create`, `cub function set --protect` or `cub changeorder create` by hand
+  for what adopt, set, upload and try do above.
+
+## End with
+
+Tell the person, in a few lines: the app's three copies (`APP-base`, `APP-staging`,
+`APP-live`) and the value each holds that differs; that live changes only when they run
+`cub mini approve ...`; and the `export PATH` line for `cub` if step 1 installed it.
+
+When the person asks how this works or what comes next, give them the page for what they
+are doing, from https://github.com/confighubai/confighub-mini-plugin/tree/main/docs/journeys:
+`new-app.md`, `existing-app.md`, `gitops-app.md` (Argo CD or Flux deploys it from Git), or
+`going-back.md` (refusing, revoking the agent, writing the app out as plain files).
+
+hook: PostToolUse
+hook: PostToolUse Completed
+codex
+I’m using the `app-with-confighub` skill for this change. It specifies `cub mini set` for a staging value and a reason.
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+exec
+/bin/zsh -lc 'cub space list' in $HOME/.confighub-staging-memory-bkofmq5d/memory-11
+ succeeded in 0ms:
+NAME                 COMPONENT    OWNER    VARIANT    STAGE      ENVIRONMENT    REGION    LAYER    #UNITS
+memory-11-staging    memory-11             staging    staging                                      1
+memory-11-live       memory-11             live       live                                         1
+workflows                                                                                          0
+memory-11-base       memory-11             base                                                    1
+
+hook: PostToolUse
+exec
+/bin/zsh -lc 'cub unit data --space memory-11-staging app' in $HOME/.confighub-staging-memory-bkofmq5d/memory-11
+ succeeded in 0ms:
+PORT=8080
+LOG_LEVEL=info
+REPLICAS=2
+RELEASE=none
+PUBLIC=false
+configHub.configName=app
+MEMORY_MB=512
+
+hook: PostToolUse
+exec
+/bin/zsh -lc 'cub unit data --space memory-11-base app' in $HOME/.confighub-staging-memory-bkofmq5d/memory-11
+ succeeded in 0ms:
+PORT=8080
+LOG_LEVEL=info
+REPLICAS=2
+RELEASE=none
+PUBLIC=false
+configHub.configName=app
+MEMORY_MB=512
+
+hook: PostToolUse
+hook: PostToolUse Completed
+exec
+/bin/zsh -lc 'cub unit data --space memory-11-live app' in $HOME/.confighub-staging-memory-bkofmq5d/memory-11
+ succeeded in 0ms:
+PORT=8080
+LOG_LEVEL=info
+REPLICAS=2
+RELEASE=none
+PUBLIC=false
+configHub.configName=app
+MEMORY_MB=512
+
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PostToolUse Completed
+hook: PostToolUse Completed
+exec
+/bin/zsh -lc 'cub mini waiting' in $HOME/.confighub-staging-memory-bkofmq5d/memory-11
+ succeeded in 115ms:
+3 Spaces have not read a rule added or taken away since, and are still judged by the rules as they were:
+  memory-11-base, memory-11-live, memory-11-staging
+  to apply the rules as they are now: cub space update --patch --where "Slug LIKE '%'" --refresh-triggers
+
+hook: PostToolUse
+hook: PostToolUse Completed
+codex
+All three units currently have `MEMORY_MB=512`. I’ll set the staging override now, then check each unit and any pending production approval.
+hook: PreToolUse
+hook: PreToolUse Completed
+exec
+/bin/zsh -lc 'cub mini set memory-11 MEMORY_MB=2048 --variant staging --change-desc "Staging service is running out of memory; raise its limit to 2048 MiB."' in $HOME/.confighub-staging-memory-bkofmq5d/memory-11
+ succeeded in 2004ms:
+memory-11-staging
+  Resource: NoSchema app
+    ~ [Update] MEMORY_MB
+        512 → 2048
+Kept as yours: a later version will not overwrite it. Reason recorded: Staging service is running out of memory; raise its limit to 2048 MiB.
+
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+hook: PreToolUse Completed
+exec
+/bin/zsh -lc 'cub unit data --space memory-11-live app' in $HOME/.confighub-staging-memory-bkofmq5d/memory-11
+ succeeded in 0ms:
+PORT=8080
+LOG_LEVEL=info
+REPLICAS=2
+RELEASE=none
+PUBLIC=false
+configHub.configName=app
+MEMORY_MB=512
+
+exec
+/bin/zsh -lc 'cub unit data --space memory-11-base app' in $HOME/.confighub-staging-memory-bkofmq5d/memory-11
+exec
+/bin/zsh -lc 'cub unit data --space memory-11-staging app' in $HOME/.confighub-staging-memory-bkofmq5d/memory-11
+ succeeded in 0ms:
+PORT=8080
+LOG_LEVEL=info
+REPLICAS=2
+RELEASE=none
+PUBLIC=false
+configHub.configName=app
+MEMORY_MB=512
+
+ succeeded in 0ms:
+PORT=8080
+LOG_LEVEL=info
+REPLICAS=2
+RELEASE=none
+PUBLIC=false
+configHub.configName=app
+MEMORY_MB=2048
+
+hook: PostToolUse
+hook: PostToolUse
+hook: PostToolUse
+hook: PostToolUse Completed
+hook: PostToolUse Completed
+hook: PostToolUse Completed
+exec
+/bin/zsh -lc 'cub mini waiting' in $HOME/.confighub-staging-memory-bkofmq5d/memory-11
+ succeeded in 121ms:
+3 Spaces have not read a rule added or taken away since, and are still judged by the rules as they were:
+  memory-11-base, memory-11-live, memory-11-staging
+  to apply the rules as they are now: cub space update --patch --where "Slug LIKE '%'" --refresh-triggers
+
+hook: PostToolUse
+hook: PostToolUse Completed
+codex
+Set `MEMORY_MB=2048` in `memory-11-staging`, with the recorded reason: “Staging service is running out of memory; raise its limit to 2048 MiB.”
+
+Verified `memory-11-base` and `memory-11-live` remain at `512`. No production approval was created.
+hook: Stop
+hook: Stop Completed
+tokens used
+8,240
