@@ -15,7 +15,7 @@ It never keeps a command's output, a copy of a file, or anything that looks like
 In a Claude Code session:
 
 - `/confighub:changes` shows what the agent changed in its latest session, and why.
-- `/confighub:why replicas` shows every recorded change to one value, and why.
+- `/confighub:why replicas` shows every recorded change to one value, and why. An explicit `confighub mini changes --why NAME --vercel production` also reads the linked Vercel project's setting and compares local env files; it requires an installed, signed-in Vercel CLI.
 - `/confighub:permissions` shows what your settings files allow agents to run, which rules were used, and a narrower set you can apply and undo. A line tells you when permissions, hooks or instructions change.
 - `/confighub:checks` sets how much is done about MCP tool calls in this folder: `off`, `log` (where you start), `warn`, `repeats` or `ask`. At `repeats`, an agent about to repeat an earlier change is held back once and told of it. At `ask`, you are asked first, and also before an edit that undoes a value an earlier session set for a reason.
 - `/confighub:inventory` shows what the repository deploys: each Kustomize overlay, Helm release and Argo CD Application, and what deploys it; the values that differ between environments; and the values agents changed. It reads only the repository's files.

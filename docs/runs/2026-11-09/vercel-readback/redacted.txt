@@ -1,0 +1,14 @@
+Vercel/production/RATE_LIMIT_PER_MIN, set by a command on Vercel production, not in a file
+  9 November 22:54  set to 600             session launch-s
+      asked: Raise the production rate limit to 600 for Tuesday's launch.
+      vercel env add RATE_LIMIT_PER_MIN production
+
+Vercel production, project prj_fixture (read back now):
+  ALIAS: not shown; it looks like a credential or is marked secret
+  API_KEY: not shown; it looks like a credential or is marked secret
+  BANNER: not shown; it looks like a credential or is marked secret
+  RATE_LIMIT_PER_MIN = "900"
+Project environment settings, not a running deployment. Branch-specific preview overrides are not included.
+Local environment files in the linked app (not sent to Vercel):
+  .env.local: API_KEY: not shown; it looks like a credential or is marked secret
+  .env.local: RATE_LIMIT_PER_MIN = "60" (differs from Vercel)
