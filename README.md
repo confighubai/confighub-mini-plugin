@@ -110,7 +110,7 @@ This is the way in to [ConfigHub](https://docs.confighub.com) for people who wor
 | Part | What it is | How you start |
 |---|---|---|
 | **The ConfigHub plugin**, for Claude Code and Codex | Records what agents change in configuration, and why, and tells the next agent before it undoes a change | Two commands, [above](#install) |
-| **confighub mini** | A hub of your own: ConfigHub itself, packaged lean, as two processes on your laptop, in an agent's sandbox or in a CI job. No Docker, no cluster, no account, and it works with the network off. A download of 44 to 67 MB | `/confighub:install-mini` in Claude Code |
+| **confighub mini** | A hub of your own: ConfigHub itself, packaged lean, as two processes on your laptop, in an agent's sandbox or in a CI job. No Docker, no cluster, no account, and it works with the network off. A download of 48 to 73 MB | `/confighub:install-mini` in Claude Code |
 | **`cub mini`** | A plugin for `cub`, ConfigHub's command-line tool, that fills in the rest of each request so the commands stay short. What you learn with it works unchanged on your organization's ConfigHub | Comes with confighub mini |
 
 It solves four problems: agents undo each other's changes ([step by step](#the-problem-it-solves)); nothing stands between an agent and production, since a rule in `CLAUDE.md` is only a request, while with a hub the agent proposes on a key of its own and only the person you name approves ([approvals](docs/approvals.md)); nobody knows what a repository deploys before they change it; and a vendor's next version overwrites your changes. Each step from the plugin to your organization's ConfigHub is [one team's path, step by step](docs/from-plugin-to-confighub.md).

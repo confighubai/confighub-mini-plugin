@@ -174,7 +174,7 @@ An agent asked to rotate a production password gives you the `secret set` comman
 - **A key for each agent.** An agent's changes are recorded as its own, not yours. Its rights are set per Space: for example, it may change the base and read production, but not write it.
 - **Approval by a colleague.** A change reaches production only when the colleague you named approves that revision. An agent's own approval is refused, and so is anyone else's ([approvals](approvals.md#on-hosted-confighub-or-your-own-server-with-cub-alone)).
 - **Agents in CI.** A job signs in with the agent's key, proposes a change with its reason, and waits for a person ([agents in CI](../ci/README.md)).
-- **Secrets stay in your secret store.** ConfigHub never takes in secret values, and neither does the record. Your configuration refers to secrets in the tool that holds them, such as Vault or External Secrets. Copying from Git into a hub leaves secrets out.
+- **Secrets stay out of ordinary app settings and the record.** Copying from Git leaves Kubernetes Secrets out. You can keep an external secret store such as Vault or External Secrets, or explicitly use `cub mini secret set` to keep a value in a separate secrets Space the agent’s key cannot read. The runtime’s reader can fetch it; the hub’s database and backups then hold the value.
 
 **When you need the next step.** An agent that runs for days, on a cluster, beside other agents, raises new questions. Which of the agents on a node made a change? Can its key be stolen? How do you stop it at once?
 

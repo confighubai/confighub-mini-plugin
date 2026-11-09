@@ -15,7 +15,7 @@ This page is for someone who makes apps with Claude Code and wants a safe place 
 ## What it costs
 
 - **Time.** About 75 seconds for the first session on Sonnet, and about two minutes on Opus, including the download. A second app took about 55 seconds.
-- **The download.** The first time, the agent downloads confighub mini, 44 to 67 MB, into `~/.confighub/mini`, and starts a hub. The hub listens on this machine only. Nothing else is installed.
+- **The download.** The first time, the agent downloads confighub mini, 48 to 73 MB, into `~/.confighub/mini`, and starts a hub. The hub listens on this machine only. Nothing else is installed.
 - **Your folder.** Besides the app's own files, two files appear: `.confighub-app`, a note of what the files match in the hub, which you commit; and `.claude/settings.local.json`, which runs later Claude Code sessions in the repository on the agent's key. That second file holds paths on your machine, so the agent's setup adds it to `.git/info/exclude`, and Git leaves it out.
 - **An account.** None. No sign-in is asked of you.
 

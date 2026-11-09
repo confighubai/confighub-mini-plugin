@@ -4,7 +4,7 @@ This page is for someone who was given an app, a Helm chart or a platform by som
 
 ## Words used on this page
 
-- **A hub** is one running ConfigHub: a server that keeps configuration with every change, who made it and why. **confighub mini** is ConfigHub made small enough to run on one machine, as two processes, with no Docker and no account. It is small enough, 44 to 67 MB, to travel inside an app's download.
+- **A hub** is one running ConfigHub: a server that keeps configuration with every change, who made it and why. **confighub mini** is ConfigHub made small enough to run on one machine, as two processes, with no Docker and no account. It is small enough, 48 to 73 MB, to travel inside an app's download.
 - **The base** is the configuration as its author ships it. **Your copy** is made from the base, and keeps what you change as your own when the base changes.
 
 ## What exists today
