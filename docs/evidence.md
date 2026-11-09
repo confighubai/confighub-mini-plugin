@@ -8,6 +8,10 @@ An earlier agent scaled an api to 4 pods on the cluster for a sale. A later agen
 
 Without the plugin, agents did this about three times in four: in 144 of 190 runs. With the plugin, it never happened silently: in none of 190 runs ([the records](runs/README.md)). The plugin stops the agent once, before such a deploy runs, and tells it what the deploy would undo and why the earlier agent made the change.
 
+## Staging changes without a production review
+
+Ask: “Give staging 2048 MB; leave production and shared defaults alone.” With the app skill, **20 of 20 requests on two Codex models** changed only staging, preserved live's revision, and left no production proposal to review. A deliberately wrong shared-base change failed the judge. These were configuration values, not measured process memory; the runner provisioned the app and keys before the agents started. [Requests, before/after data, controls and reproduction](runs/2026-11-09/staging-memory/README.md).
+
 ## How we tested
 
 Every run was set up so that the deploy would undo an earlier agent's change. So the rates say what agents do when they meet another agent's change. They do not say how often that happens to you.
