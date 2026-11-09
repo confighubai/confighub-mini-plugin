@@ -1,0 +1,51 @@
+{
+  "mode": "CLI contract fixture",
+  "real_vercel": false,
+  "real_agent": false,
+  "complete": true,
+  "checks": [
+    {
+      "check": "the scripted launch request is recorded",
+      "pass": true
+    },
+    {
+      "check": "ordinary why makes no Vercel call",
+      "pass": true
+    },
+    {
+      "check": "read-back names the linked project and exact environment",
+      "pass": true
+    },
+    {
+      "check": "recorded 600, current 900 and local 60 stay distinct",
+      "pass": true
+    },
+    {
+      "check": "secret metadata, credential names and their aliases are withheld",
+      "pass": true
+    },
+    {
+      "check": "preview and branch overrides cannot become production's value",
+      "pass": true
+    },
+    {
+      "check": "a later fetch observes a match instead of reusing the first snapshot",
+      "pass": true
+    },
+    {
+      "check": "CLI failure fails without returning a stale snapshot or raw error",
+      "pass": true
+    },
+    {
+      "check": "read-back leaves the local file and recorded entries unchanged",
+      "pass": true
+    },
+    {
+      "check": "only this check's temporary files removed",
+      "pass": true
+    }
+  ],
+  "passed": 10,
+  "failed": 0,
+  "cleanup": true
+}

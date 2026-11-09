@@ -1,0 +1,9 @@
+PASS the scripted launch request is recorded
+PASS ordinary why makes no Vercel call
+PASS read-back names the linked project and exact environment
+PASS recorded 600, current 900 and local 60 stay distinct
+PASS secret metadata, credential names and their aliases are withheld
+PASS preview and branch overrides cannot become production's value
+PASS a later fetch observes a match instead of reusing the first snapshot
+PASS CLI failure fails without returning a stale snapshot or raw error
+PASS read-back leaves the local file and recorded entries unchanged

@@ -1,0 +1,97 @@
+#!/usr/bin/env python3
+"""Check the Vercel CLI JSON contract with the real plugin, without an account."""
+import argparse
+import json
+import os
+from pathlib import Path
+import shutil
+import subprocess
+import tempfile
+
+p = argparse.ArgumentParser(description=__doc__)
+p.add_argument("plugin", type=Path)
+p.add_argument("out", type=Path)
+a = p.parse_args()
+plugin = (a.plugin.resolve() / "bin" / "confighub")
+if not plugin.is_file():
+    p.error("plugin must contain bin/confighub")
+a.out.mkdir(parents=True, exist_ok=False)
+checks = []
+complete = False
+root = Path(tempfile.mkdtemp(prefix=".confighub-vercel-", dir=Path.home()))
+env = dict(os.environ, HOME=str(root), CUB_CONFIG=str(root / "cub"))
+app, binpath = root / "app", root / "tools"
+app.mkdir()
+binpath.mkdir()
+(app / ".vercel").mkdir()
+(app / ".vercel" / "project.json").write_text(json.dumps({"projectId": "prj_fixture", "orgId": "team_fixture"}))
+local = app / ".env.local"
+local.write_text("RATE_LIMIT_PER_MIN=60\nAPI_KEY=private-local-fixture\n")
+before = local.read_bytes()
+fixture, calls = root / "response.json", root / "calls"
+env.update(READBACK_FIXTURE=str(fixture), READBACK_CALLS=str(calls), PATH=str(binpath) + os.pathsep + env["PATH"])
+tool = binpath / "vercel"
+tool.write_text('#!/bin/sh\nprintf "%s\\n" "$@" > "$READBACK_CALLS"\ncat "$READBACK_FIXTURE"\n')
+tool.chmod(0o700)
+
+def run(*args, data=None):
+    return subprocess.run([str(plugin), "mini", *args], cwd=app, env=env, input=data,
+                          text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=30)
+
+def check(name, passed):
+    checks.append({"check": name, "pass": bool(passed)})
+    print(("PASS " if passed else "FAIL ") + name, flush=True)
+    if not passed:
+        raise RuntimeError(name)
+
+def response(rate="900"):
+    fixture.write_text(json.dumps({"envs": [
+        {"key": "RATE_LIMIT_PER_MIN", "value": rate, "type": "plain", "target": ["production"]},
+        {"key": "RATE_LIMIT_PER_MIN", "value": "10", "type": "plain", "target": ["preview"]},
+        {"key": "RATE_LIMIT_PER_MIN", "value": "1", "type": "plain", "target": ["production"], "gitBranch": "experiment"},
+        {"key": "BANNER", "value": "private-remote-fixture", "type": "sensitive", "target": ["production"]},
+        {"key": "ALIAS", "value": "private-remote-fixture", "type": "plain", "target": ["production"]},
+        {"key": "API_KEY", "value": "private-key-fixture", "type": "encrypted", "target": ["production"]}
+    ]}))
+
+try:
+    for event in [
+        {"hook_event_name": "UserPromptSubmit", "prompt": "Raise the production rate limit to 600 for Tuesday's launch."},
+        {"hook_event_name": "PostToolUse", "tool_name": "Bash", "tool_input": {"command": "echo 600 | vercel env add RATE_LIMIT_PER_MIN production"}},
+    ]:
+        event.update(session_id="launch-session", cwd=str(app))
+        result = run("hook", data=json.dumps(event))
+        if result.returncode:
+            raise RuntimeError("hook failed")
+    journal_before = {str(f.relative_to(root)): f.read_bytes() for f in root.rglob("entries.jsonl")}
+    check("the scripted launch request is recorded", bool(journal_before))
+    result = run("changes", "--why", "RATE_LIMIT_PER_MIN")
+    check("ordinary why makes no Vercel call", result.returncode == 0 and not calls.exists())
+    response()
+    result = run("changes", "--why", "RATE_LIMIT_PER_MIN", "--vercel", "production")
+    check("read-back names the linked project and exact environment", result.returncode == 0 and calls.read_text() == "env\nls\n--environment\nproduction\n--json\n--project\nprj_fixture\n--scope\nteam_fixture\n")
+    check("recorded 600, current 900 and local 60 stay distinct", all(s in result.stdout for s in ['set to 600', 'for Tuesday', 'RATE_LIMIT_PER_MIN = "900"', '.env.local: RATE_LIMIT_PER_MIN = "60" (differs from Vercel)', 'not a running deployment']))
+    (a.out / "production.txt").write_text(result.stdout.replace(str(root), "$CHECK_HOME"))
+    allvalues = run("changes", "--why", "Vercel/production", "--vercel", "production")
+    check("secret metadata, credential names and their aliases are withheld", allvalues.returncode == 0 and all(s not in allvalues.stdout for s in ["private-remote-fixture", "private-key-fixture", "private-local-fixture"]) and all(s in allvalues.stdout for s in ["BANNER: not shown", "ALIAS: not shown", "API_KEY: not shown"]))
+    (a.out / "redacted.txt").write_text(allvalues.stdout.replace(str(root), "$CHECK_HOME"))
+    preview = run("changes", "--why", "RATE_LIMIT_PER_MIN", "--vercel", "preview")
+    check("preview and branch overrides cannot become production's value", preview.returncode == 0 and 'RATE_LIMIT_PER_MIN = "10"' in preview.stdout and 'RATE_LIMIT_PER_MIN = "1"' not in result.stdout and 'RATE_LIMIT_PER_MIN = "10"' not in result.stdout)
+    response("60")
+    matched = run("changes", "--why", "RATE_LIMIT_PER_MIN", "--vercel", "production")
+    check("a later fetch observes a match instead of reusing the first snapshot", matched.returncode == 0 and '(matches Vercel)' in matched.stdout)
+    tool.write_text('#!/bin/sh\necho private-cli-error-fixture >&2\nexit 1\n')
+    failed = run("changes", "--why", "RATE_LIMIT_PER_MIN", "--vercel", "production")
+    check("CLI failure fails without returning a stale snapshot or raw error", failed.returncode != 0 and not failed.stdout and "private-cli-error-fixture" not in failed.stderr and "no current value was inferred" in failed.stderr)
+    journal_after = {str(f.relative_to(root)): f.read_bytes() for f in root.rglob("entries.jsonl")}
+    check("read-back leaves the local file and recorded entries unchanged", local.read_bytes() == before and journal_before == journal_after)
+    complete = True
+finally:
+    shutil.rmtree(root)
+    clean = not root.exists()
+    checks.append({"check": "only this check's temporary files removed", "pass": clean})
+    result = {"mode": "CLI contract fixture", "real_vercel": False, "real_agent": False,
+              "complete": complete, "checks": checks, "passed": sum(c["pass"] for c in checks),
+              "failed": sum(not c["pass"] for c in checks) + int(not complete and all(c["pass"] for c in checks)), "cleanup": clean}
+    (a.out / "result.json").write_text(json.dumps(result, indent=2) + "\n")
+raise SystemExit(0 if complete and clean else 1)

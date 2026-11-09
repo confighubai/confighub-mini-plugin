@@ -198,7 +198,7 @@ To say how closely MCP calls are watched in a folder, use `/confighub:checks`. A
 
 Each turn of the record is signed when it ends, so you can check later that nobody changed it. An agent on a cluster can sign with its own workload identity, so the record names the agent that made each change ([signed records](docs/signed-records.md)).
 
-It never keeps a command's output, a copy of a file, or anything that looks like a password, key or token. It adds about 15 milliseconds to each tool call. Nothing leaves your machine unless you turn on a setting that sends it somewhere, such as a pull request or your OpenTelemetry collector. A log of which features you used on which days stays here too, and `/confighub:to-hub --usage` shows it and loads it into a hub if you choose.
+It never keeps a command's output, a copy of a file, or anything that looks like a password, key or token. It adds about 15 milliseconds to each tool call. Nothing leaves your machine unless you turn on a setting that sends it somewhere, such as a pull request or your OpenTelemetry collector. Explicit Vercel read-back calls its CLI when you request `changes --why NAME --vercel production` ([how it works](docs/runs/2026-11-09/vercel-readback/README.md)). A log of which features you used on which days stays here too, and `/confighub:to-hub --usage` shows it and loads it into a hub if you choose.
 
 [How it works](docs/how-it-works.md) covers what the agent is told and when, every setting, and how to keep the record out of the agent's reach. [What we do not claim](docs/limits.md) covers what it does not do.
 
