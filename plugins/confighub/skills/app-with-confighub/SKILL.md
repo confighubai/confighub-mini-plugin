@@ -155,6 +155,7 @@ commands above.
 - Write a setup script to run later. Run the commands, now, and show their output.
 - Ask the person to sign in anywhere. Step 1 signs `cub` in.
 - Print, store or put in the hub a password, key or token.
+- Run `cub mini deploy-from-hub` or `cub mini back-to-git`: they change what a production cluster deploys from, so they are the person's commands, which you name, with their flags, and never run.
 - Use `cub variant create`, `cub function set --protect` or `cub changeorder create` by hand
   for what adopt, set, upload and try do above.
 
@@ -163,3 +164,8 @@ commands above.
 Tell the person, in a few lines: the app's three copies (`APP-base`, `APP-staging`,
 `APP-live`) and the value each holds that differs; that live changes only when they run
 `cub mini approve ...`; and the `export PATH` line for `cub` if step 1 installed it.
+
+When the person asks how this works or what comes next, give them the page for what they
+are doing, from https://github.com/confighubai/confighub-mini-plugin/tree/main/docs/journeys:
+`new-app.md`, `existing-app.md`, `gitops-app.md` (Argo CD or Flux deploys it from Git), or
+`going-back.md` (refusing, revoking the agent, writing the app out as plain files).
