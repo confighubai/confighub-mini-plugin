@@ -12,3 +12,5 @@ CONFIGHUB_MINI_PACKAGE=/path/to/package /path/to/package/examples/staging-memory
 ```
 
 The runner provisions the pattern, app and key and scripts the initial baseline approval before models start. Requests explicitly say to leave live and shared defaults alone. This is a configuration evaluation, not measured RSS, OS memory-limit enforcement, real OOM recovery, an ambiguous-request comparison or outside-user testing. Cleanup passed. The evaluated candidate preceded the final promotion-wording and launcher-upgrade fixes; final package regression checks are separate. Home paths were replaced with $HOME.
+
+The current runner checks the native boundary directly, so a model need not attempt a read its instructions deny. The saved historical boundary-session.txt contains the actual model command observed in this twenty-request evaluation.

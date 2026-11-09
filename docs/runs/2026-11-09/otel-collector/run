@@ -1,0 +1,146 @@
+#!/usr/bin/env python3
+"""Send scripted hook events through the plugin to a real local OTLP collector."""
+import argparse
+import json
+import os
+from pathlib import Path
+import shutil
+import socket
+import subprocess
+import tempfile
+import time
+import uuid
+
+flags = argparse.ArgumentParser(description=__doc__)
+flags.add_argument("plugin", type=Path, help="built plugins/confighub folder")
+flags.add_argument("out", type=Path, help="new record folder")
+options = flags.parse_args()
+options.out = options.out.resolve()
+options.out.mkdir(parents=True, exist_ok=False)
+program = options.plugin.resolve()/"bin/confighub"
+image = "otel/opentelemetry-collector-contrib@sha256:a2a52e43c1a80aa94120ad78c2db68780eb90e6d11c8db5b3ce2f6a0cc6b5029"
+work = Path(tempfile.mkdtemp(prefix=".confighub-otel-", dir=Path.home()))
+project = work/"shop"
+project.mkdir()
+collector = work/"collector"
+collector.mkdir()
+config = collector/"config.yaml"
+config.write_text("""receivers:
+  otlp:
+    protocols:
+      http:
+        endpoint: 0.0.0.0:4318
+exporters:
+  file:
+    path: /data/events.jsonl
+    append: true
+    flush_interval: 100ms
+service:
+  pipelines:
+    logs:
+      receivers: [otlp]
+      exporters: [file]
+""")
+name = "minihub-otel-"+uuid.uuid4().hex[:10]
+checks = []
+created = False
+complete = False
+
+def command(*args, allowed=False):
+    p = subprocess.run(args, capture_output=True, text=True, timeout=120)
+    if p.returncode and not allowed:
+        raise RuntimeError(args[0]+": "+p.stderr[-1000:])
+    return p
+
+def check(what, passed):
+    checks.append({"check":what,"pass":bool(passed)})
+    print(("PASS " if passed else "FAIL ")+what, flush=True)
+    if not passed:
+        raise RuntimeError(what)
+
+def events():
+    path = collector/"events.jsonl"
+    records = []
+    for line in path.read_text().splitlines() if path.exists() else []:
+        data = json.loads(line)
+        for resource in data.get("resourceLogs",[]):
+            for scope in resource.get("scopeLogs",[]):
+                records += scope.get("logRecords",[])
+    return records
+
+def attributes(record):
+    return {a["key"]:next(iter(a["value"].values())) for a in record.get("attributes",[])}
+
+def wait_for(predicate, seconds=10):
+    until = time.monotonic()+seconds
+    while time.monotonic()<until:
+        if predicate(): return True
+        time.sleep(.1)
+    return False
+
+def ready():
+    try:
+        with socket.create_connection(("127.0.0.1",port),timeout=.1):return True
+    except OSError:return False
+
+def hook(event, **extra):
+    data = {"session_id":"collector-proof","cwd":str(project),"hook_event_name":event,**extra}
+    p = subprocess.run([str(program),"mini","hook"],input=json.dumps(data),capture_output=True,text=True,env=env,timeout=30)
+    if p.returncode: raise RuntimeError(p.stderr[-1000:])
+
+def turn(replicas):
+    hook("UserPromptSubmit",prompt="Private request marker REQUEST_NOT_EXPORTED: change replicas for the sale")
+    path = project/"app.env"
+    hook("PostToolUse",tool_name="Read",tool_input={"file_path":str(path)})
+    before = path.read_text()
+    path.write_text("REPLICAS="+str(replicas)+"\nAPI_KEY=NEW_FIXTURE_NOT_A_CREDENTIAL\n")
+    hook("PostToolUse",tool_name="Write",tool_input={"file_path":str(path)},tool_response={"type":"update","originalFile":before})
+    hook("Stop",last_assistant_message="Done.")
+
+try:
+    command("docker","run","-d","--name",name,"--user",str(os.getuid())+":"+str(os.getgid()),"-p","127.0.0.1::4318","-v",str(collector)+":/data",image,"--config=/data/config.yaml")
+    created = True
+    binding = command("docker","port",name,"4318/tcp").stdout.strip()
+    port = int(binding.rsplit(":",1)[1])
+    check("the real collector accepts a loopback connection",wait_for(ready))
+    env = {k:v for k,v in os.environ.items() if not k.startswith(("CUB_","OTEL_","CLAUDE_"))}
+    env.update(HOME=str(work),CUB_CONFIG=str(work/"cfg"),CLAUDE_PROJECT_DIR=str(project),CUB_MINI_OTEL="1",CUB_MINI_OTEL_ENDPOINT="http://127.0.0.1:"+str(port),CUB_MINI_TIPS="0",CUB_MINI_TELL="0")
+    (project/"app.env").write_text("REPLICAS=2\nAPI_KEY=OLD_FIXTURE_NOT_A_CREDENTIAL\n")
+    turn(4)
+    changed = lambda value:[attributes(r) for r in events() if attributes(r).get("config.path")=="REPLICAS" and attributes(r).get("value.new")==str(value)]
+    check("the collector persists the recorded 2 to 4 change",wait_for(lambda:bool(changed(4))))
+    first = changed(4)[0]
+    check("the event names its session and previous value",first.get("session.id")=="collector-proof" and first.get("value.old")=="2")
+    raw = (collector/"events.jsonl").read_text()
+    check("credential fixture values and the private request are absent",all(v not in raw for v in ("OLD_FIXTURE_NOT_A_CREDENTIAL","NEW_FIXTURE_NOT_A_CREDENTIAL","REQUEST_NOT_EXPORTED")))
+    before = len(events())
+    hook("Stop",last_assistant_message="Done.")
+    time.sleep(.3)
+    check("a repeated stop does not export the same events again",len(events())==before)
+    command("docker","stop",name)
+    turn(5)
+    check("the unavailable collector receives no new event",not changed(5))
+    command("docker","start",name)
+    port = int(command("docker","port",name,"4318/tcp").stdout.strip().rsplit(":",1)[1])
+    env["CUB_MINI_OTEL_ENDPOINT"] = "http://127.0.0.1:"+str(port)
+    check("the collector restarts",wait_for(ready))
+    hook("Stop",last_assistant_message="Done.")
+    check("a later stop retries the missed 4 to 5 change",wait_for(lambda:len(changed(5))==1))
+    command("docker","stop",name)
+    shutil.copyfile(collector/"events.jsonl",options.out/"collector.jsonl")
+    (options.out/"collector.log").write_text(command("docker","logs",name).stdout+command("docker","logs",name).stderr)
+    shutil.rmtree(work/"cfg")
+    check("removing the local record leaves the collector output intact",bool(changed(4)) and bool(changed(5)))
+    complete = True
+finally:
+    if created:
+        logs = command("docker","logs",name,allowed=True)
+        (options.out/"collector.log").write_text(logs.stdout+logs.stderr)
+        if (collector/"events.jsonl").exists():shutil.copyfile(collector/"events.jsonl",options.out/"collector.jsonl")
+        removed = command("docker","rm","-f",name,allowed=True).returncode==0
+    else:
+        removed = True
+    if removed:shutil.rmtree(work)
+    checks.append({"check":"only this test's container and working folder removed","pass":removed})
+    (options.out/"result.json").write_text(json.dumps({"image":image,"collector_version":"0.111.0","real_agent":False,"complete":complete,"checks":checks,"passed":sum(c["pass"] for c in checks),"failed":sum(not c["pass"] for c in checks),"cleanup":removed},indent=2)+"\n")
+raise SystemExit(0 if all(c["pass"] for c in checks) else 1)

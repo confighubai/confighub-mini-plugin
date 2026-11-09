@@ -1,0 +1,51 @@
+{
+  "image": "otel/opentelemetry-collector-contrib@sha256:a2a52e43c1a80aa94120ad78c2db68780eb90e6d11c8db5b3ce2f6a0cc6b5029",
+  "collector_version": "0.111.0",
+  "real_agent": false,
+  "complete": true,
+  "checks": [
+    {
+      "check": "the real collector accepts a loopback connection",
+      "pass": true
+    },
+    {
+      "check": "the collector persists the recorded 2 to 4 change",
+      "pass": true
+    },
+    {
+      "check": "the event names its session and previous value",
+      "pass": true
+    },
+    {
+      "check": "credential fixture values and the private request are absent",
+      "pass": true
+    },
+    {
+      "check": "a repeated stop does not export the same events again",
+      "pass": true
+    },
+    {
+      "check": "the unavailable collector receives no new event",
+      "pass": true
+    },
+    {
+      "check": "the collector restarts",
+      "pass": true
+    },
+    {
+      "check": "a later stop retries the missed 4 to 5 change",
+      "pass": true
+    },
+    {
+      "check": "removing the local record leaves the collector output intact",
+      "pass": true
+    },
+    {
+      "check": "only this test's container and working folder removed",
+      "pass": true
+    }
+  ],
+  "passed": 10,
+  "failed": 0,
+  "cleanup": true
+}
