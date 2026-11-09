@@ -93,8 +93,11 @@ cub mini require-approval APP --variant live --agent APP-agent
 Adopt already makes live wait for the person's approval. This adds a key of its own for the
 agent: it can change the base and staging, so its uploads reach staging at once, and ask for
 live; it cannot approve, promote or write live. It prints
-the line that starts the agent's sessions on that key (`claude --settings ...`); give that
-line to the person as it is.
+the line that starts Claude Code on that key (`claude --settings ...`) and a `run-codex`
+launcher for Codex CLI. Give the person the line for the agent they use. Codex's launcher
+uses separate settings and native command permissions, with the owner's sign-in out of
+reach. These settings protect new sessions; a session that started on the owner's key
+still has that authority, so do not treat changing settings as changing this session's identity.
 
 To change a copy later:
 

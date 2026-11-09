@@ -51,6 +51,14 @@ A service the app needs works the same way. `cub mini need APP postgres` gives s
 
 A secret for live, such as a database password, is yours to set, in a terminal: `cub mini secret set APP KEY --variant live --change-desc "WHY"`, with the value read from standard input. It is kept where an agent's key has no right to read it, the app's settings name it as `KEY_FILE=/run/secrets/APP/KEY`, and `cub mini secret files` writes it where the app runs ([a secret for live](from-plugin-to-confighub.md#a-secret-for-live-that-no-agent-can-read)). An agent asked to rotate it gives you that command, and never the value.
 
+## Codex sessions on the proposal key
+
+From confighub mini 0.10.7-mini.13, `cub mini require-approval APP --variant live --agent bot --dir DIR` also prints a `run-codex` launcher. Start a fresh Codex CLI session with that exact launcher. An existing session started on your owner account still has owner authority.
+
+The launcher selects the app, the proposal key and separate Codex settings. It uses your existing file-based Codex login without printing or copying its contents. Native filesystem permissions keep model-run commands from your ConfigHub owner configuration and both Codex homes, while allowing app edits and use of the agent's key. Your own Codex settings and integrations stay as they were. `cub mini get` refreshes the launcher and hooks when it updates the package; restart through the launcher afterward.
+
+This needs native permission profiles and `--no-daemon` (tested with Codex CLI 0.163.0). Unsupported clients fail instead of starting unrestricted. Pass model options to the launcher; do not replace its sandbox or permissions. Network access is enabled without domain filtering. Browser tools, connectors and external MCP servers have separate controls. Keep approval in your owner terminal, after the proposing agent has finished; there is no approval button in the coding-agent chat.
+
 ## On confighub mini, by hand: about 5 minutes
 
 Each `cub mini` command here is plain `cub` with the rest filled in ([which](cub-mini-and-cub.md)). The next section does the same with `cub` alone.
