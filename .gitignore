@@ -1,2 +1,3 @@
 plugins/confighub/bin/confighub-*-*
 !plugins/confighub/bin/confighub-*-*.gz
+!plugins/confighub/bin/confighub-mini-version
