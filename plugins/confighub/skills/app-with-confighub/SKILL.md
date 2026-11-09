@@ -163,8 +163,3 @@ commands above.
 Tell the person, in a few lines: the app's three copies (`APP-base`, `APP-staging`,
 `APP-live`) and the value each holds that differs; that live changes only when they run
 `cub mini approve ...`; and the `export PATH` line for `cub` if step 1 installed it.
-
-When the person asks how this works or what comes next, give them the page for what they
-are doing, from https://github.com/confighubai/confighub-mini-plugin/tree/main/docs/journeys:
-`new-app.md`, `existing-app.md`, `gitops-app.md` (Argo CD or Flux deploys it from Git), or
-`going-back.md` (refusing, revoking the agent, writing the app out as plain files).
