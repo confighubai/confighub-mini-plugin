@@ -10,6 +10,7 @@ This page is for someone who wants to know what the ConfigHub plugin does with a
 | nono | An agent working inside nono, with its changes recorded | No guide yet | Once, by us |
 | Entire | The reason for a value, with the checkpoint of each session | [If you use Entire](entire.md) | By us; no outside use yet |
 | OpenTelemetry | Each change sent to your collector, out of the agent's reach | `CUB_MINI_OTEL=1`: [settings](how-it-works.md#settings) | Real Collector Contrib 0.111.0: ten checks for delivery, redaction, no duplicate export and outage retry, with scripted hooks; remote IAM and retention not tested ([record and reproduction](runs/2026-11-09/otel-collector/README.md)) |
+| Vault | Owner supplies a Vault value through standard input; the runtime key reads it, the proposal key cannot | [Handoff and reproduction](runs/2026-11-09/vault-secrets/README.md) | Real Vault 2.2.1 dev server, twelve scripted checks including rotation; explicit copy/fetch, not a live provider or production policy |
 | A monitor or alert | Agents stopped when it fires | Have it run `touch ~/.confighub/halt` on the machine | By hand only: no monitor has fired it yet |
 | Sigstore | Checking the record with `cosign` | [Signed records](signed-records.md) | By us |
 | SPIFFE | The record signed with the agent's own workload identity | [Signed records](signed-records.md#signing-with-the-agents-own-identity) | By us |
