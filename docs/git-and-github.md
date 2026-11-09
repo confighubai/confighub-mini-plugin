@@ -12,6 +12,12 @@ The plugin works in any folder and any repository. It keeps its record on your m
 
 To keep the record with your commits, set `CUB_MINI_RECORD_IN_REPO=1`. Each commit an agent makes then carries `.cub-mini/changes/SESSION.record`, with its signature beside it. Anyone who checks the repository out gets it: a teammate, a CI job, or a sandbox with an empty home folder. Their agent is told what earlier agents changed in a file, and why, before it changes the file ([in CI or a sandbox](ci-and-sandboxes.md)).
 
+## Where the app started
+
+From plugin 0.79.3, before the first recorded request in a project, the plugin keeps the repository and full Git revision present then, and whether uncommitted files existed. If Git or its history is unavailable, it records that no revision was available. `bin/confighub mini changes` shows **Starting point**, marked **first observed**. It is not proof of the app's creation date or the commit it was originally forked from.
+
+The metadata is signed separately and checked by `bin/confighub mini changes --verify`. Repository URLs lose passwords, query strings and fragments. No private request or file contents go into it. It stays when old sessions expire; `bin/confighub mini changes --forget` removes it. With `CUB_MINI_RECORD_IN_REPO=1`, the signed record in Git carries it to a colleague's checkout. A clone or template selected after the first request is not inferred yet.
+
 ## GitHub, with no hub
 
 - **A comment on each pull request.** The [review](../review/README.md) is one step in a workflow file. It lists every configuration value the pull request changes, what each becomes on each cluster, and the reason from the record. Nobody installs anything, and no account is needed.

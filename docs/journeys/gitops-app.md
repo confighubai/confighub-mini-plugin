@@ -150,7 +150,7 @@ One command each way, for the move to the hub and the hand-back, is coming in th
 
 ## What it costs
 
-- **Way 1:** what [attaching the app](existing-app.md#what-it-costs) costs: about two minutes, and a 44 to 67 MB download.
+- **Way 1:** what [attaching the app](existing-app.md#what-it-costs) costs: about two minutes, and a 48 to 73 MB download.
 - **Way 2:** a GitHub workflow, a service account that may only view, and branch protection. A hub GitHub's runners can reach, or the check run from your laptop.
 - **Way 3, on your laptop:** a kind cluster with Flux or Argo CD, about two minutes to make; seconds to move the app; about 30 seconds to hand it back.
 
