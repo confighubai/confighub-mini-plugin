@@ -1,0 +1,52 @@
+# ConfigHub plugin and confighub mini
+
+> The ConfigHub plugin for Claude Code and Codex records each configuration value an agent changes, with the request and the reason, and tells the next agent before it undoes an earlier change. confighub mini is ConfigHub, a server that keeps configuration with every change and holds production for a person's approval, made small enough to run on a laptop, in a sandbox or in a CI job, with no account. In Claude Code, a person asks for an app "using ConfigHub", or asks to attach ConfigHub to an app they have, and the agent starts a hub and makes a base, a staging copy that takes changes at once, and a live copy that changes only when the person approves with `cub mini approve`. The plugin is MIT-licensed; install it with `claude plugin marketplace add confighubai/confighub-mini-plugin` and `claude plugin install confighub@confighub`.
+
+Pick a page by what the person is doing. Commands and outputs on these pages are from released versions; the plugin's version is in `.claude-plugin/marketplace.json`.
+
+## What are you doing
+
+- [A new app in Claude Code](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/journeys/new-app.md): the request to type, what the agent runs (`confighub mini get`, `cub mini adopt`, `cub mini require-approval --agent`), approving live, changing the app later, and a second app "like the first" with `--pattern`
+- [An app you already have](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/journeys/existing-app.md): attaching `.env` files, Terraform var files or a Kustomize repository with staging and production kept as they are; what adopt reads; `cub mini upload`; Helm values
+- [An app that Argo CD or Flux deploys from Git](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/journeys/gitops-app.md): the hub beside Git, a check on each pull request, or the hub as the app's source over OCI; handing the app back to Git
+- [Software with ConfigHub inside](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/journeys/bundled.md): what exists today for an app, platform or chart that comes with a hub, and what does not
+- [Going back](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/journeys/going-back.md): refusing or undoing a change, revoking an agent's key, writing apps out as plain files with `CHANGES.md`, removing confighub mini and the plugin
+- [From the plugin to ConfigHub](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/from-plugin-to-confighub.md): the four steps from the plugin to confighub mini to an organization's ConfigHub to unattended agents, and the `cub mini` features: try in a copy, a service the app needs, a shared setup, a secret for live
+
+## The plugin
+
+- [README](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/README.md): what the plugin does, installing it, the slash commands, a one-minute and a five-minute try
+- [How it works](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/how-it-works.md): what the agent is told and when, the stop before an undo, MCP call checks, what is recorded and never recorded, every setting, model use
+- [What a repository deploys](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/inventory.md): `/confighub:inventory`, each app and chart and what deploys it
+- [Git, GitHub and a hub](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/git-and-github.md): the plugin with Git and GitHub, `/confighub:to-hub`, a hub beside Git
+- [Working with the tools you already have](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/integrations.md): what the plugin does with each tool, and how far it has been run
+- [In CI or a sandbox](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/ci-and-sandboxes.md): loading the plugin in a job or container, and keeping its record
+- [In Codex](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/codex.md): the one setup command Codex needs
+- [If you use Entire](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/entire.md): `entire confighub why`
+- [Signed records](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/signed-records.md): checking the record was not changed; signing with an agent's SPIFFE identity
+- [The pull-request review](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/review/README.md): a GitHub Action that comments each configuration value a pull request changes, and why
+- [The evidence](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/evidence.md): what agents did with the plugin and without it, in measured sessions
+- [Evaluate it yourself](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/evaluate/README.md): the same evaluation with your own models
+- [What we do not claim](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/limits.md): limits, and what the plugin does not see
+
+## confighub mini and a hub
+
+- [Install confighub mini](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/install-mini.md): `/confighub:install-mini`, by hand, in a container; moving to a newer release; removing it
+- [A first run](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/try-confighub-mini.md): fifteen minutes with the package's start page example and the plugin's record
+- [Approvals](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/approvals.md): an agent proposes and only a named person approves, on confighub mini or an organization's ConfigHub; the pull-request check when Git deploys
+- [Your own Helm chart](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/your-own-chart.md): a chart in a hub with cub-helm, your values kept through its next version
+- [GitOps over OCI](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/gitops-over-oci.md): Flux and Argo CD deploying what the hub approved; self-heal, going back, your own cluster with hosted ConfigHub
+- [A service on a VM](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/vm.md): the service's files written from the hub, only approved values
+- [`cub mini` and plain `cub`](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/cub-mini-and-cub.md): which ConfigHub commands each `cub mini` command stands for
+- [Agents that run for weeks](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/agents-that-run-for-weeks.md): who acted, who agreed, and how to stop an agent at once
+- [Agents in CI](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/ci/README.md): three GitHub Actions jobs, from the plugin alone to an agent that proposes for a person's approval
+
+## For an agent in Claude Code
+
+- [The skill app-with-confighub](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/plugins/confighub/skills/app-with-confighub/SKILL.md): the commands an agent runs for an app with ConfigHub, and what it must not do
+- [The plugin's own README](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/plugins/confighub/README.md): the slash commands and settings, in short
+
+## Optional
+
+- [Run records](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/runs/README.md): each dated run the pages quote, as it came out
+- [Documentation index](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/README.md): every page, grouped by what you are doing

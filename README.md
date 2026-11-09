@@ -38,7 +38,7 @@ vibe code me a baseline app using ConfigHub: a small web service with a health e
 a configurable greeting, and a staging and a production setup
 ```
 
-The agent writes the app, starts confighub mini on your machine if no hub answers, and ends with the three copies and the command that approves a change to live. Before you run that command, run the `export PATH=...` line the agent gives you in the same terminal: `cub` comes with confighub mini and is not on your path yet. Ask for a second app "like the first" and it starts from the first's base.
+The agent writes the app, starts confighub mini on your machine if no hub answers, and ends with the three copies and the command that approves a change to live. Before you run that command, run the `export PATH=...` line the agent gives you in the same terminal: `cub` comes with confighub mini and is not on your path yet. Ask for a second app "like the first" and it starts from the first's base. [Step by step](docs/journeys/new-app.md).
 
 ### Try it in one minute
 
@@ -219,7 +219,7 @@ What you learn on your laptop works on your organization's ConfigHub too ([how t
 
 ## Documentation
 
-Every page, grouped by what you are doing, is listed in [docs/README.md](docs/README.md). Report a problem as [an issue](https://github.com/confighubai/confighub-mini-plugin/issues): what you ran, and what it printed.
+Every page, grouped by what you are doing, is listed in [docs/README.md](docs/README.md), starting with a step-by-step page for each way in: [a new app](docs/journeys/new-app.md), [an app you have](docs/journeys/existing-app.md), [an app Argo CD or Flux deploys](docs/journeys/gitops-app.md), and [software with ConfigHub inside](docs/journeys/bundled.md). For an AI agent, [`llms.txt`](llms.txt) lists every page and what it answers. Report a problem as [an issue](https://github.com/confighubai/confighub-mini-plugin/issues): what you ran, and what it printed.
 
 ## License
 
