@@ -12,7 +12,8 @@ program=$here/confighub-$os-$arch
 # The programs are kept compressed, four platforms being carried for the one that
 # runs. This machine's is unpacked once, beside them or, where the plugin's folder
 # cannot be written, in the person's own configuration.
-if [ ! -x "$program" ] && [ -f "$program.gz" ]; then
+# A Git checkout can keep yesterday's expanded executable beside today's gzip.
+if [ -f "$program.gz" ] && { [ ! -x "$program" ] || [ "$program.gz" -nt "$program" ]; }; then
   if ! { gzip -dc "$program.gz" > "$program.$$" && chmod +x "$program.$$" && mv -f "$program.$$" "$program"; } 2>/dev/null; then
     rm -f "$program.$$" 2>/dev/null
     sum=$(cksum < "$program.gz" | cut -d' ' -f1)

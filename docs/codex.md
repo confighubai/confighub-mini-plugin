@@ -26,4 +26,4 @@ The record is the plugin's list of what agents changed, and why. To read it:
 
 ## Remove it
 
-`codex-setup --remove` takes out the hooks, program copy and installed app workflow. Setup refuses to overwrite a personal skill of the same name or an edited installed workflow; it reports the conflict before changing hooks.
+`codex-setup --remove` takes out the hooks, program copy and installed app workflow. Setup refuses to overwrite a personal skill of the same name or an edited installed workflow; it reports the conflict before changing hooks. Removal keeps a personal or edited workflow while taking out the hooks and program copy.
