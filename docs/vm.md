@@ -38,6 +38,8 @@ With a `staging` and a `live` copy, each pulled by its own key, and a restart ho
 
 ## Verify the service
 
+Pull keeps each file's Unit revision and content hash in `.cub-mini-pull.json` beside it. That is a record of the files on disk, not proof that a running process loaded them. Compare the service's loaded settings with those files as well as checking its health.
+
 Before approving a change, check that live's configuration revision, the VM's files and the service's behavior stay unchanged. After approval and the next successful pull, compare the VM's files with the approved values, check the restart result, and call the service's health endpoint. Compare its reported revision, release digest or loaded settings with what was approved. A successful pull alone does not prove the service restarted or loaded the new values. Exercise the release and rollback path above and check the earlier behavior returns.
 
 ## How these steps were tested
