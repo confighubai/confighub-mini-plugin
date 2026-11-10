@@ -65,5 +65,27 @@
     "paths": 2,
     "sessions": 6,
     "all_passed": 2
+  },
+  "explicit_setup_recheck": {
+    "models": [
+      "sonnet",
+      "opus"
+    ],
+    "sessions": 2,
+    "assertions_passed": 6,
+    "assertions_total": 6
+  },
+  "shared_reason_recheck": {
+    "models": [
+      "sonnet",
+      "opus"
+    ],
+    "assertions_passed": 10,
+    "assertions_total": 10
+  },
+  "interactive_reason_recheck": {
+    "model": "sonnet",
+    "assertions_passed": 3,
+    "assertions_total": 3
   }
 }

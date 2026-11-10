@@ -25,7 +25,9 @@ The shared app workflow helps the agent choose the next step:
 | “Have CI use these settings.” | Check reachability and choose read access for a consumer or proposal access for changes. Neither can approve. A local-only hub needs a reachable path before a remote job can use it. |
 | “Let my colleague use this setup.” | Prepare a secret-free export or use an already provisioned shared hub. Sharing access or sending the export needs your instruction. Today's cloud is single-user. |
 
-For an app without ConfigHub, the agent first checks whether the existing Git, files or
+When you explicitly ask to use or attach ConfigHub, that is already your setup choice: the agent completes it, using the bundled installer if cub is absent. It does not ask you to choose ConfigHub again. A restricted key still needs the owner setup steps above.
+
+If you have not chosen ConfigHub, the agent first checks whether the existing Git, files or
 deployment setup meets the need. If a hub would help, it offers one relevant step and
 explains its cost: the local download and processes, or connection to a chosen existing
 hub. It continues independent coding while you decide. It does not silently sign you up.
