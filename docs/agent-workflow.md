@@ -37,8 +37,8 @@ Before a meaningful ConfigHub action, the agent gives a brief line such as:
 > ConfigHub: proposing the memory change for api live; it will wait for your approval.
 
 One line covers a related batch. Routine reads stay quiet. The hooks also attach an
-activity notice for recognised direct `cub mini` changes, grouped by action kind in the
-turn. They never echo arguments that might contain secrets. Hook metadata display varies
+fallback notice for recognised direct `cub mini` changes, grouped by action kind in the
+turn. When recent commentary already announces the batch, the hook omits the duplicate. They never echo arguments that might contain secrets. Hook metadata display varies
 by client; visible agent commentary supplies the attribution in Codex CLI too.
 
 A notice before a command describes the intended action. The result says separately

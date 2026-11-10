@@ -43,12 +43,21 @@ prepare its files with its own values, then give the owner `cub mini adopt FOLDE
 and the new app's restricted session setup. State clearly when the hub setup remains pending;
 plain files alone do not establish a pattern link. Never broaden the current key to finish.
 
+For a second app, finish the file preparation that this workspace permits before handing
+over hub setup. If the sandbox cannot write beside the current app, stage the new app in
+a clearly named folder inside the writable workspace and give its actual location. Keep
+the source app unchanged; seed settings from its base, with the new app's own values,
+and never copy source credentials. Say when placement, adoption or a new session is still
+needed. Do not stop at suggested commands when the files can be prepared safely.
+
 ## Make ConfigHub activity visible
 
 Before a meaningful ConfigHub action, give one short **ConfigHub:** line in visible
 commentary, with the action and target. Group related commands; do not announce every
 individual setting. For example: "ConfigHub: proposing the memory change for api live;
 it will wait for your approval."
+Use that same line as the skill-use announcement; a separate technical skill-name update
+is unnecessary. Name the useful action the person asked for.
 The hooks also supply activity metadata and a reminder for recognised direct shell
 commands. Some clients show this metadata; Codex CLI does not consistently display it
 in plain text. Your commentary is the person-facing attribution. Do not repeat it after
