@@ -21,6 +21,8 @@ A few words used throughout:
 
 **Not using Kubernetes yet?** [Compare the plugin, mini hub and shared hub](from-plugin-to-confighub.md#before-you-use-kubernetes). All three offer value for apps outside Kubernetes. The comparison separates hub hosting from app deployment. Today's cloud is single-user; the team path requires a provisioned shared hub.
 
+Run [four product examples](../examples/roadmap/README.md): a VM service with approval and rollback, reused settings, a hub round trip, and a scoped [extension](../examples/extensions/config-snapshot/README.md).
+
 ## Where the app runs
 
 An app can run on your own machine, on another machine, in a CI job, on one sandbox node or across many sandbox nodes, in a shared development cluster, and onward through staging to production. Each is a useful place to start or stay. A CI test or a temporary sandbox does not need to become a production service.

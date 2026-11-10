@@ -50,3 +50,6 @@ Pick a page by what the person is doing. Commands and outputs on these pages are
 
 - [Run records](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/runs/README.md): each dated run the pages quote, as it came out
 - [Documentation index](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/README.md): every page, grouped by what you are doing
+
+- [Four runnable examples](examples/roadmap/README.md): How do I exercise VM approval/recovery/rollback, reuse, a hub round trip and a scoped read-only extension?
+- [Configuration snapshot contract](examples/extensions/config-snapshot/README.md): How does a small extension read a pinned revision, retry and preserve its access boundary?
