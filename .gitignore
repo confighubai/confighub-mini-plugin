@@ -1,3 +1,7 @@
 plugins/confighub/bin/confighub-*-*
 !plugins/confighub/bin/confighub-*-*.gz
 !plugins/confighub/bin/confighub-mini-version
+
+__pycache__/
+*.pyc
+.confighub-example-env
