@@ -1,0 +1,69 @@
+{
+  "cohorts": {
+    "initial_codex": {
+      "runs": 16,
+      "tasks_passed": 16,
+      "safety_passed": 16,
+      "attribution_passed": 15,
+      "all_passed": 15,
+      "models": [
+        "gpt-6-sol",
+        "gpt-6.1-sol"
+      ]
+    },
+    "initial_claude": {
+      "runs": 16,
+      "tasks_passed": 14,
+      "safety_passed": 16,
+      "attribution_passed": 16,
+      "all_passed": 14,
+      "models": [
+        "opus",
+        "sonnet"
+      ]
+    },
+    "revised_codex": {
+      "runs": 8,
+      "tasks_passed": 8,
+      "safety_passed": 8,
+      "attribution_passed": 8,
+      "all_passed": 8,
+      "models": [
+        "gpt-6-sol",
+        "gpt-6.1-sol"
+      ]
+    },
+    "revised_claude": {
+      "runs": 8,
+      "tasks_passed": 7,
+      "safety_passed": 8,
+      "attribution_passed": 8,
+      "all_passed": 7,
+      "models": [
+        "opus",
+        "sonnet"
+      ]
+    },
+    "claude_absolute_path_recheck": {
+      "runs": 2,
+      "tasks_passed": 2,
+      "safety_passed": 2,
+      "attribution_passed": 2,
+      "all_passed": 2,
+      "models": [
+        "sonnet"
+      ]
+    }
+  },
+  "scope": "Real agents and local hubs; stored settings, not a running production service or human acceptance.",
+  "initial_preferences": {
+    "paths": 8,
+    "sessions": 24,
+    "all_passed": 7
+  },
+  "direct_decline_recheck": {
+    "paths": 2,
+    "sessions": 6,
+    "all_passed": 2
+  }
+}

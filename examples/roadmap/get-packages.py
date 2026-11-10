@@ -12,7 +12,7 @@ import tarfile
 import tempfile
 import urllib.request
 
-VERSION = '0.10.7-mini.17'
+VERSION = '0.10.7-mini.18'
 BASE = 'https://github.com/confighubai/confighub-mini-plugin/releases/download/mini-v' + VERSION
 
 

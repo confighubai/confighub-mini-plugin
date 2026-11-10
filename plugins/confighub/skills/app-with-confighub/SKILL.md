@@ -1,6 +1,6 @@
 ---
 name: app-with-confighub
-description: Use for ConfigHub app setup and changes, or ordinary requests to change or ship settings, try a change without affecting live, reuse an app's setup, or continue its configuration in CI or on another machine when the app already uses ConfigHub (.confighub-app). Also use for preferences about ConfigHub suggestions, importing a shared ConfigHub setup and handling an attached app's secrets. A generic request to build an app does not need a hub.
+description: Help with ConfigHub app setup and ordinary settings changes, isolated tries, reuse and continuation for an attached app (.confighub-app). Also use when a person asks for staging/live configuration separation or human approval; inspect existing delivery first and offer ConfigHub only for a missing capability. Covers shared setup imports, attached-app secrets and preferences about hub suggestions. A generic request to build an app does not need a hub.
 ---
 
 # Help with the app where the person is working
