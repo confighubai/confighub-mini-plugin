@@ -9,14 +9,14 @@ Words used on this page:
 - **The record** is what the plugin writes down about each change an agent makes to your configuration: the value, from what to what, and why.
 - **A hub** is one running ConfigHub: a server that keeps your configuration with every change, who made it and why.
 - **confighub mini** is ConfigHub made small enough that every agent can have a hub of its own: on your laptop, in a sandbox or in a CI job, with no account.
-- **Your organization's ConfigHub** is a hub your team shares: hosted at `hub.confighub.com`, or on your own servers.
+- **Your organization's ConfigHub** is a provisioned hub your team shares, for example on your own servers. Today's cloud service is single-user; a free two-person cloud hub is not available yet.
 - **A key** is a private key in a file that a person or a program signs in to a hub with. A **service account** is an account for a program, such as an agent, with a key of its own.
 
 | Step | What you add | What you get | Effort |
 |---|---|---|---|
 | 1 | The plugin | A record of what agents change and why; agents told before they undo an earlier change; what a repository deploys | Two commands, no account |
 | 2 | confighub mini, a hub of your own | Agents that edit your files as before, but whose changes reach production only once you approve them, in one command; an app with its staging and production copies in one request, or the app you have with the files it keeps; a change tried in a copy first; the services an app needs, and an app from a setup a teammate shared; a hub in each sandbox or CI job; your values kept through a vendor's next version | One command, then one sentence to the agent; or one request for the app |
-| 3 | Your organization's ConfigHub | One place for the team; agents with keys of their own; approval of changes to production | A ConfigHub organization |
+| 3 | Your organization's ConfigHub | One place for the team; agents with keys of their own; approval of changes to production | A provisioned shared hub and organization |
 | 4 | Agents that run unattended | Records signed with each agent's own identity; rights taken away at once | Agent keys; cluster workload identity for the signing example below |
 
 ## Take the smallest useful step
@@ -35,7 +35,7 @@ The plugin, mini hub and shared hub are all useful while your app runs on your o
 | **confighub mini** | A hub of your own, running as ordinary processes with no Docker or Kubernetes. Configuration copies keep their own values; agents propose changes and you approve the exact revision. | Staging and live services on a Linux VM read settings from the hub. The configured pull path takes only approved values for live ([VM guide](vm.md)). |
 | **Your organization's ConfigHub** | A reachable shared hub for people and CI jobs, shared history, a key for each agent and approval by a named colleague. Apps can remain on machines, VMs or other services. | A CI agent proposes a change, a colleague approves it, and the app's deployment path reads the approved configuration ([approvals](approvals.md#on-hosted-confighub-or-your-own-server-with-cub-alone)). |
 
-**Hosting the hub.** With hosted ConfigHub, your team does not operate the hub's infrastructure. If you run your own hub, its operators need the infrastructure required by the installation you choose. A Kubernetes-based hub installation uses Kubernetes for the hub; the app can still run elsewhere. The hub's hosting and the app's deployment are separate choices.
+**Hosting the hub.** Today's hosted service is single-user. For colleague access and approval, use an actually provisioned shared hub. A free cloud hub shared by two people is a proposed experience that still needs implementation. If you run your own hub, its operators need the infrastructure required by the installation you choose. A Kubernetes-based hub installation uses Kubernetes for the hub; the app can still run elsewhere. The hub's hosting and the app's deployment are separate choices.
 
 **When Kubernetes becomes useful.** If your apps run on a cluster, you can add Argo CD or Flux delivery from the hub, Helm workflows and cluster workload identity. Those capabilities are specific to their tools. For an app on a VM, use its file-pull and restart path instead. In either case, approval governs delivery when the deployment path uses the approved configuration; other write credentials must stay out of the agent's reach.
 
@@ -61,7 +61,7 @@ Then work as before. You change no prompt and add no instructions.
 - At the end of the first turn in which an agent changes configuration, one line saying it was recorded, and what that gives you. Once.
 - In a folder with earlier Claude Code sessions, what they changed in configuration in the last thirty days, read from Claude Code's own transcripts with the request behind each, shown when the first session opens, so the first agent is told the reasons for changes made before the plugin was installed.
 - When an agent changes a file that several environments read, one line saying which environments the change reaches and which file would change one of them only.
-- What agents set in Vercel, Supabase, Fly, Railway, GitHub, AWS SSM or with `terraform apply`, recorded with the request, and the next agent told of it.
+- What agents set in Vercel, Supabase, Fly, Railway, GitHub, AWS SSM or with `terraform apply`, recorded with the request, and the next agent told of it. This records supported agent operations; approved hub delivery to Vercel or AWS has not been run ([integration limits](integrations.md)).
 - Before an agent edits or deploys over an earlier change, the agent is told what changed and why. You see it in the agent's answer, and when the answer used it, one line at the end of the turn says so, with the earlier request.
 - When a turn shows a problem a hub would solve, such as a value replaced that had a reason, or a change to production nobody approved, one line saying what you would keep, and the one command that sets it up: `/confighub:install-mini`, which keeps a staging and a live copy of your settings on this machine, staging taking your agents' changes at once, live only when you say so. At most once a week for each kind, and never in a folder's first week; `CUB_MINI_TIPS=0` turns them off.
 
@@ -185,7 +185,7 @@ An agent asked to rotate a production password gives you the `secret set` comman
 
 ## Step 3: your organization's ConfigHub
 
-**Priya's story.** Priya leads the platform team. She wants everyone, and every agent, to work from one place, and wants no agent to change production without a person agreeing. She creates the team's organization on ConfigHub. Amara signs in and copies her work up from her laptop. Then Priya gives each agent a service account and key of its own, which may change the base and ask for a change, but not approve one.
+**Priya's story.** Priya leads the platform team. She wants everyone, and every agent, to work from one place, and wants no agent to change production without a person agreeing. This story assumes a provisioned shared hub with access for both people; today's single-user cloud does not provide this team journey. Priya uses the team's organization there. Amara signs in and copies her work up from her laptop. Then Priya gives each agent a service account and key of its own, which may change the base and ask for a change, but not approve one.
 
 **What you do.**
 

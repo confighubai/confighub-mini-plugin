@@ -17,6 +17,8 @@ This page is for someone who wants to know what the ConfigHub plugin does with a
 | SPIFFE | The record signed with the agent's own workload identity | [Signed records](signed-records.md#signing-with-the-agents-own-identity) | By us |
 | Argo CD and Flux | Clusters deploy what a hub approved | [GitOps over OCI](gitops-over-oci.md) | On a local cluster and on hosted ConfigHub, by us |
 
+**Recording and delivery are separate.** The plugin records supported Vercel and AWS changes. Applying approved hub settings to those providers has not been run. Delivery has been demonstrated to files, VM services through file pull, and clusters through Argo CD or Flux; each needs its configured delivery path.
+
 Nobody outside has run any of these yet. If you try one, we would like to hear how it went.
 
 Not here because other tools do them: running agents at scale, and hardening kernels, browsers and libraries.

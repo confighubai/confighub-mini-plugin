@@ -19,7 +19,7 @@ A few words used throughout:
 - **A hub** is a place where configuration is kept, with every change, who made it and why. **ConfigHub** is that hub.
 - **confighub mini** is ConfigHub made small enough that every agent can have a hub of its own: on your laptop, in a sandbox or in a CI job.
 
-**Not using Kubernetes yet?** [Compare the plugin, mini hub and shared hub](from-plugin-to-confighub.md#before-you-use-kubernetes). All three offer value for apps outside Kubernetes. The comparison separates what you need to host a hub from where your apps run.
+**Not using Kubernetes yet?** [Compare the plugin, mini hub and shared hub](from-plugin-to-confighub.md#before-you-use-kubernetes). All three offer value for apps outside Kubernetes. The comparison separates hub hosting from app deployment. Today's cloud is single-user; the team path requires a provisioned shared hub.
 
 ## Where the app runs
 
