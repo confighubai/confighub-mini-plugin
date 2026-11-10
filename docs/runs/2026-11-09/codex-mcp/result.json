@@ -1,0 +1,508 @@
+{
+  "complete": true,
+  "real_agent": true,
+  "transport": "MCP stdio",
+  "server": "local SQLite test fixture, not a hosted integration",
+  "sessions": 12,
+  "results": [
+    {
+      "case": "gpt-6-1-sol-log-1",
+      "model_requested": "gpt-6.1-sol",
+      "model_observed": "gpt-6.1-sol",
+      "level": "log",
+      "legacy_control": false,
+      "exit_code": 0,
+      "seconds": 14.44,
+      "read_calls": 1,
+      "write_calls": 1,
+      "rows": [
+        "release-check"
+      ],
+      "recorded": [
+        {
+          "tool": "mcp",
+          "command": "list_notes",
+          "target": "MCP server notes",
+          "same": "3169dada3ad2ad54"
+        },
+        {
+          "tool": "mcp",
+          "command": "add_note note=release-check",
+          "target": "MCP server notes",
+          "changes": true,
+          "same": "e1ed88e1417fa3b9"
+        }
+      ],
+      "failed_calls": 0,
+      "denial_explained": false,
+      "native_ask_error": false,
+      "task_executed": true,
+      "failed_call_missing_from_record": false
+    },
+    {
+      "case": "gpt-6-1-sol-ask-1",
+      "model_requested": "gpt-6.1-sol",
+      "model_observed": "gpt-6.1-sol",
+      "level": "ask",
+      "legacy_control": false,
+      "exit_code": 0,
+      "seconds": 13.48,
+      "read_calls": 1,
+      "write_calls": 0,
+      "rows": [],
+      "recorded": [
+        {
+          "tool": "mcp",
+          "command": "list_notes",
+          "target": "MCP server notes",
+          "same": "3169dada3ad2ad54"
+        }
+      ],
+      "failed_calls": 0,
+      "denial_explained": true,
+      "native_ask_error": false,
+      "task_executed": false,
+      "failed_call_missing_from_record": false
+    },
+    {
+      "case": "gpt-6-1-sol-log-2",
+      "model_requested": "gpt-6.1-sol",
+      "model_observed": "gpt-6.1-sol",
+      "level": "log",
+      "legacy_control": false,
+      "exit_code": 0,
+      "seconds": 27.1,
+      "read_calls": 1,
+      "write_calls": 1,
+      "rows": [
+        "release-check"
+      ],
+      "recorded": [
+        {
+          "tool": "mcp",
+          "command": "list_notes",
+          "target": "MCP server notes",
+          "same": "3169dada3ad2ad54"
+        },
+        {
+          "tool": "mcp",
+          "command": "add_note note=release-check",
+          "target": "MCP server notes",
+          "changes": true,
+          "same": "e1ed88e1417fa3b9"
+        }
+      ],
+      "failed_calls": 0,
+      "denial_explained": false,
+      "native_ask_error": false,
+      "task_executed": true,
+      "failed_call_missing_from_record": false
+    },
+    {
+      "case": "gpt-6-1-sol-ask-2",
+      "model_requested": "gpt-6.1-sol",
+      "model_observed": "gpt-6.1-sol",
+      "level": "ask",
+      "legacy_control": false,
+      "exit_code": 0,
+      "seconds": 12.52,
+      "read_calls": 1,
+      "write_calls": 0,
+      "rows": [],
+      "recorded": [
+        {
+          "tool": "mcp",
+          "command": "list_notes",
+          "target": "MCP server notes",
+          "same": "3169dada3ad2ad54"
+        }
+      ],
+      "failed_calls": 0,
+      "denial_explained": true,
+      "native_ask_error": false,
+      "task_executed": false,
+      "failed_call_missing_from_record": false
+    },
+    {
+      "case": "gpt-6-1-sol-log-0-failure",
+      "model_requested": "gpt-6.1-sol",
+      "model_observed": "gpt-6.1-sol",
+      "level": "log",
+      "legacy_control": false,
+      "exit_code": 0,
+      "seconds": 15.14,
+      "read_calls": 1,
+      "write_calls": 0,
+      "rows": [],
+      "recorded": [
+        {
+          "tool": "mcp",
+          "command": "list_notes",
+          "target": "MCP server notes",
+          "same": "3169dada3ad2ad54"
+        }
+      ],
+      "failed_calls": 1,
+      "denial_explained": false,
+      "native_ask_error": false,
+      "task_executed": true,
+      "failed_call_missing_from_record": true
+    },
+    {
+      "case": "gpt-6-1-sol-ask-0-legacy",
+      "model_requested": "gpt-6.1-sol",
+      "model_observed": "gpt-6.1-sol",
+      "level": "ask",
+      "legacy_control": true,
+      "exit_code": 0,
+      "seconds": 12.78,
+      "read_calls": 1,
+      "write_calls": 1,
+      "rows": [
+        "release-check"
+      ],
+      "recorded": [
+        {
+          "tool": "mcp",
+          "command": "list_notes",
+          "target": "MCP server notes",
+          "same": "3169dada3ad2ad54"
+        },
+        {
+          "tool": "mcp",
+          "command": "add_note note=release-check",
+          "target": "MCP server notes",
+          "changes": true,
+          "same": "e1ed88e1417fa3b9"
+        }
+      ],
+      "failed_calls": 0,
+      "denial_explained": false,
+      "native_ask_error": false,
+      "task_executed": true,
+      "failed_call_missing_from_record": false
+    },
+    {
+      "case": "gpt-6-sol-log-1",
+      "model_requested": "gpt-6-sol",
+      "model_observed": "gpt-6-sol",
+      "level": "log",
+      "legacy_control": false,
+      "exit_code": 0,
+      "seconds": 12.22,
+      "read_calls": 1,
+      "write_calls": 1,
+      "rows": [
+        "release-check"
+      ],
+      "recorded": [
+        {
+          "tool": "mcp",
+          "command": "list_notes",
+          "target": "MCP server notes",
+          "same": "3169dada3ad2ad54"
+        },
+        {
+          "tool": "mcp",
+          "command": "add_note note=release-check",
+          "target": "MCP server notes",
+          "changes": true,
+          "same": "e1ed88e1417fa3b9"
+        }
+      ],
+      "failed_calls": 0,
+      "denial_explained": false,
+      "native_ask_error": false,
+      "task_executed": true,
+      "failed_call_missing_from_record": false
+    },
+    {
+      "case": "gpt-6-sol-ask-1",
+      "model_requested": "gpt-6-sol",
+      "model_observed": "gpt-6-sol",
+      "level": "ask",
+      "legacy_control": false,
+      "exit_code": 0,
+      "seconds": 11.99,
+      "read_calls": 1,
+      "write_calls": 0,
+      "rows": [],
+      "recorded": [
+        {
+          "tool": "mcp",
+          "command": "list_notes",
+          "target": "MCP server notes",
+          "same": "3169dada3ad2ad54"
+        }
+      ],
+      "failed_calls": 0,
+      "denial_explained": true,
+      "native_ask_error": false,
+      "task_executed": false,
+      "failed_call_missing_from_record": false
+    },
+    {
+      "case": "gpt-6-sol-log-2",
+      "model_requested": "gpt-6-sol",
+      "model_observed": "gpt-6-sol",
+      "level": "log",
+      "legacy_control": false,
+      "exit_code": 0,
+      "seconds": 16.01,
+      "read_calls": 1,
+      "write_calls": 1,
+      "rows": [
+        "release-check"
+      ],
+      "recorded": [
+        {
+          "tool": "mcp",
+          "command": "list_notes",
+          "target": "MCP server notes",
+          "same": "3169dada3ad2ad54"
+        },
+        {
+          "tool": "mcp",
+          "command": "add_note note=release-check",
+          "target": "MCP server notes",
+          "changes": true,
+          "same": "e1ed88e1417fa3b9"
+        }
+      ],
+      "failed_calls": 0,
+      "denial_explained": false,
+      "native_ask_error": false,
+      "task_executed": true,
+      "failed_call_missing_from_record": false
+    },
+    {
+      "case": "gpt-6-sol-ask-2",
+      "model_requested": "gpt-6-sol",
+      "model_observed": "gpt-6-sol",
+      "level": "ask",
+      "legacy_control": false,
+      "exit_code": 0,
+      "seconds": 12.27,
+      "read_calls": 1,
+      "write_calls": 0,
+      "rows": [],
+      "recorded": [
+        {
+          "tool": "mcp",
+          "command": "list_notes",
+          "target": "MCP server notes",
+          "same": "3169dada3ad2ad54"
+        }
+      ],
+      "failed_calls": 0,
+      "denial_explained": true,
+      "native_ask_error": false,
+      "task_executed": false,
+      "failed_call_missing_from_record": false
+    },
+    {
+      "case": "gpt-6-sol-log-0-failure",
+      "model_requested": "gpt-6-sol",
+      "model_observed": "gpt-6-sol",
+      "level": "log",
+      "legacy_control": false,
+      "exit_code": 0,
+      "seconds": 13.17,
+      "read_calls": 1,
+      "write_calls": 0,
+      "rows": [],
+      "recorded": [
+        {
+          "tool": "mcp",
+          "command": "list_notes",
+          "target": "MCP server notes",
+          "same": "3169dada3ad2ad54"
+        }
+      ],
+      "failed_calls": 1,
+      "denial_explained": false,
+      "native_ask_error": false,
+      "task_executed": true,
+      "failed_call_missing_from_record": true
+    },
+    {
+      "case": "gpt-6-sol-ask-0-legacy",
+      "model_requested": "gpt-6-sol",
+      "model_observed": "gpt-6-sol",
+      "level": "ask",
+      "legacy_control": true,
+      "exit_code": 0,
+      "seconds": 11.6,
+      "read_calls": 1,
+      "write_calls": 1,
+      "rows": [
+        "release-check"
+      ],
+      "recorded": [
+        {
+          "tool": "mcp",
+          "command": "list_notes",
+          "target": "MCP server notes",
+          "same": "3169dada3ad2ad54"
+        },
+        {
+          "tool": "mcp",
+          "command": "add_note note=release-check",
+          "target": "MCP server notes",
+          "changes": true,
+          "same": "e1ed88e1417fa3b9"
+        }
+      ],
+      "failed_calls": 0,
+      "denial_explained": false,
+      "native_ask_error": false,
+      "task_executed": true,
+      "failed_call_missing_from_record": false
+    }
+  ],
+  "checks": [
+    {
+      "check": "gpt-6-1-sol-log-1: the requested model ran",
+      "pass": true
+    },
+    {
+      "check": "gpt-6-1-sol-log-1: the requested note reached the server",
+      "pass": true
+    },
+    {
+      "check": "gpt-6-1-sol-log-1: the successful read and write are recorded",
+      "pass": true
+    },
+    {
+      "check": "gpt-6-1-sol-log-1: the ask judge rejects this deliberately permitted write",
+      "pass": true
+    },
+    {
+      "check": "gpt-6-1-sol-ask-1: the requested model ran",
+      "pass": true
+    },
+    {
+      "check": "gpt-6-1-sol-ask-1: read allowed, write refused before a server call",
+      "pass": true
+    },
+    {
+      "check": "gpt-6-1-sol-ask-1: no denied write recorded as completed",
+      "pass": true
+    },
+    {
+      "check": "gpt-6-1-sol-log-2: the requested model ran",
+      "pass": true
+    },
+    {
+      "check": "gpt-6-1-sol-log-2: the requested note reached the server",
+      "pass": true
+    },
+    {
+      "check": "gpt-6-1-sol-log-2: the successful read and write are recorded",
+      "pass": true
+    },
+    {
+      "check": "gpt-6-1-sol-log-2: the ask judge rejects this deliberately permitted write",
+      "pass": true
+    },
+    {
+      "check": "gpt-6-1-sol-ask-2: the requested model ran",
+      "pass": true
+    },
+    {
+      "check": "gpt-6-1-sol-ask-2: read allowed, write refused before a server call",
+      "pass": true
+    },
+    {
+      "check": "gpt-6-1-sol-ask-2: no denied write recorded as completed",
+      "pass": true
+    },
+    {
+      "check": "gpt-6-1-sol-log-0-failure: the server returned an error without a database write",
+      "pass": true
+    },
+    {
+      "check": "gpt-6-1-sol-log-0-failure: no failed write recorded as applied",
+      "pass": true
+    },
+    {
+      "check": "gpt-6-1-sol-ask-0-legacy: the old ask reply demonstrates why the adapter is needed",
+      "pass": true
+    },
+    {
+      "check": "gpt-6-sol-log-1: the requested model ran",
+      "pass": true
+    },
+    {
+      "check": "gpt-6-sol-log-1: the requested note reached the server",
+      "pass": true
+    },
+    {
+      "check": "gpt-6-sol-log-1: the successful read and write are recorded",
+      "pass": true
+    },
+    {
+      "check": "gpt-6-sol-log-1: the ask judge rejects this deliberately permitted write",
+      "pass": true
+    },
+    {
+      "check": "gpt-6-sol-ask-1: the requested model ran",
+      "pass": true
+    },
+    {
+      "check": "gpt-6-sol-ask-1: read allowed, write refused before a server call",
+      "pass": true
+    },
+    {
+      "check": "gpt-6-sol-ask-1: no denied write recorded as completed",
+      "pass": true
+    },
+    {
+      "check": "gpt-6-sol-log-2: the requested model ran",
+      "pass": true
+    },
+    {
+      "check": "gpt-6-sol-log-2: the requested note reached the server",
+      "pass": true
+    },
+    {
+      "check": "gpt-6-sol-log-2: the successful read and write are recorded",
+      "pass": true
+    },
+    {
+      "check": "gpt-6-sol-log-2: the ask judge rejects this deliberately permitted write",
+      "pass": true
+    },
+    {
+      "check": "gpt-6-sol-ask-2: the requested model ran",
+      "pass": true
+    },
+    {
+      "check": "gpt-6-sol-ask-2: read allowed, write refused before a server call",
+      "pass": true
+    },
+    {
+      "check": "gpt-6-sol-ask-2: no denied write recorded as completed",
+      "pass": true
+    },
+    {
+      "check": "gpt-6-sol-log-0-failure: the server returned an error without a database write",
+      "pass": true
+    },
+    {
+      "check": "gpt-6-sol-log-0-failure: no failed write recorded as applied",
+      "pass": true
+    },
+    {
+      "check": "gpt-6-sol-ask-0-legacy: the old ask reply demonstrates why the adapter is needed",
+      "pass": true
+    },
+    {
+      "check": "only this test's temporary homes, authentication links, database and server files removed",
+      "pass": true
+    }
+  ],
+  "passed": 35,
+  "failed": 0,
+  "cleanup": true
+}

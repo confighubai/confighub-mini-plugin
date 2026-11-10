@@ -5,7 +5,7 @@ This page is for someone who wants to know what the ConfigHub plugin does with a
 | Your tool | What you get | How to set it up | How far it has been run |
 |---|---|---|---|
 | Git and GitHub | The reason for a change kept with the commit and shown in the pull request | [Git, GitHub and a hub](git-and-github.md) | In the checks made before each release |
-| Any MCP server | Each call in the record, and as much checking as you choose | [How closely MCP calls are watched](how-it-works.md#how-closely-mcp-calls-are-watched) | A small stand-in server and Claude Code's own MCP server. No payments, database or hosted server yet |
+| Any MCP server | Each call in the record, and as much checking as you choose | [How closely MCP calls are watched](how-it-works.md#how-closely-mcp-calls-are-watched) | Claude Code stand-ins; Codex MCP stdio and explicit refusals checked on two models against a local SQLite fixture ([record](runs/2026-11-09/codex-mcp/README.md)). No payments or hosted database provider yet |
 | A sandbox or container | The record, and the stop before an undo, across sandboxes that share only the repository | [In CI or a sandbox](ci-and-sandboxes.md) | `sandbox-exec` and Linux containers |
 | nono | An agent working inside nono, with its changes recorded | No guide yet | Once, by us |
 | Entire | The reason for a value, with the checkpoint of each session | [If you use Entire](entire.md) | By us; no outside use yet |

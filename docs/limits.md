@@ -12,7 +12,7 @@ The **plugin** runs in your Claude Code or Codex sessions and keeps a **record**
 
 - **The agent does not look in the record by itself.** It is given the history only when it reads a file that an earlier session changed, or looks at such a resource with `kubectl get` or `describe`, or at such a release with `helm get`, `status` or `history`. It is also given it before it applies manifests that would put back such a change. `/confighub:changes` and `/confighub:why` are for you, not the agent.
 
-- **Codex does not pick the plugin up from its marketplace.** Codex runs only the hooks in its own configuration. Run `bin/confighub mini codex-setup` to put them there.
+- **Codex needs its own hook setup.** Run `plugins/confighub/bin/confighub mini codex-setup` from the plugin checkout, then review the hooks with `/hooks` in a fresh session. Repeat setup after an update. Completed MCP calls are recorded; at `ask`, changing MCP calls are refused before reaching the server. Codex does not show a human approval prompt for that refusal. `apply_patch` edits are recorded afterwards but are not held at `ask`. In the tested Codex client, server errors gave no completion callback and were absent from the structured record. These limits were checked on macOS ARM64 with Codex 0.163.0, two models and a local SQLite test server, not a hosted payments or database provider ([the checks](runs/2026-11-09/codex-mcp/README.md)).
 
 - **Claude Code and confighub mini have not been run together inside one Linux container.** They have run together on GitHub's Linux runner, where the agent worked in a hub of its own ([ci/](../ci/README.md)). Claude Code with the plugin alone has run in a Linux CI job, where the agent kept the earlier change in 8 sessions of 8, and an agent on a Mac has used a confighub mini inside a fresh Linux container.
 
@@ -46,7 +46,7 @@ The **plugin** runs in your Claude Code or Codex sessions and keeps a **record**
 
 ## What the plugin does not see
 
-**A change on the cluster that no agent session made.** That includes a person's `kubectl edit` or `kubectl scale`, a controller's write, Argo CD's self-heal, and a change made through an MCP server. By default, the plugin learns of cluster changes only from the commands it records. It does not read the cluster.
+**A change on the cluster that no agent session made.** That includes a person's `kubectl edit` or `kubectl scale`, a controller's write, Argo CD's self-heal, and a change made through an MCP server outside a watched agent session. By default, the plugin learns of cluster changes only from the commands it records. It does not read the cluster.
 
 This was tested in 12 runs, where a person or a controller had scaled the api to 4:
 - The plugin's stop before a deploy said nothing.

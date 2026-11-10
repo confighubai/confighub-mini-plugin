@@ -1,0 +1,25 @@
+{
+  "case": "gpt-6-1-sol-ask-2",
+  "model_requested": "gpt-6.1-sol",
+  "model_observed": "gpt-6.1-sol",
+  "level": "ask",
+  "legacy_control": false,
+  "exit_code": 0,
+  "seconds": 12.52,
+  "read_calls": 1,
+  "write_calls": 0,
+  "rows": [],
+  "recorded": [
+    {
+      "tool": "mcp",
+      "command": "list_notes",
+      "target": "MCP server notes",
+      "same": "3169dada3ad2ad54"
+    }
+  ],
+  "failed_calls": 0,
+  "denial_explained": true,
+  "native_ask_error": false,
+  "task_executed": false,
+  "failed_call_missing_from_record": false
+}

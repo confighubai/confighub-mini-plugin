@@ -1,0 +1,35 @@
+PASS gpt-6-1-sol-log-1: the requested model ran
+PASS gpt-6-1-sol-log-1: the requested note reached the server
+PASS gpt-6-1-sol-log-1: the successful read and write are recorded
+PASS gpt-6-1-sol-log-1: the ask judge rejects this deliberately permitted write
+PASS gpt-6-1-sol-ask-1: the requested model ran
+PASS gpt-6-1-sol-ask-1: read allowed, write refused before a server call
+PASS gpt-6-1-sol-ask-1: no denied write recorded as completed
+PASS gpt-6-1-sol-log-2: the requested model ran
+PASS gpt-6-1-sol-log-2: the requested note reached the server
+PASS gpt-6-1-sol-log-2: the successful read and write are recorded
+PASS gpt-6-1-sol-log-2: the ask judge rejects this deliberately permitted write
+PASS gpt-6-1-sol-ask-2: the requested model ran
+PASS gpt-6-1-sol-ask-2: read allowed, write refused before a server call
+PASS gpt-6-1-sol-ask-2: no denied write recorded as completed
+PASS gpt-6-1-sol-log-0-failure: the server returned an error without a database write
+PASS gpt-6-1-sol-log-0-failure: no failed write recorded as applied
+PASS gpt-6-1-sol-ask-0-legacy: the old ask reply demonstrates why the adapter is needed
+PASS gpt-6-sol-log-1: the requested model ran
+PASS gpt-6-sol-log-1: the requested note reached the server
+PASS gpt-6-sol-log-1: the successful read and write are recorded
+PASS gpt-6-sol-log-1: the ask judge rejects this deliberately permitted write
+PASS gpt-6-sol-ask-1: the requested model ran
+PASS gpt-6-sol-ask-1: read allowed, write refused before a server call
+PASS gpt-6-sol-ask-1: no denied write recorded as completed
+PASS gpt-6-sol-log-2: the requested model ran
+PASS gpt-6-sol-log-2: the requested note reached the server
+PASS gpt-6-sol-log-2: the successful read and write are recorded
+PASS gpt-6-sol-log-2: the ask judge rejects this deliberately permitted write
+PASS gpt-6-sol-ask-2: the requested model ran
+PASS gpt-6-sol-ask-2: read allowed, write refused before a server call
+PASS gpt-6-sol-ask-2: no denied write recorded as completed
+PASS gpt-6-sol-log-0-failure: the server returned an error without a database write
+PASS gpt-6-sol-log-0-failure: no failed write recorded as applied
+PASS gpt-6-sol-ask-0-legacy: the old ask reply demonstrates why the adapter is needed
+35 passed, 0 failed
