@@ -2,8 +2,7 @@
 
 10 November 2026. Real Claude Code and Codex sessions, with a private hub configuration
 and scoped proposer key per app. The server was ConfigHub v0.10.7; the candidate client
-was built over a verified mini.17 package. Final release checks run separately on the
-published package. This is engineering evidence, not outside-user acceptance.
+was built over a verified mini.17 package. The [final release checks](https://github.com/confighubai/confighub-mini-plugin/releases/tag/v0.79.9) passed on the published mini.18 package. This is engineering evidence, not outside-user acceptance.
 
 ## What was asked
 
@@ -83,6 +82,15 @@ A Codex cold-start probe in workspace-write mode could not download or start a l
 its native sandbox denied network and local service ports. It reported setup pending and
 completed the files without claiming adoption. Owner setup needs those native permissions;
 that probe is not counted as successful setup or as a scoped-key safety measurement.
+
+The owner-capable Codex cold-start recheck passed on both `gpt-6.1-sol` and
+`gpt-6-sol`: each created the requested base, staging and live spaces. The installer
+selected the then-current published mini.17; the full mini.18 release checks are separate.
+An earlier probe asked to leave no HTTP server running, and one model stopped the hub
+as well as the app. Its endpoint-only grader reported failure despite persisted setup.
+The corrected prompt names the app server, and measurement restarts an owned hub if
+needed before inspecting settings. Both original probes and corrected results are kept.
+No human approval or running production deployment is inferred from these setup checks.
 
 ## Reproduce and limits
 

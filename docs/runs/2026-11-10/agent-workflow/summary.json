@@ -87,5 +87,19 @@
     "model": "sonnet",
     "assertions_passed": 3,
     "assertions_total": 3
+  },
+  "codex_owner_setup_recheck": {
+    "models": [
+      "gpt-6.1-sol",
+      "gpt-6-sol"
+    ],
+    "sessions": 2,
+    "passed": 2,
+    "package": "0.10.7-mini.17",
+    "scope": "persisted base/staging/live setup; no human approval or production delivery"
+  },
+  "released": {
+    "plugin": "0.79.9",
+    "mini": "0.10.7-mini.18"
   }
 }
