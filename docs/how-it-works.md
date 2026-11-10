@@ -73,7 +73,7 @@ What to expect from it:
 - At every level from `log`, an agent's first call to a server is followed by what earlier sessions changed through it.
 - `repeats` tells a willing agent and does not forbid. With a tool that takes a shell command or SQL, half of the agents went ahead once told, each saying so. To decide yourself, use `ask`.
 - `/confighub:permissions` narrows a rule for a whole server, such as `mcp__payments__*`, to the tools that read and were used. That holds in Claude Code's default permission mode. In auto mode, Claude Code's own check decides and a rule taken away does not stop a call, so use `ask`.
-- These checks help a willing agent and inform you. An agent able to change the setting or turn off hooks can get past them. They do not cover Codex.
+- These checks help a willing agent and inform you. An agent able to change the setting or turn off hooks can get past them. The measurements above are for Claude Code; Codex records completed calls and refuses changing calls at `ask`, with the client limits described above.
 
 ## Changes made by commands
 
