@@ -1,6 +1,8 @@
 # An app you already have, in Claude Code: staging and production kept as they are
 
-This page is for someone whose app already has its settings in files, one set for staging and one for production, and who now lets Claude Code change them. Today an agent that can edit the staging file can edit the production file too. Here you ask Claude Code to attach ConfigHub to the app. Your staging and production values stay exactly as they are, your files are not changed, and from then on a change reaches production only when you approve it.
+This page is for someone whose app already has its settings in files, one set for staging and one for production, and who now lets Claude Code change them. Today an agent that can edit the staging file can edit the production file too. Here you ask Claude Code to attach ConfigHub to the app. Your staging and production values stay exactly as they are, your files are not changed, and changes to the hub's live configuration wait for your approval.
+
+The app might run on your own machine, on another machine, in CI, on one or many sandbox nodes, in a shared development cluster, or in production. Attaching it creates configuration copies in the hub. Its running services use the hub's approved settings once their deployment path is connected ([where the app runs](../README.md#where-the-app-runs)).
 
 It works for these kinds of files:
 
@@ -16,7 +18,7 @@ If Argo CD or Flux deploys the app from Git, read this page, then [an app that A
 ## Words used on this page
 
 - **A hub** is one running ConfigHub: a server that keeps your app's settings, with every change, who made it and why. **confighub mini** is ConfigHub made small enough to run on your laptop. `cub` is ConfigHub's command-line tool, and comes with confighub mini.
-- **The base** holds the values every environment shares. **The staging copy** is made from it and takes each change at once. **The live copy** is your production. It takes a change only when you approve it. Each copy keeps its **own values**, the ones your staging or production file sets differently, through later changes to the base.
+- **The base** holds the values every environment shares. **The staging copy** is made from it and takes each change at once. **The live copy** holds the settings intended for production. It takes a change only when you approve it. Each copy keeps its **own values**, the ones your staging or production file sets differently, through later changes to the base.
 - **A Space** is where the hub keeps one copy, such as `orders-live`.
 - **A change order** is a request for a change to reach the live copy. It waits until you approve or refuse it.
 - **The agent's key** is a sign-in of the agent's own. On it, the agent can change the base and staging, and propose changes to live. It cannot approve them.
@@ -158,6 +160,12 @@ Your files were never changed, so there is nothing to undo in them. To leave:
 4. Delete `.confighub-app` from the repository.
 
 Every way out: [going back](going-back.md).
+
+## Verify what you have
+
+1. Check the base, staging and live values in the hub. Live's recorded revision should stay unchanged while the change order waits; the agent must be unable to approve it.
+2. If you only wanted managed configuration, that is the result of this walkthrough. To run services from it, connect the [deployment path for your target](../README.md#where-the-app-runs).
+3. Check that the service answers, then compare its loaded settings or release with the approved live revision. Check both before and after your approval. Use the target guide's restart and rollback steps; a configuration copy alone does not prove a service is running ([verification](../approvals.md#verify-the-result)).
 
 ## How this was tested
 

@@ -6,8 +6,8 @@ The pages are grouped by what you are doing. Each page starts by saying who it i
 
 | You are | Start here | You end with |
 |---|---|---|
-| In Claude Code, making a new app | [A new app](journeys/new-app.md) | The app, a staging copy that takes changes at once, and a live copy that changes only when you approve; a second app made from the first |
-| In Claude Code, changing an app you already have: `.env` files, Terraform var files, a Kustomize repository or Helm values | [An app you already have](journeys/existing-app.md) | Your staging and production values kept exactly as they are, your files unchanged, and production behind your approval |
+| In Claude Code, making a new app | [A new app](journeys/new-app.md) | The app, staging configuration that takes changes at once, and live configuration that changes only when you approve; a second app made from the first |
+| In Claude Code, changing an app you already have: `.env` files, Terraform var files, a Kustomize repository or Helm values | [An app you already have](journeys/existing-app.md) | Your staging and production values kept exactly as they are, your files unchanged, and changes to live configuration waiting for your approval |
 | Running an app that Argo CD or Flux deploys from Git | [An app that Argo CD or Flux deploys](journeys/gitops-app.md) | The hub beside Git, a check on each pull request, or the hub as the app's source; and the way back to Git |
 | Using software that came with ConfigHub inside it | [Software with ConfigHub inside](journeys/bundled.md) | What exists today, what does not, and how to keep your changes through its next version |
 | Letting agents change configuration, and wanting them to stop undoing each other | [The README](../README.md) | A record of what each agent changed and why, told to the next agent; no hub, no account |
@@ -18,6 +18,18 @@ A few words used throughout:
 - **The record** is what the plugin writes down about each change an agent makes to your configuration: the value, from what to what, and why.
 - **A hub** is a place where configuration is kept, with every change, who made it and why. **ConfigHub** is that hub.
 - **confighub mini** is ConfigHub made small enough that every agent can have a hub of its own: on your laptop, in a sandbox or in a CI job.
+
+**Not using Kubernetes yet?** [Compare the plugin, mini hub and shared hub](from-plugin-to-confighub.md#before-you-use-kubernetes). All three offer value for apps outside Kubernetes. The comparison separates what you need to host a hub from where your apps run.
+
+## Where the app runs
+
+An app can run on your own machine, on another machine, in a CI job, on one sandbox node or across many sandbox nodes, in a shared development cluster, and onward through staging to production. Each is a useful place to start or stay. A CI test or a temporary sandbox does not need to become a production service.
+
+An app can have several running copies, each with its own settings and lifetime. Several sandbox nodes might run independent copies for parallel tests, or parts of one distributed app. A shared development cluster might run several apps and environments.
+
+The hub keeps configuration for those copies. The hub's location and the app's location are separate choices. Creating staging and live configuration in a hub does not start those services; a process or deployment system must read the configuration and run the app.
+
+For the paths documented here, see [CI and sandboxes](ci-and-sandboxes.md), [a service on a VM](vm.md), and [Flux or Argo CD deploying from the hub](gitops-over-oci.md). Each guide says what was tested. A remote service needs a hub it can reach, and production approval depends on its deployment path using the approved configuration.
 
 ## Using the plugin
 

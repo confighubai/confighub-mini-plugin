@@ -8,6 +8,23 @@ A few words used on this page:
 - A **turn** is one request you make in a session and the agent's work on it.
 - The **record** is the plugin's list of what agents changed, with the request that caused each change and the reason given.
 
+## Client capabilities
+
+Recording, telling the agent, refusing a call and asking a person are different operations. This table is the reference for client-specific promises. Local hooks depend on the client invoking them; they are not a server-side access boundary.
+
+| Client and operation | Recorded | History or warning | Refusal before execution | Human approval |
+|---|---|---|---|---|
+| Claude Code: supported file edits and shell commands | Supported changes, with the request and reason | Earlier reasons on supported reads; a deploy undo can be stopped once and explained | Supported deploy undo held once; a retry can proceed | At `ask`, a supported file edit undoing another session's reasoned value asks the person |
+| Claude Code: MCP calls | Calls from `log` upward; no calls at `off` | Earlier calls on first use; changing-call notice at `warn` | At `repeats`, a relevant call is held once; a retry can proceed | At `ask`, changing calls ask the person, including when a permission rule allows the tool |
+| Codex: supported shell commands and file changes | Supported completed changes after hook setup | Earlier reasons supplied on supported operations | At `ask`, supported shell-file undos are refused; there is no approval retry | No native approval prompt from that refusal |
+| Codex: `apply_patch` | Edits recorded afterwards | File history is supplied when supported reads occur | The patch is not held at `ask` | No prompt from this hook |
+| Codex: MCP calls | Completed calls after hook setup; tested server errors had no completion callback and were absent | Earlier calls supplied; level-specific notices where applicable | Changing calls at `ask` are refused before reaching the server; retry stays refused | No native approval prompt from that refusal |
+| Either client: a proposal to a hub on its own scoped key | The hub records revisions and change orders | The person reviews the proposed revision | The hub refuses the agent's approval and writes outside its rights | The named person approves in their own authenticated process; this does not grant the agent an in-chat approval tool |
+
+Codex rows were checked on macOS ARM64 with Codex 0.163.0, two models and a local SQLite MCP server ([transport evidence](runs/2026-11-09/codex-mcp/README.md)). They do not establish hosted payments or database coverage. Claude Code measurements are described in the [evidence](evidence.md) and the sections below. Rerun `codex-setup` after updates and review `/hooks` in a fresh session. If a call produces no completion callback, use the native transcript to inspect the attempt; the structured record may be incomplete.
+
+The next agent receives history for supported operations; it is not guaranteed to preserve the value. A server-side production gate additionally requires a deployment path that consumes the approved configuration and an agent without bypass credentials ([approvals](approvals.md)).
+
 ## What the agent is told, and when
 
 Most of the time the agent is told nothing. The plugin speaks only when earlier sessions changed the file the agent is looking at. Then, once in the session, it adds the history of that file beside what the agent read. From the five-minute try in the README:
@@ -53,6 +70,8 @@ The agent then decides what to do. Usually it asks you. If it runs the same comm
 `CUB_MINI_STOP_BEFORE_UNDO=0` turns the stop off.
 
 ## How closely MCP calls are watched
+
+The levels below describe Claude Code. Use the [client capability matrix](#client-capabilities) for Codex, where `ask` refuses rather than presenting a prompt.
 
 In Codex, completed MCP calls are recorded after `codex-setup`. At `ask`, changing MCP calls and supported shell-file undos are refused with an explanation; the hook cannot request that approval prompt. A refusal never permits a retry. Codex apply_patch edits are recorded afterwards and are not held before an undo. Failed calls can be missing; use the native session transcript for those attempts. See [the transport check and client limits](runs/2026-11-09/codex-mcp/README.md). Rerun setup after updating and review changed definitions with `/hooks`.
 

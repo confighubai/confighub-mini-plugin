@@ -2,6 +2,8 @@
 
 This page is for anyone deciding how far to take ConfigHub. You can stop at any step. Each step keeps what the one before gave you. None asks you to learn a set of commands first: you install it, keep working as you do, and each next step is offered in one line, at the moment it would help, and never before. The story follows one platform team as its needs grow.
 
+Client behavior differs: see the [capability matrix](how-it-works.md#client-capabilities) for recording, refusal and approval in Claude Code and Codex.
+
 Words used on this page:
 
 - **The record** is what the plugin writes down about each change an agent makes to your configuration: the value, from what to what, and why.
@@ -15,7 +17,31 @@ Words used on this page:
 | 1 | The plugin | A record of what agents change and why; agents told before they undo an earlier change; what a repository deploys | Two commands, no account |
 | 2 | confighub mini, a hub of your own | Agents that edit your files as before, but whose changes reach production only once you approve them, in one command; an app with its staging and production copies in one request, or the app you have with the files it keeps; a change tried in a copy first; the services an app needs, and an app from a setup a teammate shared; a hub in each sandbox or CI job; your values kept through a vendor's next version | One command, then one sentence to the agent; or one request for the app |
 | 3 | Your organization's ConfigHub | One place for the team; agents with keys of their own; approval of changes to production | A ConfigHub organization |
-| 4 | Agents that run unattended | Records signed with each agent's own identity; rights taken away at once | Your cluster's workload identity |
+| 4 | Agents that run unattended | Records signed with each agent's own identity; rights taken away at once | Agent keys; cluster workload identity for the signing example below |
+
+## Take the smallest useful step
+
+If Git, a values file and required pull-request reviews already do the job, keep using them. The plugin adds reasons for supported agent changes between commits without changing the deployment path. Add a hub for a particular app when independent configuration copies, preserved values or a named approver would help. Add shared hosting when a colleague or job needs that work while your machine is unavailable.
+
+You keep editing the same files. Each additional step has setup and operational costs; use it for a concrete problem, and [leave or go back](journeys/going-back.md) when it no longer helps. You can use the plugin on its own, start directly on a shared hub, or keep Git delivering while using a hub beside it.
+
+## Before you use Kubernetes
+
+The plugin, mini hub and shared hub are all useful while your app runs on your own machine, another machine, in CI or across sandboxes. Choose according to the configuration and collaboration you need. Moving to a shared hub does not require moving the app to Kubernetes, and a team can start with a shared hub directly.
+
+| What you use | What it gives you before Kubernetes | Example |
+|---|---|---|
+| **The plugin** | A record of changes to supported settings files and service commands, with the request and reason; the next agent is given that history. No hub or cluster to operate. | An agent raises a timeout in `.env`; the next agent is told why before changing it. |
+| **confighub mini** | A hub of your own, running as ordinary processes with no Docker or Kubernetes. Configuration copies keep their own values; agents propose changes and you approve the exact revision. | Staging and live services on a Linux VM read settings from the hub. The configured pull path takes only approved values for live ([VM guide](vm.md)). |
+| **Your organization's ConfigHub** | A reachable shared hub for people and CI jobs, shared history, a key for each agent and approval by a named colleague. Apps can remain on machines, VMs or other services. | A CI agent proposes a change, a colleague approves it, and the app's deployment path reads the approved configuration ([approvals](approvals.md#on-hosted-confighub-or-your-own-server-with-cub-alone)). |
+
+**Hosting the hub.** With hosted ConfigHub, your team does not operate the hub's infrastructure. If you run your own hub, its operators need the infrastructure required by the installation you choose. A Kubernetes-based hub installation uses Kubernetes for the hub; the app can still run elsewhere. The hub's hosting and the app's deployment are separate choices.
+
+**When Kubernetes becomes useful.** If your apps run on a cluster, you can add Argo CD or Flux delivery from the hub, Helm workflows and cluster workload identity. Those capabilities are specific to their tools. For an app on a VM, use its file-pull and restart path instead. In either case, approval governs delivery when the deployment path uses the approved configuration; other write credentials must stay out of the agent's reach.
+
+Rendering a Helm chart and previewing an upgrade can be useful before a cluster is available. Deploying the rendered Kubernetes resources and reconciling them on a cluster use Kubernetes.
+
+The [VM guide](vm.md#how-these-steps-were-tested) and [approval guide](approvals.md#how-these-steps-were-tested) describe the scope of their runs. They distinguish a configured approval from a verified deployment. Agents can also work unattended on a machine or in CI with keys and revocation at step 2 or 3; step 4's cluster workload identity is a further example.
 
 ## Step 1: the plugin
 
@@ -52,7 +78,7 @@ Then work as before. You change no prompt and add no instructions.
 **What arrives by itself.**
 
 - **A change waiting for you.** At the end of an agent's turn that proposed a change, one line: the value, from what to what, the copy it is headed for, the agent's reason, and `cub mini approve` to say yes, or `cub mini refuse --reason WHY` to say no. Approving shows the change and asks first. That is all you type.
-- **Agents that propose and cannot approve.** After the setup, every Claude Code session in the repository runs on the agent's key. Agents edit the files as usual and propose them with one command, which waits for you. The files are what production runs once you approve.
+- **Agents that propose and cannot approve.** After the setup, every Claude Code session in the repository runs on the agent's key. Agents edit the files as usual and propose them with one command, which waits for you. Approval updates the hub's live configuration. The running service uses it when its deployment path reads that approved revision.
 - **A refusal asked for again.** If an agent proposes again what you refused, you are told once.
 - **The one sentence when something elsewhere needs a hub,** such as a VM or a cluster on another machine: it names the step that connects them.
 
@@ -64,7 +90,7 @@ Then work as before. You change no prompt and add no instructions.
 - The next version of a chart or an app taken in with your changes kept, and what it changes shown first ([your own Helm chart](your-own-chart.md)).
 - Flux or Argo CD deploying what the hub approved, over OCI, when you want the hub to be the source ([GitOps over OCI](gitops-over-oci.md)).
 
-You do not need a cluster for any of this. confighub mini uses the same `cub` commands as ConfigHub, so nothing you learn here is wasted ([how the commands map](cub-mini-and-cub.md)).
+The hub, configuration copies and approval work without a cluster; Flux and Argo CD delivery use one. confighub mini uses the same `cub` commands as ConfigHub, so nothing you learn here is wasted ([how the commands map](cub-mini-and-cub.md)).
 
 ### The app in one request
 
@@ -195,6 +221,6 @@ An agent asked to rotate a production password gives you the `secret set` comman
 
 ## Where each step stops
 
-- The plugin records what agents do through their tools and the commands it knows. It does not see what a person does by hand in another terminal, unless that change is in Git.
+- The plugin records what agents do through their tools and the commands it knows. Before the next request, it can detect that a previously recorded file changed outside a session, including an uncommitted hand edit. It cannot recover the person's reason or observe arbitrary external service and cluster changes ([how it works](how-it-works.md#what-it-records-and-what-it-does-not)).
 - confighub mini runs on one machine. It is not a team server.
 - ConfigHub keeps what explains a value. It does not keep whole agent sessions, watch agent behavior, or patch what agents run on. Those are other tools' jobs ([what we do not claim](limits.md)).

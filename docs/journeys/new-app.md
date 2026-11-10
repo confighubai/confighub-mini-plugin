@@ -1,13 +1,15 @@
 # A new app in Claude Code, with a staging copy and a live copy
 
-This page is for someone who makes apps with Claude Code and wants a safe place to try changes before they reach the copy people use. An agent that writes your app can change its production settings as easily as its staging ones, and a rule in `CLAUDE.md` is only a request. Here you ask for the app in one sentence, and you end with the app, a staging copy that takes changes at once, and a live copy that changes only when you approve. A second app can start from the first.
+This page is for someone who makes apps with Claude Code and wants a safe place to try changes before they reach the copy people use. An agent that writes your app can change its production settings as easily as its staging ones, and a rule in `CLAUDE.md` is only a request. Here you ask for the app in one sentence, and you end with the app, staging configuration that takes changes at once, and live configuration that changes only when you approve. A second app can start from the first.
+
+The app might run on your own machine, on another machine, in CI, on one or many sandbox nodes, in a shared development cluster, or eventually in production. This walkthrough creates staging and live configuration in the hub. Connect the running copies to that configuration using the deployment path for your target ([where the app runs](../README.md#where-the-app-runs)).
 
 ## Words used on this page
 
 - **A hub** is one running ConfigHub: a server that keeps your app's settings, with every change, who made it and why.
 - **confighub mini** is ConfigHub made small enough to run on your laptop, as two processes: the server and its PostgreSQL database. It needs no Docker, no cluster and no account.
 - **`cub`** is ConfigHub's command-line tool. It comes with confighub mini.
-- **The base** is the version of the app's settings that changes first. **The staging copy** is made from the base and takes each change at once. **The live copy** is your production. It takes a change only when you approve it.
+- **The base** is the version of the app's settings that changes first. **The staging copy** is made from the base and takes each change at once. **The live copy** holds the settings intended for production. It takes a change only when you approve it. A running service uses those settings once its deployment path is connected.
 - **A Space** is where a hub keeps one copy. The app `greeter` has three: `greeter-base`, `greeter-staging` and `greeter-live`.
 - **A change order** is a request for a change to reach the live copy. It waits until you **approve** it, or **refuse** it.
 - **The agent's key** is a sign-in of the agent's own, for a **service account**: an account for a program rather than a person. On it, the agent can change the base and staging, and propose changes to live. It cannot approve them.
@@ -192,6 +194,12 @@ Every way out, step by step: [going back](going-back.md).
 - **Your team on one hub.** Copy your app up to your organization's ConfigHub with `cub mini copy --from-context`, and connect the two with `cub mini connect` ([step 3 of from the plugin to ConfigHub](../from-plugin-to-confighub.md#step-3-your-organizations-confighub)).
 - **A service on a VM** fed only approved values from the hub ([a service on a VM](../vm.md)).
 - **A cluster** that deploys what the hub approved ([GitOps over OCI](../gitops-over-oci.md)).
+
+## Verify what you have
+
+1. Check the base, staging and live values in the hub. Live's recorded revision should stay unchanged while the change order waits; the agent must be unable to approve it.
+2. If you only wanted managed configuration, that is the result of this walkthrough. To run services from it, connect the [deployment path for your target](../README.md#where-the-app-runs).
+3. Check that the service answers, then compare its loaded settings or release with the approved live revision. Check both before and after your approval. Use the target guide's restart and rollback steps; a configuration copy alone does not prove a service is running ([verification](../approvals.md#verify-the-result)).
 
 ## How this was tested
 
