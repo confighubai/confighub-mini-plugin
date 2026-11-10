@@ -18,6 +18,8 @@ In a Claude Code session:
 - `/confighub:why replicas` shows every recorded change to one value, and why. An explicit `confighub mini changes --why NAME --vercel production` also reads the linked Vercel project's setting and compares local env files; it requires an installed, signed-in Vercel CLI.
 - `/confighub:permissions` shows what your settings files allow agents to run, which rules were used, and a narrower set you can apply and undo. A line tells you when permissions, hooks or instructions change.
 - `/confighub:checks` sets how much is done about MCP tool calls in this folder: `off`, `log` (where you start), `warn`, `repeats` or `ask`. At `repeats`, an agent about to repeat an earlier change is held back once and told of it. At `ask`, you are asked first, and also before an edit that undoes a value an earlier session set for a reason.
+
+
 - `/confighub:inventory` shows what the repository deploys: each Kustomize overlay, Helm release and Argo CD Application, and what deploys it; the values that differ between environments; and the values agents changed. It reads only the repository's files.
 - `/confighub:install-mini` installs confighub mini, which is ConfigHub made small enough to run on your laptop, and starts it.
 - `/confighub:to-hub` copies what agents changed here, and why, into the ConfigHub your `cub` is signed in to: your organization's, with no confighub mini, or your own. It names the hub and lists what it would write; `/confighub:to-hub --yes` writes it.
@@ -42,15 +44,17 @@ Each setting is off unless you turn it on, in Claude Code's settings file under 
 
 ## In Codex
 
-Codex runs only the hooks in its own configuration, so installing this plugin in Codex records nothing. Instead, from a copy of this plugin (the one Claude Code installed, or a clone of its repository), run:
+For the tested Codex CLI 0.163, configure the hooks explicitly. From a copy of this plugin (the one Claude Code installed, or a clone of its repository), run:
 
 ```
 bin/confighub mini codex-setup
 ```
 
-This copies the program into `~/.codex/confighub` and adds the plugin's hooks to `~/.codex/hooks.json`, next to any hooks you already have. Then open Codex and type `/hooks` to approve them. You only need to do this once.
+This copies the program into `~/.codex/confighub` and adds the plugin's hooks to `~/.codex/hooks.json`, next to any hooks you already have. Then open Codex and type `/hooks` to review them. Run setup again after upgrading; changed hook definitions need a fresh review.
 
 To read the record, run `~/.codex/confighub/bin/confighub mini changes`. To see what `codex-setup` would do without doing it, add `--dry-run`. To remove it, run `codex-setup --remove`.
+
+In Codex, completed MCP calls are also recorded after `codex-setup`. At `ask`, changing MCP calls and supported shell-file undos are refused with an explanation: the hook cannot request an approval prompt there. A refused undo is refused again on retry. Codex `apply_patch` edits are recorded afterwards but are not held before an undo; failed MCP calls can be missing because Codex 0.163 emits no completion callback for them. Read Codex's session transcript for those attempts. This is not approval in the coding-agent chat.
 
 ## What is in it
 

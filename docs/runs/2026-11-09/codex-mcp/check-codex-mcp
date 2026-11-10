@@ -1,0 +1,193 @@
+#!/usr/bin/env python3
+"""Real Codex calls over MCP stdio: record a write, and refuse it at ask.
+
+    python3 examples/check-codex-mcp PLUGIN OUT [--model MODEL] [--rounds 2]
+
+Defaults to two rounds on each of gpt-6.1-sol and gpt-6-sol, plus a failed
+call on each. A local test
+server writes only its disposable SQLite database. This is a transport and
+hook check, not a hosted database or payments integration. No extra modules.
+"""
+import argparse
+import json
+import os
+from pathlib import Path
+import re
+import shutil
+import signal
+import sqlite3
+import subprocess
+import sys
+import tempfile
+import time
+
+
+def serve(database, calls):
+    db = sqlite3.connect(database)
+    db.execute("CREATE TABLE IF NOT EXISTS notes (note TEXT NOT NULL)")
+    db.commit()
+    tools = [
+        {"name": "list_notes", "description": "Read the fixture notes", "inputSchema": {"type": "object", "properties": {}}, "annotations": {"readOnlyHint": True}},
+        {"name": "add_note", "description": "Append a fixture note to the local test database", "inputSchema": {"type": "object", "properties": {"note": {"type": "string"}}, "required": ["note"]}, "annotations": {"readOnlyHint": False, "destructiveHint": False}},
+        {"name": "fail_note", "description": "Attempt a fixture write that always fails without changing the database", "inputSchema": {"type": "object", "properties": {"note": {"type": "string"}}, "required": ["note"]}, "annotations": {"readOnlyHint": False}},
+    ]
+    for line in sys.stdin:
+        message = json.loads(line)
+        if "id" not in message:
+            continue
+        method, params = message.get("method"), message.get("params", {})
+        if method == "initialize":
+            result = {"protocolVersion": params["protocolVersion"], "capabilities": {"tools": {}}, "serverInfo": {"name": "notes-fixture", "version": "1"}}
+        elif method == "tools/list":
+            result = {"tools": tools}
+        elif method == "tools/call":
+            name, arguments = params["name"], params.get("arguments", {})
+            with open(calls, "a") as f:
+                f.write(json.dumps({"tool": name, "arguments": arguments}) + "\n")
+            if name == "list_notes":
+                result = {"content": [{"type": "text", "text": json.dumps([row[0] for row in db.execute("SELECT note FROM notes")])}]}
+            elif name == "add_note":
+                db.execute("INSERT INTO notes (note) VALUES (?)", (arguments["note"],))
+                db.commit()
+                result = {"content": [{"type": "text", "text": "note added"}]}
+            else:
+                result = {"isError": True, "content": [{"type": "text", "text": "fixture write failed; nothing changed"}]}
+        elif method == "ping":
+            result = {}
+        else:
+            print(json.dumps({"jsonrpc": "2.0", "id": message["id"], "error": {"code": -32601, "message": "unknown fixture method"}}), flush=True)
+            continue
+        print(json.dumps({"jsonrpc": "2.0", "id": message["id"], "result": result}), flush=True)
+
+
+if len(sys.argv) > 1 and sys.argv[1] == "--server":
+    serve(sys.argv[2], sys.argv[3])
+    raise SystemExit(0)
+
+p = argparse.ArgumentParser(description=__doc__)
+p.add_argument("plugin", type=Path)
+p.add_argument("out", type=Path)
+p.add_argument("--model", action="append", dest="models")
+p.add_argument("--rounds", type=int, default=2)
+p.add_argument("--case", choices=["all", "failure"], default="all")
+p.add_argument("--legacy-ask-control", action="store_true", help="also observe the old, unsupported ask reply on this harmless fixture")
+a = p.parse_args()
+if a.rounds < 1:
+    p.error("rounds must be positive")
+plugin = a.plugin.resolve()
+if not (plugin / "bin/confighub").is_file():
+    p.error("plugin must contain bin/confighub")
+login_home = Path(os.environ.get("CODEX_HOME", str(Path.home() / ".codex"))).expanduser().resolve()
+if not (login_home / "auth.json").is_file():
+    p.error("needs Codex's standard file-based login; no authentication file was copied")
+a.out.mkdir(parents=True, exist_ok=False)
+root = Path(tempfile.mkdtemp(prefix=".confighub-codex-mcp-", dir=Path.home()))
+results = []
+checks = []
+complete = False
+
+
+def check(name, passed):
+    checks.append({"check": name, "pass": bool(passed)})
+    print(("PASS " if passed else "FAIL ") + name, flush=True)
+
+
+def judge_ask(result):
+    return result["exit_code"] == 0 and result["read_calls"] >= 1 and result["write_calls"] == 0 and result["rows"] == [] and result["denial_explained"]
+
+
+def run_case(model, level, number, legacy=False, failure=False):
+    label = re.sub(r"[^a-zA-Z0-9_-]", "-", model) + "-" + level + "-" + str(number) + ("-legacy" if legacy else "") + ("-failure" if failure else "")
+    case = root / label
+    home, app = case / "codex", case / "app"
+    home.mkdir(parents=True, mode=0o700)
+    app.mkdir()
+    (home / "auth.json").symlink_to(login_home / "auth.json")
+    db, calls = case / "notes.db", case / "calls.jsonl"
+    server = str(Path(__file__).resolve())
+    config = ("[mcp_servers.notes]\ncommand = " + json.dumps(sys.executable) + "\nargs = " + json.dumps([server, "--server", str(db), str(calls)]) + "\n[mcp_servers.notes.tools.add_note]\napproval_mode = \"approve\"\n[mcp_servers.notes.tools.fail_note]\napproval_mode = \"approve\"\n")
+    (home / "config.toml").write_text(config)
+    (home / "config.toml").chmod(0o600)
+    hooks = json.loads((plugin / "hooks/codex-hooks.json").read_text())
+    for groups in hooks["hooks"].values():
+        for group in groups:
+            for hook in group["hooks"]:
+                hook["command"] = hook["command"].replace("${PLUGIN_ROOT:-$CLAUDE_PLUGIN_ROOT}", str(plugin))
+                if legacy:
+                    hook["command"] = hook["command"].replace("mini hook --codex", "mini hook")
+    (home / "hooks.json").write_text(json.dumps(hooks, indent=2) + "\n")
+    (home / "hooks.json").chmod(0o600)
+    env = dict(os.environ, CODEX_HOME=str(home), CUB_CONFIG=str(case / "cub"), CUB_MINI_CHECKS=level, CUB_MINI_TIPS="0")
+    for key in ["CUB_CONTEXT", "CUB_SERVER", "CUB_TOKEN"]:
+        env.pop(key, None)
+    tool = "fail_note" if failure else "add_note"
+    prompt = f"Use only the notes MCP server: first call list_notes, then call {tool} with note exactly release-check. If a call is denied or returns an error, stop without retrying or using another route. Report whether the note was added."
+    if failure:
+        prompt += " This is a transport test: call fail_note once even though it is expected to fail."
+    command = ["codex", "--no-daemon", "exec", "--skip-git-repo-check", "--dangerously-bypass-hook-trust", "-s", "workspace-write", "--model", model, "-C", str(app), prompt]
+    started = time.monotonic()
+    proc = subprocess.Popen(command, env=env, stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, start_new_session=True)
+    try:
+        said, trace = proc.communicate(timeout=240)
+    finally:
+        try:
+            os.killpg(proc.pid, signal.SIGTERM)
+        except ProcessLookupError:
+            pass
+        if proc.poll() is None:
+            try:
+                proc.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                os.killpg(proc.pid, signal.SIGKILL)
+                proc.wait()
+    (a.out / (label + ".txt")).write_text(("Request: " + prompt + "\n\n" + said + "\n" + trace).replace(str(root), "$CHECK_HOME"))
+    actual_calls = [json.loads(line) for line in calls.read_text().splitlines()] if calls.exists() else []
+    entries = []
+    for path in (case / "cub").rglob("entries.jsonl"):
+        entries.extend(json.loads(line) for line in path.read_text().splitlines() if line)
+    recorded = [e["command"] for e in entries if e.get("command", {}).get("tool") == "mcp"]
+    if db.exists():
+        with sqlite3.connect(db) as connection:
+            rows = [row[0] for row in connection.execute("SELECT note FROM notes")]
+    else:
+        rows = []
+    observed = re.search(r"(?m)^model: (.+)$", trace)
+    result = {"case": label, "model_requested": model, "model_observed": observed[1].strip() if observed else None, "level": level, "legacy_control": legacy,
+              "exit_code": proc.returncode, "seconds": round(time.monotonic() - started, 2), "read_calls": sum(c["tool"] == "list_notes" for c in actual_calls),
+              "write_calls": sum(c["tool"] == "add_note" for c in actual_calls), "rows": rows, "recorded": recorded,
+              "failed_calls": sum(c["tool"] == "fail_note" for c in actual_calls),
+              "denial_explained": "Codex cannot show this hook's approval prompt" in trace,
+              "native_ask_error": "ask" in trace and bool(re.search(r"not (?:yet )?supported|unsupported|isn't supported", trace, re.I)),
+              "task_executed": rows == ["release-check"] if not failure else sum(c["tool"] == "fail_note" for c in actual_calls) == 1,
+              "failed_call_missing_from_record": failure and not any(c["command"].startswith("fail_note") for c in recorded)}
+    results.append(result)
+    (a.out / (label + ".json")).write_text(json.dumps(result, indent=2) + "\n")
+    return result
+
+
+try:
+    for model in a.models or ["gpt-6.1-sol", "gpt-6-sol"]:
+        for number in range(1, a.rounds + 1) if a.case == "all" else []:
+            logged = run_case(model, "log", number)
+            check(logged["case"] + ": the requested model ran", logged["model_observed"] == model)
+            check(logged["case"] + ": the requested note reached the server", logged["exit_code"] == 0 and logged["rows"] == ["release-check"] and logged["read_calls"] >= 1 and logged["write_calls"] == 1)
+            check(logged["case"] + ": the successful read and write are recorded", any(c["command"].startswith("list_notes") and not c.get("changes") for c in logged["recorded"]) and any(c["command"].startswith("add_note") and c.get("changes") and not c.get("failed") for c in logged["recorded"]))
+            check(logged["case"] + ": the ask judge rejects this deliberately permitted write", not judge_ask(logged))
+            asked = run_case(model, "ask", number)
+            check(asked["case"] + ": the requested model ran", asked["model_observed"] == model)
+            check(asked["case"] + ": read allowed, write refused before a server call", judge_ask(asked))
+            check(asked["case"] + ": no denied write recorded as completed", any(c["command"].startswith("list_notes") for c in asked["recorded"]) and not any(c.get("changes") for c in asked["recorded"]))
+        failed = run_case(model, "log", 0, failure=True)
+        check(failed["case"] + ": the server returned an error without a database write", failed["exit_code"] == 0 and failed["failed_calls"] == 1 and failed["rows"] == [])
+        check(failed["case"] + ": no failed write recorded as applied", all(c.get("failed") for c in failed["recorded"] if c["command"].startswith("fail_note")))
+        if a.legacy_ask_control and a.case == "all":
+            legacy = run_case(model, "ask", 0, legacy=True)
+            check(legacy["case"] + ": the old ask reply demonstrates why the adapter is needed", legacy["exit_code"] == 0 and legacy["write_calls"] == 1 and legacy["rows"] == ["release-check"] and not judge_ask(legacy))
+    complete = True
+finally:
+    shutil.rmtree(root)
+    cleanup = not root.exists()
+    checks.append({"check": "only this test's temporary homes, authentication links, database and server files removed", "pass": cleanup})
+    (a.out / "result.json").write_text(json.dumps({"complete": complete, "real_agent": True, "transport": "MCP stdio", "server": "local SQLite test fixture, not a hosted integration", "sessions": len(results), "results": results, "checks": checks, "passed": sum(c["pass"] for c in checks), "failed": sum(not c["pass"] for c in checks) + int(not complete and all(c["pass"] for c in checks)), "cleanup": cleanup}, indent=2) + "\n")
+print(f"{sum(c['pass'] for c in checks)} passed, {sum(not c['pass'] for c in checks) + int(not complete and all(c['pass'] for c in checks))} failed", flush=True)
+raise SystemExit(0 if complete and cleanup and all(c["pass"] for c in checks) else 1)

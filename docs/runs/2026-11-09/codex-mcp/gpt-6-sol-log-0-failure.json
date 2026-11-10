@@ -1,0 +1,25 @@
+{
+  "case": "gpt-6-sol-log-0-failure",
+  "model_requested": "gpt-6-sol",
+  "model_observed": "gpt-6-sol",
+  "level": "log",
+  "legacy_control": false,
+  "exit_code": 0,
+  "seconds": 13.17,
+  "read_calls": 1,
+  "write_calls": 0,
+  "rows": [],
+  "recorded": [
+    {
+      "tool": "mcp",
+      "command": "list_notes",
+      "target": "MCP server notes",
+      "same": "3169dada3ad2ad54"
+    }
+  ],
+  "failed_calls": 1,
+  "denial_explained": false,
+  "native_ask_error": false,
+  "task_executed": true,
+  "failed_call_missing_from_record": true
+}

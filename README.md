@@ -40,6 +40,8 @@ a configurable greeting, and a staging and a production setup
 
 The agent writes the app, starts confighub mini on your machine if no hub answers, and ends with the three copies and the command that approves a change to live. Before you run that command, run the `export PATH=...` line the agent gives you in the same terminal: `cub` comes with confighub mini and is not on your path yet. Ask for a second app "like the first" and it starts from the first's base. [Step by step](docs/journeys/new-app.md).
 
+For Codex CLI, run `plugins/confighub/bin/confighub mini codex-setup` from this checkout, then review `/hooks`. Repeat after updates.
+
 Codex can use a scoped proposal key with a separate launcher; [setup and limits](docs/approvals.md#codex-sessions-on-the-proposal-key).
 
 ### Try it in one minute
@@ -198,9 +200,11 @@ To say how closely MCP calls are watched in a folder, use `/confighub:checks`. A
 
 Each turn of the record is signed when it ends, so you can check later that nobody changed it. An agent on a cluster can sign with its own workload identity, so the record names the agent that made each change ([signed records](docs/signed-records.md)).
 
+In Codex, completed MCP calls are recorded too; at `ask`, write calls are refused with an explanation. Failed calls and `apply_patch` undo protection have [client limits](docs/runs/2026-11-09/codex-mcp/README.md).
+
 It never keeps a command's output, a copy of a file, or anything that looks like a password, key or token. It adds about 15 milliseconds to each tool call. Nothing leaves your machine unless you turn on a setting that sends it somewhere, such as a pull request or your OpenTelemetry collector. Explicit Vercel read-back calls its CLI when you request `changes --why NAME --vercel production` ([how it works](docs/runs/2026-11-09/vercel-readback/README.md)). A log of which features you used on which days stays here too, and `/confighub:to-hub --usage` shows it and loads it into a hub if you choose.
 
-[How it works](docs/how-it-works.md) covers what the agent is told and when, every setting, and how to keep the record out of the agent's reach. [What we do not claim](docs/limits.md) covers what it does not do.
+[How it works](docs/how-it-works.md) covers hooks, settings and protecting the record; [limits](docs/limits.md) says what remains unproved.
 
 ## When you want more than a record
 
@@ -221,7 +225,7 @@ What you learn on your laptop works on your organization's ConfigHub too ([how t
 
 ## Documentation
 
-Every page, grouped by what you are doing, is listed in [docs/README.md](docs/README.md), starting with a step-by-step page for each way in: [a new app](docs/journeys/new-app.md), [an app you have](docs/journeys/existing-app.md), [an app Argo CD or Flux deploys](docs/journeys/gitops-app.md), and [software with ConfigHub inside](docs/journeys/bundled.md). For an AI agent, [`llms.txt`](llms.txt) lists every page and what it answers. Report a problem as [an issue](https://github.com/confighubai/confighub-mini-plugin/issues): what you ran, and what it printed.
+[Guides](docs/README.md): [a new app](docs/journeys/new-app.md), [an app you have](docs/journeys/existing-app.md), [Argo CD or Flux](docs/journeys/gitops-app.md), and [software with ConfigHub inside](docs/journeys/bundled.md). [`llms.txt`](llms.txt) indexes the pages for agents. Report [issues](https://github.com/confighubai/confighub-mini-plugin/issues) with the command and its output.
 
 ## License
 
