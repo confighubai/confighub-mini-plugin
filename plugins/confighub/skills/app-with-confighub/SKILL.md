@@ -1,174 +1,90 @@
 ---
 name: app-with-confighub
-description: Use when the person asks for an app "using ConfigHub" or "with confighub", asks to attach or add ConfigHub to an existing app or folder, wants a staging and a production setup where the agent proposes changes to production and cannot change it without the person, asks to try a change "first", "in a copy" or "without touching production" on an app a hub holds, asks to start an app from a setup someone shared (a NAME-setup.tar.gz file or an OCI reference from cub mini copy), or asks to set, change or rotate a password, key, token or other secret of an app whose folder has a .confighub-app file. Starts a hub on this machine if none answers, and makes the base, staging and production copies with cub mini.
+description: Help with ConfigHub app setup and ordinary settings changes, isolated tries, reuse and continuation for an attached app (.confighub-app). Also use when a person asks for staging/live configuration separation or human approval; inspect existing delivery first and offer ConfigHub only for a missing capability. Covers shared setup imports, attached-app secrets and preferences about hub suggestions. A generic request to build an app does not need a hub.
 ---
 
-# An app with ConfigHub: base, staging, production
+# Help with the app where the person is working
 
-A hub is a ConfigHub server. Here it runs on this machine, as two processes, with no account.
-The app's settings live there as a base, a staging copy that takes changes at once, and a
-live copy (the person's production) that changes only when the person approves. Every
-command below was run as written; do not read `cub --help` first.
+The person asks for development work. Work from their app, files and delivery path;
+they do not need to know ConfigHub commands or roadmap names. The plugin already keeps
+its local record without a hub or account. Building an ordinary app does not require setup.
 
-## 1. Find a hub, or start one
+## Choose the smallest useful step
 
-Run `cub space list`. If it answers with a table, use that hub. If it fails, or `cub` is not
-installed, and the person asked for a staging and a production setup without naming
-ConfigHub, first say in one line what you are starting: confighub mini, ConfigHub on this
-machine, which keeps the app's settings as a staging copy and a live copy that changes only
-when they approve; a download of about 60 MB. Then run:
+Inspect `.confighub-app` and existing environment and deployment setup first.
 
-```
-"${CLAUDE_PLUGIN_ROOT}/bin/confighub" mini get
-```
+| What the person needs | What to do |
+|---|---|
+| Understand or preserve an earlier setting | Use the history supplied by the plugin; attribute it briefly when it explains your answer. No hub needed. |
+| Try a change without affecting customers | Use existing isolation if it meets the need. For an attached app, inspect existing tries first and use an assigned empty try. Create a new one only if this identity has that right; otherwise give the owner the setup step below. A configuration copy is not a running sandbox: run and verify the service separately if requested. |
+| Ship an attached app's change | Show the proposed values and exact revision. Submit for owner approval, then verify the delivery path and running service separately. |
+| Make another app like this one | For an attached source app, offer its base as a pattern; retain the new app's own settings and keep credentials private. |
+| Let CI or another machine continue the work | Check whether it can reach the chosen hub. Prepare a scoped reader or proposer appropriate to the task. Explain any missing connectivity or access before changing the setup. |
+| Let a colleague use the setup | Offer a secret-free setup export or an already provisioned shared hub. Today's cloud is single-user; do not promise a free shared cloud or silently register an account. |
 
-It downloads confighub mini (about 60 MB), starts a hub on this machine and signs `cub` in to
-it, in under a minute. Its last lines print the `export PATH="...:$PATH"` line for its `cub`;
-run that line in each later command, or use the path directly:
-`${CUB_CONFIG:-$HOME/.confighub}/mini/confighub-mini-<version>-<os>-<arch>/bin/cub`.
-Do not run `cub auth login`, and do not send the person to hub.confighub.com. Run it again
-after a restart to start the hub again.
+For an unattached app that needs ConfigHub, make one relevant offer: name the problem it
+would solve and the install/connect cost. Continue independent app work while waiting.
+An existing Git or deployment path can already meet the need. Respect a decline and the
+project preference supplied by the hooks. Do not keep offering a hub in the same project.
+An explicit later request for ConfigHub can still be fulfilled.
+When the person declines future hub offers for this project in other words, save that
+explicit preference with `cub mini changes --hub-suggestions off` (or the plugin program's
+`mini changes --hub-suggestions off` when cub is absent; its path is in reference section 1).
+Use `on` only when asked to resume. If the hook already confirmed the saved preference,
+do not save it again. A generic no to this one action is not a project preference.
 
-## 2. Make the app's copies
+A restricted proposer key can edit assigned open copies and propose for live. It cannot
+create new variants, new apps or access grants. Do not discover this by repeatedly retrying
+writes or ask for owner credentials. For a new try, prepare the proposed values and give
+the owner the one setup step: `cub mini try APP NAME`, followed by rerunning their existing
+`cub mini require-approval APP --variant live --agent AGENT` command so the new open copy
+is assigned to that key. Use the returned session setup for later work. For another app,
+prepare its files with its own values, then give the owner `cub mini adopt FOLDER --pattern SOURCE`
+and the new app's restricted session setup. State clearly when the hub setup remains pending;
+plain files alone do not establish a pattern link. Never broaden the current key to finish.
 
-The app's settings are an env file in its folder: `.env`, with `KEY=VALUE` lines. For a new
-app, write the code and its `.env` first (`PORT`, `GREETING`, `LOG_LEVEL`, and so on). For an
-existing app, use the files the person has: `.env` (or `app.env`, a compose file's
-environment), with `.env.staging` and `.env.production` beside it if they keep them, or a
-Terraform folder's `common.tfvars` with `staging.tfvars` and `prod.tfvars`. A Kustomize
-repository with overlays (a `base/`, `overlays/staging`, `overlays/prod`) is adopted as it is:
-its rendered base becomes the base, and what each overlay changes becomes that copy's own
-values; `cub mini upload` on the repository's folder takes a later change the same way. Then,
-from the folder above the app's:
+For a second app, finish the file preparation that this workspace permits before handing
+over hub setup. If the sandbox cannot write beside the current app, stage the new app in
+a clearly named folder inside the writable workspace and give its actual location. Keep
+the source app unchanged; seed settings from its base, with the new app's own values,
+and never copy source credentials. Say when placement, adoption or a new session is still
+needed. Do not stop at suggested commands when the files can be prepared safely.
 
-```
-cub mini adopt APP-FOLDER --dry-run
-cub mini adopt APP-FOLDER
-```
+## Make ConfigHub activity visible
 
-This makes `APP-base`, `APP-staging` with the file's values now, and `APP-live`, which takes
-them only once the person approves. A `.env.staging` or `.env.production` becomes that copy's
-own values from the start. A value that looks like a password or token is left out and named;
-leave it out of the file too, and name where to read it instead (`DB_PASSWORD_FILE`). The
-app's name is the folder's; `--name NAME` sets another (lowercase letters, digits, dashes).
-`cub space list` shows the three copies; `cub unit data --space APP-staging app` shows one.
-Adopt writes `.confighub-app` into the folder, a note of what its files match in the hub;
-commit it with the app, so that `cub mini upload` from any clone proposes only what that
-clone changed.
+Before a meaningful ConfigHub action, give one short **ConfigHub:** line in visible
+commentary, with the action and target. Group related commands; do not announce every
+individual setting. For example: "ConfigHub: proposing the memory change for api live;
+it will wait for your approval."
+Use that same line as the skill-use announcement; a separate technical skill-name update
+is unnecessary. Name the useful action the person asked for.
+The hooks also supply activity metadata and a reminder for recognised direct shell
+commands. Some clients show this metadata; Codex CLI does not consistently display it
+in plain text. Your commentary is the person-facing attribution. Do not repeat it after
+receiving the hook reminder, announce routine reads, or claim completion before the result.
+For scripts and MCP calls, provide the same brief attribution yourself.
 
-A second app on a hub that already has one starts from the first, not from nothing:
+Read [app operations](references/app-operations.md) only for the operation needed:
+setup/adoption and patterns (1–2), proposals and secrets (3), isolated tries (4).
+For CI readers, use the public [snapshot contract](https://github.com/confighubai/confighub-mini-plugin/blob/main/examples/extensions/config-snapshot/README.md)
+and [working example](https://github.com/confighubai/confighub-mini-plugin/tree/main/examples/extensions/config-snapshot).
+For hub continuation, inspect `cub mini copy --help` and `cub mini connect --help` for the
+installed version. Copying configuration does not by itself move the running service,
+merge histories, or prove that a hosted/team path works.
 
-```
-cub mini adopt APP-FOLDER --pattern FIRST-APP
-```
+## Keep the boundaries clear
 
-It gets the first's base as its own base, keeps its own values, and takes what the first
-changes next (`cub mini upgrade APP-base/app`). Use it whenever the person asks for another
-app "like" one that is here, or with "the same setup"; `cub space list` shows which apps are.
-
-### An app from a setup someone shared
-
-A setup someone shared is a file `NAME-setup.tar.gz` (from `cub mini copy APP --to-file`) or
-an OCI reference (from `--to-oci`): an app's base, staging and live copies, with the reason
-for each value, and no secrets. Take it in under a name of its own, then make the person's
-app from it, as the second app above:
-
-```
-cub mini copy --from-file FILE --name SHARED        # or --from-oci REF --name SHARED
-cub mini adopt APP-FOLDER --pattern SHARED
-```
-
-The copy's last line names the adopt command. The person's app is then `APP-base`,
-`APP-staging` and `APP-live`, made from `SHARED-base`: it keeps its own values from its
-`.env`, takes the shared values for the rest with their reasons, and takes what the shared
-setup changes next. Do not stop at the copy: `SHARED-*` is the shared setup under the first
-person's values, not the person's app. Then step 3 for the person's app.
-
-## 3. Production only with the person
-
-```
-cub mini require-approval APP --variant live --agent APP-agent
-```
-
-Adopt already makes live wait for the person's approval. This adds a key of its own for the
-agent: it can change the base and staging, so its uploads reach staging at once, and ask for
-live; it cannot approve, promote or write live. It prints
-the line that starts Claude Code on that key (`claude --settings ...`) and a `run-codex`
-launcher for Codex CLI. Give the person the line for the agent they use. Codex's launcher
-uses separate settings and native command permissions, with the owner's sign-in out of
-reach. These settings protect new sessions; a session that started on the owner's key
-still has that authority, so do not treat changing settings as changing this session's identity.
-
-To change a copy later:
-
-```
-cub mini set APP KEY=VALUE --variant staging --change-desc "WHY"      # staging, at once
-cub mini upload APP-FOLDER --component APP --change-desc "WHY"        # the files as edited; staging now, live waits
-cub mini waiting                                                      # what waits, and the approve command
-```
-
-The person approves in a terminal with `cub mini approve APP-base/ORDER`, which `cub mini
-waiting` prints. Never run `cub mini approve` yourself, and never ask for the right to write
-`APP-live`.
-
-A secret (a password, a key, a token) is kept by the person, in a terminal, with
-`cub mini secret set APP KEY --variant live --change-desc "WHY"`, which puts it where your
-key cannot read it, and the app's settings name it as `KEY_FILE=/run/secrets/APP/KEY`, so
-KEY is the name in `.env` without its `_FILE`. Asked to set or rotate one, do not ask for its
-value, make one up, or put one on a command line: give the person that command, with the KEY
-`.env` names, and say that the machine that runs the app reads it with
-`cub mini secret files APP --variant live --dir /run/secrets/APP`.
-
-A service the app needs (a Postgres, a Redis, an S3 bucket, a mail sender):
-`cub mini need APP KIND`, with KIND one of `postgres`, `redis`, `s3`, `mail`. If the hub has a
-provider of it, its settings (`DATABASE_URL`, `REDIS_URL`, ...) land in staging at once, as its
-own, each copy from the provider registered for it; live, or any copy behind approval, takes
-them only when the person approves the change order `need` prints (`cub mini waiting` lists it),
-so tell the person it waits and give them that `cub mini approve` command. Otherwise the copies
-say what they need, and `cub mini needs APP` lists it. Do not write the service's address into
-`.env` yourself, and never its password: that is the person's, with `cub mini secret set`.
-
-## 4. Try a change in a copy first
-
-When the person asks to "try" a change "first", "in a copy", or "without touching
-production", change neither staging nor live. Make a copy of the app for the try, change
-it there, and read what differs:
-
-```
-cub mini try APP NAME                                                  # APP-try-NAME, from staging, in a second
-cub mini set APP KEY=VALUE --variant try-NAME --change-desc "WHY"      # the change, in the copy only
-cub mini tries APP                                                     # what the copy holds differently
-```
-
-NAME is a word for the try (`limit`). `--from live` makes the copy from what runs instead.
-`cub mini copies APP --to DIR` writes the copy as a file, to run the app on it. Then there
-are two ways out, and only the person chooses:
-
-```
-cub mini try APP NAME --keep --change-desc "WHY"    # staging now, live once the person approves; the copy removed
-cub mini try APP NAME --drop                        # the copy removed, with a line saying what it held
-```
-
-Unless the person said to keep it or to drop it, leave the copy. End with what the copy
-holds differently from staging, that staging and live are unchanged, and the two
-commands above.
-
-## Do not
-
-- Write a setup script to run later. Run the commands, now, and show their output.
-- Ask the person to sign in anywhere. Step 1 signs `cub` in.
-- Print, store or put in the hub a password, key or token.
-- Run `cub mini deploy-from-hub` or `cub mini back-to-git`: they change what a production cluster deploys from, so they are the person's commands, which you name, with their flags, and never run.
-- Use `cub variant create`, `cub function set --protect` or `cub changeorder create` by hand
-  for what adopt, set, upload and try do above.
-
-## End with
-
-Tell the person, in a few lines: the app's three copies (`APP-base`, `APP-staging`,
-`APP-live`) and the value each holds that differs; that live changes only when they run
-`cub mini approve ...`; and the `export PATH` line for `cub` if step 1 installed it.
-
-When the person asks how this works or what comes next, give them the page for what they
-are doing, from https://github.com/confighubai/confighub-mini-plugin/tree/main/docs/journeys:
-`new-app.md`, `existing-app.md`, `gitops-app.md` (Argo CD or Flux deploys it from Git), or
-`going-back.md` (refusing, revoking the agent, writing the app out as plain files).
+- A chat "yes" is not authenticated owner approval. Never run `cub mini approve`, use the
+  owner's ConfigHub identity, remove the gate, or ask for live write rights. Give the owner
+  the exact terminal command from `cub mini waiting`. A fresh restricted session is needed
+  after `require-approval --agent`; changing settings does not restrict this session.
+- Keep credentials out of chat, command arguments, exports and records. Secret setup is an
+  owner-terminal step. A reader cannot propose or approve; a proposer cannot approve.
+- Distinguish settings stored, service running and approved revision deployed. Verify each
+  result you promise. `copy`, `set` and approval alone do not prove production changed.
+- The app may run on this machine, another machine, in CI, one or many sandboxes, a shared
+  dev cluster or production. Neither this workflow nor an app requires Kubernetes.
+- Follow the person's request: making a try does not authorise keeping, deploying or deleting it;
+  sharing a setup does not authorise sending it or granting access to someone.
+- `try --keep` promotes its differences; `try --drop` deletes the isolated copy. Leave a
+  try available for inspection unless the person asks to promote or delete it.

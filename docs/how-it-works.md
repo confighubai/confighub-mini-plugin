@@ -19,6 +19,7 @@ Recording, telling the agent, refusing a call and asking a person are different 
 | Codex: supported shell commands and file changes | Supported completed changes after hook setup | Earlier reasons supplied on supported operations | At `ask`, supported shell-file undos are refused; there is no approval retry | No native approval prompt from that refusal |
 | Codex: `apply_patch` | Edits recorded afterwards | File history is supplied when supported reads occur | The patch is not held at `ask` | No prompt from this hook |
 | Codex: MCP calls | Completed calls after hook setup; tested server errors had no completion callback and were absent | Earlier calls supplied; level-specific notices where applicable | Changing calls at `ask` are refused before reaching the server; retry stays refused | No native approval prompt from that refusal |
+| Either client: recognised direct `cub mini` changes | Activity kind, without command arguments in the notice | Brief activity metadata; the shared workflow supplies visible agent commentary | Activity notices grant no permission and preserve existing refusals | No approval from a notice |
 | Either client: a proposal to a hub on its own scoped key | The hub records revisions and change orders | The person reviews the proposed revision | The hub refuses the agent's approval and writes outside its rights | The named person approves in their own authenticated process; this does not grant the agent an in-chat approval tool |
 
 Codex rows were checked on macOS ARM64 with Codex 0.163.0, two models and a local SQLite MCP server ([transport evidence](runs/2026-11-09/codex-mcp/README.md)). They do not establish hosted payments or database coverage. Claude Code measurements are described in the [evidence](evidence.md) and the sections below. Rerun `codex-setup` after updates and review `/hooks` in a fresh session. If a call produces no completion callback, use the native transcript to inspect the attempt; the structured record may be incomplete.
@@ -27,7 +28,7 @@ The next agent receives history for supported operations; it is not guaranteed t
 
 ## What the agent is told, and when
 
-Most of the time the agent is told nothing. The plugin speaks only when earlier sessions changed the file the agent is looking at. Then, once in the session, it adds the history of that file beside what the agent read. From the five-minute try in the README:
+The local record runs quietly. The plugin supplies earlier reasons when earlier sessions changed the file the agent is looking at. A selected app workflow, an explicit project preference and ConfigHub activity reminders can also give the agent context ([ordinary app requests](agent-workflow.md)). Then, once in the session, it adds the history of that file beside what the agent read. From the five-minute try in the README:
 
 ```
 Earlier agent sessions in this folder changed .env, as the ConfigHub plugin recorded:

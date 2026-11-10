@@ -43,7 +43,7 @@ The app might run on your own machine, on another machine, in CI, on one or many
    a configurable greeting, a request limit per minute, and a staging and a production setup
    ```
 
-   You do not need to name ConfigHub. Asked for "a staging and a production setup so that I can try changes on staging first and nothing changes in production unless I say so", the agent first says in one line what it is about to start, then does the same.
+   You do not need special prompts for later app work. The [current workflow](../agent-workflow.md) first checks your existing setup. If you have not chosen ConfigHub, the agent explains the relevant benefit and setup cost before offering a hub. The walkthrough below records the earlier explicit ConfigHub setup.
 
 4. Let the agent work. It writes the app and its settings files (`.env`, `.env.staging`, `.env.production`). If no hub answers, it runs the plugin's own `confighub mini get`, which downloads confighub mini and starts a hub. On a machine without it, this took 22 seconds and printed:
 

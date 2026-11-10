@@ -46,6 +46,8 @@ The [client capability matrix](how-it-works.md#client-capabilities) distinguishe
 
 - **`CUB_MINI_ASK_REASONS=1` can show a message that reads like an error.** When an agent leaves out its reasons, the plugin's Stop hook asks for them, and Claude Code shows that as "Stop hook error". Nothing has gone wrong, and the reasons are kept. This happened once in five runs.
 
+- **A shared workflow does not give a restricted agent creation rights.** It can edit assigned open copies and propose for live. Creating another app or a new try variant needs owner setup. The workflow gives that step rather than asking for owner credentials. Hook activity metadata is not consistently shown in Codex CLI plain text; agent commentary supplies the attribution ([ordinary app requests](agent-workflow.md)).
+
 ## What the plugin does not see
 
 **A change on the cluster that no agent session made.** That includes a person's `kubectl edit` or `kubectl scale`, a controller's write, Argo CD's self-heal, and a change made through an MCP server outside a watched agent session. By default, the plugin learns of cluster changes only from the commands it records. It does not read the cluster.
