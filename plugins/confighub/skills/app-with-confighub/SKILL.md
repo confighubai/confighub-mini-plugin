@@ -9,12 +9,20 @@ The person asks for development work. Work from their app, files and delivery pa
 they do not need to know ConfigHub commands or roadmap names. The plugin already keeps
 its local record without a hub or account. Building an ordinary app does not require setup.
 
+An explicit request to build an app **using ConfigHub**, or to attach ConfigHub, is already
+a setup choice. Complete that requested setup; do not replace it with plain files or ask
+whether they want ConfigHub again. Read reference sections 1–3, build the app and settings,
+start/find the chosen hub, adopt the app, and prepare its restricted agent setup. Missing
+`cub` is what the bundled program's `mini get` installs, not a reason to stop. A restricted
+key still uses the owner handoff below rather than acquiring new rights.
+
 ## Choose the smallest useful step
 
 Inspect `.confighub-app` and existing environment and deployment setup first.
 
 | What the person needs | What to do |
 |---|---|
+| Build an app using ConfigHub, or attach ConfigHub | Complete the already requested setup with reference sections 1–3. Explain the download in the brief action notice; do not ask again whether to use the product they chose. |
 | Understand or preserve an earlier setting | Use the history supplied by the plugin; attribute it briefly when it explains your answer. No hub needed. |
 | Try a change without affecting customers | Use existing isolation if it meets the need. For an attached app, inspect existing tries first and use an assigned empty try. Create a new one only if this identity has that right; otherwise give the owner the setup step below. A configuration copy is not a running sandbox: run and verify the service separately if requested. |
 | Ship an attached app's change | Show the proposed values and exact revision. Submit for owner approval, then verify the delivery path and running service separately. |
@@ -22,7 +30,7 @@ Inspect `.confighub-app` and existing environment and deployment setup first.
 | Let CI or another machine continue the work | Check whether it can reach the chosen hub. Prepare a scoped reader or proposer appropriate to the task. Explain any missing connectivity or access before changing the setup. |
 | Let a colleague use the setup | Offer a secret-free setup export or an already provisioned shared hub. Today's cloud is single-user; do not promise a free shared cloud or silently register an account. |
 
-For an unattached app that needs ConfigHub, make one relevant offer: name the problem it
+When the person has not chosen ConfigHub and an unattached app needs it, make one relevant offer: name the problem it
 would solve and the install/connect cost. Continue independent app work while waiting.
 An existing Git or deployment path can already meet the need. Respect a decline and the
 project preference supplied by the hooks. Do not keep offering a hub in the same project.

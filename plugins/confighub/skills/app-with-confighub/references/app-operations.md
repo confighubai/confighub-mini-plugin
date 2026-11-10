@@ -5,6 +5,12 @@ are not proof that a service runs them. Inspect the actual delivery path.
 
 ## 1. Find a hub, or start one
 
+For a Claude plugin, derive the absolute program path from this reference's installed
+location: `skills/app-with-confighub/references/` is inside the plugin, whose program is
+`bin/confighub`. Use that absolute path if the plugin-root shell variables below are not
+set; do not guess a repository-relative path. Codex setup renders the command below with
+the installed program's absolute path.
+
 Inspect the current cub context and `.confighub-app` before choosing a target. A reachable
 hub is not necessarily the hub for this app. Use an explicitly chosen context; do not
 redirect writes to another hub when a command fails. If no suitable hub answers, explain
