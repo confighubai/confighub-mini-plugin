@@ -1,0 +1,171 @@
+# App operations
+
+Read only the section needed for the current request. App settings stored in a live copy
+are not proof that a service runs them. Inspect the actual delivery path.
+
+## 1. Find a hub, or start one
+
+Inspect the current cub context and `.confighub-app` before choosing a target. A reachable
+hub is not necessarily the hub for this app. Use an explicitly chosen context; do not
+redirect writes to another hub when a command fails. If no suitable hub answers, explain
+the local download (about 60 MB) and two local processes. Start it only if the person
+already asked for ConfigHub, or accepted this setup. Then run:
+
+```
+"${PLUGIN_ROOT:-$CLAUDE_PLUGIN_ROOT}/bin/confighub" mini get
+```
+
+For Codex hook-only setup, use `${CODEX_HOME:-$HOME/.codex}/confighub/bin/confighub mini get`
+instead. A restricted agent with an existing app must use its configured hub, not install another.
+
+It downloads confighub mini (about 60 MB), starts a hub on this machine and signs `cub` in to
+it, in under a minute. Its last lines print the `export PATH="...:$PATH"` line for its `cub`;
+run that line in each later command, or use the path directly:
+`${CUB_CONFIG:-$HOME/.confighub}/mini/confighub-mini-<version>-<os>-<arch>/bin/cub`.
+Do not run `cub auth login`, and do not send the person to hub.confighub.com. Run it again
+after a restart to start the hub again.
+
+## 2. Make the app's copies
+
+The app's settings are an env file in its folder: `.env`, with `KEY=VALUE` lines. For a new
+app, write the code and its `.env` first (`PORT`, `GREETING`, `LOG_LEVEL`, and so on). For an
+existing app, use the files the person has: `.env` (or `app.env`, a compose file's
+environment), with `.env.staging` and `.env.production` beside it if they keep them, or a
+Terraform folder's `common.tfvars` with `staging.tfvars` and `prod.tfvars`. A Kustomize
+repository with overlays (a `base/`, `overlays/staging`, `overlays/prod`) is adopted as it is:
+its rendered base becomes the base, and what each overlay changes becomes that copy's own
+values; `cub mini upload` on the repository's folder takes a later change the same way. Then,
+from the folder above the app's:
+
+```
+cub mini adopt APP-FOLDER --dry-run
+cub mini adopt APP-FOLDER
+```
+
+This makes `APP-base`, `APP-staging` with the file's values now, and `APP-live`, which takes
+them only once the person approves. A `.env.staging` or `.env.production` becomes that copy's
+own values from the start. A value that looks like a password or token is left out and named;
+leave it out of the file too, and name where to read it instead (`DB_PASSWORD_FILE`). The
+app's name is the folder's; `--name NAME` sets another (lowercase letters, digits, dashes).
+`cub space list` shows the three copies; `cub unit data --space APP-staging app` shows one.
+Adopt writes `.confighub-app` into the folder, a note of what its files match in the hub;
+commit it with the app, so that `cub mini upload` from any clone proposes only what that
+clone changed.
+
+A second app on a hub that already has one starts from the first, not from nothing:
+
+```
+cub mini adopt APP-FOLDER --pattern FIRST-APP
+```
+
+It gets the first's base as its own base, keeps its own values, and takes what the first
+changes next (`cub mini upgrade APP-base/app`). Use it whenever the person asks for another
+app "like" one that is here, or with "the same setup"; `cub space list` shows which apps are.
+
+### An app from a setup someone shared
+
+A setup someone shared is a file `NAME-setup.tar.gz` (from `cub mini copy APP --to-file`) or
+an OCI reference (from `--to-oci`): an app's base, staging and live copies, with the reason
+for each value, and no secrets. Take it in under a name of its own, then make the person's
+app from it, as the second app above:
+
+```
+cub mini copy --from-file FILE --name SHARED        # or --from-oci REF --name SHARED
+cub mini adopt APP-FOLDER --pattern SHARED
+```
+
+The copy's last line names the adopt command. The person's app is then `APP-base`,
+`APP-staging` and `APP-live`, made from `SHARED-base`: it keeps its own values from its
+`.env`, takes the shared values for the rest with their reasons, and takes what the shared
+setup changes next. Do not stop at the copy: `SHARED-*` is the shared setup under the first
+person's values, not the person's app. Then step 3 for the person's app.
+
+## 3. Production only with the person
+
+```
+cub mini require-approval APP --variant live --agent APP-agent
+```
+
+Adopt already makes live wait for the person's approval. This adds a key of its own for the
+agent: it can change the base and staging, so its uploads reach staging at once, and ask for
+live; it cannot approve, promote or write live. It prints
+the line that starts Claude Code on that key (`claude --settings ...`) and a `run-codex`
+launcher for Codex CLI. Give the person the line for the agent they use. Codex's launcher
+uses separate settings and native command permissions, with the owner's sign-in out of
+reach. These settings protect new sessions; a session that started on the owner's key
+still has that authority, so do not treat changing settings as changing this session's identity.
+
+To change a copy later:
+
+```
+cub mini set APP KEY=VALUE --variant staging --change-desc "WHY"      # staging, at once
+cub mini upload APP-FOLDER --component APP --change-desc "WHY"        # the files as edited; staging now, live waits
+cub mini waiting                                                      # what waits, and the approve command
+```
+
+The person approves in a terminal with `cub mini approve APP-base/ORDER`, which `cub mini
+waiting` prints. Never run `cub mini approve` yourself, and never ask for the right to write
+`APP-live`.
+
+A secret (a password, a key, a token) is kept by the person, in a terminal, with
+`cub mini secret set APP KEY --variant live --change-desc "WHY"`, which puts it where your
+key cannot read it, and the app's settings name it as `KEY_FILE=/run/secrets/APP/KEY`, so
+KEY is the name in `.env` without its `_FILE`. Asked to set or rotate one, do not ask for its
+value, make one up, or put one on a command line: give the person that command, with the KEY
+`.env` names, and say that the machine that runs the app reads it with
+`cub mini secret files APP --variant live --dir /run/secrets/APP`.
+
+A service the app needs (a Postgres, a Redis, an S3 bucket, a mail sender):
+`cub mini need APP KIND`, with KIND one of `postgres`, `redis`, `s3`, `mail`. If the hub has a
+provider of it, its settings (`DATABASE_URL`, `REDIS_URL`, ...) land in staging at once, as its
+own, each copy from the provider registered for it; live, or any copy behind approval, takes
+them only when the person approves the change order `need` prints (`cub mini waiting` lists it),
+so tell the person it waits and give them that `cub mini approve` command. Otherwise the copies
+say what they need, and `cub mini needs APP` lists it. Do not write the service's address into
+`.env` yourself, and never its password: that is the person's, with `cub mini secret set`.
+
+## 4. Try a change in a copy first
+
+When the person asks to "try" a change "first", "in a copy", or "without touching
+production", change neither staging nor live. A restricted proposer uses an assigned
+try or gives the owner the setup step from the main workflow; it cannot create variants. Make a copy of the app for the try, change
+it there, and read what differs:
+
+```
+cub mini try APP NAME                                                  # APP-try-NAME, from staging, in a second
+cub mini set APP KEY=VALUE --variant try-NAME --change-desc "WHY"      # the change, in the copy only
+cub mini tries APP                                                     # what the copy holds differently
+```
+
+NAME is a word for the try (`limit`). `--from live` makes the copy from what runs instead.
+`cub mini copies APP --to DIR` writes the copy as a file, to run the app on it. Then there
+are two ways out, and only the person chooses:
+
+```
+cub mini try APP NAME --keep --change-desc "WHY"    # staging now, live once the person approves; the copy removed
+cub mini try APP NAME --drop                        # the copy removed, with a line saying what it held
+```
+
+Unless the person said to keep it or to drop it, leave the copy. End with what the copy
+holds differently from staging, that staging and live are unchanged, and the two
+commands above.
+
+## Do not
+
+- Defer an authorised command that this key can run. Complete those commands now; a restricted key's owner-only setup remains an explicit handoff.
+- Ask the person to sign in anywhere. Step 1 signs `cub` in.
+- Print, store or put in the hub a password, key or token.
+- Run `cub mini deploy-from-hub` or `cub mini back-to-git`: they change what a production cluster deploys from, so they are the person's commands, which you name, with their flags, and never run.
+- Use `cub variant create`, `cub function set --protect` or `cub changeorder create` by hand
+  for what adopt, set, upload and try do above.
+
+## End with
+
+Tell the person, in a few lines: the app's three copies (`APP-base`, `APP-staging`,
+`APP-live`) and the value each holds that differs; that live changes only when they run
+`cub mini approve ...`; and the `export PATH` line for `cub` if step 1 installed it.
+
+When the person asks how this works or what comes next, give them the page for what they
+are doing, from https://github.com/confighubai/confighub-mini-plugin/tree/main/docs/journeys:
+`new-app.md`, `existing-app.md`, `gitops-app.md` (Argo CD or Flux deploys it from Git), or
+`going-back.md` (refusing, revoking the agent, writing the app out as plain files).

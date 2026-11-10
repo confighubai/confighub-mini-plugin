@@ -11,6 +11,8 @@ Before Kubernetes, [all three stages are useful](docs/from-plugin-to-confighub.m
 
 Your agent makes the platform; the hub keeps it. The plugin records supported changes in files and services ([coverage](docs/integrations.md)); approved hub delivery to Vercel or AWS has not been run. The next agent receives earlier reasons for [supported operations](docs/how-it-works.md#client-capabilities). In simulated weeks with model personas, no agent undid an earlier change silently ([the runs](docs/evidence.md)). See [ConfigHub for AI agents](https://confighub.github.io/helm-expt/ai-agents/) for examples.
 
+[Use ordinary app requests](docs/agent-workflow.md). ConfigHub actions get a short notice; hub suggestions are dismissible.
+
 ## Install
 
 In a terminal:
