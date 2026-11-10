@@ -9,7 +9,7 @@ This page is for teams that let coding agents change configuration that runs in 
 - ConfigHub keeps each approval: who gave it, when, and why.
 - If a cluster still deploys from Git, an optional check on each pull request lets only the approved copy merge.
 
-It works on confighub mini on a laptop, and on ConfigHub, hosted or on your own server (`cub server install`). Every step uses `cub`, ConfigHub's command-line tool.
+It works on confighub mini on a laptop, and on ConfigHub, hosted or on your own server (`cub server install`). Every step uses `cub`, ConfigHub's command-line tool. Today's cloud service is single-user: it can separate an owner from an agent, but colleague approval requires a provisioned shared hub. A free two-person cloud workspace is not available yet.
 
 ## Why a rule in a file is not enough
 
@@ -329,6 +329,6 @@ A service that cannot report its revision needs an equivalent check of its loade
 
 ## How these steps were tested
 
-Every command on this page was run as written, on confighub mini (ConfigHub v0.9.0) and on hosted ConfigHub (v0.10.7, with `cub` v0.10.7). On hosted ConfigHub, 16 ways around the approval were also tried, from the agent approving itself to it forcing past the gate, and each was refused. The pull-request check was run against hosted ConfigHub, signed in with only its view key. It passed on the approved copy, and failed on a commit with a value nobody approved. The key could not create anything. The workflow has also run in a GitHub repository, setting the status on each commit.
+Every command on this page was run as written, on confighub mini (ConfigHub v0.9.0) and on hosted ConfigHub (v0.10.7, with `cub` v0.10.7). On hosted ConfigHub, 16 ways around the approval were also tried, from the agent approving itself to it forcing past the gate, and each was refused. The pull-request check was run against hosted ConfigHub, signed in with only its view key. It passed on the approved copy, and failed on a commit with a value nobody approved. The key could not create anything. The workflow has also run in a GitHub repository, setting the status on each commit. These tests used an existing organization and agent keys; they do not demonstrate two human users signing up for and sharing a free cloud hub.
 
 More on ChangeWorkflows, change orders and attestations: [docs.confighub.com](https://docs.confighub.com).
