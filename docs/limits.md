@@ -6,6 +6,8 @@ The **plugin** runs in your Claude Code or Codex sessions and keeps a **record**
 
 ## Limits
 
+The [client capability matrix](how-it-works.md#client-capabilities) distinguishes recording, warnings, refusal and human approval for each client and operation.
+
 - **A reason for each value in Git is not unique to the plugin.** One line in `CLAUDE.md` that asks the agent to give a reason for each value in its commit messages does that. What the plugin adds: its reasons are kept by value, across sessions, and you can ask for them with `/confighub:why`, with no rule written beforehand.
 
 - **You do not need a hub to keep a value through a chart's next version, when the chart exposes it.** A Helm values file or a Kustomize patch does that. The hub's preview helps when a new version changes what a setting does, or stops using it.
@@ -28,7 +30,7 @@ The **plugin** runs in your Claude Code or Codex sessions and keeps a **record**
 
 - **The inventory reads one repository's files.** A folder deployed from another repository shows as deployed by nothing, and the inventory says what the files ask for, not what is running. Some ApplicationSet generators are listed but not followed ([what it does not do](inventory.md#what-it-does-not-do)).
 
-- **ConfigHub's approval holds against what is deployed only when the cluster deploys from the hub.** When Argo CD or Flux deploys from Git, branch protection and CODEOWNERS on that repository are the gate. They already give an approval of an exact commit by a named person.
+- **ConfigHub's approval controls deployment only when its path consumes the approved configuration.** A VM can pull approved files; a cluster can deploy approved releases from the hub. When Argo CD or Flux deploys from Git, branch protection and CODEOWNERS on that repository are the gate. They already give an approval of an exact commit by a named person.
 
 - **A careful setup can match part of each example.** In our own adversarial testing, each of these did part of the job without ConfigHub:
   - a `CLAUDE.md` rule asking agents to log changes made on a cluster;

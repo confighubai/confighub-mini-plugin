@@ -10,7 +10,9 @@ This page is for setting up the ConfigHub plugin in Codex. Codex runs only the h
    plugins/confighub/bin/confighub mini codex-setup
    ```
 
-2. In Codex, type `/hooks` and approve the plugin's hooks. You do this once.
+2. In Codex, type `/hooks` and approve the plugin's hooks. Repeat setup after an update and review the changed definitions in a fresh session.
+
+For what is recorded, refused or left to a person, see the [client capability matrix](how-it-works.md#client-capabilities).
 
 ## Read the record
 

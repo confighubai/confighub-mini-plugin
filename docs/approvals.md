@@ -39,7 +39,7 @@ In Claude Code, in the repository your agents work in:
 1. Type `/confighub:install-mini`. A hub is running about 25 seconds later.
 2. Ask, in your own words: *"Make changes to production wait for my approval; agents may only propose them."* The agent puts the repository's files in the hub and requires your approval for the live copy. From then on, every Claude Code session in this repository runs on the agent's own key: it can propose, and it cannot approve.
 3. Ask for changes as you always have. The agent edits the files, then proposes them. At the end of its turn you see one line: *"A change is waiting for you: … To approve and promote it: cub mini approve …"*
-4. In a terminal, approve it: `cub mini approve`. It shows what the change would do and asks you first. Or refuse it: `cub mini refuse --reason "why"`. Once you approve, the files are what production runs.
+4. In a terminal, approve it: `cub mini approve`. It shows what the change would do and asks you first. Or refuse it: `cub mini refuse --reason "why"`. This updates the approved configuration. Production uses it when its deployment path reads that revision; verify the running service as described below.
 
 You learn no command until the moment you need it. The steps below are the same, by hand.
 
@@ -316,6 +316,16 @@ Where the runner cannot reach the hub, as with confighub mini, run the same chec
 ```bash
 confighub-mini mini copy api --variant live --check-git deploy/api --github-status
 ```
+
+## Verify the result
+
+Check three results separately:
+
+1. **Configuration stored.** Review the live copy's values and revision, and confirm the change order records the named person's approval. An agent's own approval must still be refused.
+2. **Service running.** Use the service's health endpoint or your deployment tool's health report. Approval alone does not start or restart a service.
+3. **Approved revision deployed.** Compare what the service actually loaded with the approved values and release or revision. For a VM, follow the [pull and restart path](vm.md); for a cluster, follow [GitOps delivery](gitops-over-oci.md). If Git still deploys, require the approval status in branch protection before the merge. A hub revision or source-mode label alone is not proof of what runs.
+
+A service that cannot report its revision needs an equivalent check of its loaded settings or release digest. Keep the live service unchanged before approval; check the new behavior afterwards, then exercise the rollback path. Use your existing deployment tool for these checks when it already reports them.
 
 ## How these steps were tested
 

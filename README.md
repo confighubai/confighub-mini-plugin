@@ -1,11 +1,15 @@
 # ConfigHub for AI agents: the ConfigHub plugin and confighub mini
 
-You are in Claude Code, making a new app or changing one you have. Install the plugin, and the app gets what a platform used to give you, around it:
+Making or changing an app in Claude Code? The plugin gives it staging configuration, approvals and a record of changes:
 
-- **A new app:** ask for it with "a staging and a production setup". The agent writes it and leaves a staging copy that takes changes at once and a live copy that changes only when you approve, on a hub it starts on your machine: 75 seconds, in 16 of 16 measured sessions. A second app "like the first" starts from it. [How to ask](#or-ask-for-the-app).
-- **An app you have:** a folder with `.env.staging`, Terraform var files, or a Kustomize repository that Argo CD or Flux deploys. "Attach ConfigHub to this app" keeps your values exactly as they are and puts production behind your approval: 32 of 32 sessions.
+- **A new app:** ask for "a staging and a production setup". The agent writes it and starts a hub: staging configuration takes changes at once; live waits for approval. This took 75 seconds in 16 of 16 measured sessions. A second app can start from it. [How to ask](#or-ask-for-the-app).
+- **An app you have:** `.env.staging`, Terraform var files, or a Kustomize repository deployed by Argo CD or Flux. "Attach ConfigHub to this app" keeps your values and makes live configuration changes wait for approval: 32 of 32 sessions.
 
-Your agent makes the platform; the hub keeps it. From the first session, each value an agent sets is also recorded with your request behind it, in your files and in the services your production lives in (Vercel, Supabase, Fly, Railway, GitHub, AWS SSM, `terraform apply`, `kubectl`, `helm`), so the next agent is told why before it changes it, and you stop re-explaining. In simulated weeks with people new to ConfigHub, no agent undid an earlier change silently ([the runs](docs/evidence.md)). One page shows it in real runs: [ConfigHub for AI agents](https://confighub.github.io/helm-expt/ai-agents/).
+Your app can run on your own machine, another machine, in CI, on one or many sandbox nodes, in a shared development cluster, and onward to production. Each is useful in its own right. [Where the app runs](docs/README.md#where-the-app-runs) explains how configuration reaches running services.
+
+Before Kubernetes, [all three stages are useful](docs/from-plugin-to-confighub.md#before-you-use-kubernetes): the plugin, mini hub and shared hub.
+
+Your agent makes the platform; the hub keeps it. Each value an agent sets is recorded with your request, in files and services (Vercel, Supabase, Fly, Railway, GitHub, AWS SSM, `terraform apply`, `kubectl`, `helm`). The next agent receives earlier reasons for [supported operations](docs/how-it-works.md#client-capabilities). In simulated weeks with model personas, no agent undid an earlier change silently ([the runs](docs/evidence.md)). See [ConfigHub for AI agents](https://confighub.github.io/helm-expt/ai-agents/) for examples.
 
 ## Install
 
