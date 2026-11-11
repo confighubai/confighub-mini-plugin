@@ -174,7 +174,7 @@ These are the same steps with `cub` alone. If confighub mini is installed, `cub 
      --attestation-prerequisite-from-user-ids approval=YOUR_USER_ID \
      --attestation-prerequisite-description "approval=read and approved by a person before it reaches api-live" \
      --stage-prerequisites live=approval
-   cub component update --patch api --change-workflow-required \
+   cub component update --patch api --require-change-workflow \
      --allowed-change-workflow workflows/api-live-approval
    ```
 
