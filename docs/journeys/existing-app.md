@@ -98,7 +98,7 @@ If Argo CD or Flux deploys the app from Git, read this page, then [an app that A
 
 5. In your own terminal, run the `export PATH=...` line the agent gave you, so that `cub` is on your path.
 
-6. Let live take the values it shares with the base. Its own values are there already. The shared ones wait in a change order that adopt made:
+6. Let live take the values it shares with the base. Its own values are there already; if an agent wrote the files they came from, nothing delivers them until you approve this order (from plugin 0.82.0). The shared ones wait in a change order that adopt made:
 
    ```
    cub mini waiting

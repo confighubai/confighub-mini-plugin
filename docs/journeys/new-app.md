@@ -113,7 +113,7 @@ The app might run on your own machine, on another machine, in CI, on one or many
    …
    ```
 
-   Live's own values, from `.env.production`, stay as they are.
+   Live's own values, from `.env.production`, stay as they are. From plugin 0.82.0, where the agent wrote those files, this approval also approves them as production's starting values, and you see `Approved revision N of greeter-live/app too, its starting values, as shown above.` Until then nothing delivers live: `cub mini pull`, `pull-key` and `deploy-from-hub` refuse, and name this command.
 
 8. Commit the app with `.confighub-app`:
 
