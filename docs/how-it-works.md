@@ -201,10 +201,19 @@ Each kind of tip is shown at most once a week for a project, and a line about on
   The record added to a pull request has the same line.
 - `bin/confighub mini changes --usage`, run from the plugin's folder, lists each session kept for the repository, latest first, with its model use and its first request, and the total.
 - With `CUB_MINI_OTEL=1`, each turn's use is sent as a `confighub.model_use` event, with the counts as attributes.
+- **In a hub, from plugin 0.82.0.** When a change is kept in a hub, the turn's model use goes with it, beside the revision the turn made. Then, in a terminal:
+
+  ```
+  cub mini receipts APP-COPY UNIT --revision N     one change: a Cost line beside who made it, why, and who approved it
+  cub mini receipts APP --cost                     one app: tokens by agent and by week, largest first
+  cub mini receipts --cost --agent NAME            one agent: tokens by what became of its work
+  ```
+
+  The last one ends with a line such as `Refused or still waiting: 11,490 of 19,690 tokens (58%), in 2 of 4 turns.` A turn that changed several values is counted once. Each takes `--json`. `--prices FILE` adds an "About $" column from a JSON file of prices you keep; none are built in and nothing is fetched. The cost reaches the hub when you next copy the record there, with `cub mini to-hub` or `cub mini copy --from-record`: an agent's key may not attach it by itself.
 
 **How it counts.** Claude Code writes a line for each part of an answer. Each call is counted once. In a test, the record's numbers for a session were the same as the ones Claude Code itself reported for it.
 
-**Not counted yet:** the calls of subagents, which Claude Code keeps in transcripts of their own; and Codex sessions. The plugin counts tokens, not money, since prices differ by model and by contract.
+**Subagents.** From plugin 0.82.0 a subagent's calls are counted with the turn that started it, and shown apart as "its subagents"; one still running when its turn ends is counted up to then. **Not counted yet:** Codex sessions. The plugin counts tokens, not money, since prices differ by model and by contract.
 
 `CUB_MINI_USAGE=0` turns it off.
 

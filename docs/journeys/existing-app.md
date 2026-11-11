@@ -62,7 +62,7 @@ If Argo CD or Flux deploys the app from Git, read this page, then [an app that A
    Without --dry-run, this makes orders an app from what app renders (base, overlays/staging for staging, overlays/prod for live):
      orders-base, holding base as kustomize renders it: ConfigMap/orders-config, Service/orders, Deployment/orders
      orders-staging, with its own from overlays/staging: FEATURE_NEW_CHECKOUT=true, LOG_LEVEL=debug, namespace=orders-staging
-     orders-live, with its own from overlays/prod: RATE_LIMIT_PER_MINUTE=600, replicas=3, namespace=orders; the rest it takes from the base only once you approve
+     orders-live, with its own from overlays/prod: RATE_LIMIT_PER_MINUTE=600, replicas=3, namespace=orders, holding everything overlays/prod renders, with nothing waiting for your approval
    ```
 
    For a folder with `.env`, `.env.staging` and `.env.production`:
@@ -98,7 +98,7 @@ If Argo CD or Flux deploys the app from Git, read this page, then [an app that A
 
 5. In your own terminal, run the `export PATH=...` line the agent gave you, so that `cub` is on your path.
 
-6. Let live take the values it shares with the base. Its own values are there already. The shared ones wait in a change order that adopt made:
+6. Let live take the values it shares with the base. Its own values are there already; if an agent wrote the files they came from, nothing delivers them until you approve this order (from plugin 0.82.0). The shared ones wait in a change order that adopt made:
 
    ```
    cub mini waiting
@@ -107,7 +107,7 @@ If Argo CD or Flux deploys the app from Git, read this page, then [an app that A
 
    `cub mini approve` shows what live would take and asks you first. When it worked, you see `Approved APP-base/adopt.`
 
-   For a Kustomize repository, live already holds everything its overlay renders, so there may be nothing to take. Then `cub mini waiting` says `Nothing is waiting for you.`, and there is nothing to approve.
+   For a Kustomize repository, live already holds everything its overlay renders, so there may be nothing to take. From plugin 0.82.0 adopt says so: `Live already holds everything OVERLAY renders, so nothing waits for your approval now; a later change to the base will.` Then `cub mini waiting` says `Nothing is waiting for you.`, and there is nothing to approve.
 
 7. Commit `.confighub-app`:
 
@@ -155,7 +155,7 @@ Then adopt reads each copy back from the hub and compares it with what `kustomiz
 
 ## If something goes wrong
 
-- **Adopt found no settings.** It prints `reads no settings adopt can find` and names where it looked. Your files may use other names, such as `values-prod.env`. Ask the agent to say where the app's settings are, or copy them into one of the files in the table above.
+- **Adopt found no settings.** It prints `reads no settings adopt can find` and names where it looked. Your files may use other names, such as `values-prod.env`. From plugin 0.82.0, adopt names a file such as `api.env` that it found and does not read, and gives the two ways on: rename it to `.env`, or keep it as it is with `cub mini upload FOLDER --variant live --target none`.
 - **A value was left out and named.** A value that looks like a password or a token never goes into the hub. Keep it out of the file, and name where the app reads it instead, such as `DB_PASSWORD_FILE`. Set it in a terminal with `cub mini secret set` ([a secret for live](../from-plugin-to-confighub.md#a-secret-for-live-that-no-agent-can-read)).
 - **An overlay that is neither staging nor production** is left as it is, and named.
 - **Adopt refused an overlay.** It names the kustomization field and what to do, and nothing was written ([what adopt refuses](#what-adopt-refuses-in-a-kustomize-repository)).

@@ -113,7 +113,7 @@ The app might run on your own machine, on another machine, in CI, on one or many
    …
    ```
 
-   Live's own values, from `.env.production`, stay as they are.
+   Live's own values, from `.env.production`, stay as they are. From plugin 0.82.0, where the agent wrote those files, this approval also approves them as production's starting values, and you see `Approved revision N of greeter-live/app too, its starting values, as shown above.` Until then nothing delivers live: `cub mini pull`, `pull-key` and `deploy-from-hub` refuse, and name this command.
 
 8. Commit the app with `.confighub-app`:
 
@@ -175,7 +175,7 @@ Approve its live copy as in step 7, with `cub mini approve notes-base/adopt`.
 - **`cub: command not found`.** Run the `export PATH=...` line from step 6 in this terminal. To see it again, type `/confighub:install-mini` in Claude Code.
 - **No hub answers after a restart.** Type `/confighub:install-mini` in Claude Code, or ask the agent to start the hub. It starts the hub you had, with everything in it.
 - **The agent wrote a setup script for you to run, or asked you to sign in.** The plugin's skill was not used. Check that the plugin is installed with `claude plugin list`, and ask again with the words "using ConfigHub".
-- **Adopt found no settings.** It prints `reads no settings adopt can find` when the app has no `.env`, compose file, `.env.example` or `.tfvars` file, and its code reads no setting. Ask the agent to put the app's settings in `.env`, then adopt again.
+- **Adopt found no settings.** It prints `reads no settings adopt can find` when the app has no `.env`, compose file, `.env.example` or `.tfvars` file, and its code reads no setting. Ask the agent to put the app's settings in `.env`, then adopt again. From plugin 0.82.0, if the folder has an env file by another name, such as `api.env`, the message names it and gives the two ways on: rename it to `.env`, or keep it with `cub mini upload APP --variant live --target none`.
 - **Live does not have a production value you asked for.** The agent wrote it in `.env`, which the copies share, and not in `.env.production`. Live takes a shared value only when you approve it: `cub mini waiting` shows it, and `cub mini approve APP-base/adopt` gives it to live. To make it live's own from the start, ask the agent to put it in `.env.production` too.
 - **A value was left out and named.** A value that looks like a password or a token never goes into the hub. Keep it out of the file, and set it in a terminal with `cub mini secret set APP KEY --variant live --change-desc "WHY"` ([a secret for live](../from-plugin-to-confighub.md#a-secret-for-live-that-no-agent-can-read)).
 - **The second app did not start from the first.** In one measured session of eight, the second app was asked for inside the first app's repository. Sessions there run on the first app's agent key, which may not make a new app. Ask from a folder of its own.
@@ -183,7 +183,7 @@ Approve its live copy as in step 7, with `cub mini approve notes-base/adopt`.
 
 ## How to go back
 
-- **Refuse a change that waits:** `cub mini refuse APP-base/ORDER --reason "WHY"`. The agent can read your reason.
+- **Refuse a change that waits:** `cub mini refuse APP-base/ORDER --reason "WHY"`. The agent can read your reason. The refused value stays in the base until someone changes it back, so the next change that waits would carry it; from plugin 0.82.0, `cub mini waiting` and `cub mini approve` mark it `refused before`, with your reason, so you do not approve it by accident.
 - **Undo a change live already has:** going back is a change like any other. Ask the agent to set the value back. It proposes it, and you approve it.
 - **Run sessions as yourself again:** `cub mini revoke-agent APP-agent` takes the agent's rights away at once. Then delete `.claude/settings.local.json`, or take out what the agent setup added to it if you keep other settings there.
 - **Leave the hub:** your app's files were never changed by the hub, so they are still yours as they are. To take the hub's copies out as plain files, with a `CHANGES.md` that says why each value is set, run `cub mini copy APP --to-dir DIR`. Then `cub mini stop` stops the hub, and `cub mini uninstall --delete-data` removes it and its data.

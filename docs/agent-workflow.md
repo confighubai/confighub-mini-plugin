@@ -110,6 +110,12 @@ with who wrote the values and when, and the command that approves them,
 `cub mini approve APP-live`. Files you kept before any agent wrote to them are yours, and
 are not marked.
 
+The same holds when you ask for the app yourself. From plugin 0.82.0, `cub mini adopt`
+marks production's copy in the same way when an agent wrote its files, whoever runs the
+command. Approving `APP-base/adopt`, which [the new-app steps](journeys/new-app.md) already
+ask of you, approves those values too, so you type nothing extra; `cub mini waiting` names
+that command while the order waits.
+
 **To turn it off.** For one folder, `cub mini changes --arrival off`; edits to its files
 are then no longer sent to the hub either. For the machine, `cub mini install --arrival no`.
 To turn one folder on again, in your own terminal: `cub mini changes --arrival on --dir PROJECT`.

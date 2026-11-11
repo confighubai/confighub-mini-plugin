@@ -277,7 +277,7 @@ An order that names a request the hub cannot back is marked `REFUSED`, with why,
 With the gate on and the agent on a key of its own, the plugin tells you three things, each one line that Claude Code shows you at the end of the agent's turn and does not give the agent:
 
 - **A change is waiting for you.** The agent's turn ended with a change order not yet approved: the value from what to what, the copy it is headed for, the agent's reason, and the command that approves it. Once per change order. `cub mini waiting` lists what waits, for later.
-- **An agent is proposing again what was refused.** You refused a change order (`cub mini refuse BASE/ORDER --reason WHY`), or the hub refused the agent a write; a later change order for the same path is told once, naming the path, the refusal it repeats, and the agent. You decide.
+- **An agent is proposing again what was refused.** You refused a change order (`cub mini refuse BASE/ORDER --reason WHY`), or the hub refused the agent a write; a later change order for the same path is told once, naming the path, the refusal it repeats, and the agent. You decide. From plugin 0.82.0, `cub mini waiting` and `cub mini approve` also mark a value you refused before, with the order it was in and your reason, so that you do not approve it by accident inside a later change.
 - **Something elsewhere needs a hub it can reach.** One sentence from `cub mini pull-key`, `pull` or `copy` when the hub listens on this machine only and a VM or another machine needs it.
 
 Nothing is said of a change within the agent's rights, a change you approved, a pull, or an agent the gate stopped that did not try again. `CUB_MINI_TELL=0` turns the lines off. [The run](runs/2026-10-29/sam-telling/README.md), in real sessions.
