@@ -2,16 +2,16 @@
 
 Making or changing an app in Claude Code? The plugin gives it staging configuration, approvals and a record of changes:
 
-- **A new app:** ask for "a staging and a production setup". The agent writes it and starts a hub: staging configuration takes changes at once; live waits for approval. This took 75 seconds in 16 of 16 measured sessions. A second app can start from it. [How to ask](#or-ask-for-the-app).
+- **A new app:** ask for one "using ConfigHub", with a staging and a production setup. The agent writes it and starts a hub: staging configuration takes changes at once; live waits for approval. This took 75 seconds in 16 of 16 measured sessions. A second app can start from it. [How to ask](#or-ask-for-the-app).
 - **An app you have:** `.env.staging`, Terraform var files, or a Kustomize repository deployed by Argo CD or Flux. "Attach ConfigHub to this app" keeps your values and makes live configuration changes wait for approval: 32 of 32 sessions.
 
-Your app can run on your own machine, another machine, in CI, on one or many sandbox nodes, in a shared development cluster, and onward to production. Each is useful in its own right. [Where the app runs](docs/README.md#where-the-app-runs) explains how configuration reaches running services.
+**You ship it; then someone hardens it, and your next app starts from their fixes.** You ask your agent for an app, and approve what reaches production. A colleague makes it fit for production, each value with its reason, and shares the setup as a file. Your next app is made from it with `cub mini adopt FOLDER --pattern NAME`, keeping its own values ([how](docs/from-plugin-to-confighub.md#an-app-from-a-setup-someone-shared)). Two people sharing one hub in the cloud is not available yet; today each of you runs a hub on your own machine, or you share one on a server you both reach.
 
-Before Kubernetes, [all three stages are useful](docs/from-plugin-to-confighub.md#before-you-use-kubernetes): the plugin, mini hub and shared hub.
+Your app can run anywhere from your laptop to production ([where the app runs](docs/README.md#where-the-app-runs)).
 
-Your agent makes the platform; the hub keeps it. The plugin records supported changes in files and services ([coverage](docs/integrations.md)); approved hub delivery to Vercel or AWS has not been run. The next agent receives earlier reasons for [supported operations](docs/how-it-works.md#client-capabilities). In simulated weeks with model personas, no agent undid an earlier change silently ([the runs](docs/evidence.md)). See [ConfigHub for AI agents](https://confighub.github.io/helm-expt/ai-agents/) for examples.
+Your agent makes the platform; the hub keeps it. The plugin records supported changes in files and services ([coverage](docs/integrations.md)). The next agent receives earlier reasons for [supported operations](docs/how-it-works.md#client-capabilities). In simulated weeks with model personas, no agent undid an earlier change silently ([the runs](docs/evidence.md)). See [ConfigHub for AI agents](https://confighub.github.io/helm-expt/ai-agents/) for examples.
 
-[Use ordinary app requests](docs/agent-workflow.md). ConfigHub actions get a short notice; hub suggestions are dismissible.
+[Ordinary app requests](docs/agent-workflow.md) start no hub. One starts by itself only if you say yes to one question at setup. ConfigHub actions get a short notice.
 
 ## Install
 
@@ -33,7 +33,7 @@ Then, in any Claude Code session, you can ask:
 /confighub:to-hub               the same record, MCP calls too, into the ConfigHub your cub is signed in to
 ```
 
-There is no account to create and no server to run. The plugin is MIT-licensed.
+There is no account to create and no server to run.
 
 ### Or ask for the app
 
@@ -44,11 +44,9 @@ vibe code me a baseline app using ConfigHub: a small web service with a health e
 a configurable greeting, and a staging and a production setup
 ```
 
-The agent writes the app, starts confighub mini on your machine if no hub answers, and ends with the three copies and the command that approves a change to live. Before you run that command, run the `export PATH=...` line the agent gives you in the same terminal: `cub` comes with confighub mini and is not on your path yet. Ask for a second app "like the first" and it starts from the first's base. [Step by step](docs/journeys/new-app.md).
+The agent writes the app, starts confighub mini on your machine if no hub answers, and ends with the three copies and the command that approves a change to live. Before you run that command, run the `export PATH=...` line the agent gives you: `cub` comes with confighub mini and is not on your path yet. Ask for a second app "like the first" and it starts from the first's base. [Step by step](docs/journeys/new-app.md).
 
-For Codex CLI, run `plugins/confighub/bin/confighub mini codex-setup` from this checkout, then review `/hooks`. Repeat after updates.
-
-Codex can use a scoped proposal key with a separate launcher; [setup and limits](docs/approvals.md#codex-sessions-on-the-proposal-key).
+For Codex CLI, run `plugins/confighub/bin/confighub mini codex-setup` from this checkout, then review `/hooks`; repeat after updates ([Codex](docs/codex.md)).
 
 ### Try it in one minute
 
@@ -115,7 +113,7 @@ Already use [Entire](docs/entire.md)? `entire plugin install https://github.com/
 
 ## What this is
 
-This is the way in to [ConfigHub](https://docs.confighub.com) for people who work with AI agents; the plugin and this repository are MIT-licensed. ConfigHub keeps configuration with every change, who made it and why, and lets a person approve what reaches production. There are three parts:
+This is the way in to [ConfigHub](https://docs.confighub.com) for people who work with AI agents. ConfigHub keeps configuration with every change, who made it and why, and lets a person approve what reaches production. There are three parts:
 
 | Part | What it is | How you start |
 |---|---|---|
@@ -123,7 +121,7 @@ This is the way in to [ConfigHub](https://docs.confighub.com) for people who wor
 | **confighub mini** | A hub of your own: ConfigHub itself, packaged lean, as two processes on your laptop, in an agent's sandbox or in a CI job. No Docker, no cluster, no account, and it works with the network off. A download of 48 to 73 MB | `/confighub:install-mini` in Claude Code |
 | **`cub mini`** | A plugin for `cub`, ConfigHub's command-line tool, that fills in the rest of each request so the commands stay short. What you learn with it works unchanged on your organization's ConfigHub | Comes with confighub mini |
 
-It solves four problems: agents undo each other's changes ([step by step](#the-problem-it-solves)); nothing stands between an agent and production, since a rule in `CLAUDE.md` is only a request, while with a hub the agent proposes on a key of its own and only the person you name approves ([approvals](docs/approvals.md)); nobody knows what a repository deploys before they change it; and a vendor's next version overwrites your changes. Each step from the plugin to your organization's ConfigHub is [one team's path, step by step](docs/from-plugin-to-confighub.md).
+It solves four problems: agents undo each other's changes ([step by step](#the-problem-it-solves)); nothing stands between an agent and production, since a rule in `CLAUDE.md` is only a request, while with a hub the agent proposes on a key of its own and only the person you name approves ([approvals](docs/approvals.md)); nobody knows what a repository deploys before they change it; and a vendor's next version overwrites your changes. [One team's path, step by step](docs/from-plugin-to-confighub.md).
 
 ## The problem it solves
 
@@ -200,15 +198,13 @@ To say how closely MCP calls are watched in a folder, use `/confighub:checks`. A
 - **MCP tool calls**: the server, the tool and its arguments, with credentials taken out and the request behind it. A refund or a database change is in the record, though no file changed. The tool's output is not kept.
 - **Values in configuration files**: Kubernetes files, Helm values, Kustomize, Compose, GitHub Actions workflows, settings files such as `.env`, Terraform files and variables, Dockerfiles, and agent configuration such as `CLAUDE.md`. For a `.tf` file or a Dockerfile, the record says the file changed, not each value. It records the change whether the agent used its edit tool or a shell command such as `sed`.
 - **Commands that change a cluster or a deployment**: `kubectl`, `helm`, `argocd`, `flux`, `terraform`, `tofu`, `cub` and `nvkectl`, with the values they set, and changes made with `aws`, `gcloud`, `az`, `docker`, `gh` and `vercel`.
-- **Why**: the request the agent was given, and the reason it gave, when you ask agents to give one.
+- **Why**: the request the agent was given, the reason it gave when you ask for one, and what it said it chose for a value it changed (`CUB_MINI_DECISIONS=0` turns that off).
 - **What agents may do**: one line tells you when a permission rule, an MCP server, a hook or an instruction file changes, including when you click "don't ask again".
 - **What it cost**: each turn's model calls and tokens, so you can see what a change cost and which sessions cost the most ([model use](docs/how-it-works.md#model-use)).
 
-Each turn of the record is signed when it ends, so you can check later that nobody changed it. An agent on a cluster can sign with its own workload identity, so the record names the agent that made each change ([signed records](docs/signed-records.md)).
+Each entry of the record is signed as it is written, so a check later names an entry changed, added or taken out. An agent on a cluster can sign with its own workload identity, so the record names the agent that made each change ([signed records](docs/signed-records.md)).
 
-In Codex, completed MCP calls are recorded too; at `ask`, write calls are refused with an explanation. Failed calls and `apply_patch` undo protection have [client limits](docs/runs/2026-11-09/codex-mcp/README.md).
-
-It never keeps a command's output, a copy of a file, or anything that looks like a password, key or token. It adds about 15 milliseconds to each tool call. Nothing leaves your machine unless you turn on a setting that sends it somewhere, such as a pull request or your OpenTelemetry collector. Explicit Vercel read-back calls its CLI when you request `changes --why NAME --vercel production` ([how it works](docs/runs/2026-11-09/vercel-readback/README.md)). A log of which features you used on which days stays here too, and `/confighub:to-hub --usage` shows it and loads it into a hub if you choose.
+It never keeps a command's output, a copy of a file, or anything that looks like a password, key or token. It adds about 15 milliseconds to each tool call. Nothing leaves your machine unless you turn on a setting that sends it somewhere, such as a pull request or your OpenTelemetry collector. A log of which features you used on which days stays here too, and `/confighub:to-hub --usage` shows it and loads it into a hub if you choose.
 
 [How it works](docs/how-it-works.md) covers hooks, settings and protecting the record; [limits](docs/limits.md) says what remains unproved.
 

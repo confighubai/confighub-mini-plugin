@@ -28,11 +28,13 @@ It does the following, in about 25 seconds on a Mac:
 4. It unpacks the package.
 5. It starts a hub.
 
+It asks nothing in Claude Code. It prints one line about a setting that is yours alone, off until you turn it on: whether a hub may start by itself for an app's settings files when an agent works in its folder ([what it does](agent-workflow.md#a-hub-that-starts-by-itself-only-if-you-say-yes)).
+
 If you run it again, it starts the hub if the hub is stopped, and moves it onto a newer release if there is one ([how](#move-to-a-newer-confighub-mini)).
 
 When it is done, it prints the line that puts the package's `cub` on your `PATH`, and what to do next: put a repository's record into the hub with `cub mini copy --from-record` ([how](try-confighub-mini.md#step-4-put-your-agents-record-into-the-hub)), or follow [a first run](try-confighub-mini.md).
 
-In a terminal, or in Codex, run `bin/confighub mini get` from the plugin. It does the same. The plugin on its own carries no server, so any `cub mini` command run as `bin/confighub mini COMMAND`, such as `bin/confighub mini install` or `bin/confighub mini need`, says it needs confighub mini when none is downloaded, and names `confighub mini get`.
+In a terminal, or in Codex, run `bin/confighub mini get` from the plugin. It does the same, and in a terminal, the first time on a machine, it asks that setting as a question before it starts the hub. Enter means no. The plugin on its own carries no server, so any `cub mini` command run as `bin/confighub mini COMMAND`, such as `bin/confighub mini install` or `bin/confighub mini need`, says it needs confighub mini when none is downloaded, and names `confighub mini get`.
 
 The one-step install needs nothing else on the machine: no `tar`, `xz` or `curl`, and no system certificates. It works on Linux distributions that use glibc, such as Debian, Ubuntu, Fedora, Rocky and Amazon Linux, including their slim images. Alpine uses musl, and the bundled PostgreSQL does not run on it, so the install stops before it downloads anything and says so. Use a glibc image instead. In a container, run it as a user that has an account, since PostgreSQL will not start for a user ID without one.
 
@@ -92,7 +94,7 @@ On Linux you need `curl` and `xz`. On Debian or Ubuntu, install them with `apt-g
    cub mini install
    ```
 
-   This starts the ConfigHub server and its PostgreSQL, in about 10 seconds. It also signs `cub` in to the new hub, as a new *context*. A context is a named server and sign-in that `cub` can talk to.
+   The first time on a machine, it asks the one setup question first; Enter means no. This starts the ConfigHub server and its PostgreSQL, in about 10 seconds. It also signs `cub` in to the new hub, as a new *context*. A context is a named server and sign-in that `cub` can talk to.
 
    - If you had no `cub` context before, the hub's context becomes the current one.
    - If you already use `cub`, your current context is kept. `cub mini install` prints the line that reaches the hub, such as `cub --context star-paw space list`. To make the hub's context the current one instead, run `cub mini install --use`.

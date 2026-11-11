@@ -12,6 +12,8 @@ This page is for setting up the ConfigHub plugin in Codex. Codex runs only the h
 
 2. In Codex, type `/hooks` and approve the plugin's hooks. Repeat setup after an update and review the changed definitions in a fresh session.
 
+Codex can work on a scoped proposal key with a separate launcher ([setup and limits](approvals.md#codex-sessions-on-the-proposal-key)).
+
 Use normal app requests after setup; see [how the agent chooses a useful step and attributes ConfigHub actions](agent-workflow.md).
 
 For what is recorded, refused or left to a person, see the [client capability matrix](how-it-works.md#client-capabilities).

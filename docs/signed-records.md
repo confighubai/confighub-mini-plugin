@@ -2,9 +2,9 @@
 
 This page is for a team that relies on the plugin's record of what its agents changed: in a review, an audit or an incident. The record is a file. Anyone who can write to its folder, including an agent told to tidy up, can change a value or a reason afterwards, and nothing would show it. Signing lets anyone check that the record is still as it was written.
 
-The plugin signs each turn of the record when the turn ends. A **turn** is one request in a session and the agent's work on it. Each signature is linked to the turn before. If a record is changed afterwards, or a signature is taken out or altered, a check names it.
+The plugin signs each **entry** of the record as it writes it: each thing it notes, such as a value changed or a command run. Each signature is linked to the one before, and has a line in the folder's list of signatures, `signatures.jsonl`, beside the folder's **sessions** (one session is one Claude Code conversation; a **turn** is one request in it and the agent's work on it). If an entry is changed, added or taken out after it was signed, or a session is removed or cut back, a check names it.
 
-Nothing is asked of you or the agent. Signing adds about a millisecond to the end of a turn. `CUB_MINI_SIGN=0` turns it off.
+Nothing is asked of you or the agent. Signing one entry takes about 0.2 milliseconds. `CUB_MINI_SIGN=0` turns it off.
 
 ## Checking the record
 
@@ -22,7 +22,16 @@ The records of /work/shop:
   ok   .cub-mini/changes/255c6769-eb67-4f4f-bdfd-a57103ecd696.record: signed, unchanged since (key e6ce0a1eb16e)
 ```
 
-A record changed after it was signed is marked `NOT`, with the turn it no longer matches. The command then fails, so a CI job can stop on it. A record made before signing existed is marked `--` and does not fail the check.
+A record changed after it was signed is marked `NOT`, with the session, the file and the turn. The command then fails, so a CI job can stop on it. For example, for an entry written in after the record was signed, and for a session removed:
+
+```
+NOT  session s1: 1 entry after the last signature was never signed: the first is entry 8 of entries.jsonl, turn 2 (a change to k8s/api.yaml: Deployment/api/spec.replicas 6 to 20); written in after the record was signed, or left by a hook stopped before it could sign
+NOT  session s1: removed: the folder's list of signatures has 7 signatures of it, the last at 11 November 12:01, and its record is gone
+```
+
+Two cases are marked `--` and do not fail the check. An entry from the last minute that is not signed yet is an unfinished write; after a minute it is marked `NOT`. A session with no signatures at all, made with `CUB_MINI_SIGN=0` or written in as a file, is marked `--` too.
+
+`cub mini changes`, `/confighub:why` and the review show only entries a signature covers. `cub mini changes` says what it leaves out, in a line that starts `Not shown:`.
 
 **In the pull-request review.** The [review](../review/README.md) comment opens with one line: `Records in the repository: 1 signed and unchanged.` If a record in the repository was changed after it was signed, the review names it there, in bold.
 
@@ -49,17 +58,17 @@ On a real session's commit, cosign printed `Verified OK`.
 
 `--insecure-ignore-tlog` is there because the signature is not in Sigstore's public log. See "Not yet", below.
 
-## With a hub: a witness that cannot be changed
+## With a hub: a copy to compare against
 
 ConfigHub is a hub: a place where your configuration is kept, with every change, who made it and why ([ConfigHub docs](https://docs.confighub.com)). A hub is a ConfigHub server. confighub mini is ConfigHub, small, for one machine ([install confighub mini](install-mini.md)). With confighub mini, `CUB_MINI_KEEP_IN_HUB=1` keeps changes in the hub.
 
 Each change kept in the hub then has an attestation beside its revisions in ConfigHub. An attestation is a statement that ConfigHub stores; this one is of type `AgentRecord`. It holds:
 
-- the digest of the turn's signature, and of the record it covers;
+- the digest of the latest signature, and of the record it covers;
 - the key;
 - the session.
 
-ConfigHub records the attestation with its own time, and never changes it. So nobody can later rewrite or backdate the record without it showing, not even whoever holds the key.
+ConfigHub records the attestation with its own time, and never changes it. `--verify` does not read it. A record rewritten and signed again by whoever holds the key shows only when you compare it with the attestations the hub kept, and that comparison is done by hand today.
 
 ## Signing with the agent's own identity
 
@@ -94,7 +103,7 @@ On a laptop, the machine's key is enough: one person, one machine. An agent that
 | `CUB_MINI_SIGNING_KEY` | Its private key, in PEM |
 | `CUB_MINI_TRUST_BUNDLE` | The trust bundle, in PEM. Set it wherever you run `--verify` |
 
-Each turn is then signed with the identity's key, and the signature carries the certificate, so anyone with the trust bundle can check the record.
+Each entry is then signed with the identity's key, and the signature carries the certificate, so anyone with the trust bundle can check the record.
 
 **What it does not do.**
 
@@ -107,9 +116,17 @@ This was run on a kind cluster with SPIRE 1.15.5 and spiffe-helper 0.10.1, with 
 
 ## What it proves, and what it does not
 
-- **It proves** that the record has not changed since each turn was signed, and which key signed it.
+- **It proves** that the record has not changed since each entry was written, by anyone without the key, and which key signed it.
 - **It does not prove** that the hook saw everything the agent did. An agent that acts through something the plugin does not watch leaves nothing to sign.
-- **The key** is made on your machine, in `~/.confighub/agent-changes/signing/`, the first time it is needed. Whoever can read the key can sign. The settings that `cub mini require-approval --agent` writes keep the key, with the record, out of the agent's reach. The hub's witness covers the rest.
+- **The key** is made on your machine, in `~/.confighub/agent-changes/signing/`, the first time it is needed. Whoever can read the key, or run the hook, can make a record again and sign it. The settings that `cub mini require-approval --agent` writes keep the key, with the record, out of the agent's reach.
+- **What a check on this machine cannot show.** Three alterations leave nothing on the machine to compare with, so `--verify` cannot name them:
+  - the folder's whole record removed, with its list of signatures;
+  - the latest turn taken out of the record together with its signatures and its lines in the list;
+  - a record made again and signed by whoever holds the key.
+
+  Each shows only against a copy kept elsewhere at the time: the hub's attestations, for changes kept in a hub; the record committed to the repository; or the changes sent to an OpenTelemetry collector. No command compares them today.
+- **The plugin's own clean-up.** The plugin removes a session 30 days after its last write. A session whose last signature is more than 30 days old can be removed unseen in the same way.
+- **A record made by plugin 0.80.0 or earlier** was signed at the end of each turn, and has no list of signatures. Its signed turns are checked as before. It cannot show a session removed, or cut back to an earlier turn. Entries after its last signature may be a turn that never ended: they are marked `--` for an hour, then `NOT`, and such a record cannot tell which.
 - **Not yet:**
   - putting the digest in Sigstore's public log, for open-source repositories;
   - signing in CI with the job's own identity, such as GitHub Actions' OIDC token, with no key to keep;
