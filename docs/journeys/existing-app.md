@@ -107,6 +107,8 @@ If Argo CD or Flux deploys the app from Git, read this page, then [an app that A
 
    `cub mini approve` shows what live would take and asks you first. When it worked, you see `Approved APP-base/adopt.`
 
+   For a Kustomize repository, live already holds everything its overlay renders, so there may be nothing to take. Then `cub mini waiting` says `Nothing is waiting for you.`, and there is nothing to approve.
+
 7. Commit `.confighub-app`:
 
    ```
