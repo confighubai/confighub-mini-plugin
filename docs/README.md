@@ -23,6 +23,8 @@ A few words used throughout:
 
 Run [four product examples](../examples/roadmap/README.md): a VM service with approval and rollback, reused settings, a hub round trip, and a scoped [extension](../examples/extensions/config-snapshot/README.md).
 
+An experimental [delivery add-on contract](../examples/extensions/delivery/README.md) applies one approved revision to a provider. It has been tried against a directory stand-in only, not a real provider.
+
 ## Where the app runs
 
 An app can run on your own machine, on another machine, in a CI job, on one sandbox node or across many sandbox nodes, in a shared development cluster, and onward through staging to production. Each is a useful place to start or stay. A CI test or a temporary sandbox does not need to become a production service.

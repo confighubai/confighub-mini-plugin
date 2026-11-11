@@ -184,9 +184,9 @@ def r4(ex):
     run([ex.package / 'bin/confighub-mini-app', 'mini', 'install-plugin', reader_cfg], env=env)
     server = json.loads(ex.cub('context', 'get', context, '-o', 'json').stdout)['coordinate']['serverURL']
     run([ex.package / 'bin/cub', 'auth', 'login', '--new-context', '--private-key=' + str(key), '--server', server], env=env)
-    extension = ROOT / 'extensions/config-snapshot/read.py'
+    extension = ROOT / 'extensions/config-snapshot/read.sh'
     output = ex.work / 'snapshot.json'
-    command = [sys.executable, extension, '--space', 'notes-live', '--unit', 'app', '--out', output]
+    command = ['sh', extension, '--space', 'notes-live', '--unit', 'app', '--out', output]
     run(command, env=env)
     first = output.read_bytes()
     value = json.loads(first)

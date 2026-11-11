@@ -1,13 +1,17 @@
 # Read one revision from a small extension
 
-`read.py` is an executable example of an extension using the existing `cub` interface. It reads one unit in one space and writes a JSON snapshot. It does not deploy an app or approve a change.
+`read.sh` is an executable example of an extension using the existing `cub` interface, in POSIX shell: it needs `cub` and standard utilities, and nothing else. It reads one unit in one space and writes a JSON snapshot. It does not deploy an app or approve a change.
+
+An experimental [delivery add-on contract](../delivery/README.md) extends this read with import, apply and compare, tried against a directory stand-in only.
 
 Run the complete setup, access checks and cleanup from [R4](../../roadmap/README.md#r4-read-a-pinned-revision-from-a-small-extension). To use a previously provisioned reader context:
 
 ```sh
 CUB_CONFIG=/path/to/reader-config CUB_CONTEXT=reader \
-  python3 read.py --space notes-live --unit app --out snapshot.json
+  sh read.sh --space notes-live --unit app --out snapshot.json
 ```
+
+`read.py` is the same reader in Python. It remains for those who use it.
 
 The owner provisions a scoped reader with `cub mini pull-key extension-reader notes --variant live` and gives the extension only that reader's key. Keep owner credentials outside the extension's environment. A reader has no permission to propose, write or approve. An extension that needs to propose changes needs a separately scoped proposer; it must not receive approval rights.
 
@@ -36,10 +40,12 @@ The output has mode 0600. An identical existing snapshot is an idempotent retry.
 
 ## Compatibility and checks
 
-The example uses `cub unit get -o json` and `cub revision data`; the enclosing R4 run checks these against its pinned package. Run the contract boundary tests with:
+The example uses `cub unit get -o jq=...`, which prints the listed head as one plain line, and `cub revision data`; the enclosing R4 run checks these against its pinned package. It parses no JSON itself. Run the contract boundary tests with:
 
 ```sh
 python3 -m unittest discover -s .
 ```
+
+The tests are the only part that needs Python. `test_contract.py` runs the same tests against `read.sh` and `read.py`, with a stand-in for `cub` on the PATH that needs `jq`; `READ_PROGRAM=/path/to/program` tests one program alone. `read.sh` refuses two things `read.py` accepts: content with a NUL byte, and a space or unit that starts with `-`.
 
 The R4 integration additionally checks that the provisioned key cannot read base, write live or approve, and that the output contains no owner credentials or configuration-directory paths. These checks apply to this example and key, not to every external add-on.
