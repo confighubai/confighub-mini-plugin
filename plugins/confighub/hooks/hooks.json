@@ -17,7 +17,7 @@
           {
             "type": "command",
             "command": "\"${CLAUDE_PLUGIN_ROOT}/bin/confighub\" mini hook || true",
-            "timeout": 10
+            "timeout": 120
           }
         ]
       }
@@ -51,7 +51,7 @@
           {
             "type": "command",
             "command": "\"${CLAUDE_PLUGIN_ROOT}/bin/confighub\" mini hook || true",
-            "timeout": 10
+            "timeout": 120
           }
         ]
       }
