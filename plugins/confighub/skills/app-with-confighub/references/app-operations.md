@@ -34,8 +34,12 @@ after a restart to start the hub again.
 ## 2. Make the app's copies
 
 The app's settings are an env file in its folder: `.env`, with `KEY=VALUE` lines. For a new
-app, write the code and its `.env` first (`PORT`, `GREETING`, `LOG_LEVEL`, and so on). For an
-existing app, use the files the person has: `.env` (or `app.env`, a compose file's
+app, write the code and its `.env` first (`PORT`, `GREETING`, `LOG_LEVEL`, and so on), with
+values for running it locally. Put each value the person gave for staging in `.env.staging`,
+and each value they gave for production in `.env.production`. Keep those values out of
+`.env`, or give `.env` a different one: adopt takes a value in `.env.production` as
+production's own, at once, only where `.env` differs. A value `.env` holds too reaches
+production only after the person approves. For an existing app, use the files the person has: `.env` (or `app.env`, a compose file's
 environment), with `.env.staging` and `.env.production` beside it if they keep them, or a
 Terraform folder's `common.tfvars` with `staging.tfvars` and `prod.tfvars`. A Kustomize
 repository with overlays (a `base/`, `overlays/staging`, `overlays/prod`) is adopted as it is:
@@ -98,8 +102,12 @@ live; it cannot approve, promote or write live. It prints
 the line that starts Claude Code on that key (`claude --settings ...`) and a `run-codex`
 launcher for Codex CLI. Give the person the line for the agent they use. Codex's launcher
 uses separate settings and native command permissions, with the owner's sign-in out of
-reach. These settings protect new sessions; a session that started on the owner's key
-still has that authority, so do not treat changing settings as changing this session's identity.
+reach. These settings protect new sessions. A session that started in the app's folder reads
+them at once: from its next command, its `cub` cannot read the owner's sign-in and fails with
+"operation not permitted". Run `cub` there with the agent's `CUB_CONFIG` and `CUB_CONTEXT`,
+which the command prints, and leave approval to the person's own terminal. A session that
+started elsewhere still has the owner's authority, so do not treat changing settings as
+changing its identity.
 
 To change a copy later:
 
