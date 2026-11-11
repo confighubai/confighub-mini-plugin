@@ -7,6 +7,7 @@ The plugin keeps a record of what an AI agent changes in your configuration, and
 - **Values the agent changes** in Kubernetes files, Helm values, Kustomize, Compose, GitHub Actions workflows, settings files, Terraform variables and agent configuration.
 - **Commands the agent runs** with `kubectl`, `helm`, `argocd`, `flux`, `terraform` or `cub`: where each one went, whether it changed something, and the values it set, such as `--replicas=5` or `helm --set`.
 - **What the agent said** at the end of each turn.
+- **What the agent said about each value it changed**: what it chose and what it set aside, in its own words, kept with that change. It is read from the session; the agent is asked nothing.
 
 It never keeps a command's output, a copy of a file, or anything that looks like a password, key or token. The record is kept in `~/.confighub/agent-changes`, outside your repository. Nothing in the repository changes unless you turn that on.
 
