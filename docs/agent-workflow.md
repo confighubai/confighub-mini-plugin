@@ -82,10 +82,12 @@ One question, asked once on this machine. When an agent works in a folder that h
 Enter means no. Your answer is kept, and the question is not asked again on that machine.
 A script answers with `--arrival yes` or `--arrival no` on the same commands. In Claude
 Code, `/confighub:install-mini` asks nothing, since whatever you could type there the
-agent could type too. It prints this line instead, and the setting stays off:
+agent could type too. It prints this line instead, once in a session, and the setting
+stays off. The command in it is the package's own `cub`, with your version and platform, so it runs as printed on a
+machine where `cub` is not yet on your `PATH`:
 
 ```
-ConfigHub: one setting is yours alone: whether a hub may start by itself to keep an app's settings files when an agent works in its folder. It is off. To turn it on, in your own terminal: cub mini install --arrival yes (or --arrival no, and this line is not shown again).
+ConfigHub: one setting is yours alone: whether a hub may start by itself to keep an app's settings files when an agent works in its folder. It is off. To turn it on, in your own terminal: ~/.confighub/mini/confighub-mini-VERSION-PLATFORM/bin/cub mini install --arrival yes (or --arrival no, and this line is not shown again).
 ```
 
 **After a yes.** When an agent works in a Git project folder that holds one of those
@@ -96,7 +98,7 @@ never starts a hub. The next session started in the folder brings the hub at its
 request, and shows you one line:
 
 ```
-ConfigHub: as chosen at setup on this machine, this folder's settings are now also kept in a hub the plugin started, as a staging and a production copy. Your files are unchanged and nothing is deployed. Turn this off here with cub mini changes --arrival off, or remove the hub with cub mini uninstall.
+ConfigHub: as chosen at setup on this machine, this folder's settings are now also kept in a hub the plugin started, as a staging and a production copy. Your files are unchanged and nothing is deployed. Turn this off with cub mini changes --arrival off, or remove the hub from your own terminal: cub mini uninstall --delete-data.
 ```
 
 **Values an agent wrote wait for you.** When an agent wrote the file production's copy
@@ -110,8 +112,10 @@ are not marked.
 
 **To turn it off.** For one folder, `cub mini changes --arrival off`; edits to its files
 are then no longer sent to the hub either. For the machine, `cub mini install --arrival no`.
-What a hub already holds stays until `cub mini uninstall --delete-data`. What this does
-not cover: [limits](limits.md).
+To turn one folder on again, in your own terminal: `cub mini changes --arrival on --dir PROJECT`.
+What a hub already holds stays until `cub mini uninstall --delete-data`, which removes
+the hub and every app it holds, not this folder's alone. What this does not cover:
+[limits](limits.md).
 
 ## Where the app runs
 
