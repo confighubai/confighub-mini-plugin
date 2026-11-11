@@ -1,6 +1,6 @@
 # An app you already have, in Claude Code: staging and production kept as they are
 
-This page is for someone whose app already has its settings in files, one set for staging and one for production, and who now lets Claude Code change them. Today an agent that can edit the staging file can edit the production file too. Here you ask Claude Code to attach ConfigHub to the app. Your staging and production values stay exactly as they are, your files are not changed, and changes to the hub's live configuration wait for your approval.
+Ask Claude Code to attach ConfigHub to your app, and keep working as before: your staging and production values stay exactly as they are, your files are not changed, and changes to production wait for your approval. This page is for someone whose app already keeps its settings in files, one set for staging and one for production, and who lets Claude Code change them; without this, an agent that can edit the staging file can edit the production file too.
 
 The app might run on your own machine, on another machine, in CI, on one or many sandbox nodes, in a shared development cluster, or in production. Attaching it creates configuration copies in the hub. Its running services use the hub's approved settings once their deployment path is connected ([where the app runs](../README.md#where-the-app-runs)).
 
@@ -46,7 +46,7 @@ If Argo CD or Flux deploys the app from Git, read this page, then [an app that A
    and make sure an agent cannot change production without my say
    ```
 
-3. Let the agent work. It starts a hub on your machine if none answers, then runs `cub mini adopt` with `--dry-run` first, which says what it would make and makes nothing. For a Terraform folder, it printed:
+3. Let the agent work. It starts a hub on your machine if none answers. If it does, its output has one line about a setting that is yours alone, whether a hub may start by itself in other folders; it is off, and this page does not need it ([what it is](../agent-workflow.md#a-hub-that-starts-by-itself-only-if-you-say-yes)). Then it runs `cub mini adopt` with `--dry-run` first, which says what it would make and makes nothing. For a Terraform folder, it printed:
 
    ```
    Without --dry-run, this makes app an app on pattern-web/web-service, from what app reads at start (common.tfvars, staging.tfvars for staging, prod.tfvars for live):
@@ -105,7 +105,7 @@ If Argo CD or Flux deploys the app from Git, read this page, then [an app that A
    cub mini approve APP-base/adopt
    ```
 
-   `cub mini approve` shows what live would take and asks you first.
+   `cub mini approve` shows what live would take and asks you first. When it worked, you see `Approved APP-base/adopt.`
 
 7. Commit `.confighub-app`:
 
@@ -138,6 +138,15 @@ Nothing has been changed.
 
 The agent's turn ends with one line when a change waits for you. What approving looks like, and what the agent is refused: [a new app, changing it later](new-app.md#changing-the-app-later).
 
+## What adopt refuses in a Kustomize repository
+
+A copy in the hub holds the base's resources, with what its overlay changes in them as the copy's own values. An overlay that does more than change values cannot be held that way. `cub mini adopt` refuses it by name before it writes anything, `--dry-run` included, and says which kustomization field does it, in which file, and what to do. For example: `overlays/prod adds the list spec.template.spec.containers.0.env to Deployment/api (patches in overlays/prod/kustomization.yaml)`.
+
+- **Refused:** an overlay that adds or leaves out a resource, including through its own `resources`, `components` or `configMapGenerator`; one that takes a field out, makes a list longer or shorter, or adds an empty map; `helmCharts`, `generators`, `transformers` and `validators`; and a base named by a URL.
+- **Carried:** `namespace`, labels, annotations, `images`, `replicas` and patches that change values; `namePrefix` and `nameSuffix`, with each reference to the renamed resource; a fraction such as `cpu: 0.5`; a value of another type than the base's; and an element of a list such as a container's `args`.
+
+Then adopt reads each copy back from the hub and compares it with what `kustomize` renders for its folder. If one differs, it names the first difference, removes what it made, and adopts nothing. A refusal is the honest answer: the alternative is a production copy that is not what your overlay deploys. Before plugin 0.81.0, adopt could report success while its copy left part of an overlay out. If you adopted a Kustomize repository with plugin 0.80.0 or earlier, run `cub mini upload` on it: it names any difference.
+
 ## Helm values
 
 `cub mini adopt` does not read a Helm chart's values file. To keep your own values for a chart, each with its reason, through the chart's next version, put the chart in the hub with [cub-helm](https://github.com/confighub/cub-helm): `cub helm install NAME CHART --version V --values my-values.yaml`. Before you take the chart's next version, you see what it would change. The steps are in [your own Helm chart](../your-own-chart.md), about 10 minutes, run in a terminal rather than asked of the agent.
@@ -146,7 +155,8 @@ The agent's turn ends with one line when a change waits for you. What approving 
 
 - **Adopt found no settings.** It prints `reads no settings adopt can find` and names where it looked. Your files may use other names, such as `values-prod.env`. Ask the agent to say where the app's settings are, or copy them into one of the files in the table above.
 - **A value was left out and named.** A value that looks like a password or a token never goes into the hub. Keep it out of the file, and name where the app reads it instead, such as `DB_PASSWORD_FILE`. Set it in a terminal with `cub mini secret set` ([a secret for live](../from-plugin-to-confighub.md#a-secret-for-live-that-no-agent-can-read)).
-- **An overlay that is neither staging nor production** is left as it is, and named. So is a resource an overlay adds or leaves out: it stays in the repository.
+- **An overlay that is neither staging nor production** is left as it is, and named.
+- **Adopt refused an overlay.** It names the kustomization field and what to do, and nothing was written ([what adopt refuses](#what-adopt-refuses-in-a-kustomize-repository)).
 - **The values in the hub do not match your files.** Run `cub mini adopt APP-FOLDER --dry-run` again and compare. `cub mini copies APP --to DIR` writes each copy as the hub holds it.
 - **The agent asks you for the right to write production,** or offers to use your own sign-in. Say no. That would remove the approval. `cub mini require-approval` prints lines for `CLAUDE.md` or `AGENTS.md` that tell the agent to propose instead; the agent gives them to you, and you add them.
 
@@ -161,12 +171,28 @@ Your files were never changed, so there is nothing to undo in them. To leave:
 
 Every way out: [going back](going-back.md).
 
-## Verify what you have
-
-1. Check the base, staging and live values in the hub. Live's recorded revision should stay unchanged while the change order waits; the agent must be unable to approve it.
-2. If you only wanted managed configuration, that is the result of this walkthrough. To run services from it, connect the [deployment path for your target](../README.md#where-the-app-runs).
-3. Check that the service answers, then compare its loaded settings or release with the approved live revision. Check both before and after your approval. Use the target guide's restart and rollback steps; a configuration copy alone does not prove a service is running ([verification](../approvals.md#verify-the-result)).
-
 ## How this was tested
 
 On 7 November 2026, with the plugin 0.78.0 and the confighub mini 0.10.7-mini.9 its sessions downloaded, 32 non-interactive Claude Code sessions were asked the request in step 2: 16 on a Terraform folder and 16 on a Kustomize repository that an Argo CD Application deploys, on Sonnet and Opus. A program read the hub and the files afterwards. In 32 of 32, the hub held the person's staging and production values, the agent's key could edit nothing in production, and the person's files were unchanged. The `.env` output is from a session the same day. The Kustomize upload output is from a run of the change released in confighub mini 0.10.7-mini.11, which lets `cub mini upload` take a Kustomize repository. The wording of a line may differ slightly in the current release.
+
+## What you have now
+
+- Your app and its files, unchanged, with `.confighub-app` committed beside them.
+- A hub on this machine with three copies of its settings: the base, with what every environment shares; staging, with its own values, taking each change at once; and live, with its own values, taking a change only when you approve it.
+- A key of the agent's own, `APP-agent`. Claude Code sessions in the repository run on it: they can propose a change to live, and cannot approve it.
+- The plugin's record of what each agent changed, with the request and, where the agent said it, what it chose and why. `CUB_MINI_DECISIONS=0` in Claude Code's settings stops keeping what the agent said.
+
+If Argo CD or Flux deploys the app from Git, Git still decides what runs: see [an app that Argo CD or Flux deploys](gitops-app.md). Otherwise, a running service reads live's values only once its [deployment path](../README.md#where-the-app-runs) is connected. To check:
+
+1. Check the base, staging and live values in the hub. Live's recorded revision should stay unchanged while a change order waits; the agent must be unable to approve it.
+2. Check that the service answers, then compare its loaded settings or release with the approved live revision, before and after your approval. A configuration copy alone does not prove a service is running ([verification](../approvals.md#verify-the-result)).
+
+## What to try next
+
+In five minutes, in the same repository:
+
+1. Ask the agent to change a production value, such as a request limit. Its turn ends with one line: a change waits for you. Run `cub mini waiting`, then the `cub mini approve` command it prints, or `cub mini refuse APP-base/ORDER --reason "WHY"`.
+2. In Claude Code, type `/confighub:why` with the setting's name: each change to it, the request behind it, and the agent's own words about it.
+3. Run `cub mini receipts APP --setup` for the app's setup as the hub holds it: its copies, approval, agent keys, own values and delivery, each with why, and the `cub` command that changes it.
+
+Then: [try a change in a copy first](../from-plugin-to-confighub.md#try-a-change-in-a-copy-first), [a password for live that no agent can read](../from-plugin-to-confighub.md#a-secret-for-live-that-no-agent-can-read), or, when two agents work on the app, [one agent asks another](../approvals.md#one-agent-asks-another-for-a-change).

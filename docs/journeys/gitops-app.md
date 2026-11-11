@@ -1,6 +1,6 @@
 # An app that Argo CD or Flux deploys from Git: a hub beside it, as its source, and back
 
-This page is for a team whose app is deployed by Argo CD or Flux from a Git repository, and whose agents now propose changes to it. Attaching ConfigHub keeps your values and holds production for your approval in the hub, but Argo CD or Flux still deploys whatever reaches the branch it watches. This page shows the three ways to set that up, how to move one app so that the cluster deploys from the hub, and how to hand it back to Git.
+Let your agents propose changes to an app that Argo CD or Flux deploys, keep your values, and have production take only what you approve, with the same controller and the same pods. This page is for a team whose app is deployed from a Git repository. It shows three ways to set it up, from the hub beside Git to the hub as the app's source, how to move one app with no pod restarted, and how to hand it back to Git. Until you move an app, Argo CD or Flux still deploys whatever reaches the branch it watches.
 
 ## Words used on this page
 
@@ -30,7 +30,7 @@ attach confighub to this existing app: keep my staging and production values exa
 and make sure an agent cannot change production without my say
 ```
 
-The agent adopts the Kustomize repository as it is: the base as `kustomize` renders it, staging's own values from `overlays/staging`, and live's own from the prod overlay, or from the overlay an Argo CD Application in the repository deploys. The steps, outputs and costs are in [an app you already have](existing-app.md). In 15 of 16 measured sessions, the agent then said what this does not cover, as here:
+The agent adopts the Kustomize repository as it is: the base as `kustomize` renders it, staging's own values from `overlays/staging`, and live's own from the prod overlay, or from the overlay an Argo CD Application in the repository deploys. An overlay whose changes a copy cannot hold, such as one that adds a resource, is refused by name, and nothing is written ([what adopt refuses](existing-app.md#what-adopt-refuses-in-a-kustomize-repository)). The steps, outputs and costs are in [an app you already have](existing-app.md). In 15 of 16 measured sessions, the agent then said what this does not cover, as here:
 
 > **Argo CD**
 > Argo CD still syncs production from `overlays/prod` on `main`, so a merge to `main` still changes production without your approval. Because of that, ConfigHub only gates the agent's changes to production if the Argo CD route is closed. You could protect `main` or change how Argo CD syncs. I haven't changed either.
@@ -139,11 +139,14 @@ In our run, Flux's Kustomization `shop` was Ready at the hand-back commit, nothi
 
 With Argo CD, the same round trip ran on an app synced by an Argo CD Application: onto the hub under the same Argo CD, with no pod restarted, and back to Git with the hub stopped and the same Deployment running.
 
-One command each way, for the move to the hub and the hand-back, is coming in the next release.
+From confighub mini 0.10.7-mini.19, one command does each move, for an app adopted from a Kustomize repository or uploaded with `cub mini upload FOLDER --variant live --target none`:
+
+- `cub mini deploy-from-hub APP --variant live --repo DIR` finds the one Argo CD Application or Flux Kustomization that deploys the copy, and points it at the hub. It refuses, and says what it found, when none or several deploy it, when the copy holds other objects than Git deploys, or when its pod templates differ from what runs. It checks that the same pods run before and after. `--dry-run` says what it would change. A person runs it: on an agent's key it refuses.
+- `cub mini back-to-git APP --variant live --repo DIR` writes the copy into the folder the controller deployed from, with `CHANGES.md`, commits it, and once the controller's Git source has the commit, puts the controller back as it found it. `--push` pushes the commit; `--stop-hub` stops the hub once no copy deploys from it.
 
 ## If something goes wrong
 
-- **Pods restart once, on an app whose Deployment reads a ConfigMap.** In the current release, the hub's copy of such a pod template gains an annotation, `hash.confighub.com/...`, that your Git does not have. Deployed from the hub, or written back to Git, the pods roll once. In a test of 22 public charts, 9 had such workloads. Try it on a kind cluster first, as above, and check `kubectl get pods` before and after.
+- **You want pods to restart when a ConfigMap changes.** `cub mini upload` keeps pod templates as your files have them, so taking a running app over restarts nothing; it takes out the hash annotation ConfigHub would add, and says so. `cub mini upload --roll-on-configmap` keeps that annotation instead, so a ConfigMap change restarts the pods that use it. Check `kubectl get pods` before and after, on a kind cluster first.
 - **The hand-back set old values for a moment.** The Kustomization was resumed before its GitRepository had the new commit. Wait for it, as in step 3.
 - **The cluster cannot reach a hub on your laptop.** confighub mini listens on your machine only. A cluster elsewhere needs hosted ConfigHub or a server of your own.
 - **A merge to Git still changed production.** In way 1, Git still deploys. Use way 2 or way 3.
@@ -157,3 +160,21 @@ One command each way, for the move to the hub and the hand-back, is coming in th
 ## How this was tested
 
 On 8 November 2026, with the released confighub mini 0.10.7-mini.11, on a Mac with OrbStack and kind: the Flux round trip above, every check passed, in 189 seconds; and an app under Argo CD, moved onto the hub, changed there and on the cluster, and handed back to Git, in 346 seconds. No Claude Code session was needed for these runs: the agent's change was typed as an agent makes it, on its own key. The Argo CD warning quoted in step 1 is from 16 Claude Code sessions on 7 November 2026, with the plugin 0.78.0 and confighub mini 0.10.7-mini.9.
+
+## What you have now
+
+- **After way 1:** your repository and files unchanged; a hub on this machine with the app's base, staging and live copies; agents on a key of their own that can propose and cannot approve. Argo CD or Flux still deploys from Git, so a merge to the branch it watches still changes production.
+- **After way 2:** the same, and a required check that fails a pull request whose values differ from the hub's approved copy.
+- **After way 3:** for one app, the controller pulls from the hub over OCI, and only an approved change reaches the cluster. The same pods kept running. Every other app still deploys from Git.
+
+Each can be undone: way 3 by [handing the app back to Git](#hand-it-back-to-git), and the hub with `cub mini stop`, or `cub mini uninstall --delete-data` to remove it and its data ([going back](going-back.md)).
+
+## What to try next
+
+In five minutes, after way 1:
+
+1. Ask the agent to raise production's replicas. Its turn ends with one line: a change waits for you. Run `cub mini waiting`, then the `cub mini approve` command it prints.
+2. In Claude Code, type `/confighub:inventory`: what the repository deploys, and what deploys each part.
+3. Run `cub mini drift --dir DIR` on the checkout the controller deploys: each field on the cluster that Git does not set, with who set it. It only reads.
+
+Then try way 3 on a kind cluster, as above, before you move an app your team relies on.

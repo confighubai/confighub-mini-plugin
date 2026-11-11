@@ -65,6 +65,54 @@ Other wording of an explicit project-wide decline can be saved by the agent with
 command. An explicit later request to use ConfigHub still works without enabling future
 unsolicited offers. `CUB_MINI_TIPS=0` also remains available for turning off tips globally.
 
+## A hub that starts by itself, only if you say yes
+
+A hub can also start without your asking, to keep the settings files of an app an agent
+works on (`.env`, `.env.staging`, `.env.production`) as a staging and a production copy.
+This is off until you say yes to one question at setup.
+
+**The question.** The first time you set up confighub mini in a terminal, with
+`bin/confighub mini get` from the plugin, `cub mini install` or
+`cub mini require-approval --agent`, it asks:
+
+```
+One question, asked once on this machine. When an agent works in a folder that holds an app's settings files (.env, .env.staging, .env.production), may a hub start by itself to keep them, as a staging and a production copy? Your files are not changed, nothing is deployed, production's copy waits for your approval, and you are told in one line when it starts. Turn it on? [y/N]
+```
+
+Enter means no. Your answer is kept, and the question is not asked again on that machine.
+A script answers with `--arrival yes` or `--arrival no` on the same commands. In Claude
+Code, `/confighub:install-mini` asks nothing, since whatever you could type there the
+agent could type too. It prints this line instead, and the setting stays off:
+
+```
+ConfigHub: one setting is yours alone: whether a hub may start by itself to keep an app's settings files when an agent works in its folder. It is off. To turn it on, in your own terminal: cub mini install --arrival yes (or --arrival no, and this line is not shown again).
+```
+
+**After a yes.** When an agent works in a Git project folder that holds one of those
+files, the end of its turn prepares the folder, without a word: sessions started there
+from then on run as the agent, on a key that cannot approve, in a sandbox that keeps your
+own ConfigHub configuration out of reach. The session that was running is yours, and
+never starts a hub. The next session started in the folder brings the hub at its first
+request, and shows you one line:
+
+```
+ConfigHub: as chosen at setup on this machine, this folder's settings are now also kept in a hub the plugin started, as a staging and a production copy. Your files are unchanged and nothing is deployed. Turn this off here with cub mini changes --arrival off, or remove the hub with cub mini uninstall.
+```
+
+**Values an agent wrote wait for you.** When an agent wrote the file production's copy
+starts from, such as the `.env` of a new app, that copy is marked "starting values, not
+approved". Nothing delivers it until you approve that exact revision. The line above then
+ends: `Production's copy starts from values an agent wrote, not approved, and nothing
+delivers it until you approve them: cub mini waiting.` `cub mini waiting` lists it first,
+with who wrote the values and when, and the command that approves them,
+`cub mini approve APP-live`. Files you kept before any agent wrote to them are yours, and
+are not marked.
+
+**To turn it off.** For one folder, `cub mini changes --arrival off`; edits to its files
+are then no longer sent to the hub either. For the machine, `cub mini install --arrival no`.
+What a hub already holds stays until `cub mini uninstall --delete-data`. What this does
+not cover: [limits](limits.md).
+
 ## Where the app runs
 
 Your app can be on your own machine, another machine, in a CI job, in one or many sandbox

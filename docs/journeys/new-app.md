@@ -1,6 +1,6 @@
 # A new app in Claude Code, with a staging copy and a live copy
 
-This page is for someone who makes apps with Claude Code and wants a safe place to try changes before they reach the copy people use. An agent that writes your app can change its production settings as easily as its staging ones, and a rule in `CLAUDE.md` is only a request. Here you ask for the app in one sentence, and you end with the app, staging configuration that takes changes at once, and live configuration that changes only when you approve. A second app can start from the first.
+Ask Claude Code for an app in one sentence, and end with the app, staging configuration that takes your agent's changes at once, and live configuration that changes only when you approve. A second app can start from the first. This page is for someone who makes apps with Claude Code and wants production to change only with their say: an agent can change production settings as easily as staging ones, and a rule in `CLAUDE.md` is only a request.
 
 The app might run on your own machine, on another machine, in CI, on one or many sandbox nodes, in a shared development cluster, or eventually in production. This walkthrough creates staging and live configuration in the hub. Connect the running copies to that configuration using the deployment path for your target ([where the app runs](../README.md#where-the-app-runs)).
 
@@ -61,6 +61,8 @@ The app might run on your own machine, on another machine, in CI, on one or many
    To stop the hub: cub mini stop. To remove it and its data: cub mini uninstall --delete-data.
    ```
 
+   From plugin 0.81.0, the output also has one line about a setting that is yours alone, `ConfigHub: one setting is yours alone: whether a hub may start by itself …`. It is off, and this walkthrough does not need it: you asked for this hub. To decide it, read [a hub that starts by itself](../agent-workflow.md#a-hub-that-starts-by-itself-only-if-you-say-yes).
+
    Then it runs `cub mini adopt greeter`, which makes the three copies from what the app reads at start:
 
    ```
@@ -98,7 +100,7 @@ The app might run on your own machine, on another machine, in CI, on one or many
    cub mini approve greeter-base/adopt
    ```
 
-   `cub mini approve` shows what the change would do and asks you first. In a run of an app with other values in its files, it showed:
+   `cub mini approve` shows what the change would do and asks you first. When it worked, you see `Approved greeter-base/adopt.` In a run of an app with other values in its files, it showed:
 
    ```
    greeter-base/adopt, for greeter-live: greeter adopted from what greeter reads at start (.env, .env.staging for staging, .env.production for live) (made just now)
@@ -148,8 +150,6 @@ The agent cannot approve its own change. When it tried, on its key (named `g-age
 cub mini: the hub did not take your approval: only someone its workflow for greeter-live names may approve, and g-agent is not one of them. Nothing was approved or promoted
 ```
 
-More you can ask for, each a sentence to the agent: [try a change in a copy first](../from-plugin-to-confighub.md#try-a-change-in-a-copy-first), [a Postgres, a Redis, an S3 bucket or a mail sender](../from-plugin-to-confighub.md#a-service-the-app-needs), and [a password for live that no agent can read](../from-plugin-to-confighub.md#a-secret-for-live-that-no-agent-can-read).
-
 ## A second app from the first
 
 Start Claude Code in a new folder, outside the first app's Git repository, and ask:
@@ -189,18 +189,29 @@ Approve its live copy as in step 7, with `cub mini approve notes-base/adopt`.
 
 Every way out, step by step: [going back](going-back.md).
 
-## When you need more
-
-- **Your team on one hub.** Copy your app up to your organization's ConfigHub with `cub mini copy --from-context`, and connect the two with `cub mini connect` ([step 3 of from the plugin to ConfigHub](../from-plugin-to-confighub.md#step-3-your-organizations-confighub)).
-- **A service on a VM** fed only approved values from the hub ([a service on a VM](../vm.md)).
-- **A cluster** that deploys what the hub approved ([GitOps over OCI](../gitops-over-oci.md)).
-
-## Verify what you have
-
-1. Check the base, staging and live values in the hub. Live's recorded revision should stay unchanged while the change order waits; the agent must be unable to approve it.
-2. If you only wanted managed configuration, that is the result of this walkthrough. To run services from it, connect the [deployment path for your target](../README.md#where-the-app-runs).
-3. Check that the service answers, then compare its loaded settings or release with the approved live revision. Check both before and after your approval. Use the target guide's restart and rollback steps; a configuration copy alone does not prove a service is running ([verification](../approvals.md#verify-the-result)).
-
 ## How this was tested
 
 Each step ran in non-interactive Claude Code sessions (`claude -p`) in empty Git repositories, with no `cub` on the path, on 7 November 2026, with the plugin 0.78.0 and confighub mini 0.10.7-mini.9; a program read the hub and the files afterwards, not what the session said. The app came out with its three copies in 16 of 16 sessions, and a second app started from the first's base in 7 of 8 ([the evidence](../evidence.md#the-app-in-one-request)). The agent's upload, `cub mini waiting` and the refused approval are from a run the same day of the change that went out in confighub mini 0.10.7-mini.11, where an agent's key changes staging at once. The wording of a line may differ slightly in the current release.
+
+## What you have now
+
+- The app, with its files as the agent wrote them, and `.confighub-app` committed beside them.
+- A hub on this machine with three copies of its settings: `greeter-base`; `greeter-staging`, which takes each change at once; and `greeter-live`, which takes a change only when you approve it.
+- A key of the agent's own, `greeter-agent`. Claude Code sessions in the folder run on it: they can propose a change to live, and cannot approve it.
+- The plugin's record of what each agent changed, with the request and, where the agent said it, what it chose and why. `CUB_MINI_DECISIONS=0` in Claude Code's settings stops keeping what the agent said.
+
+What you do not have yet is a running service that reads live's values. To check one:
+
+1. Check the base, staging and live values in the hub. Live's recorded revision should stay unchanged while a change order waits; the agent must be unable to approve it.
+2. If you only wanted managed configuration, that is the result of this walkthrough. To run services from it, connect the [deployment path for your target](../README.md#where-the-app-runs).
+3. Check that the service answers, then compare its loaded settings or release with the approved live revision, before and after your approval. A configuration copy alone does not prove a service is running ([verification](../approvals.md#verify-the-result)).
+
+## What to try next
+
+In five minutes, in the same folder:
+
+1. Ask the agent for a change, such as *"make the greeting warmer"*. Its turn ends with one line: a change waits for you. Run `cub mini waiting`, then the `cub mini approve` command it prints.
+2. In Claude Code, type `/confighub:why GREETING`: each change to the greeting, the request behind it, and the agent's own words about it.
+3. Run `cub mini receipts greeter-live` for everything the hub keeps about live's latest revision: who made it, why, and who approved it. `cub mini receipts greeter --setup` shows the app's setup: its copies, approval, agent keys, own values and delivery, each with why, and the `cub` command that changes it.
+
+Then, each a sentence to the agent: [try a change in a copy first](../from-plugin-to-confighub.md#try-a-change-in-a-copy-first), [a Postgres, a Redis, an S3 bucket or a mail sender](../from-plugin-to-confighub.md#a-service-the-app-needs), or [a password for live that no agent can read](../from-plugin-to-confighub.md#a-secret-for-live-that-no-agent-can-read). Later: [your team on one hub](../from-plugin-to-confighub.md#step-3-your-organizations-confighub), [a service on a VM](../vm.md) fed only approved values, or [a cluster](../gitops-over-oci.md) that deploys what the hub approved.

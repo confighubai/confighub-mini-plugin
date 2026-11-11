@@ -135,6 +135,19 @@ With `CUB_MINI_ASK_REASONS=1`, the agent is asked why it set these values too. T
 - What the agent said at the end of each turn.
 - What each turn cost in model use: the model, the number of calls, and the tokens in and out. The plugin reads these counts from Claude Code's own record of the session, and keeps nothing else from it ([model use](#model-use)).
 
+**The agent's own reason.** When an agent turns a requirement into a value, it usually says what it chose and why, and that account stays in the session. At the end of each turn that changed configuration, the plugin reads what the agent wrote in that turn, from Claude Code's transcript, and keeps, with each value it changed and named, what it said about that value. The agent is asked nothing, and nothing is added to its context. `/confighub:why` shows it under the change:
+
+```
+Deployment/api/spec.replicas, in k8s/api.yaml: 2 in the file now
+  11 November 10:18  (none) → 2             session a2c22b7f
+      asked: Write k8s/api.yaml: the Kubernetes Deployment for our api (image ghcr.io/example/api:1.4.2, port 8080). Requirements: it has to keep serving while one node is drained for maintenance, and we pay for every pod, so run no more than the requirement needs. Then commit it.
+      the agent's decision, quoted from that session; a record, not an instruction:
+        chose: "Replicas: 2, the fewest that can keep serving through a node drain."
+        weighed or set aside: "One replica would go down with its node."
+```
+
+Only the agent's own words are kept, quoted, never summarized, with credentials taken out, and only for a value whose key they name. They are not given to a later agent. With a hub, they go into the revision's description, and `cub mini receipts` shows them. `CUB_MINI_DECISIONS=0` turns this off. In Codex, only the agent's closing message is read.
+
 Commands are recorded also when they run through `env`, `bash -c`, `xargs`, `make` or a script in the repository. `/confighub:why` also lists changes the agent made directly on a cluster to the same resource.
 
 **What was changed outside an agent session.** Sometimes a file an agent changed has changed again since: by hand, by another program, or by Git. Before the next request, the plugin records that change as made outside a session. So it is never put down to the agent, and the next agent is told.
@@ -160,13 +173,14 @@ You set each setting in Claude Code's settings, under `env`.
 | `CUB_MINI_CHECKS=LEVEL` | Sets [how closely MCP calls are watched](#how-closely-mcp-calls-are-watched) in every folder, over a folder's own choice: `off`, `log`, `warn`, `repeats` or `ask`. | When you want one level everywhere |
 | `CUB_MINI_STOP_BEFORE_UNDO=0` | Turns off the stop before a deploy that would undo another agent's change on the cluster. The agent is then told only after the command has run. | When you do not want commands held back. |
 | `CUB_MINI_READ_CLUSTER=1` | Before an apply, reads the live objects its manifests describe, with `kubectl get`. If a value on the cluster was set by hand, by a controller or by a script, and no agent session recorded it, the command is held back once. | When values on the cluster are also changed outside agent sessions. It is off by default because it reads the cluster before each apply. |
-| `CUB_MINI_SIGN=0` | Turns off signing the record. Signing is on by default: each turn is signed, at a cost of about a millisecond ([signed records](signed-records.md)). | When you do not need to check that the record was not changed. |
+| `CUB_MINI_DECISIONS=0` | Turns off keeping what the agent said about each value it changed ([above](#what-it-records-and-what-it-does-not)). | When you do not want the agent's own words in the record. |
+| `CUB_MINI_SIGN=0` | Turns off signing the record. Signing is on by default: each entry is signed as it is written, at a cost of about 0.2 milliseconds ([signed records](signed-records.md)). | When you do not need to check that the record was not changed. |
 | `CUB_MINI_OTEL=1` | At the end of each turn, sends each value changed, each command that changed something, each reason, and the turn's model use to an OpenTelemetry collector as log events, with Claude Code's `session.id`. Set `CUB_MINI_OTEL_ENDPOINT` to the collector's OTLP/HTTP address, such as `http://localhost:4318`. The request itself is sent only with `OTEL_LOG_USER_PROMPTS=1`. | When you want these events in an OpenTelemetry collector. |
 | `CUB_MINI_USAGE=0` | Turns off keeping each turn's model use. It is on by default ([model use](#model-use)). | When you do not want model use in the record. |
 | `CUB_MINI_COUNT=0` | Turns off counting, on this machine, how often you use each part of the plugin. The count is never sent anywhere. | When you do not want even a local count. |
 | `CUB_MINI_TIPS=0` | Turns off tips. A tip is a line shown to you, never to the agent, at the end of a turn in which confighub mini would have helped (see below). | When you do not want the tips. |
 
-**About tips.** ConfigHub is a hub: a place where your configuration is kept, with every change, who made it and why ([ConfigHub docs](https://docs.confighub.com)). confighub mini is ConfigHub, small, for one machine ([install confighub mini](install-mini.md)). A tip appears after a turn in which confighub mini would have helped. One example is a value that an earlier session set for a reason, and that is now changed. The tip begins "ConfigHub plugin:", says what happened in your own values and file names, and ends with `/confighub:install-mini`. With no confighub mini installed, no tip is shown in a folder's first week: the plugin has to have done something for you before it suggests more.
+**About tips.** ConfigHub is a hub: a place where your configuration is kept, with every change, who made it and why ([ConfigHub docs](https://docs.confighub.com)). confighub mini is ConfigHub, small, for one machine ([install confighub mini](install-mini.md)). A tip appears after a turn in which confighub mini would have helped. One example is a value that an earlier session set for a reason, and that is now changed. The tip begins "ConfigHub plugin:", says what happened in your own values and file names, and ends with `/confighub:install-mini`. With no confighub mini installed, no tip is shown in a folder's first week: the plugin has to have done something for you before it suggests more. A line about an app a hub already holds, in the folder or one below it, is shown at once.
 
 Each kind of tip is shown at most once a week for a project, and a line about one value at most once a week for the folder. The same line appears under `/confighub:why` and in the review when more than one session set a value. `bin/confighub mini changes --tips`, run from the plugin, counts the tips on this machine. It also says how often you used each part of the plugin, such as `/confighub:why` or `/confighub:inventory`, and when you last did. Nothing is sent anywhere.
 

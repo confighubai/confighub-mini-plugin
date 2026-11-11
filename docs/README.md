@@ -2,6 +2,8 @@
 
 The pages are grouped by what you are doing. Each page starts by saying who it is for and what you get from it. To see how the plugin, confighub mini and your organization's ConfigHub fit together, start with [from the plugin to ConfigHub](from-plugin-to-confighub.md). For an AI agent, [`llms.txt`](../llms.txt) lists every page with the question it answers.
 
+**One app, two people.** You ship an app with your agent, and approve what reaches production ([a new app](journeys/new-app.md)). Then someone makes it fit for production, each value with its reason, and shares the setup; your next app starts from their fixes ([an app from a setup someone shared](from-plugin-to-confighub.md#an-app-from-a-setup-someone-shared)). Two people sharing one hub in the cloud is not available yet. Today each of you runs a hub on your own machine and you share setups as files, or you share one hub on a server you both reach.
+
 ## What are you doing?
 
 | You are | Start here | You end with |
@@ -19,7 +21,7 @@ A few words used throughout:
 - **A hub** is a place where configuration is kept, with every change, who made it and why. **ConfigHub** is that hub.
 - **confighub mini** is ConfigHub made small enough that every agent can have a hub of its own: on your laptop, in a sandbox or in a CI job.
 
-**Not using Kubernetes yet?** [Compare the plugin, mini hub and shared hub](from-plugin-to-confighub.md#before-you-use-kubernetes). All three offer value for apps outside Kubernetes. The comparison separates hub hosting from app deployment. Today's cloud is single-user; the team path requires a provisioned shared hub.
+**Not using Kubernetes yet?** [Compare the plugin, mini hub and shared hub](from-plugin-to-confighub.md#before-you-use-kubernetes). All three offer value for apps outside Kubernetes. The comparison separates hub hosting from app deployment.
 
 Run [four product examples](../examples/roadmap/README.md): a VM service with approval and rollback, reused settings, a hub round trip, and a scoped [extension](../examples/extensions/config-snapshot/README.md).
 

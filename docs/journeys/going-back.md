@@ -18,6 +18,7 @@ This page is for anyone who added the ConfigHub plugin, confighub mini or a hub 
 | The agent's key | `cub mini revoke-agent APP-agent`. Its sessions lose their rights at once, those already signed in too. Then delete `.claude/settings.local.json` in the repository, or take out what the agent setup added to it | What the agent did, in the hub |
 | Every agent session, at once | `touch ~/.confighub/halt` stops every Claude Code session with the plugin at its next tool call. Remove the file to let them run again | A process an agent already started keeps running |
 | The hub as the source for an app on Argo CD or Flux | Write the app back to Git and point the controller at Git again ([hand it back to Git](gitops-app.md#hand-it-back-to-git)) | The same Deployment and pods, and a `CHANGES.md` in Git |
+| A hub that starts by itself | For one folder, `cub mini changes --arrival off`. For the machine, `cub mini install --arrival no` | What the hub already holds, until you remove confighub mini |
 | confighub mini | Take your apps out as plain files ([below](#take-an-app-out-as-plain-files)), then `cub mini stop`, or `cub mini uninstall --delete-data` | The files you wrote out. Your app's own files, which the hub never changed |
 | The plugin | `claude plugin uninstall confighub@confighub` | The record, in `~/.confighub/agent-changes`, removed after 30 days without use. Nothing in your repository, unless you turned on a setting that writes there |
 
