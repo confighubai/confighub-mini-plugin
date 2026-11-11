@@ -2,6 +2,8 @@
 
 `read.py` is an executable example of an extension using the existing `cub` interface. It reads one unit in one space and writes a JSON snapshot. It does not deploy an app or approve a change.
 
+An experimental [delivery add-on contract](../delivery/README.md) extends this read with import, apply and compare, tried against a directory stand-in only.
+
 Run the complete setup, access checks and cleanup from [R4](../../roadmap/README.md#r4-read-a-pinned-revision-from-a-small-extension). To use a previously provisioned reader context:
 
 ```sh
