@@ -34,10 +34,7 @@ after a restart to start the hub again.
 ## 2. Make the app's copies
 
 The app's settings are an env file in its folder: `.env`, with `KEY=VALUE` lines. For a new
-app, write the code and its `.env` first (`PORT`, `GREETING`, `LOG_LEVEL`, and so on), and put
-each value the person gave for staging or production in `.env.staging` or `.env.production`,
-even when `.env` has it too: live has a value from `.env.production` at once, and one only in
-`.env` only after the person approves. For an
+app, write the code and its `.env` first (`PORT`, `GREETING`, `LOG_LEVEL`, and so on). For an
 existing app, use the files the person has: `.env` (or `app.env`, a compose file's
 environment), with `.env.staging` and `.env.production` beside it if they keep them, or a
 Terraform folder's `common.tfvars` with `staging.tfvars` and `prod.tfvars`. A Kustomize
