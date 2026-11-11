@@ -18,12 +18,14 @@ The owner's approval workflow decides what the copy holds. A snapshot does not c
 
 ## Run the contract tests
 
-The tests need only Python 3's standard library. They use a directory as the provider and a fake hub:
+The reference add-on, `delivery.sh`, is POSIX shell: it needs `cub` and the standard utilities of macOS or Linux, and nothing else. The tests are the only part that needs Python, its standard library alone, and `jq`, which their stand-in for `cub` uses. They use a directory as the provider and that stand-in as the hub:
 
 ```sh
 cd examples/extensions/delivery
 python3 -m unittest discover -s . -v
 ```
+
+To test an add-on of your own with the same three commands, name it: `DELIVERY_PROGRAM=/path/to/add-on python3 -m unittest discover -s . -v`. The tests also try inputs written to break a shell program: values with spaces, quotes, `$`, backticks or a newline inside quotes, a value or path that starts with `-`, a name with `=`, a path with spaces, and a provider folder that is a symbolic link.
 
 Each test passes on the reference add-on. Each was also seen to fail with a small fault planted in a copy of the add-on, such as "apply writes to the provider every time" or "a setting named twice is taken".
 
@@ -32,16 +34,18 @@ Each test passes on the reference add-on. Each was also seen to fail with a smal
 The owner gives the add-on a reader key for one copy, never an owner or proposer key:
 
 ```sh
-python3 delivery.py import --provider-root /private/provider --dir /private/app
+sh delivery.sh import --provider-root /private/provider --dir /private/app
 # Owner: cub mini adopt /private/app --name api
 # Owner: cub mini pull-key delivery-reader api --variant live
 CUB_CONFIG=/private/reader-config CUB_CONTEXT=delivery-reader \
-  python3 delivery.py apply --provider-root /private/provider \
+  sh delivery.sh apply --provider-root /private/provider \
   --target production --space api-live --unit app --receipt /private/receipt.json
 CUB_CONFIG=/private/reader-config CUB_CONTEXT=delivery-reader \
-  python3 delivery.py compare --provider-root /private/provider \
+  sh delivery.sh compare --provider-root /private/provider \
   --target production --space api-live --unit app
 ```
+
+The add-on parses no JSON itself. It reads each value it needs from the hub with `cub ... -o jq=...`, which prints it as one plain line, and reads the revision with `cub revision data` through the [snapshot reader](../config-snapshot/README.md), `read.sh`, which it loads from beside it. The stand-in provider keeps one JSON file per target. `compare` and `import` read that file only in the layout `apply` writes, and refuse any other layout, even valid JSON, rather than guess at it.
 
 Run `apply` as the owner, in CI, or on a timer on the owner's machine. There is no daemon. For a hub on your laptop, the add-on runs on that same machine. A real integration would receive its provider credential only in its own process environment: never in configuration, a receipt, a transcript or an agent session.
 
