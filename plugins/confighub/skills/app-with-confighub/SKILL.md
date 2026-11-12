@@ -11,7 +11,9 @@ its local record without a hub or account. Building an ordinary app does not req
 
 An explicit request to build an app **using ConfigHub**, or to attach ConfigHub, is already
 a setup choice. Complete that requested setup; do not replace it with plain files or ask
-whether they want ConfigHub again. Read reference sections 1–3, build the app and settings,
+whether they want ConfigHub again. For an app that Argo CD or Flux already deploys, with
+`CUB_MINI_STARTERS` set, read reference section 0 first: one line does the setup. Otherwise
+read reference sections 1–3, build the app and settings,
 start/find the chosen hub, adopt the app, and prepare its restricted agent setup. Missing
 `cub` is what the bundled program's `mini get` installs, not a reason to stop. A restricted
 key still uses the owner handoff below rather than acquiring new rights.
@@ -22,6 +24,7 @@ Inspect `.confighub-app` and existing environment and deployment setup first.
 
 | What the person needs | What to do |
 |---|---|
+| Attach ConfigHub to an app that Argo CD or Flux already deploys, with `CUB_MINI_STARTERS` set | Use reference section 0: one adopt line the person runs, which starts the hub, and one approval. Do not use sections 1–3 for it. |
 | Build an app using ConfigHub, or attach ConfigHub | Complete the already requested setup with reference sections 1–3. Explain the download in the brief action notice; do not ask again whether to use the product they chose. |
 | Understand or preserve an earlier setting | Use the history supplied by the plugin; attribute it briefly when it explains your answer. No hub needed. |
 | Try a change without affecting customers | Use existing isolation if it meets the need. For an attached app, inspect existing tries first and use an assigned empty try. Create a new one only if this identity has that right; otherwise give the owner the setup step below. A configuration copy is not a running sandbox: run and verify the service separately if requested. |
@@ -73,7 +76,7 @@ receiving the hook reminder, announce routine reads, or claim completion before 
 For scripts and MCP calls, provide the same brief attribution yourself.
 
 Read [app operations](references/app-operations.md) only for the operation needed:
-setup/adoption and patterns (1–2), proposals and secrets (3), isolated tries (4).
+an app Argo CD or Flux already deploys, with a starter (0), setup/adoption and patterns (1–2), proposals and secrets (3), isolated tries (4).
 For CI readers, use the public [snapshot contract](https://github.com/confighubai/confighub-mini-plugin/blob/main/examples/extensions/config-snapshot/README.md)
 and [working example](https://github.com/confighubai/confighub-mini-plugin/tree/main/examples/extensions/config-snapshot).
 For hub continuation, inspect `cub mini copy --help` and `cub mini connect --help` for the
@@ -86,6 +89,11 @@ merge histories, or prove that a hosted/team path works.
   owner's ConfigHub identity, remove the gate, or ask for live write rights. Give the owner
   the exact terminal command from `cub mini waiting`. A fresh restricted session is needed
   after `require-approval --agent`; changing settings does not restrict this session.
+- After setup, end your reply with the lines `require-approval --agent` printed under
+  "Tell the person this, in these words", as they are, and give the person no other command.
+- Read with your own key. Listing Spaces, what waits, an app's status, a Unit's data and the
+  cluster's objects are reads you run yourself; hand the person only what approves or moves
+  production.
 - Keep credentials out of chat, command arguments, exports and records. Secret setup is an
   owner-terminal step. A reader cannot propose or approve; a proposer cannot approve.
 - Distinguish settings stored, service running and approved revision deployed. Verify each
