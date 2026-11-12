@@ -9,7 +9,7 @@ This page is for teams that let coding agents change configuration that runs in 
 - ConfigHub keeps each approval: who gave it, when, and why.
 - If a cluster still deploys from Git, an optional check on each pull request lets only the approved copy merge.
 
-It works on confighub mini on a laptop, and on ConfigHub, hosted or on your own server (`cub server install`). Every step uses `cub`, ConfigHub's command-line tool. Today's cloud service is single-user: it can separate an owner from an agent, but colleague approval requires a provisioned shared hub. A free two-person cloud workspace is not available yet.
+It works on confighub mini on a laptop, and on ConfigHub, hosted or on your own server (`cub server install`). Every step uses `cub`, ConfigHub's command-line tool. Hosted ConfigHub and the enterprise edition support many people in one organization, so a colleague can be the person who approves.
 
 ## Why a rule in a file is not enough
 
