@@ -234,8 +234,9 @@ commands above.
 ## End with
 
 Tell the person, in a few lines: the app's three copies (`APP-base`, `APP-staging`,
-`APP-live`) and the value each holds that differs; that live changes only when they run
-`cub mini approve ...`; and the `export PATH` line for `cub` if step 1 installed it.
+`APP-live`) and the value each holds that differs; and that live changes only when they run
+the `cub mini approve ...` command, given with `cub`'s full path so that it runs in a
+terminal of their own as printed. Give no `export PATH` line.
 
 When the person asks how this works or what comes next, give them the page for what they
 are doing, from https://github.com/confighubai/confighub-mini-plugin/tree/main/docs/journeys:
