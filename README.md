@@ -38,6 +38,31 @@ The [step-by-step guide](docs/journeys/new-app.md) shows what each step prints. 
 
 You ask your agent to turn on debug logging, and staging and production both read the same `.env` file. Without ConfigHub, production starts logging customers' email addresses. With ConfigHub, staging and production get their settings from the hub instead. Staging gets debug logging right away, and production waits. `cub mini waiting` shows `LOG_LEVEL=info → LOG_LEVEL=debug`, and you refuse it with a reason: "Debug logs leak customer emails." The next agent that tries is told you said no, and why. An agent that also holds your cloud or cluster credentials can still go around this ([what an agent can reach](docs/agents-that-run-for-weeks.md#limiting-what-an-agent-can-reach)).
 
+## Why `cub mini`
+
+`cub` is ConfigHub's command-line tool, and it works with every hub. `cub mini` adds a few commands that each do a whole job in one step. `cub mini adopt` connects an app and makes its staging and production copies. `cub mini require-approval` puts production behind your yes and gives an agent a key that can suggest a change but not approve one. `cub mini approve` shows you the change before it approves it. With plain `cub`, each of these takes several commands, and agents get them wrong more often. Underneath, `cub mini` runs the same `cub` commands, so anything it does, you can also do with plain `cub` on any hub. [`cub mini` and plain `cub`](docs/cub-mini-and-cub.md) lists each command next to the `cub` commands it stands for.
+
+## When agents do real work
+
+Once agents run for hours, or several of them share an app, you'll want more control. A hub gives you:
+
+- **A key for each agent,** with only the rights it needs. It can suggest a production change, but it can't approve one ([agent keys](docs/agents-that-run-for-weeks.md#who-acted-give-the-agent-a-key-of-its-own)).
+- **Approval of the exact change.** Anything that comes after it needs its own approval ([approvals](docs/approvals.md)).
+- **A way to stop them.** Take away one agent's access, or shut the hub down. The agent is cut off at its next request ([stopping an agent](docs/agents-that-run-for-weeks.md#stopping-an-agent)).
+- **A record nobody can quietly edit.** Every change is signed when it's recorded, and one command tells you if anything was edited, added or deleted later ([signed records](docs/signed-records.md)).
+- **Agents asking each other.** When one agent asks another for a change, the hub records who asked ([requests between agents](docs/approvals.md#one-agent-asks-another-for-a-change)).
+- **What it cost.** Every change shows how many tokens the agent spent making it ([model use](docs/how-it-works.md#model-use)).
+
+## Starters
+
+A starter gives every new app of one kind your team's default settings, such as retries, timeouts and worker limits, each with a note on why it is set. It is one short YAML file, the same idea as a Spring Boot starter but for any kind of app. When you connect an app, it gets the starter's settings, except where you have already set a value. When your team fixes a default, the fix goes into the starter's next version, and every new app gets it.
+
+confighub mini comes with starters for a small web service and for a Kustomize repository that Argo CD or Flux deploys. Starters for apps on Vercel and apps that read AWS Parameter Store are in preview: they run against a local stand-in, not yet a real account. Starters are off until you switch them on. [Starters](docs/starters.md) shows how to switch them on, use them and write your own.
+
+## Works with your tools
+
+Git and GitHub, Argo CD and Flux, Vault, Sigstore, OpenTelemetry, Entire, Codex, and sandboxes and containers. [Integrations](docs/integrations.md) says what you get with each one and how far along it is.
+
 ## Commands in Claude Code
 
 ```
