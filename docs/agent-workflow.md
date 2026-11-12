@@ -124,10 +124,24 @@ the hub and every app it holds, not this folder's alone. What this does not cove
 
 ## Where the app runs
 
-Your app can be on your own machine, another machine, in a CI job, in one or many sandbox
-nodes, in a shared development cluster, or in production. The plugin and a hub can help
-before you use Kubernetes. App placement, hub hosting, access and deployment are separate
-choices. Keep a working delivery path until you choose to change it.
+An app can run on your own machine, on another machine, in a CI job, on one sandbox node or
+across many, in a shared development cluster, and onward through staging to production. Each
+is a useful place to start or stay. A CI test or a temporary sandbox doesn't need to become a
+production service. The plugin and a hub can help before you use Kubernetes
+([before you use Kubernetes](from-plugin-to-confighub.md#before-you-use-kubernetes)).
+
+An app can have several running copies, each with its own settings and lifetime. Several
+sandbox nodes might run independent copies for parallel tests, or parts of one distributed
+app. A shared development cluster might run several apps and environments.
+
+The hub keeps the configuration for those copies. Where the hub runs and where the app runs
+are separate choices, and so are access and deployment. Making staging and live
+configuration in a hub doesn't start those services: a process or deployment system has to
+read the configuration and run the app. Keep a working delivery path until you choose to
+change it. For the paths documented here, see [CI and sandboxes](ci-and-sandboxes.md),
+[a service on a VM](vm.md), and [Flux or Argo CD deploying from the hub](gitops-over-oci.md).
+A remote service needs a hub it can reach, and approval of production only holds if its
+deployment path uses the approved configuration.
 
 The agent's scoped key still cannot approve, read the owner's identity or broaden its own
 rights. An in-chat authenticated approval control and automatic provisioning of restricted

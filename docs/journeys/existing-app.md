@@ -2,7 +2,7 @@
 
 Ask Claude Code to attach ConfigHub to your app, and keep working as before: your staging and production values stay exactly as they are, your files are not changed, and changes to production wait for your approval. This page is for someone whose app already keeps its settings in files, one set for staging and one for production, and who lets Claude Code change them; without this, an agent that can edit the staging file can edit the production file too.
 
-The app might run on your own machine, on another machine, in CI, on one or many sandbox nodes, in a shared development cluster, or in production. Attaching it creates configuration copies in the hub. Its running services use the hub's approved settings once their deployment path is connected ([where the app runs](../README.md#where-the-app-runs)).
+The app might run on your own machine, on another machine, in CI, on one or many sandbox nodes, in a shared development cluster, or in production. Attaching it creates configuration copies in the hub. Its running services use the hub's approved settings once their deployment path is connected ([where the app runs](../agent-workflow.md#where-the-app-runs)).
 
 It works for these kinds of files:
 
@@ -192,7 +192,7 @@ On 7 November 2026, with the plugin 0.78.0 and the confighub mini 0.10.7-mini.9 
 - A key of the agent's own, `APP-agent`. Claude Code sessions in the repository run on it: they can propose a change to live, and cannot approve it.
 - The plugin's record of what each agent changed, with the request and, where the agent said it, what it chose and why. `CUB_MINI_DECISIONS=0` in Claude Code's settings stops keeping what the agent said.
 
-If Argo CD or Flux deploys the app from Git, Git still decides what runs: see [an app that Argo CD or Flux deploys](gitops-app.md). Otherwise, a running service reads live's values only once its [deployment path](../README.md#where-the-app-runs) is connected. To check:
+If Argo CD or Flux deploys the app from Git, Git still decides what runs: see [an app that Argo CD or Flux deploys](gitops-app.md). Otherwise, a running service reads live's values only once its [deployment path](../agent-workflow.md#where-the-app-runs) is connected. To check:
 
 1. Check the base, staging and live values in the hub. Live's recorded revision should stay unchanged while a change order waits; the agent must be unable to approve it.
 2. Check that the service answers, then compare its loaded settings or release with the approved live revision, before and after your approval. A configuration copy alone does not prove a service is running ([verification](../approvals.md#verify-the-result)).

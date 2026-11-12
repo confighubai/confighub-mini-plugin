@@ -16,7 +16,8 @@ Pick a page by what the person is doing. Commands and outputs on these pages are
 
 ## The plugin
 
-- [README](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/README.md): what the plugin does, installing it, the slash commands, a one-minute and a five-minute try
+- [README](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/README.md): what ConfigHub and the plugin are, installing it, a first try, the slash commands, and a map of the pages
+- [Try the plugin on its own](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/try-the-plugin.md): a one-minute and a five-minute try with no hub, stopping every session with `~/.confighub/halt`, what the plugin records and never records, `.claude/settings.json` for a whole team, and when to add a hub
 - [Work normally](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/agent-workflow.md): ordinary requests start no hub; the one setup question, what a yes does, and starting values an agent wrote that wait for a person's approval
 - [How it works](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/how-it-works.md): what the agent is told and when, the stop before an undo, MCP call checks, what is recorded and never recorded, the agent's own reason kept with a change, every setting, model use
 - [What a repository deploys](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/inventory.md): `/confighub:inventory`, each app and chart and what deploys it
@@ -51,7 +52,7 @@ Pick a page by what the person is doing. Commands and outputs on these pages are
 ## Optional
 
 - [Run records](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/runs/README.md): each dated run the pages quote, as it came out
-- [Documentation index](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/README.md): every page, grouped by what you are doing
+- [Documentation index](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/README.md): every page, grouped as get started, concepts, reference, other tools and setups, and how this was tested
 
 - [Four runnable examples](examples/roadmap/README.md): How do I exercise VM approval/recovery/rollback, reuse, a hub round trip and a scoped read-only extension?
 - [Configuration snapshot contract](examples/extensions/config-snapshot/README.md): How does a small extension read a pinned revision, retry and preserve its access boundary?

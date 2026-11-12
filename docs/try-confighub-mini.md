@@ -95,7 +95,7 @@ If you have used the ConfigHub plugin in a repository, its record of what agents
    cub mini copy --from-record --dry-run
    ```
 
-   In the repository from the [five-minute try](../README.md#try-it-in-five-minutes), it printed:
+   In the repository from the [five-minute try](try-the-plugin.md#try-it-in-five-minutes), it printed:
 
    ```
    .env, as try-confighub-env:

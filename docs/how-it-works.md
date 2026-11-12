@@ -28,7 +28,7 @@ The next agent receives history for supported operations; it is not guaranteed t
 
 ## What the agent is told, and when
 
-The local record runs quietly. The plugin supplies earlier reasons when earlier sessions changed the file the agent is looking at. A selected app workflow, an explicit project preference and ConfigHub activity reminders can also give the agent context ([ordinary app requests](agent-workflow.md)). Then, once in the session, it adds the history of that file beside what the agent read. From the five-minute try in the README:
+The local record runs quietly. The plugin supplies earlier reasons when earlier sessions changed the file the agent is looking at. A selected app workflow, an explicit project preference and ConfigHub activity reminders can also give the agent context ([ordinary app requests](agent-workflow.md)). Then, once in the session, it adds the history of that file beside what the agent read. From the [five-minute try](try-the-plugin.md#try-it-in-five-minutes):
 
 ```
 Earlier agent sessions in this folder changed .env, as the ConfigHub plugin recorded:

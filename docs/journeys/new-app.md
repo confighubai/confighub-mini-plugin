@@ -2,7 +2,7 @@
 
 Ask Claude Code for an app in one sentence, and end with the app, staging configuration that takes your agent's changes at once, and live configuration that changes only when you approve. A second app can start from the first. This page is for someone who makes apps with Claude Code and wants production to change only with their say: an agent can change production settings as easily as staging ones, and a rule in `CLAUDE.md` is only a request.
 
-The app might run on your own machine, on another machine, in CI, on one or many sandbox nodes, in a shared development cluster, or eventually in production. This walkthrough creates staging and live configuration in the hub. Connect the running copies to that configuration using the deployment path for your target ([where the app runs](../README.md#where-the-app-runs)).
+The app might run on your own machine, on another machine, in CI, on one or many sandbox nodes, in a shared development cluster, or eventually in production. This walkthrough creates staging and live configuration in the hub. Connect the running copies to that configuration using the deployment path for your target ([where the app runs](../agent-workflow.md#where-the-app-runs)).
 
 ## Words used on this page
 
@@ -236,7 +236,7 @@ Each step ran in non-interactive Claude Code sessions (`claude -p`) in empty Git
 What you do not have yet is a running service that reads live's values. To check one:
 
 1. Check the base, staging and live values in the hub. Live's recorded revision should stay unchanged while a change order waits; the agent must be unable to approve it.
-2. If you only wanted managed configuration, that is the result of this walkthrough. To run services from it, connect the [deployment path for your target](../README.md#where-the-app-runs).
+2. If you only wanted managed configuration, that is the result of this walkthrough. To run services from it, connect the [deployment path for your target](../agent-workflow.md#where-the-app-runs).
 3. Check that the service answers, then compare its loaded settings or release with the approved live revision, before and after your approval. A configuration copy alone does not prove a service is running ([verification](../approvals.md#verify-the-result)).
 
 ## What to try next
