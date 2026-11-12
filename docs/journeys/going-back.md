@@ -37,9 +37,9 @@ This page is for anyone who added the ConfigHub plugin, confighub mini or a hub 
    ```
    # What this directory is
 
-   Configuration written out of a ConfigHub hub (snout-snout) as plain files, one directory for each Space. It is what the hub held when this was written. Nothing here needs the hub.
+   Configuration written out of a ConfigHub hub (growl-cub) as plain files, one directory for each Space. It is what the hub held when this was written. Nothing here needs the hub.
 
-   To run from these files, point Argo CD or Flux at the directory of the Space you run.
+   Settings files keep their native format, with ConfigHub bookkeeping removed. Have your application read the files for its environment using its normal configuration loader. Kubernetes resources can still be delivered by Argo CD or Flux. Writing these files does not start a service.
 
    If your repository makes its files from something else, Helm values or Kustomize overlays, those do not know about the changes below. The files here do. To keep working from values or overlays, put the changes you care about back there.
    ```

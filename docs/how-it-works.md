@@ -49,7 +49,19 @@ In an earlier run on a Kubernetes file, an agent was asked whether the api was r
 
 **When the answer used what the plugin kept.** An agent that was told the history says "it was raised for your launch" without saying how it knew. So when its answer repeats the earlier request, or names the value it was given, the end of the turn says so, once a week for each value in a folder: "ConfigHub plugin: the agent was told why RATE_LIMIT_PER_MIN is 600: an earlier session set it, asked "We launch on Product Hunt on Tuesday; raise the rate limit." Every change to it: /confighub:why RATE_LIMIT_PER_MIN". A request quoted in any line is as many whole sentences as fit in two hundred characters, since the reason is often in the second. The line says what the agent did with what it knew, "the agent left RATE_LIMIT_PER_MIN at 600, knowing why" or "changed RATE_LIMIT_PER_MIN from 600 knowing why it was set", and comes at most once a day for a folder.
 
-**When a change reaches more than one environment.** When an agent changes a value in a file that several environments read, a Kustomize base, a shared Helm values file or a shared Terraform var file, the end of the turn says so, and names the file that would change one environment only: "ConfigHub plugin: memory_mb 2048 → 1024 in common.tfvars reaches staging and prod. staging.tfvars would change staging only." It is not shown when the agent's own answer already named that file, and comes at most once a week for a file. A `git checkout`, `stash`, `pull` or `reset` the agent runs is recorded as git's doing, never as an agent undoing an earlier change.
+**When a change reaches more than one environment.** When an agent changes a value in a file that several environments read, a Kustomize base, a shared Helm values file, a shared Terraform var file, or a `.env` beside `.env.staging` and `.env.production`, the end of the turn says so, and names the file that would change one environment only: "ConfigHub plugin: memory_mb 2048 → 1024 in common.tfvars reaches staging and prod. staging.tfvars would change staging only." For a shared `.env`, the line says that production has the change too:
+
+```
+ConfigHub plugin: LOG_LEVEL is now debug in .env, which both staging and production read, so production has it too. To change staging only, put it in .env.staging.
+```
+
+The agent is told as well, at the end of its edit, so that it can offer to move the value:
+
+```
+ConfigHub plugin: this edit reaches production too. LOG_LEVEL is now debug in .env, and .env.production does not set LOG_LEVEL, so production reads it from .env. If the person asked for staging only, say so and offer to move it to .env.staging, which changes staging alone.
+```
+
+The person's line is not shown when the agent's own answer already named that file, and comes at most once a week for a file. A `git checkout`, `stash`, `pull` or `reset` the agent runs is recorded as git's doing, never as an agent undoing an earlier change.
 
 `/confighub:changes` and `/confighub:why` are for you. The agent cannot run them.
 

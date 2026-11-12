@@ -49,35 +49,38 @@ If Argo CD or Flux deploys the app from Git, read this page, then [an app that A
 3. Let the agent work. It starts a hub on your machine if none answers. If it does, its output has one line about a setting that is yours alone, whether a hub may start by itself in other folders; it is off, and this page does not need it ([what it is](../agent-workflow.md#a-hub-that-starts-by-itself-only-if-you-say-yes)). Then it runs `cub mini adopt` with `--dry-run` first, which says what it would make and makes nothing. For a Terraform folder, it printed:
 
    ```
-   Without --dry-run, this makes app an app on pattern-web/web-service, from what app reads at start (common.tfvars, staging.tfvars for staging, prod.tfvars for live):
-     first the starter pattern, pattern-web, with the rules replicas-limit, not-public, log-level, no-secret-values
-     app-base, with its own values cpu=512, log_retention_days=14, memory_mb=2048
-     app-staging, with them now, and its own from staging.tfvars: desired_count=1, env=staging
-     app-live, which takes them only once you approve, and its own from prod.tfvars: desired_count=3, env=prod
+   Nothing was changed. Without --dry-run, ConfigHub would keep app's settings, from common.tfvars, with staging.tfvars for staging and prod.tfvars for production:
+     It would keep three copies of them: app-base, the shared settings that staging and production start from; app-staging; and app-live, for production.
+     First it would make a starter pattern, pattern-web: default settings for a small web service, and rules that each change must pass (replicas-limit, not-public, log-level, no-secret-values).
+     Your settings that differ from the defaults in pattern-web/web-service: cpu=512, log_retention_days=14, memory_mb=2048. A new version of those defaults will not overwrite them.
+     Staging would have the shared settings at once, with its own settings from staging.tfvars: desired_count=1, env=staging.
+     Production would have its own settings from prod.tfvars at once: desired_count=3, env=prod. It would take the shared settings only after you approve them.
    ```
 
-   For a Kustomize repository, adopted with `--name orders`:
+   The shared values in `common.tfvars` become the base, and each environment's file gives its copy its own values. For a Kustomize repository, adopted with `--name orders`:
 
    ```
-   Without --dry-run, this makes orders an app from what app renders (base, overlays/staging for staging, overlays/prod for live):
-     orders-base, holding base as kustomize renders it: ConfigMap/orders-config, Service/orders, Deployment/orders
-     orders-staging, with its own from overlays/staging: FEATURE_NEW_CHECKOUT=true, LOG_LEVEL=debug, namespace=orders-staging
-     orders-live, with its own from overlays/prod: RATE_LIMIT_PER_MINUTE=600, replicas=3, namespace=orders, holding everything overlays/prod renders, with nothing waiting for your approval
+   Nothing was changed. Without --dry-run, ConfigHub would keep orders's configuration, as kustomize renders it from base, with overlays/staging for staging and overlays/prod for production:
+     It would keep three copies of it: orders-base, the base's manifests that staging and production start from (ConfigMap/orders-config, Service/orders, Deployment/orders); orders-staging; and orders-live, for production.
+     Staging would have the base's manifests, with its own values from overlays/staging: FEATURE_NEW_CHECKOUT=true, LOG_LEVEL=debug, namespace=orders-staging.
+     Production would hold everything overlays/prod renders, with its own values from overlays/prod: RATE_LIMIT_PER_MINUTE=600, replicas=3, namespace=orders, so nothing would wait for your approval.
+     Then it would read each copy back and compare it with what its folder renders. If one differs, it removes what it made and adopts nothing.
    ```
 
-   For a folder with `.env`, `.env.staging` and `.env.production`:
+   What each overlay changes becomes that copy's own values. For a folder with `.env`, `.env.staging` and `.env.production`:
 
    ```
-   Without --dry-run, this makes greeter an app on pattern-web/web-service, from what greeter reads at start (.env, .env.staging for staging, .env.production for live):
-     first the starter pattern, pattern-web, with the rules replicas-limit, not-public, log-level, no-secret-values
-     greeter-base, with its own values GREETING=Hello, PORT=3000, RATE_LIMIT_PER_MINUTE=60
-     greeter-staging, with them now, and its own from .env.staging: GREETING=Hello from staging, RATE_LIMIT_PER_MINUTE=600
-     greeter-live, which takes them only once you approve, and its own from .env.production: GREETING=Welcome
+   Nothing was changed. Without --dry-run, ConfigHub would keep greeter's settings, from .env, with .env.staging for staging and .env.production for production:
+     It would keep three copies of them: greeter-base, the shared settings that staging and production start from; greeter-staging; and greeter-live, for production.
+     First it would make a starter pattern, pattern-web: default settings for a small web service, and rules that each change must pass (replicas-limit, not-public, log-level, no-secret-values).
+     Your settings that differ from the defaults in pattern-web/web-service: GREETING=Hello, PORT=3000, RATE_LIMIT_PER_MINUTE=60. A new version of those defaults will not overwrite them.
+     Staging would have the shared settings at once, with its own settings from .env.staging: GREETING=Hello from staging, RATE_LIMIT_PER_MINUTE=600.
+     Production would have its own settings from .env.production at once: GREETING=Welcome. It would take the shared settings only after you approve them.
    ```
 
-   `pattern-web` is a starter pattern the first adopt makes for an env or Terraform app: the defaults a small web service starts from, and four rules, such as one that refuses a value named like a password. It is yours to change or ignore.
+   `pattern-web` is a starter pattern the first adopt makes for an env or Terraform app: the defaults a small web service starts from, and four rules, such as one that refuses a value named like a password. It is yours to change or ignore. Adopt makes it whether or not the optional [starters](../starters.md) are switched on.
 
-   The agent then runs the adopt itself, and `cub mini require-approval APP --variant live --agent APP-agent`, which gives the agent its own key.
+   The agent then runs the adopt itself, and `cub mini require-approval APP --variant live --agent APP-agent`, which gives the agent its own key. The output of `require-approval` ends with a few lines for you, which the agent passes on as they are: what you now have, and the one command to type, `cub mini approve APP-base/adopt`, with `cub`'s full path.
 
 4. Read the agent's summary. For the Terraform folder it said:
 
@@ -96,20 +99,23 @@ If Argo CD or Flux deploys the app from Git, read this page, then [an app that A
 
    For a Kustomize repository that Argo CD deploys, the agent also said that Argo CD still syncs production from Git. That is true, and [the next page](gitops-app.md) is about it.
 
-5. In your own terminal, run the `export PATH=...` line the agent gave you, so that `cub` is on your path.
-
-6. Let live take the values it shares with the base. Its own values are there already; if an agent wrote the files they came from, nothing delivers them until you approve this order (from plugin 0.82.0). The shared ones wait in a change order that adopt made:
+5. Let live take the values it shares with the base. Its own values are there already. If an agent wrote the files they came from, nothing delivers them until you approve this order. The shared values wait in a change order that adopt made. Run the approve command the agent gave you, in a terminal of your own. It names confighub mini's own `cub` by its full path, so it runs as printed, and nothing needs to go on your PATH:
 
    ```
-   cub mini waiting
-   cub mini approve APP-base/adopt
+   ~/.confighub/mini/confighub-mini-VERSION-OS-ARCH/bin/cub mini approve APP-base/adopt
    ```
 
-   `cub mini approve` shows what live would take and asks you first. When it worked, you see `Approved APP-base/adopt.`
+   `cub mini approve` shows what live would take and asks you first. When it worked, you see `Approved APP-base/adopt.` To see first everything that waits, run `cub mini waiting` the same way.
 
-   For a Kustomize repository, live already holds everything its overlay renders, so there may be nothing to take. From plugin 0.82.0 adopt says so: `Live already holds everything OVERLAY renders, so nothing waits for your approval now; a later change to the base will.` Then `cub mini waiting` says `Nothing is waiting for you.`, and there is nothing to approve.
+   For a Kustomize repository, live already holds everything its overlay renders, so there may be nothing to take. Adopt then says so:
 
-7. Commit `.confighub-app`:
+   ```
+     Production has everything overlays/prod renders, with its own values from overlays/prod: RATE_LIMIT_PER_MINUTE=600, replicas=3, namespace=orders, so nothing waits for your approval now. A later change to the base will reach production only after you approve it.
+   ```
+
+   Then `cub mini waiting` says `Nothing is waiting for you.`, and there is nothing to approve.
+
+6. Commit `.confighub-app`:
 
    ```
    git add .confighub-app && git commit -m "ConfigHub: what the files match in the hub"
@@ -124,19 +130,20 @@ cub mini upload APP-FOLDER --component APP --change-desc "WHY" --dry-run   # wha
 cub mini upload APP-FOLDER --component APP --change-desc "WHY"
 ```
 
-The upload sets each changed value in the base with the reason. Staging has it at once. Live waits for your `cub mini approve`. A change to the staging file is staging's own and goes no further. For a Kustomize repository, the upload renders it as adopt did. With `--dry-run`, on a repository whose base changed a ConfigMap value and whose prod overlay now asked for 4 replicas, it printed:
+The upload sets each changed value in the base with the reason. Staging has it at once. Live waits for your `cub mini approve`. A change to the staging file is staging's own and goes no further. For a Kustomize repository, the upload renders it as adopt did. With `--dry-run`, on the Kustomize repository above, after its base changed a ConfigMap value and its prod overlay asked for 4 replicas, it printed:
 
 ```
 Live keeps its own values, which a change to the base does not reach. For what its overlay now says, replicas=4, live changes only with your say:
-  cub mini set shopk set-int-path apps/v1/Deployment spec.replicas 4 --variant live --resource Deployment/shop --change-desc WHY
-Would set in shopk-base, with the reason, and propose:
-  app: ConfigMap/shop-config/data.CHECKOUT_TIMEOUT 30s → 45s
-shopk-staging would have ConfigMap/shop-config/data.LOG_LEVEL = warn, as staging's own, from overlays/staging.
-shopk-staging would have ConfigMap/shop-config/data.CHECKOUT_TIMEOUT = 45s now, from base.
-shopk-live takes it only once approved: a change order in shopk-base would wait for that, to see and approve with cub mini approve.
+  cub mini set orders set-int-path apps/v1/Deployment spec.replicas 4 --variant live --resource Deployment/orders --change-desc WHY
+Would set in orders-base, with the reason, and propose:
+  app: ConfigMap/orders-config/data.CHECKOUT_TIMEOUT 30s → 45s
+orders-staging would have CHECKOUT_TIMEOUT=45s now, from base.
+orders-live takes it only once approved: a change order in orders-base would wait for that, to see and approve with cub mini approve.
 
 Nothing has been changed.
 ```
+
+The base's change would reach staging at once and wait for you before it reaches live. The overlay's new replica count is live's own value, so the upload gives you the command that changes it, and does not change it for you.
 
 The agent's turn ends with one line when a change waits for you. What approving looks like, and what the agent is refused: [a new app, changing it later](new-app.md#changing-the-app-later).
 
@@ -155,7 +162,7 @@ Then adopt reads each copy back from the hub and compares it with what `kustomiz
 
 ## If something goes wrong
 
-- **Adopt found no settings.** It prints `reads no settings adopt can find` and names where it looked. Your files may use other names, such as `values-prod.env`. From plugin 0.82.0, adopt names a file such as `api.env` that it found and does not read, and gives the two ways on: rename it to `.env`, or keep it as it is with `cub mini upload FOLDER --variant live --target none`.
+- **Adopt found no settings.** It prints `reads no settings adopt can find` and names where it looked. Your files may use other names, such as `values-prod.env`. Adopt names a file such as `api.env` that it found and does not read, and gives the two ways on: rename it to `.env`, or keep it as it is with `cub mini upload FOLDER --variant live --target none`.
 - **A value was left out and named.** A value that looks like a password or a token never goes into the hub. Keep it out of the file, and name where the app reads it instead, such as `DB_PASSWORD_FILE`. Set it in a terminal with `cub mini secret set` ([a secret for live](../from-plugin-to-confighub.md#a-secret-for-live-that-no-agent-can-read)).
 - **An overlay that is neither staging nor production** is left as it is, and named.
 - **Adopt refused an overlay.** It names the kustomization field and what to do, and nothing was written ([what adopt refuses](#what-adopt-refuses-in-a-kustomize-repository)).
@@ -175,7 +182,7 @@ Every way out: [going back](going-back.md).
 
 ## How this was tested
 
-On 7 November 2026, with the plugin 0.78.0 and the confighub mini 0.10.7-mini.9 its sessions downloaded, 32 non-interactive Claude Code sessions were asked the request in step 2: 16 on a Terraform folder and 16 on a Kustomize repository that an Argo CD Application deploys, on Sonnet and Opus. A program read the hub and the files afterwards. In 32 of 32, the hub held the person's staging and production values, the agent's key could edit nothing in production, and the person's files were unchanged. The `.env` output is from a session the same day. The Kustomize upload output is from a run of the change released in confighub mini 0.10.7-mini.11, which lets `cub mini upload` take a Kustomize repository. The wording of a line may differ slightly in the current release.
+On 7 November 2026, with the plugin 0.78.0 and the confighub mini 0.10.7-mini.9 its sessions downloaded, 32 non-interactive Claude Code sessions were asked the request in step 2: 16 on a Terraform folder and 16 on a Kustomize repository that an Argo CD Application deploys, on Sonnet and Opus. A program read the hub and the files afterwards. In 32 of 32, the hub held the person's staging and production values, the agent's key could edit nothing in production, and the person's files were unchanged. The output of each command on this page is from a run of the same steps on 12 November 2026, with the released confighub mini 0.10.7-mini.23; the agent's summary in step 4 is from a measured session.
 
 ## What you have now
 

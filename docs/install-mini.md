@@ -32,7 +32,7 @@ It asks nothing in Claude Code. It prints one line about a setting that is yours
 
 If you run it again, it starts the hub if the hub is stopped, and moves it onto a newer release if there is one ([how](#move-to-a-newer-confighub-mini)).
 
-When it is done, it prints the line that puts the package's `cub` on your `PATH`, and what to do next: put a repository's record into the hub with `cub mini copy --from-record` ([how](try-confighub-mini.md#step-4-put-your-agents-record-into-the-hub)), or follow [a first run](try-confighub-mini.md).
+When it is done, it prints the full path of the package's `cub`, which runs in a terminal of your own with nothing added to your `PATH`, and what to do next: put a repository's record into the hub with `cub mini copy --from-record` ([how](try-confighub-mini.md#step-4-put-your-agents-record-into-the-hub)), or follow [a first run](try-confighub-mini.md).
 
 In a terminal, or in Codex, run `bin/confighub mini get` from the plugin. It does the same, and in a terminal, the first time on a machine, it asks that setting as a question before it starts the hub. Enter means no. The plugin on its own carries no server, so any `cub mini` command run as `bin/confighub mini COMMAND`, such as `bin/confighub mini install` or `bin/confighub mini need`, says it needs confighub mini when none is downloaded, and names `confighub mini get`.
 
@@ -111,7 +111,7 @@ The package's `START-HERE.txt` lists ten stories you can run on the hub. For a g
 
 ## Move to a newer confighub mini
 
-Type `/confighub:install-mini` again in Claude Code, or run `bin/confighub mini get` from the plugin in a terminal. It downloads the newest release, checks it against `SHA256SUMS`, and moves the hub onto it. Every Space, revision, change order still waiting and secret is kept. Each agent that `cub mini require-approval --agent` set up runs `cub mini` from the new package from then on, and its Claude Code settings may read it. The command's last lines print the new `export PATH=...` line for its `cub`. `--version VERSION` gets one release in particular.
+Type `/confighub:install-mini` again in Claude Code, or run `bin/confighub mini get` from the plugin in a terminal. It downloads the newest release, checks it against `SHA256SUMS`, and moves the hub onto it. Every Space, revision, change order still waiting and secret is kept. Each agent that `cub mini require-approval --agent` set up runs `cub mini` from the new package from then on, and its Claude Code settings may read it. In a terminal, the command's last lines print the new `export PATH=...` line for its `cub`; in Claude Code, they print its full path. `--version VERSION` gets one release in particular.
 
 A repository's `.claude/settings.local.json` is not changed for you. When one runs its sessions as an agent, the move prints the new package's folder to add to that file's `sandbox.filesystem.allowRead`.
 

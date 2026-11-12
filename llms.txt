@@ -12,6 +12,7 @@ Pick a page by what the person is doing. Commands and outputs on these pages are
 - [Software with ConfigHub inside](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/journeys/bundled.md): what exists today for an app, platform or chart that comes with a hub, and what does not
 - [Going back](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/journeys/going-back.md): refusing or undoing a change, revoking an agent's key, writing apps out as plain files with `CHANGES.md`, removing confighub mini and the plugin
 - [From the plugin to ConfigHub](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/from-plugin-to-confighub.md): the four steps from the plugin to confighub mini to an organization's ConfigHub to unattended agents, and the `cub mini` features: try in a copy, a service the app needs, a shared setup, a secret for live
+- [Starters](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/starters.md): an option, off unless `CUB_MINI_STARTERS` names a folder of starter files; one YAML file per kind of app with the settings it starts with and a reason for each; `cub mini adopt` connects an app with it in one command and one approval, never replacing a value a person set; a starter kept in the hub with versions a person approves; two starters on one app with `after`; a new provider as an add-on and a starter, checked with `examples/starter-check`
 
 ## The plugin
 
