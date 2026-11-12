@@ -31,7 +31,7 @@ Inspect `.confighub-app` and existing environment and deployment setup first.
 | Ship an attached app's change | Show the proposed values and exact revision. Submit for owner approval, then verify the delivery path and running service separately. |
 | Make another app like this one | For an attached source app, offer its base as a pattern; retain the new app's own settings and keep credentials private. |
 | Let CI or another machine continue the work | Check whether it can reach the chosen hub. Prepare a scoped reader or proposer appropriate to the task. Explain any missing connectivity or access before changing the setup. |
-| Let a colleague use the setup | Offer a secret-free setup export or an already provisioned shared hub. Today's cloud is single-user; do not promise a free shared cloud or silently register an account. |
+| Let a colleague use the setup | Offer a secret-free setup export, or copying the app to a shared hub: hosted ConfigHub or the enterprise edition, where many people share one organization. Never register an account or share access without the person's instruction. |
 
 When the person has not chosen ConfigHub and an unattached app needs it, make one relevant offer: name the problem it
 would solve and the install/connect cost. Continue independent app work while waiting.
