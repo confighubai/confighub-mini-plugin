@@ -4,6 +4,8 @@
 
 Pick a page by what the person is doing. Commands and outputs on these pages are from released versions; the plugin's version is in `.claude-plugin/marketplace.json`.
 
+Read [AGENTS.md](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/AGENTS.md) first: what the project is, what an agent may and may not do, the commands, and which page answers which question.
+
 ## What are you doing
 
 - [A new app in Claude Code](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/journeys/new-app.md): the request to type, what the agent runs (`confighub mini get`, `cub mini adopt`, `cub mini require-approval --agent`), approving live, changing the app later, and a second app "like the first" with `--pattern`
