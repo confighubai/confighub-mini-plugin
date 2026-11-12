@@ -1,21 +1,34 @@
 # ConfigHub for AI agents
 
-ConfigHub keeps your apps' settings: the values an app reads, such as a port, a request limit or a log level. It also helps you manage the apps that use them. Each app gets a staging set and a production set of settings. Agents can change staging; production changes only when you approve. Every change keeps its reason, so you, or the next agent, can ask why a setting has its value.
+**Ship faster with coding agents. You decide what reaches production.**
 
-A **hub** is one running ConfigHub server: the place your settings are kept. A hub can run in one of two places:
+ConfigHub keeps your app's settings in a hub: a small server that holds a staging copy your agents can change and a production copy that changes only when you approve. It also keeps the reason for each change. This repository holds the ConfigHub plugin for Claude Code, the easy way to start: from the first session it records what your agents change and why, and it sets up a hub on your laptop when you ask for one. Ordinary coding requests start no hub ([when ConfigHub acts](docs/agent-workflow.md)).
 
-- **On your own computer.** This is confighub mini: free, with no account, and nothing leaves your machine. It is the quickest way to start, and where most people begin.
-- **Shared on a network,** so that a team, the team's agents and its CI jobs work from one place, and a colleague you name approves what reaches production. A shared hub is hosted ConfigHub, run for you as a service, or ConfigHub's enterprise edition on your own servers; both support many people in one organization ([ConfigHub's documentation](https://docs.confighub.com)).
+It works for a new app your agent writes, and for one you already have: `.env` files, Terraform var files, or a Kustomize repository that Argo CD or Flux deploys.
 
-Everything you do on confighub mini works the same way on a shared hub, because confighub mini is ConfigHub itself, made small enough to run on a laptop ([how the commands map](docs/cub-mini-and-cub.md)). [From the plugin to ConfigHub](docs/from-plugin-to-confighub.md) walks from one to the other.
+## Where your hub runs
 
-The **plugin** for Claude Code, which this repository holds, is the easy way to start. From the first session it records what your agents change and why, with no hub and no account. When you ask for an app "using ConfigHub", or ask the agent to attach ConfigHub to an app you have, it sets up a hub on your computer for you. Ordinary coding requests start no hub ([when ConfigHub acts](docs/agent-workflow.md)).
+- **Your laptop.** This is confighub mini, ConfigHub made small enough for one machine. It is free, needs no account, and the plugin sets it up for you.
+- **Hosted ConfigHub.** Run for you as a service. Your team, its agents and its CI jobs work from one hub, and a colleague you name approves what reaches production.
+- **Enterprise edition.** ConfigHub on your own servers, for many people and teams in one organization.
+
+The commands are the same on all three, and your apps move from your laptop to a shared hub when your team needs it ([from the plugin to ConfigHub](docs/from-plugin-to-confighub.md), [ConfigHub's documentation](https://docs.confighub.com)).
+
+## An agent should not be able to change production on its own
+
+An agent turns on debug logging in the `.env` that staging and production both read, and production starts logging every customer's email address. With ConfigHub, staging gets the change at once, and production waits for you. You refuse it with your reason, and the next agent that touches the setting is told that reason. The agent works on a key of its own that cannot approve. An agent that also holds your cloud or cluster credentials can still go around this ([what an agent can reach](docs/agents-that-run-for-weeks.md#limiting-what-an-agent-can-reach)).
 
 ## Three things you get
 
-1. **Simple commands for managing your apps.** `/confighub:changes` and `/confighub:why` show what changed and why. `cub mini waiting` shows what waits for your approval, and `cub mini approve` or `cub mini refuse` decides it. `cub` is ConfigHub's command-line tool, and confighub mini adds `cub mini` to it. Other commands undo a change, move software someone else maintains, such as a Helm chart, to its next version while keeping your own values, and start a new app from one you already have ([a new app](docs/journeys/new-app.md), [an app you have](docs/journeys/existing-app.md)).
-2. **Starters, which give any kind of app a good starting setup.** Much like Spring Boot's starters, a starter gives each new app of one kind the settings it should start with, each with its reason. A starter is one short file with no program in it. One command checks it before anyone uses it. Your team's fixes become its next version, so every new app starts with them. Starters are off unless `CUB_MINI_STARTERS` is set ([starters](docs/starters.md)).
-3. **The tools you need once agents do real work, through a hub.** Each agent signs in with a key of its own, with only the rights it needs, changes to production wait for a person, one switch stops every agent at once, and nobody can alter the record of changes without it being detected ([approvals](docs/approvals.md), [agents that run for weeks](docs/agents-that-run-for-weeks.md), [signed records](docs/signed-records.md)). One agent can ask another for a change, and the hub checks that the asking agent really made the request; when your monitoring raises an alert, you are told the last change made before it (`examples/extensions/alert` in the confighub mini package); and each change shows what it cost in tokens ([one agent asks another](docs/approvals.md#one-agent-asks-another-for-a-change), [model use](docs/how-it-works.md#model-use)).
+1. **Everyday commands.** `/confighub:why` shows every change to a setting and the request behind it. `cub mini waiting` lists what waits for your approval, and `cub mini approve` or `cub mini refuse` decides it (`cub` is ConfigHub's command-line tool). You can also take the next version of a Helm chart someone else maintains and keep your own values ([a new app](docs/journeys/new-app.md), [an app you have](docs/journeys/existing-app.md)).
+2. **Starters: good default settings for every new app.** Much like Spring Boot's starters, but for any kind of app. A starter is one short file: the settings a kind of app should have, a value for each, and the reason. It never replaces a value you set, and when your team fixes a default, every new app starts with the fix. There is no program to write, and one command checks a starter before anyone uses it. Starters are off unless `CUB_MINI_STARTERS` is set ([starters](docs/starters.md)).
+3. **Controls for agents that run for hours, or for several agents on one app:**
+   - a key for each agent, with only the rights it needs ([agent keys](docs/agents-that-run-for-weeks.md#who-acted-give-the-agent-a-key-of-its-own));
+   - approval of the exact change, by the person you name ([approvals](docs/approvals.md));
+   - revoking an agent, or stopping them all ([stopping agents](docs/agents-that-run-for-weeks.md#stopping-an-agent));
+   - a record of changes that shows any later tampering ([signed records](docs/signed-records.md));
+   - requests between agents, which the hub checks ([requests between agents](docs/approvals.md#one-agent-asks-another-for-a-change));
+   - the tokens each change cost ([model use](docs/how-it-works.md#model-use)).
 
 ## Install
 
