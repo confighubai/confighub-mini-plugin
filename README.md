@@ -55,9 +55,9 @@ Once agents run for hours, or several of them share an app, you'll want more con
 
 ## Starters
 
-A starter gives every new app of one kind your team's default settings, such as retries, timeouts and worker limits, each with a note on why it is set. It is one short YAML file, the same idea as a Spring Boot starter but for any kind of app. When you connect an app, it gets the starter's settings, except where you have already set a value. When your team fixes a default, the fix goes into the starter's next version, and every new app gets it.
+A starter gives every new app of one kind your team's default settings, such as retries, timeouts and worker limits, each with a note on why it is set. It is one short YAML file, the same idea as a [Spring Boot starter](https://docs.spring.io/spring-boot/reference/using/build-systems.html#using.build-systems.starters) but for any kind of app. When you connect an app, it gets the starter's settings, except where you have already set a value. When your team fixes a default, the fix goes into the starter's next version, and every new app gets it.
 
-confighub mini comes with starters for a small web service and for a Kustomize repository that Argo CD or Flux deploys. Starters for apps on Vercel and apps that read AWS Parameter Store are in preview: they run against a local stand-in, not yet a real account. Starters are off until you switch them on. [Starters](docs/starters.md) shows how to switch them on, use them and write your own.
+confighub mini comes with starters for [a small web service](docs/starters.md#connect-a-small-web-service) and for [a Kustomize repository that Argo CD or Flux deploys](docs/journeys/gitops-app.md). Starters for [apps on Vercel](docs/starters.md#connect-an-app-on-vercel-one-command-and-one-approval) and [apps that read AWS Parameter Store](docs/starters.md#a-new-provider-an-add-on-and-a-starter) are in preview: they run against a local stand-in, not yet a real account. Starters are off until you switch them on. [Starters](docs/starters.md) shows how to [switch them on](docs/starters.md#switch-starters-on), use them and [write your own](docs/starters.md#what-a-starter-is).
 
 ## Works with your tools
 
