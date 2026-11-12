@@ -1,6 +1,8 @@
 # From the plugin to ConfigHub, one step at a time
 
-This page is for anyone deciding how far to take ConfigHub. You can stop at any step. Each step keeps what the one before gave you. None asks you to learn a set of commands first: you install it, keep working as you do, and each next step is offered in one line, at the moment it would help, and never before. The story follows one platform team as its needs grow.
+ConfigHub keeps your apps' settings, and it helps you manage the apps that use them. Each app gets a staging set and a production set of settings; agents can change staging, and production changes only when you approve. The main part is the hub: one running ConfigHub server, the place your settings are kept. A hub can run on your own computer, as confighub mini, or be shared by a team on a network, as hosted ConfigHub, run for you as a service, or ConfigHub's enterprise edition on your own servers. Everything you do on confighub mini works the same way on a shared hub, because confighub mini is ConfigHub itself, made small enough to run on a laptop. The plugin for Claude Code is the easy way to start: it records what your agents change and why with no hub, and it sets up a hub on your computer when you ask for an app "using ConfigHub".
+
+This page is for anyone deciding how far to take ConfigHub. It goes from the plugin, to a hub on your computer, to a shared hub. You can stop at any step. Each step keeps what the one before gave you. None asks you to learn a set of commands first: you install it, keep working as you do, and each next step is offered in one line, at the moment it would help, and never before. The story follows one platform team as its needs grow.
 
 Client behavior differs: see the [capability matrix](how-it-works.md#client-capabilities) for recording, refusal and approval in Claude Code and Codex.
 
@@ -9,7 +11,7 @@ Words used on this page:
 - **The record** is what the plugin writes down about each change an agent makes to your configuration: the value, from what to what, and why.
 - **A hub** is one running ConfigHub: a server that keeps your configuration with every change, who made it and why.
 - **confighub mini** is ConfigHub made small enough that every agent can have a hub of its own: on your laptop, in a sandbox or in a CI job, with no account.
-- **Your organization's ConfigHub** is a hub your team shares: hosted ConfigHub, or ConfigHub's enterprise edition on your own servers. Both support many people in one organization.
+- **A shared hub**, which this page also calls your organization's ConfigHub, is a hub your team reaches over a network: hosted ConfigHub, or ConfigHub's enterprise edition on your own servers. Both support many people in one organization.
 - **A key** is a private key in a file that a person or a program signs in to a hub with. A **service account** is an account for a program, such as an agent, with a key of its own.
 
 | Step | What you add | What you get | Effort |

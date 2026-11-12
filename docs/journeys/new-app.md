@@ -6,7 +6,7 @@ The app might run on your own machine, on another machine, in CI, on one or many
 
 ## Words used on this page
 
-- **A hub** is one running ConfigHub: a server that keeps your app's settings, with every change, who made it and why.
+- **A hub** is one running ConfigHub: a server that keeps your app's settings, with every change, who made it and why. A hub can run on your own computer, or be shared on a network: a **shared hub**, hosted ConfigHub or ConfigHub's enterprise edition, is one that a team, its agents and its CI jobs all reach. This guide uses a hub on your own computer, confighub mini. The same app can move to a shared hub later ([from the plugin to ConfigHub](../from-plugin-to-confighub.md)).
 - **confighub mini** is ConfigHub made small enough to run on your laptop, as two processes: the server and its PostgreSQL database. It needs no Docker, no cluster and no account.
 - **`cub`** is ConfigHub's command-line tool. It comes with confighub mini.
 - **The base** is the version of the app's settings that changes first. **The staging copy** is made from the base and takes each change at once. **The live copy** holds the settings intended for production. It takes a change only when you approve it. A running service uses those settings once its deployment path is connected.

@@ -1,8 +1,10 @@
 # Starters: the settings a kind of app starts with
 
-ConfigHub is a server that keeps your apps' settings, with every change, who made it and why, and holds a change to production until a person approves it. confighub mini runs it on your own machine. This page is for someone who uses confighub mini and gives each new app of one kind the same settings by hand: a time limit, a cache time, two instances, nothing public.
+A starter gives any kind of app a good starting setup, much like Spring Boot's starters. It is one short file, written for one kind of app, that lists the settings an app of that kind should start with, a value for each, and the reason for that value. When you connect an app of that kind to a hub, the app gets those settings, except where you have set a value yourself. A starter is easy to make: you can read one in a minute, there is no program to write, and one command checks it before anyone uses it. When your team fixes a setting, the fix becomes the starter's next version, so every new app starts with it. AI agents given this guide and nothing else wrote working starters, including one for a hosting service that confighub mini did not support.
 
-A starter writes those settings down once, in a short file, with the reason for each. When you then connect an app of that kind to ConfigHub, it gets those settings, except where you have set a value yourself. Starters are an option, switched off unless you switch them on. They come with confighub mini from 0.10.7-mini.21; the output on this page is from 0.10.7-mini.23.
+ConfigHub keeps your apps' settings, with every change, who made it and why, and holds a change to production until a person approves it. A hub is one running ConfigHub server. It can run on your own computer, as confighub mini, or be shared by a team on a network; this page uses confighub mini. This page is for someone who gives each new app of one kind the same settings by hand: a time limit, a cache time, two instances, nothing public.
+
+Starters are an option, switched off unless you switch them on. They come with confighub mini from 0.10.7-mini.21; the output on this page is from 0.10.7-mini.23.
 
 You need an unpacked confighub mini package ([install confighub mini](install-mini.md)), a terminal, and Python 3 for the Vercel and author's-kit examples. Everything runs on your machine; no account is used and nothing is sent anywhere.
 
