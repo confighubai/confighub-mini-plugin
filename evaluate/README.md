@@ -1,6 +1,6 @@
 # Check the numbers yourself
 
-This page is for you if you run coding agents and are deciding whether to add the ConfigHub plugin to every session. Our numbers come from our runs, and your models, your Claude Code version and your requests may behave differently. `evaluate` runs the same evaluation that is behind the numbers in the README, on your machine, with the models you choose, in one command. It keeps every session, so you can read what each agent did and said.
+This page is for you if you run coding agents and are deciding whether to add the ConfigHub plugin to every session. Our numbers come from our runs, and your models, your Claude Code version and your requests may behave differently. `evaluate` runs the same evaluation that is behind our [test results](../docs/evidence.md), on your machine, with the models you choose, in one command. It keeps every session, so you can read what each agent did and said.
 
 ## Run it
 

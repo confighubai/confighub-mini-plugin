@@ -102,4 +102,4 @@ Two agents worked at the same time, in two worktrees. One scaled the api to 4 on
 
 The plugin keeps the reason for a value with the value. It does this across sessions, worktrees and folders. So the next agent knows why the value is there. It can finish its job without reverting the value, or it can tell you that it is reverting it.
 
-To see the same thing in five minutes on your own machine, follow [the README](../README.md#try-it-in-five-minutes). What these runs do not show is in [what we do not claim](limits.md).
+To see the same thing in five minutes on your own machine, follow [try the plugin on its own](try-the-plugin.md#try-it-in-five-minutes). What these runs do not show is in [what we do not claim](limits.md).
