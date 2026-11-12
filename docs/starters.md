@@ -63,6 +63,21 @@ A starter holds no program, no template and no expression: what it sets is writt
 
 `cub mini adopt` refuses a file that breaks a rule before it writes anything, and names the rule it breaks: a setting without a reason, a setting it does not own, or a default that looks like a password, for example.
 
+## Where the idea comes from
+
+Starters borrow their main ideas from [Spring Boot](https://spring.io/projects/spring-boot)'s starters and its [auto-configuration](https://docs.spring.io/spring-boot/reference/features/developing-auto-configuration.html), and we are grateful to the Spring team for them. Here is what each idea became:
+
+| In Spring Boot | In a ConfigHub starter |
+|---|---|
+| A starter: one dependency that brings what a kind of app needs | One file that gives a kind of app the settings it needs |
+| Auto-configuration applies only when its conditions hold, such as a class being on the classpath | `looks_for`: the files a folder must have for the starter to fit |
+| Back-off: a bean or property you define yourself wins over the default | Your values win: a value you already set is never replaced |
+| Ordering between auto-configurations (`@AutoConfigureAfter`) | `after:`, the starters this one comes after |
+| The condition evaluation report, which says why each auto-configuration did or did not apply | `cub mini adopt` lists every starter it considered and why each one did or did not fit |
+| Configuration properties under a prefix, each one described | `owns:`, the prefix of the settings a starter may set, and a reason for each value |
+
+Two things are different. Spring Boot applies its auto-configuration every time an app starts; a starter writes its settings once, when you connect the app, and after that the hub holds them, so a new version of the starter comes to an app as a proposal, never as a rewrite. And because production's copy changes only when a person approves it, a starter can set up production's settings but cannot change them on its own.
+
 ## Switch starters on
 
 `cub mini adopt` uses starters only when the environment variable `CUB_MINI_STARTERS` names a folder of starter files. When it is not set, adopt connects an app as [an app you already have](journeys/existing-app.md) shows.
