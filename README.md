@@ -21,7 +21,7 @@ An agent turns on debug logging in the `.env` that staging and production both r
 ## Three things you get
 
 1. **Everyday commands.** `/confighub:why` shows every change to a setting and the request behind it. `cub mini waiting` lists what waits for your approval, and `cub mini approve` or `cub mini refuse` decides it (`cub` is ConfigHub's command-line tool). You can also take the next version of a Helm chart someone else maintains and keep your own values ([a new app](docs/journeys/new-app.md), [an app you have](docs/journeys/existing-app.md)).
-2. **Starters.** Give every new app your team's defaults: retries, worker limits, logging, timeouts. Write them once, in a short file, with a reason for each. Like Spring Boot starters, for any stack. Your values always win, and a fix to a default reaches every new app. No code; one command checks a starter. Off unless `CUB_MINI_STARTERS` is set ([starters](docs/starters.md)).
+2. **Starters.** Give every new app your team's defaults: retries, worker limits, logging, timeouts. You write them once in a small YAML file, with a note on why each one is set. It's the same idea as Spring Boot starters, but it works for any kind of app. Your values always win, and a fix to a default reaches every new app. No code; one command checks a starter. Off unless `CUB_MINI_STARTERS` is set ([starters](docs/starters.md)).
 3. **Controls for agents that run for hours, or for several agents on one app:**
    - a key for each agent, with only the rights it needs ([agent keys](docs/agents-that-run-for-weeks.md#who-acted-give-the-agent-a-key-of-its-own));
    - approval of the exact change, by the person you name ([approvals](docs/approvals.md));
