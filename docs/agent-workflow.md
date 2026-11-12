@@ -23,7 +23,7 @@ The shared app workflow helps the agent choose the next step:
 | “Ship this change.” | Propose the exact settings revision and show the owner's approval command. A chat “yes” does not approve it. After approval, delivery and service checks still depend on the connected deployment path. |
 | “Make another app like this, on port 3002.” | Prepare the new app with its own values and offer the first app's base as its pattern. A restricted key cannot create a new app: owner adoption and a new scoped session remain explicit setup steps. Credentials are kept out of the shared setup. |
 | “Have CI use these settings.” | Check reachability and choose read access for a consumer or proposal access for changes. Neither can approve. A local-only hub needs a reachable path before a remote job can use it. |
-| “Let my colleague use this setup.” | Prepare a secret-free export or use an already provisioned shared hub. Sharing access or sending the export needs your instruction. Today's cloud is single-user. |
+| “Let my colleague use this setup.” | Prepare a secret-free export, or copy the app to a shared hub: hosted ConfigHub or the enterprise edition, where many people share one organization. Sharing access or sending the export needs your instruction. |
 
 When you explicitly ask to use or attach ConfigHub, that is already your setup choice: the agent completes it, using the bundled installer if cub is absent. It does not ask you to choose ConfigHub again. A restricted key still needs the owner setup steps above.
 

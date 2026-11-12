@@ -61,7 +61,7 @@ python3 run.py r3 --out "$HOME/r3-result.json"
 
 Two local hubs exercise the copy/connect path. The app keeps its values, protection and reasons; a parent update leaves the local port choice intact. Returning to plain files produces native settings files and `CHANGES.md`, with no owner key.
 
-This uses one owner and two local hubs. It does not exercise cloud signup, two-person cloud sharing, full historical revision/cost replay, or a service running after the move. The current hosted cloud is single-user. Use a provisioned shared hub for a team journey.
+This uses one owner and two local hubs. It does not exercise cloud signup, two people sharing one hub, full historical revision/cost replay, or a service running after the move. For a team, use a shared hub: hosted ConfigHub or the enterprise edition, where many people share one organization.
 
 ## R4: read a pinned revision from a small extension
 
