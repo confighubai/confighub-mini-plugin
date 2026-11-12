@@ -30,6 +30,6 @@ This page is for teams that use both [Entire](https://entire.io) and the ConfigH
 
 ## Using both in one repository
 
-In a test with both in one repository, every hook of each tool ran and exited cleanly. Each commit kept both tools' trailers.
+The two work side by side: every hook of each tool runs and exits cleanly, and each commit keeps both tools' trailers.
 
 The plugin's [pull-request review](../review/README.md) shows Entire's hooks in `.claude/settings.json` as one line, not one value each.

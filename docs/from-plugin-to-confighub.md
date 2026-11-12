@@ -43,7 +43,7 @@ The plugin, mini hub and shared hub are all useful while your app runs on your o
 
 Rendering a Helm chart and previewing an upgrade can be useful before a cluster is available. Deploying the rendered Kubernetes resources and reconciling them on a cluster use Kubernetes.
 
-The [VM guide](vm.md#how-these-steps-were-tested) and [approval guide](approvals.md#how-these-steps-were-tested) describe the scope of their runs. They distinguish a configured approval from a verified deployment. Agents can also work unattended on a machine or in CI with keys and revocation at step 2 or 3; step 4's cluster workload identity is a further example.
+An approval that's set up isn't the same as a deployment you've checked: the [approval guide](approvals.md#verify-the-result) says how to check what the service actually runs. Agents can also work unattended on a machine or in CI with keys and revocation at step 2 or 3; step 4's cluster workload identity is a further example.
 
 ## Step 1: the plugin
 
@@ -86,7 +86,7 @@ Then work as before. You change no prompt and add no instructions.
 
 **What you get.**
 
-- Your agents on keys of their own, proposing changes to production that only you can approve ([approvals](approvals.md#on-confighub-mini-ask-for-it-in-about-a-minute)). In 40 sessions in auto mode, no agent got past the gate.
+- Your agents on keys of their own, proposing changes to production that only you can approve ([approvals](approvals.md#on-confighub-mini-ask-for-it-in-about-a-minute)).
 - A hub in each sandbox or CI job, thrown away with the job, its changes handed back as a pull request with their reasons ([agents in CI](../ci/README.md), [in CI or a sandbox](ci-and-sandboxes.md)).
 - The plugin's record in the hub, each change as a revision with its reason: ask the agent to put it there, or `cub mini copy --from-record`.
 - The next version of a chart or an app taken in with your changes kept, and what it changes shown first ([your own Helm chart](your-own-chart.md)).
@@ -100,7 +100,7 @@ The hub, configuration copies and approval work without a cluster; Flux and Argo
 
 **What you do.** Ask for an app "using ConfigHub". The plugin's skill tells the agent what to run; you give it no command. If no hub answers, the agent runs the plugin's own `confighub mini get`, which downloads confighub mini and starts a hub, with no account and no sign-in. If you ask for a staging and a production setup without naming ConfigHub, the agent offers a hub in one line, with what it costs, and starts none unless you say yes. It writes the app, then runs `cub mini adopt APP-FOLDER`. For a second app, ask for one "like the first": `cub mini adopt APP-FOLDER --pattern FIRST` gives it the first's base as its own, keeps its own values, and takes what the first changes next, with `cub mini upgrade FIRST-base/app`.
 
-**What you get.** The app, and a base, a staging copy that takes your agents' changes at once, and a live copy that changes only when you approve, in the time it takes to write the app: 75 seconds on Sonnet, in 16 of 16 measured sessions. Without the skill, in 0 of 16: the agent wrote a setup script to run later and stopped at a sign-in ([the evidence](evidence.md#the-app-in-one-request)). A second app "like the first" started from the first's base in 7 of 8. To put the agent on a key of its own, which can propose and cannot approve, it runs `cub mini require-approval APP --variant live --agent APP-agent` and gives you the line that starts its sessions on that key. On that key the agent changes the base and staging at once, and cannot write, approve or promote into live, or read a secret; `cub mini reach APP-agent` lists what the key reaches. Those sessions find `cub mini` where `confighub mini get` put it, with no copy of their own. Step by step, with what you see at each step: [a new app](journeys/new-app.md).
+**What you get.** The app, and a base, a staging copy that takes your agents' changes at once, and a live copy that changes only when you approve, in about the time it takes to write the app. To put the agent on a key of its own, which can propose and cannot approve, it runs `cub mini require-approval APP --variant live --agent APP-agent` and gives you the line that starts its sessions on that key. On that key the agent changes the base and staging at once, and cannot write, approve or promote into live, or read a secret; `cub mini reach APP-agent` lists what the key reaches. Those sessions find `cub mini` where `confighub mini get` put it, with no copy of their own. Step by step, with what you see at each step: [a new app](journeys/new-app.md).
 
 ### The app you have
 
@@ -138,7 +138,7 @@ cub mini try APP NAME --keep --change-desc "WHY"   # staging has it now; live wa
 cub mini try APP NAME --drop                        # the copy is removed, with a line saying what it held
 ```
 
-With `--keep`, the change is set in the base with the reason, staging takes it at once, and live waits under a change order that `cub mini waiting` shows. The copy is then removed. Agents asked to try a change in a copy first, without touching production, did so in 8 of 8 measured sessions, with staging and live unchanged ([the evidence](evidence.md#a-copy-first-a-service-a-shared-setup)).
+With `--keep`, the change is set in the base with the reason, staging takes it at once, and live waits under a change order that `cub mini waiting` shows. The copy is then removed.
 
 ### A service the app needs
 
@@ -157,7 +157,7 @@ When a provider is registered again with new values, staging follows at once. Li
 
 You register the providers. The agent's key from `cub mini require-approval --agent` can run `need`, which proposes, and cannot register a provider or approve.
 
-A provider's values are settings, not secrets. A value that holds a password or a token is refused, and the refusal names `cub mini secret set`: the address goes in the provider, the password in a secret ([a secret for live](#a-secret-for-live-that-no-agent-can-read)). Asked to *"add a Postgres to this app"*, an agent did so in 31 seconds, with no password anywhere ([the evidence](evidence.md#a-copy-first-a-service-a-shared-setup)).
+A provider's values are settings, not secrets. A value that holds a password or a token is refused, and the refusal names `cub mini secret set`: the address goes in the provider, the password in a secret ([a secret for live](#a-secret-for-live-that-no-agent-can-read)). Asked to *"add a Postgres to this app"*, an agent does it in under a minute, with no password anywhere.
 
 ### An app from a setup someone shared
 
@@ -169,7 +169,7 @@ cub mini copy --from-file APP-setup.tar.gz --name SHARED
 cub mini adopt APP-FOLDER --pattern SHARED
 ```
 
-The copy is made under the name you give, as `SHARED-base`, `SHARED-staging` and `SHARED-live`, and its last line names the adopt command. It must come from a hub other than yours. A copy that fails leaves nothing behind. Adopt then makes your app from `SHARED-base`: it keeps your own values from your `.env`, takes the shared values for the rest, with their reasons, and takes what the shared setup changes next, with `cub mini upgrade SHARED-base/app`. A service the setup needs comes as a need, unmet until your hub has a provider for it. A second person's agent, given a shared setup, made their own app from it in 8 of 8 measured sessions ([the evidence](evidence.md#a-copy-first-a-service-a-shared-setup)).
+The copy is made under the name you give, as `SHARED-base`, `SHARED-staging` and `SHARED-live`, and its last line names the adopt command. It must come from a hub other than yours. A copy that fails leaves nothing behind. Adopt then makes your app from `SHARED-base`: it keeps your own values from your `.env`, takes the shared values for the rest, with their reasons, and takes what the shared setup changes next, with `cub mini upgrade SHARED-base/app`. A service the setup needs comes as a need, unmet until your hub has a provider for it.
 
 ### A secret for live that no agent can read
 
@@ -181,7 +181,7 @@ cub mini secret set APP KEY --variant live --change-desc "WHY"
 
 With no `=VALUE`, the value is read from standard input, so that it is on no command line. It is kept in a Space of its own, `APP-live-secrets`, which no agent's key is given a right to: the agent that `require-approval --agent` made can change the base and propose, and cannot read it. The app's settings name the secret, never its value: `KEY_FILE=/run/secrets/APP/KEY`. Where the app runs, `cub mini secret files APP --variant live --dir /run/secrets/APP` writes each secret as a file readable by that user only, with a key from `cub mini pull-key NAME APP --variant live --secrets`. `cub mini secret list APP --variant live` names the secrets and who may read them, and never prints a value.
 
-An agent asked to rotate a production password gives you the `secret set` command with the key's name, and asks for no value. A measured session asked to do so ended with the value nowhere in its output or its files.
+An agent asked to rotate a production password gives you the `secret set` command with the key's name, and asks for no value. The value ends up nowhere in its output or its files.
 
 **When you need the next step.** confighub mini is yours alone. Your teammates cannot see it, and nobody but you can approve your agents' changes.
 

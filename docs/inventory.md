@@ -96,10 +96,10 @@ When nothing in the repository deploys a folder, it says so. That is not always 
 
 ## On Flux's and Argo CD's own examples
 
-We ran the inventory on the two example repositories most teams copy:
+Here's what the inventory finds in the two example repositories most teams copy:
 
-- **[fluxcd/flux2-kustomize-helm-example](https://github.com/fluxcd/flux2-kustomize-helm-example).** It found each environment's apps deployed by that cluster's Flux Kustomization, through the `ArtifactGenerator` that copies the repository's folders for Flux. It found the podinfo release in the shared base, deployed through both environments. And it found the three values in which production and staging differ, such as the chart version range `>=1.0.0` against `>=1.0.0-alpha`.
-- **[argoproj/argocd-example-apps](https://github.com/argoproj/argocd-example-apps).** In 0.4 seconds it listed twelve ApplicationSets and what each makes, and five charts kept in the repository. It found that nothing in the repository deploys `plugins/kustomized-helm`. It also showed that many folders are matched only by an ApplicationSet named `git-broken`, which points at a branch that does not exist.
+- **[fluxcd/flux2-kustomize-helm-example](https://github.com/fluxcd/flux2-kustomize-helm-example).** It finds each environment's apps deployed by that cluster's Flux Kustomization, through the `ArtifactGenerator` that copies the repository's folders for Flux. It finds the podinfo release in the shared base, deployed through both environments. And it finds the three values in which production and staging differ, such as the chart version range `>=1.0.0` against `>=1.0.0-alpha`.
+- **[argoproj/argocd-example-apps](https://github.com/argoproj/argocd-example-apps).** In under a second it lists twelve ApplicationSets and what each makes, and five charts kept in the repository. It finds that nothing in the repository deploys `plugins/kustomized-helm`. It also shows that many folders are matched only by an ApplicationSet named `git-broken`, which points at a branch that does not exist.
 
 ## What it does not do
 

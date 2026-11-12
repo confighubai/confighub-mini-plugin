@@ -16,7 +16,7 @@ The app might run on your own machine, on another machine, in CI, on one or many
 
 ## What it costs
 
-- **Time.** About 75 seconds for the first session on Sonnet, and about two minutes on Opus, including the download. A second app took about 55 seconds.
+- **Time.** One to two minutes for the first app, including the download, and about a minute for a second one.
 - **The download.** The first time, the agent downloads confighub mini, 48 to 73 MB, into `~/.confighub/mini`, and starts a hub. The hub listens on this machine only. Nothing else is installed.
 - **Your folder.** Besides the app's own files, two files appear: `.confighub-app`, a note of what the files match in the hub, which you commit; and `.claude/settings.local.json`, which runs later Claude Code sessions in the repository on the agent's key. That second file holds paths on your machine, so the agent's setup adds it to `.git/info/exclude`, and Git leaves it out.
 - **An account.** None. No sign-in is asked of you.
@@ -36,7 +36,7 @@ The app might run on your own machine, on another machine, in CI, on one or many
    mkdir baseline && cd baseline && git init -q && claude
    ```
 
-3. Ask for the app, in your own words. This is the request we measured:
+3. Ask for the app, in your own words. For example:
 
    ```
    vibe code me a baseline app using ConfigHub: a small web service with a health endpoint,
@@ -93,7 +93,7 @@ The app might run on your own machine, on another machine, in CI, on one or many
 
    The approve command is the one ConfigHub command you need to type.
 
-5. Read the agent's summary. In our run it ended:
+5. Read the agent's summary. It ends something like this:
 
    > **The three copies in the hub:**
    >
@@ -130,7 +130,7 @@ The app might run on your own machine, on another machine, in CI, on one or many
    Done. Each copy kept its own values.
    ```
 
-   In this run, production already had its own value for each setting the base holds, from `.env.production`, so approving changed no value there. It recorded that you read and approved production's settings. Where the agent wrote those files, this approval also approves them as production's starting values, and you see `Approved revision N of greeter-live/app too, its starting values, as shown above.` Until then nothing delivers live: `cub mini pull`, `pull-key` and `deploy-from-hub` refuse, and name this command.
+   Here, production already had its own value for each setting the base holds, from `.env.production`, so approving changed no value there. It recorded that you read and approved production's settings. Where the agent wrote those files, this approval also approves them as production's starting values, and you see `Approved revision N of greeter-live/app too, its starting values, as shown above.` Until then nothing delivers live: `cub mini pull`, `pull-key` and `deploy-from-hub` refuse, and name this command.
 
 7. Commit the app with `.confighub-app`:
 
@@ -187,7 +187,7 @@ Start Claude Code in a new folder, outside the first app's Git repository, and a
 make me a second app like the first: a notes service with a health endpoint, the same staging and production setup
 ```
 
-The agent writes the second app and runs `cub mini adopt notes --pattern greeter`. The second app's base is made from the first's. It keeps its own values, and takes what the first changes next. In our run, adopt printed:
+The agent writes the second app and runs `cub mini adopt notes --pattern greeter`. The second app's base is made from the first's. It keeps its own values, and takes what the first changes next. Adopt prints something like this:
 
 ```
 ConfigHub now keeps notes's settings, from .env, with .env.staging for staging and .env.production for production. Your files are unchanged.
@@ -210,7 +210,7 @@ Approve its live copy as in step 6, with `cub mini approve notes-base/adopt`.
 - **Adopt found no settings.** It prints `reads no settings adopt can find` when the app has no `.env`, compose file, `.env.example` or `.tfvars` file, and its code reads no setting. Ask the agent to put the app's settings in `.env`, then adopt again. If the folder has an env file by another name, such as `api.env`, the message names it and gives the two ways on: rename it to `.env`, or keep it with `cub mini upload APP --variant live --target none`.
 - **Live does not have a production value you asked for.** The agent wrote it in `.env`, which the copies share, and not in `.env.production`. Live takes a shared value only when you approve it: `cub mini waiting` shows it, and `cub mini approve APP-base/adopt` gives it to live. To make it live's own from the start, ask the agent to put it in `.env.production` too.
 - **A value was left out and named.** A value that looks like a password or a token never goes into the hub. Keep it out of the file, and set it in a terminal with `cub mini secret set APP KEY --variant live --change-desc "WHY"` ([a secret for live](../from-plugin-to-confighub.md#a-secret-for-live-that-no-agent-can-read)).
-- **The second app did not start from the first.** In one measured session of eight, the second app was asked for inside the first app's repository. Sessions there run on the first app's agent key, which may not make a new app. Ask from a folder of its own.
+- **The second app did not start from the first.** This happens when the second app is asked for inside the first app's repository. Sessions there run on the first app's agent key, which may not make a new app. Ask from a folder of its own.
 - **Alpine Linux.** confighub mini does not run on it. Use a distribution with glibc ([install](../install-mini.md)).
 
 ## How to go back
@@ -221,10 +221,6 @@ Approve its live copy as in step 6, with `cub mini approve notes-base/adopt`.
 - **Leave the hub:** your app's files were never changed by the hub, so they are still yours as they are. To take the hub's copies out as plain files, with a `CHANGES.md` that says why each value is set, run `cub mini copy APP --to-dir DIR`. Then `cub mini stop` stops the hub, and `cub mini uninstall --delete-data` removes it and its data.
 
 Every way out, step by step: [going back](going-back.md).
-
-## How this was tested
-
-Each step ran in non-interactive Claude Code sessions (`claude -p`) in empty Git repositories, with no `cub` on the path, on 7 November 2026, with the plugin 0.78.0 and confighub mini 0.10.7-mini.9; a program read the hub and the files afterwards, not what the session said. The app came out with its three copies in 16 of 16 sessions, and a second app started from the first's base in 7 of 8 ([the evidence](../evidence.md#the-app-in-one-request)). The output of each command on this page is from a run of the same steps on 12 November 2026, with the plugin 0.83.0 and the released confighub mini 0.10.7-mini.23; the agent's summary in step 5 is from a measured session.
 
 ## What you have now
 

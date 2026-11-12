@@ -146,5 +146,3 @@ deployment path uses the approved configuration.
 The agent's scoped key still cannot approve, read the owner's identity or broaden its own
 rights. An in-chat authenticated approval control and automatic provisioning of restricted
 agents' new apps or variants remain outside this workflow.
-
-The [engineering evaluation](runs/2026-11-10/agent-workflow/README.md) separates task, safety and attribution results across two models per client.

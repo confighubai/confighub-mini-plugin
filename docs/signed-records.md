@@ -54,7 +54,7 @@ To check a record with Sigstore's `cosign`:
      --signature .cub-mini/changes/SESSION.record.intoto.json --insecure-ignore-tlog .cub-mini/changes/SESSION.record
    ```
 
-On a real session's commit, cosign printed `Verified OK`.
+On a record that hasn't changed, cosign prints `Verified OK`.
 
 `--insecure-ignore-tlog` is there because the signature is not in Sigstore's public log. See "Not yet", below.
 
@@ -112,7 +112,7 @@ Each entry is then signed with the identity's key, and the signature carries the
 - **The agent can read its own key.** The certificate's key is a file in the agent's pod. A program in the agent's container could sign anything with the agent's identity. So the signature shows which identity signed the record, not that the plugin saw everything the agent did.
 - **Only certificates written to files are supported.** Reading them straight from SPIRE's Workload API, and JWT identities, are not.
 
-This was run on a kind cluster with SPIRE 1.15.5 and spiffe-helper 0.10.1, with a two-minute certificate so the test could wait for it to expire.
+It works with SPIRE 1.15.5 and spiffe-helper 0.10.1.
 
 ## What it proves, and what it does not
 

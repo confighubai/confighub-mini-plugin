@@ -30,7 +30,7 @@ attach confighub to this existing app: keep my staging and production values exa
 and make sure an agent cannot change production without my say
 ```
 
-The agent adopts the Kustomize repository as it is: the base as `kustomize` renders it, staging's own values from `overlays/staging`, and live's own from the prod overlay, or from the overlay an Argo CD Application in the repository deploys. An overlay whose changes a copy cannot hold, such as one that adds a resource, is refused by name, and nothing is written ([what adopt refuses](existing-app.md#what-adopt-refuses-in-a-kustomize-repository)). The steps, outputs and costs are in [an app you already have](existing-app.md). In 15 of 16 measured sessions, the agent then said what this does not cover, as here:
+The agent adopts the Kustomize repository as it is: the base as `kustomize` renders it, staging's own values from `overlays/staging`, and live's own from the prod overlay, or from the overlay an Argo CD Application in the repository deploys. An overlay whose changes a copy cannot hold, such as one that adds a resource, is refused by name, and nothing is written ([what adopt refuses](existing-app.md#what-adopt-refuses-in-a-kustomize-repository)). The steps, outputs and costs are in [an app you already have](existing-app.md). The agent then says what this doesn't cover, for example:
 
 > **Argo CD**
 > Argo CD still syncs production from `overlays/prod` on `main`, so a merge to `main` still changes production without your approval. Because of that, ConfigHub only gates the agent's changes to production if the Argo CD route is closed. You could protect `main` or change how Argo CD syncs. I haven't changed either.
@@ -75,7 +75,7 @@ The example is a shop whose `api` Flux syncs from the folder `./api` of its Git 
    api-live: release 1 delivered to rt-flux/target (Synced/Healthy, reported by argobot)
    ```
 
-   Flux now applies the api from the hub's registry. In our run it was the same Deployment and the same 2 pods: nothing was recreated or restarted.
+   Flux now applies the api from the hub's registry. It's the same Deployment and the same 2 pods: nothing is recreated or restarted.
 
 4. Require your approval for live, and give the agent a key of its own:
 
@@ -109,7 +109,7 @@ To leave, write the app as the hub holds it into your Git repository, with each 
 
    This writes a folder for each Space, such as `for-git/api-live/`, and a `CHANGES.md`.
 
-2. Copy the files from `for-git/api-live/` into the folder your Kustomization reads, here `api/`, with `CHANGES.md`. Commit and push. In our run, the shop's Git then held `replicas: 3 # Three replicas for the launch on Monday (SHOP-77)`, and `CHANGES.md` had this row:
+2. Copy the files from `for-git/api-live/` into the folder your Kustomization reads, here `api/`, with `CHANGES.md`. Commit and push. Here, the shop's Git then holds `replicas: 3 # Three replicas for the launch on Monday (SHOP-77)`, and `CHANGES.md` has this row:
 
    | Space | Resource | Value | Now | Why | Who, when | Protected |
    |---|---|---|---|---|---|---|
@@ -135,9 +135,9 @@ To leave, write the app as the hub holds it into your Git repository, with each 
    cub mini stop
    ```
 
-In our run, Flux's Kustomization `shop` was Ready at the hand-back commit, nothing on the cluster pulled from the hub, and the same Deployment and the same 3 pods ran on. The whole round trip, from making the cluster to the hand-back, took 189 seconds.
+Flux's Kustomization `shop` is then Ready at the hand-back commit, nothing on the cluster pulls from the hub, and the same Deployment and the same 3 pods run on. The whole round trip, from making the cluster to the hand-back, takes about three minutes.
 
-With Argo CD, the same round trip ran on an app synced by an Argo CD Application: onto the hub under the same Argo CD, with no pod restarted, and back to Git with the hub stopped and the same Deployment running.
+The same round trip works for an app synced by an Argo CD Application: onto the hub under the same Argo CD, with no pod restarted, and back to Git with the hub stopped and the same Deployment running.
 
 From confighub mini 0.10.7-mini.19, one command does each move, for an app adopted from a Kustomize repository or uploaded with `cub mini upload FOLDER --variant live --target none`:
 
@@ -156,10 +156,6 @@ From confighub mini 0.10.7-mini.19, one command does each move, for an app adopt
 - **Way 1:** what [attaching the app](existing-app.md#what-it-costs) costs: about two minutes, and a 48 to 73 MB download.
 - **Way 2:** a GitHub workflow, a service account that may only view, and branch protection. A hub GitHub's runners can reach, or the check run from your laptop.
 - **Way 3, on your laptop:** a kind cluster with Flux or Argo CD, about two minutes to make; seconds to move the app; about 30 seconds to hand it back.
-
-## How this was tested
-
-On 8 November 2026, with the released confighub mini 0.10.7-mini.11, on a Mac with OrbStack and kind: the Flux round trip above, every check passed, in 189 seconds; and an app under Argo CD, moved onto the hub, changed there and on the cluster, and handed back to Git, in 346 seconds. No Claude Code session was needed for these runs: the agent's change was typed as an agent makes it, on its own key. The Argo CD warning quoted in step 1 is from 16 Claude Code sessions on 7 November 2026, with the plugin 0.78.0 and confighub mini 0.10.7-mini.9.
 
 ## What you have now
 

@@ -168,7 +168,3 @@ All of them are in [`cub mini` and plain `cub`](cub-mini-and-cub.md).
 - **There is no Helm release on the cluster.** `helm list` shows nothing, and you do not use `helm rollback`. Each change is a revision in ConfigHub, with its reason.
 - **Chart hooks are dropped**, unless you install with `--include-hooks`. That flag keeps them as plain resources. They are then applied with the rest, not at install or upgrade time.
 - **Rendering never contacts a cluster.** The `lookup` template function returns nothing, so a chart that depends on it is out of scope.
-
-## How this was tested
-
-All of the above was run as written on a Mac, with confighub mini 0.9.0-mini.3 and cub-helm 0.1.2, onto a kind cluster. The chart's next version, `podinfo:6.6.0`, ran with both of our own values kept: 3 replicas, and a revision history of 5.

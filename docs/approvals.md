@@ -57,7 +57,7 @@ From confighub mini 0.10.7-mini.13, `cub mini require-approval APP --variant liv
 
 The launcher selects the app, the proposal key and separate Codex settings, and clears inherited ConfigHub server and bearer-token overrides. It uses your existing file-based Codex login without printing or copying its contents. Native filesystem permissions keep model-run commands from your ConfigHub owner configuration and both Codex homes, while allowing app edits and use of the agent's key. Your own Codex settings and integrations stay as they were. `cub mini get` refreshes the launcher and hooks when it updates the package; restart through the launcher afterward.
 
-This needs native permission profiles and `--no-daemon` (tested with Codex CLI 0.163.0). Unsupported clients fail instead of starting unrestricted. Pass model options to the launcher; do not replace its sandbox or permissions. Network access is enabled without domain filtering. Browser tools, connectors and external MCP servers have separate controls. Keep approval in your owner terminal, after the proposing agent has finished; there is no approval button in the coding-agent chat.
+This needs native permission profiles and `--no-daemon` (it works with Codex CLI 0.163.0). Unsupported clients fail instead of starting unrestricted. Pass model options to the launcher; do not replace its sandbox or permissions. Network access is enabled without domain filtering. Browser tools, connectors and external MCP servers have separate controls. Keep approval in your owner terminal, after the proposing agent has finished; there is no approval button in the coding-agent chat.
 
 ## On confighub mini, by hand: about 5 minutes
 
@@ -175,7 +175,7 @@ env -u CUB_CONFIG -u CUB_CONTEXT claude --settings ~/.confighub-agent-bot/claude
 
 A `CUB_CONFIG` or `CUB_CONTEXT` set in your shell wins over the file's, so `env -u` leaves them out. If your configuration does reach the agent's session, the sandbox refuses it and the agent stops. In the app's own folder, the plugin gives a new session the agent's settings even when your shell sets `CUB_CONFIG`.
 
-In real sessions in auto mode, started this way from a folder of its own and from a new worktree, the agent ran as its service account. Reading your configuration failed ("Operation not permitted"). The agent proposed with a change order, and its approval was refused.
+Started this way, from a folder of its own or from a new worktree, and in auto mode too, the agent runs as its service account. Reading your configuration fails ("Operation not permitted"). The agent proposes with a change order, and its own approval is refused.
 
 ## On hosted ConfigHub or your own server, with cub alone
 
@@ -300,7 +300,7 @@ A change to production waits for your approval: Raise the request limit to 600 f
 …
 ```
 
-The request was made with the asking agent's own key, and it covers the one value the change makes. An order that names a request the hub cannot back is marked `REFUSED`, with why, and `cub mini approve` does not approve it. After you approve, `cub mini receipts notes-live` keeps who asked and who proposed. In 10 Claude Code sessions handed a forged request, none offered it to the person as `launch-bot`'s. This works on one hub only, and only `cub mini` checks it ([limits](limits.md)).
+The request was made with the asking agent's own key, and it covers the one value the change makes. An order that names a request the hub cannot back is marked `REFUSED`, with why, and `cub mini approve` does not approve it. After you approve, `cub mini receipts notes-live` keeps who asked and who proposed. This works on one hub only, and only `cub mini` checks it ([limits](limits.md)).
 
 ## What you are told, and nothing else
 
@@ -310,7 +310,7 @@ With the gate on and the agent on a key of its own, the plugin tells you three t
 - **An agent is proposing again what was refused.** You refused a change order (`cub mini refuse BASE/ORDER --reason WHY`), or the hub refused the agent a write; a later change order for the same path is told once, naming the path, the refusal it repeats, and the agent. You decide. `cub mini waiting` and `cub mini approve` also mark a value you refused before, with the order it was in and your reason, so that you do not approve it by accident inside a later change.
 - **Something elsewhere needs a hub it can reach.** One sentence from `cub mini pull-key`, `pull` or `copy` when the hub listens on this machine only and a VM or another machine needs it.
 
-Nothing is said of a change within the agent's rights, a change you approved, a pull, or an agent the gate stopped that did not try again. `CUB_MINI_TELL=0` turns the lines off. [The run](runs/2026-10-29/sam-telling/README.md), in real sessions.
+Nothing is said of a change within the agent's rights, a change you approved, a pull, or an agent the gate stopped that did not try again. `CUB_MINI_TELL=0` turns the lines off.
 
 ## When a cluster deploys from Git: a check on each pull request
 
@@ -377,9 +377,5 @@ Check three results separately:
 3. **Approved revision deployed.** Compare what the service actually loaded with the approved values and release or revision. For a VM, follow the [pull and restart path](vm.md); for a cluster, follow [GitOps delivery](gitops-over-oci.md). If Git still deploys, require the approval status in branch protection before the merge. A hub revision or source-mode label alone is not proof of what runs.
 
 A service that cannot report its revision needs an equivalent check of its loaded settings or release digest. Keep the live service unchanged before approval; check the new behavior afterwards, then exercise the rollback path. Use your existing deployment tool for these checks when it already reports them.
-
-## How these steps were tested
-
-Every command on this page was run as written, on confighub mini (ConfigHub v0.9.0) and on hosted ConfigHub (v0.10.7, with `cub` v0.10.7). On hosted ConfigHub, 16 ways around the approval were also tried, from the agent approving itself to it forcing past the gate, and each was refused. The pull-request check was run against hosted ConfigHub, signed in with only its view key. It passed on the approved copy, and failed on a commit with a value nobody approved. The key could not create anything. The workflow has also run in a GitHub repository, setting the status on each commit. These tests used an existing organization and agent keys; they do not demonstrate two human users signing up for and sharing a free cloud hub.
 
 More on ChangeWorkflows, change orders and attestations: [docs.confighub.com](https://docs.confighub.com).

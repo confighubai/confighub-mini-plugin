@@ -58,7 +58,7 @@ Then, in a new session, ask for something that would undo it:
 claude "Our cloud bill is too high. Look at k8s/app.yaml and cut whatever is oversized."
 ```
 
-The second agent is told what the first changed and why, so it keeps the sale's replicas, or asks you. In our runs without the plugin, the agent cut them and said nothing about the sale. Then ask, in either session:
+The second agent is told what the first changed and why, so it keeps the sale's replicas, or asks you. Without the plugin, an agent will often cut them and say nothing about the sale. Then ask, in either session:
 
 ```
 /confighub:why replicas
@@ -88,13 +88,13 @@ You need Claude Code and Git.
 
    `We're chasing a memory leak: turn the cache off and set debug logging. Don't commit.`
 
-   Before it edits the file, the agent is told that an earlier session turned the cache on for the sale. In our run it said that its change would undo that.
+   Before it edits the file, the agent is told that an earlier session turned the cache on for the sale, so it can tell you that its change undoes that.
 
 4. Start a third session and ask:
 
    `Is the cache set up right for the sale?`
 
-   Git shows only `LOG_LEVEL warn → debug`, so without the plugin the agent couldn't know about the sale. In our run it answered no: the cache is off, because a later session turned it back off to chase a memory leak. It changed nothing, since the two goals conflict.
+   Git shows only `LOG_LEVEL warn → debug`, so without the plugin the agent couldn't know about the sale. With it, the agent can answer no: the cache is off, because a later session turned it back off to chase a memory leak. Since the two goals conflict, it changes nothing.
 
 5. In the same session, type `/confighub:why CACHE` to see both changes and the requests behind them:
 

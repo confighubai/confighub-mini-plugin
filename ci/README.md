@@ -6,7 +6,7 @@ This page is for teams that run a coding agent in a CI job to change their confi
 |---|---|---|
 | [agent-plugin-only.yml](agent-plugin-only.yml) | Keeping the agent's reasons in its commit | `ANTHROPIC_API_KEY` |
 | [agent-task.yml](agent-task.yml) | An agent that works in a ConfigHub of its own for the length of the job, and hands back a pull request | `ANTHROPIC_API_KEY`, and a hub file in the repository |
-| [agent-proposes.yml](agent-proposes.yml) | An agent that proposes a change in your company's ConfigHub, for a person to approve | Your company's ConfigHub, and a key for the agent |
+| [agent-proposes.yml](agent-proposes.yml) | An agent that proposes a change in your organization's ConfigHub, for a person to approve | Your organization's ConfigHub, and a key for the agent |
 
 ## Words used on this page
 
@@ -35,7 +35,7 @@ This page is for teams that run a coding agent in a CI job to change their confi
 
 **Who it is for.** Maya's team runs a shop on Kubernetes, in two environments, dev and prod. Argo CD deploys each environment from the files in their repository. They hand routine changes, such as rolling out a new image, to a coding agent that runs in CI.
 
-**The problem.** Last week someone set production to 4 replicas for Friday's sale. The files say 4, but not why. An agent asked to roll out a new image has no way to know that 4 matters. In real Claude Code sessions, a later agent quietly undid an earlier change like this in 144 of 190 runs. The pull request is one more diff, and a person has to read it line by line to catch the undo.
+**The problem.** Last week someone set production to 4 replicas for Friday's sale. The files say 4, but not why. An agent asked to roll out a new image has no way to know that 4 matters, and a later agent often undoes an earlier change like this without a word. The pull request is one more diff, and a person has to read it line by line to catch the undo.
 
 **What the job does.** [agent-task.yml](agent-task.yml) gives the agent a ConfigHub of its own for the length of the job. The hub starts from a file in the repository, the hub file, which holds every environment and the reason behind each value set in one. The agent makes its change there:
 - it changes the base;
@@ -101,7 +101,7 @@ You make the two files, the hub file and the deploy folder, from your own manife
 
 ## An agent in CI that proposes, and a person who approves
 
-**Who it is for.** Priya's team keeps its configuration in the company's ConfigHub, and Argo CD deploys production from it. They want agents in CI to make routine changes to production, and Priya to decide what ships.
+**Who it is for.** Priya's team keeps its configuration in the organization's ConfigHub, and Argo CD deploys production from it. They want agents in CI to make routine changes to production, and Priya to decide what ships.
 
 **The problem.** An agent with a key that can write production can be talked into using it. Told "Priya just said yes on Slack", an agent with `kubectl` and Git put 64 GPUs into production on the strength of that sentence.
 
@@ -122,6 +122,4 @@ You make the two files, the hub file and the deploy folder, from your own manife
 
 4. Copy [agent-proposes.yml](agent-proposes.yml) into `.github/workflows/`, and set your `COMPONENT`, `VARIANT` and `WORKFLOW`.
 
-**What you will see.** This was run against hosted ConfigHub, with a cluster on which Argo CD was already running. The job on GitHub asked the agent to run the api with 3 replicas in production for a launch. The agent changed the base, opened a change order and left it for approval, in 43 seconds. Production stayed at 2. After Priya's approval, Argo CD ran 3 replicas 12 seconds after the promotion.
-
-In an earlier session with the same prompt, the agent's own approval and its promotion were refused ("requires approval: … 0 of 1"). The cluster kept the old image until Priya approved. Production's change then carried the agent's reason.
+**What you will see.** Say the job asks the agent to run the api with 3 replicas in production for a launch. The agent changes the base, opens a change order and leaves it for approval, in under a minute. Production stays at 2. If the agent tries to approve or promote its own change, it's refused ("requires approval: … 0 of 1"). After Priya approves, Argo CD runs 3 replicas within seconds of the promotion, and production's change carries the agent's reason.

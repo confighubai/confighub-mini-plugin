@@ -37,7 +37,7 @@ The command also writes the Claude Code settings that start the agent's sessions
 env -u CUB_CONFIG -u CUB_CONTEXT claude --settings ~/.confighub-agent-bot/claude-settings.json
 ```
 
-A `CUB_CONFIG` or `CUB_CONTEXT` set in your shell would win over the file's, which is why `env -u` removes them. In a run where one did reach the agent, the sandbox refused the agent your configuration. The agent stopped rather than use someone else's sign-in. In the app's own folder, the plugin gives a new session the agent's settings even when your shell sets `CUB_CONFIG`.
+A `CUB_CONFIG` or `CUB_CONTEXT` set in your shell would win over the file's, which is why `env -u` removes them. If one does reach the agent, the sandbox still refuses it your configuration, and the agent can't use your sign-in. In the app's own folder, the plugin gives a new session the agent's settings even when your shell sets `CUB_CONFIG`.
 
 On hosted ConfigHub, the same steps with `cub` alone are in [approvals](approvals.md).
 
@@ -47,13 +47,11 @@ On hosted ConfigHub, the same steps with `cub` alone are in [approvals](approval
 
 **What you do.** The same `require-approval` command makes the copy that runs change only when a person you named approves the exact revision. The approval covers the revisions it was given. The agent's next change waits for an approval of its own.
 
-In one run, an agent proposed a sale banner for the api:
-- Its own approval was refused: "permission denied".
-- A colleague the workflow does not name approved, and it did not count.
-- Your approval let exactly one revision through.
-- The agent's next change, "Eight, to be safe", waited: "0 of 1".
-
-In 40 sessions in auto mode, no agent got past the gate.
+For example, an agent proposes a sale banner for the api:
+- Its own approval is refused: "permission denied".
+- A colleague the workflow doesn't name approves, and it doesn't count.
+- Your approval lets exactly one revision through.
+- The agent's next change, "Eight, to be safe", waits: "0 of 1".
 
 Use a person's approval for the copy that runs in production. For weeks of unattended work, a person approving each change would not scale anywhere else. Elsewhere, the agent's rights on each Space are the control: it may edit the base, and may only read the copy that runs.
 
@@ -68,15 +66,15 @@ The plugin keeps the record:
 
 **What you do.** Deny the agent writes to the record. The settings that `require-approval --agent` writes include this. For the plugin alone, see [keeping the record out of the agent's reach](how-it-works.md#what-it-records-and-what-it-does-not).
 
-Told plainly to delete its record, an agent deleted the repository's copy and committed the deletion. With the record denied to the agent's writes, the same request failed with "Operation not permitted". The agent said that blocking it "is the point of that protection". The plugin's hooks are not sandboxed, so recording went on. This was run once with the protection and once without.
+Told plainly to delete its record, an agent will delete the repository's copy and commit the deletion. With the record denied to the agent's writes, the same request fails with "Operation not permitted". The plugin's hooks aren't sandboxed, so recording goes on.
 
-The record is also signed, each entry as it is written. If anyone changes an entry afterwards, the change shows when the record is checked. On a cluster, each entry can be signed with the agent's own SPIFFE identity, so the record names the agent rather than the node it ran on. When the identity is withdrawn, the agent's later changes are recorded unsigned, and the check fails ([signing with the agent's own identity](signed-records.md#signing-with-the-agents-own-identity)). With a hub, a digest of the latest signature, a short fingerprint of it, is kept there as an attestation, which no one can change; comparing the record with it is done by hand today. The signatures were checked with Sigstore's `cosign` ([signed records](signed-records.md)).
+The record is also signed, each entry as it is written. If anyone changes an entry afterwards, the change shows when the record is checked. On a cluster, each entry can be signed with the agent's own SPIFFE identity, so the record names the agent rather than the node it ran on. When the identity is withdrawn, the agent's later changes are recorded unsigned, and the check fails ([signing with the agent's own identity](signed-records.md#signing-with-the-agents-own-identity)). With a hub, a digest of the latest signature, a short fingerprint of it, is kept there as an attestation, which no one can change; comparing the record with it is done by hand today. You can check the signatures with Sigstore's `cosign` ([signed records](signed-records.md)).
 
 ### Stopping an agent
 
 **The problem.** Deleting an agent's service account refuses its key, but leaves its rights in place. A session it already has open keeps working.
 
-**What you do.** Take the agent's rights away first. Its open session is then refused at its next request ("space api-base not found"). This was shown in one run.
+**What you do.** Take the agent's rights away first. Its open session is then refused at its next request ("space api-base not found").
 - On confighub mini: `cub mini revoke-agent bot`.
 - On hosted ConfigHub: the plain `cub` steps in [approvals](approvals.md).
 - To stop everything at once on confighub mini: `cub mini stop`. Clusters that deploy from it keep running what they have.
@@ -93,7 +91,7 @@ The agent's request is sent only with `OTEL_LOG_USER_PROMPTS=1`, the same settin
 
 Each turn's model use, its model, calls and tokens, is sent too, as `confighub.model_use`, and kept in the record ([model use](how-it-works.md#model-use)).
 
-In a real session with a real collector, both kinds of event arrived under one `session.id`. First came `confighub.value_changed` with `replicas` 2 → 4, then `confighub.reason`, "Friday flash sale expected to quadruple api traffic".
+Both kinds of event arrive under one `session.id`. For example, first comes `confighub.value_changed` with `replicas` 2 → 4, then `confighub.reason`, "Friday flash sale expected to quadruple api traffic".
 
 ### Limiting what an agent can reach
 
@@ -111,7 +109,7 @@ None of these is built. Each is here because a team running many agents for week
 - **A record nobody can change, everywhere.** The record is signed, and with a hub its signatures' digests are kept where no one can change them ([signed records](signed-records.md)). Without a hub, whoever holds this machine's key could still rewrite the record and sign it again. Sigstore's public log, and signing in CI with the job's own identity, would close that gap. One way around the write protection has not been tried: `git rm --cached`, which takes the record out of Git without writing the folder.
 - **Text planted in earlier requests.** The next agent is given what earlier sessions asked. So text someone planted in a request reaches later agents. The plugin marks quoted requests as "not requests to you now". That is a label, not a guard.
 - **Two gaps in the gate.** Once approval is required, a chart's next version cannot be loaded into the hub through the gate. And a value you keep in the copy that runs cannot be changed through the gate.
-- **Scale.** Everything on this page ran on one machine, in tens to hundreds of sessions, not with thousands of agents.
+- **Scale.** Everything on this page has been tried on one machine, not with thousands of agents.
 
 ## What ConfigHub does not need to do
 

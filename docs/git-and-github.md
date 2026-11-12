@@ -48,9 +48,9 @@ GitHub's runners must reach the hub to run the check in the pull request's own j
 
 Or let the clusters deploy from the hub itself, over OCI, and keep Git for people to read ([GitOps over OCI](gitops-over-oci.md)).
 
-## How it was tested
+## What branch protection then lets through
 
-In [a scratch repository](https://github.com/monadic/branch-rule-check) whose `main` requires "ConfigHub: api-live", for administrators too, with the check run from the approver's laptop:
+When `main` requires "ConfigHub: api-live", for administrators too, and the check runs from the approver's laptop:
 
 | Pull request | Its status | The merge |
 |---|---|---|
