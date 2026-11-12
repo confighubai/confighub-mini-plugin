@@ -47,7 +47,7 @@ On Linux you need `curl` and `xz`. On Debian or Ubuntu, install them with `apt-g
 1. Set the version, and work out the package name for your machine. Run the next steps in the same shell, since they use `V` and `P`:
 
    ```bash
-   V=0.10.7-mini.23
+   V=0.10.7-mini.24
    P=$(uname -s | tr A-Z a-z)-$(uname -m | sed 's/x86_64/amd64/; s/aarch64/arm64/')
    ```
 
@@ -151,7 +151,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates
 RUN useradd -m agent
 USER agent
 WORKDIR /home/agent
-ARG V=0.10.7-mini.23
+ARG V=0.10.7-mini.24
 RUN P=linux-$(uname -m | sed 's/x86_64/amd64/; s/aarch64/arm64/') \
  && curl -fsSLO https://github.com/confighubai/confighub-mini-plugin/releases/download/mini-v$V/confighub-mini-$V-$P.tar.xz \
  && curl -fsSLO https://github.com/confighubai/confighub-mini-plugin/releases/download/mini-v$V/SHA256SUMS \
@@ -189,7 +189,7 @@ The features of a hub are ConfigHub's own, not a separate version of them. That 
 
 Open an issue in [confighubai/confighub-mini-plugin](https://github.com/confighubai/confighub-mini-plugin/issues). It helps to include:
 
-- the package folder's name, which gives its version and platform, such as `confighub-mini-0.10.7-mini.23-darwin-arm64`;
+- the package folder's name, which gives its version and platform, such as `confighub-mini-0.10.7-mini.24-darwin-arm64`;
 - what `cub version` prints, which names the hub's server version too;
 - the command you ran, and what it printed.
 
