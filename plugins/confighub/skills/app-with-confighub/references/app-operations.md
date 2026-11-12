@@ -3,6 +3,49 @@
 Read only the section needed for the current request. App settings stored in a live copy
 are not proof that a service runs them. Inspect the actual delivery path.
 
+## 0. An app that Argo CD or Flux already deploys, with a starter
+
+When `CUB_MINI_STARTERS` is set (`echo $CUB_MINI_STARTERS` shows it) and Argo CD or Flux
+already deploys the app from Git, the person connects it with one line, and approves with
+a second. This section replaces
+sections 1 to 3 for such an app. Do not give the person `cub mini install`,
+`require-approval` or `cub cluster attach` before it. Do not add `--note-dir`,
+`--note-outside` or `--own-values` to it: the line already leaves the app's files unchanged.
+
+```
+cub mini adopt APP-FOLDER --kube-context CONTEXT --source NAME --agent APP-agent --attach CLUSTER
+```
+
+`NAME` is the Argo CD Application or Flux Kustomization that deploys the app, and `CLUSTER`
+is the name the cluster gets in the hub. What this one line does for the person:
+
+- It starts a hub on this machine when there is none, so the person installs nothing first.
+- It makes the base, staging and production copies from the app's files, and puts
+  production behind the person's approval.
+- It attaches the cluster to the Argo CD or Flux that is there, and leaves Argo CD's admin
+  password out of what it prints.
+- It makes your key, which can change staging and ask for a change to production, and
+  cannot approve.
+- It keeps the app's note outside the app's folder, so the app's files are not changed. It
+  adds only `.claude/settings.local.json`, which Git ignores, so that the next Claude Code
+  session in the folder runs as the agent.
+
+Its last line is the person's approval, `cub mini deploy-from-hub ... --change-order
+APP-live/connect --approve`. It shows the person what it would move and asks yes or no. On a
+yes it approves the order and moves delivery to the hub, with the same pods running. Give
+the person these two lines and no other. If `cub` is not on the person's PATH yet, because
+only the plugin is installed, give the adopt line with the plugin's program in place of
+`cub` (see section 1); it installs confighub mini first, and its last line names the
+person's `cub` in full.
+
+Check before you hand it over, with your own commands: `cub mini adopt APP-FOLDER
+--kube-context CONTEXT --source NAME --dry-run` shows the starter's plan and needs no hub.
+After the adopt line, read with the key it made for you, using the `CUB_CONFIG` and
+`CUB_CONTEXT` it printed: `cub space list`, `cub mini waiting`, `cub mini status`, `cub unit
+data`, `cub mini deploy-from-hub ... --dry-run` and `kubectl get` answer you as they answer
+the person. Do not hand the person a command that only reads; the approval is the only
+command that has to be theirs.
+
 ## 1. Find a hub, or start one
 
 For a Claude plugin, derive the absolute program path from this reference's installed
@@ -25,9 +68,11 @@ For Codex hook-only setup, use `${CODEX_HOME:-$HOME/.codex}/confighub/bin/config
 instead. A restricted agent with an existing app must use its configured hub, not install another.
 
 It downloads confighub mini (about 60 MB), starts a hub on this machine and signs `cub` in to
-it, in under a minute. Its last lines print the `export PATH="...:$PATH"` line for its `cub`;
-run that line in each later command, or use the path directly:
+it, in under a minute. Its last lines name its `cub` by its full path. In each later command,
+use that path, or put its folder first on the PATH in that command:
 `${CUB_CONFIG:-$HOME/.confighub}/mini/confighub-mini-<version>-<os>-<arch>/bin/cub`.
+Do not give the person a PATH line: a new session in the app's folder finds `cub` by itself,
+and each command printed for the person names its `cub` in full.
 Do not run `cub auth login`, and do not send the person to hub.confighub.com. Run it again
 after a restart to start the hub again.
 
@@ -61,6 +106,9 @@ app's name is the folder's; `--name NAME` sets another (lowercase letters, digit
 Adopt writes `.confighub-app` into the folder, a note of what its files match in the hub;
 commit it with the app, so that `cub mini upload` from any clone proposes only what that
 clone changed.
+
+An app that Argo CD or Flux already deploys from Git, with `CUB_MINI_STARTERS` set, is
+connected by the one line in section 0, in place of this section and the next.
 
 A second app on a hub that already has one starts from the first, not from nothing:
 
@@ -98,11 +146,21 @@ cub mini require-approval APP --variant live --agent APP-agent
 
 Adopt already makes live wait for the person's approval. This adds a key of its own for the
 agent: it can change the base and staging, so its uploads reach staging at once, and ask for
-live; it cannot approve, promote or write live. It prints
-the line that starts Claude Code on that key (`claude --settings ...`) and a `run-codex`
-launcher for Codex CLI. Give the person the line for the agent they use. Codex's launcher
+live; it cannot approve, promote or write live. Run it in the app's folder or the folder above
+it. It writes the agent's settings into the app's folder: every Claude Code session started
+there from then on runs as the agent, finds `cub`, and changes staging through the hub, with
+nothing for the person to type. It also prints the line that starts Claude Code on that key
+elsewhere (`claude --settings ...`) and a `run-codex` launcher for Codex CLI; give one only to a
+person who uses Codex or asks to start the agent in another folder. Codex's launcher
 uses separate settings and native command permissions, with the owner's sign-in out of
-reach. These settings protect new sessions. A session that started in the app's folder reads
+reach.
+
+Its last lines, under "Tell the person this, in these words", are what the person needs after
+setup: what they now have, what it does for them next time, and the one command to type if a
+change already waits for them. End your reply with those lines as they are. Do not add the
+hub's Spaces, PATH lines, launch lines, or other commands for the person; they can ask.
+
+These settings protect new sessions. A session that started in the app's folder reads
 them at once: from its next command, its `cub` cannot read the owner's sign-in and fails with
 "operation not permitted". Run `cub` there with the agent's `CUB_CONFIG` and `CUB_CONTEXT`,
 which the command prints, and leave approval to the person's own terminal. A session that
