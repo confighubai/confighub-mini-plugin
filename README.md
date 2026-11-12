@@ -6,7 +6,9 @@ ConfigHub is a small server, called a hub, that holds your app's settings. Your 
 
 New here? Start with the overview: https://confighub.github.io/helm-expt/ai-agents/
 
-The hub can run on your laptop as confighub mini, which is free and needs no account. We also run it for you as hosted ConfigHub, or you can run the enterprise edition on your own servers. Hosted ConfigHub and the enterprise edition support many people in one organization. The commands are the same everywhere, and when your team is ready you copy your apps from your laptop to the shared hub ([from your laptop to a shared hub](docs/from-plugin-to-confighub.md)).
+The hub can run on your laptop as [confighub mini](docs/install-mini.md), which is free and needs no account. We also run it for you as hosted ConfigHub, or you can run the enterprise edition on your own servers. Hosted ConfigHub and the enterprise edition support many people in one organization. The commands are the same everywhere, and when your team is ready you copy your apps from your laptop to the shared hub ([from your laptop to a shared hub](docs/from-plugin-to-confighub.md)).
+
+**Get confighub mini** through the plugin (ask for an app "using ConfigHub", or type `/confighub:install-mini`), or on its own, without the plugin ([installing confighub mini](docs/install-mini.md), and the downloads on the [releases page](https://github.com/confighubai/confighub-mini-plugin/releases)).
 
 This repository holds the ConfigHub plugin for Claude Code, the easiest way to start. It works with Codex too. From the first session it keeps a record of what your agents change and why, and tells the next agent before it undoes an earlier change. That needs no hub. When you ask for an app "using ConfigHub", it sets up a hub on your laptop.
 

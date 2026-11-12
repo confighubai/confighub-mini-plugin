@@ -34,7 +34,7 @@ A hub on a laptop listens on that machine only; the VM reaches it through a tunn
 
 ## An app platform on the hub
 
-With a `staging` and a `live` copy, each pulled by its own key, and a restart hook that takes the release the settings name, the same hub is an app platform: an agent proposes a release by its digest, you approve it to staging and then to live, and rollback is one change order given up and demoted. [The run](runs/2026-10-29/sam-platform/README.md) shows each step reaching the service within the timer's 30 seconds.
+With a `staging` and a `live` copy, each pulled by its own key, and a restart hook that takes the release the settings name, the same hub is an app platform: an agent proposes a release by its digest, you approve it to staging and then to live, and rollback is one change order given up and demoted. Each step reaches the service within the timer's 30 seconds.
 
 ## Verify the service
 
@@ -42,6 +42,4 @@ Pull keeps each file's Unit revision and content hash in `.cub-mini-pull.json` b
 
 Before approving a change, check that live's configuration revision, the VM's files and the service's behavior stay unchanged. After approval and the next successful pull, compare the VM's files with the approved values, check the restart result, and call the service's health endpoint. Compare its reported revision, release digest or loaded settings with what was approved. A successful pull alone does not prove the service restarted or loaded the new values. Exercise the release and rollback path above and check the earlier behavior returns.
 
-## How these steps were tested
-
-[A service on a VM](runs/2026-10-29/sam-vm/README.md): a Linux VM pulling from a laptop's hub, an approved timeout reaching the service within 30 seconds, an unapproved one never, a hand edit named and written over, the VM's key refused a write. [An app platform](runs/2026-10-29/sam-platform/README.md): a release to staging and live, and rolled back. [`cub mini` as plain `cub`](cub-mini-and-cub.md) says what each command stands for.
+[`cub mini` and plain `cub`](cub-mini-and-cub.md) says what each command on this page stands for.

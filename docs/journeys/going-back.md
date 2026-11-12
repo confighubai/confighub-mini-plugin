@@ -69,7 +69,3 @@ For an app you attached, your own `.env`, `.tfvars` or Kustomize files were neve
 ## Leave your organization's ConfigHub
 
 `cub mini copy` copies an app between any two hubs your `cub` can reach, base and copies together, with each kept value's reason. It reads the hub it copies from and changes nothing there. To bring an app down to confighub mini, make confighub mini the current `cub` context and run `cub mini copy --from-context ORG APP`, where `ORG` is your organization's context. To disconnect a cluster from ConfigHub, `cub cluster detach CLUSTER` leaves the cluster as it is ([your own cluster](../gitops-over-oci.md#your-own-cluster-with-hosted-confighub)).
-
-## How this was tested
-
-The hand-back to Git ran on 8 November 2026 on confighub mini 0.10.7-mini.11, under Flux and under Argo CD, and the `CHANGES.md` above is from that run ([an app that Argo CD or Flux deploys](gitops-app.md#how-this-was-tested)). The other commands on this page are the ones the earlier pages use, each run there.

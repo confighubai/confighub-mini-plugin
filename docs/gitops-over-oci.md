@@ -249,7 +249,7 @@ spec:
 
 The other steps are the same, except that step 4 needs no `flux reconcile`. Argo CD's UI is at the address `cub cluster up` prints.
 
-With Argo CD, the approved change ran about 4 seconds after the promotion. Going back ran about 4 seconds after its promotion. Every release read Synced and Healthy.
+With Argo CD, the approved change runs a few seconds after the promotion, and so does going back. Every release reads Synced and Healthy.
 
 ## Your own cluster, with hosted ConfigHub
 
@@ -295,19 +295,19 @@ The same works with a cluster you already have and hosted ConfigHub, or a Config
    cub release publish api-live --revision ChangeOrder:api-base/sale-4
    ```
 
-**How this was tested with Argo CD.** We ran it against hosted ConfigHub, with a kind cluster on which Argo CD v3.1.9 was installed first:
-- `cub cluster attach` left that Argo CD in place.
-- The first release ran 2 replicas.
-- Before the approval, the promotion was refused ("requires approval: … 0 of 1"), and the cluster still ran 2.
-- After the approval, the cluster ran 4, 9 seconds after the promotion.
-- A scale to 7 made by hand was put back by Argo CD within 3 seconds.
-- `cub release list` showed the running release Synced and Healthy.
+**What you see with Argo CD** already on the cluster, here v3.1.9:
+- `cub cluster attach` leaves that Argo CD in place.
+- The first release runs 2 replicas.
+- Before the approval, the promotion is refused ("requires approval: … 0 of 1"), and the cluster still runs 2.
+- After the approval, the cluster runs 4 within seconds of the promotion.
+- A scale to 7 made by hand is put back by Argo CD within seconds.
+- `cub release list` shows the running release Synced and Healthy.
 
-**How this was tested with Flux.** We ran it the same way, with Flux already installed on the cluster (`flux install`):
-- `cub cluster attach` left Flux in place.
-- Flux pulled the release from `oci.hub.confighub.com`.
-- A released change ran 4 seconds later.
-- A scale made by hand was put back.
+**What you see with Flux** already on the cluster (`flux install`):
+- `cub cluster attach` leaves Flux in place.
+- Flux pulls the release from `oci.hub.confighub.com`.
+- A released change runs within seconds.
+- A scale made by hand is put back.
 
 **To remove it:**
 - `cub cluster detach my-cluster` disconnects the cluster from ConfigHub, and leaves the cluster as it is.
@@ -345,25 +345,25 @@ Replace `FIRST-COMMIT` with the hash of the commit made in step 2, "The hub's co
 
 Each top-level folder of the repository is a Space. So the copy must be at the root of the repository, not in a subfolder.
 
-**How this was tested.** We ran it on confighub mini with Flux, with no approval required for live. The merged change, 2 to 3 replicas, was in the hub as "Three for the launch, reviewed in a pull request (Git, commit bb2beb3, by Dan)". The cluster ran 3 replicas 5 seconds later.
+For example, with Flux and no approval required for live, a merged change from 2 to 3 replicas is kept in the hub as "Three for the launch, reviewed in a pull request (Git, commit bb2beb3, by Dan)", and the cluster runs 3 replicas a few seconds later.
 
 ## When the hub is down
 
 What runs keeps running. The controller holds the last release it pulled.
 
-We ran this on confighub mini with Flux, with the hub stopped:
-- The app kept its 2 replicas.
-- Scaled to 7 by hand, it was put back to 2 by Flux, from its last release.
-- New releases waited.
-- When the hub started again, Flux fetched from it straight away.
+With Flux, while the hub is stopped:
+- The app keeps its 2 replicas.
+- Scaled to 7 by hand, it's put back to 2 by Flux, from its last release.
+- New releases wait.
+- When the hub starts again, Flux fetches from it straight away.
 
-This was not run with Argo CD.
+We haven't tried this with Argo CD yet.
 
 ## What k8sbot may do in your cluster
 
 k8sbot reads, and makes one kind of write.
 
-On the cluster `cub cluster up --controller flux` made, k8sbot's service account had two ClusterRoles:
+On the cluster `cub cluster up --controller flux` makes, k8sbot's service account has two ClusterRoles:
 - One to get, list and watch pods and their logs, services, endpoints, configmaps, events, namespaces, nodes, volumes, and the workload, networking and Flux resources. It does not include Secrets.
 - One to get, list, watch and patch Flux `OCIRepository` objects. Patching one is how k8sbot asks Flux to deploy.
 
@@ -376,7 +376,3 @@ cub cluster down shop --delete-config
 ```
 
 This deletes the cluster, and its setup in the hub.
-
-## How this page was tested
-
-All of the above was run as written with confighub mini 0.9.0-mini.3 (ConfigHub v0.9.0), with Flux v2.9.2 and with Argo CD, on a Mac with OrbStack.

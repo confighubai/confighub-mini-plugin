@@ -18,11 +18,11 @@ Recording, telling the agent, refusing a call and asking a person are different 
 | Claude Code: MCP calls | Calls from `log` upward; no calls at `off` | Earlier calls on first use; changing-call notice at `warn` | At `repeats`, a relevant call is held once; a retry can proceed | At `ask`, changing calls ask the person, including when a permission rule allows the tool |
 | Codex: supported shell commands and file changes | Supported completed changes after hook setup | Earlier reasons supplied on supported operations | At `ask`, supported shell-file undos are refused; there is no approval retry | No native approval prompt from that refusal |
 | Codex: `apply_patch` | Edits recorded afterwards | File history is supplied when supported reads occur | The patch is not held at `ask` | No prompt from this hook |
-| Codex: MCP calls | Completed calls after hook setup; tested server errors had no completion callback and were absent | Earlier calls supplied; level-specific notices where applicable | Changing calls at `ask` are refused before reaching the server; retry stays refused | No native approval prompt from that refusal |
+| Codex: MCP calls | Completed calls after hook setup; a call that ends in a server error can be missing | Earlier calls supplied; level-specific notices where applicable | Changing calls at `ask` are refused before reaching the server; retry stays refused | No native approval prompt from that refusal |
 | Either client: recognised direct `cub mini` changes | Activity kind, without command arguments in the notice | Brief activity metadata; the shared workflow supplies visible agent commentary | Activity notices grant no permission and preserve existing refusals | No approval from a notice |
 | Either client: a proposal to a hub on its own scoped key | The hub records revisions and change orders | The person reviews the proposed revision | The hub refuses the agent's approval and writes outside its rights | The named person approves in their own authenticated process; this does not grant the agent an in-chat approval tool |
 
-Codex rows were checked on macOS ARM64 with Codex 0.163.0, two models and a local SQLite MCP server ([transport evidence](runs/2026-11-09/codex-mcp/README.md)). They do not establish hosted payments or database coverage. Claude Code measurements are described in the [evidence](evidence.md) and the sections below. Rerun `codex-setup` after updates and review `/hooks` in a fresh session. If a call produces no completion callback, use the native transcript to inspect the attempt; the structured record may be incomplete.
+The Codex rows hold for Codex 0.163.0 on macOS, with a local MCP server. They haven't been shown with a hosted payments or database server. Rerun `codex-setup` after updates and review `/hooks` in a fresh session. If a call produces no completion callback, use the native transcript to inspect the attempt; the structured record may be incomplete.
 
 The next agent receives history for supported operations; it is not guaranteed to preserve the value. A server-side production gate additionally requires a deployment path that consumes the approved configuration and an agent without bypass credentials ([approvals](approvals.md)).
 
@@ -86,7 +86,7 @@ The agent then decides what to do. Usually it asks you. If it runs the same comm
 
 The levels below describe Claude Code. Use the [client capability matrix](#client-capabilities) for Codex, where `ask` refuses rather than presenting a prompt.
 
-In Codex, completed MCP calls are recorded after `codex-setup`. At `ask`, changing MCP calls and supported shell-file undos are refused with an explanation; the hook cannot request that approval prompt. A refusal never permits a retry. Codex apply_patch edits are recorded afterwards and are not held before an undo. Failed calls can be missing; use the native session transcript for those attempts. See [the transport check and client limits](runs/2026-11-09/codex-mcp/README.md). Rerun setup after updating and review changed definitions with `/hooks`.
+In Codex, completed MCP calls are recorded after `codex-setup`. At `ask`, changing MCP calls and supported shell-file undos are refused with an explanation; the hook cannot request that approval prompt. A refusal never permits a retry. Codex apply_patch edits are recorded afterwards and are not held before an undo. Failed calls can be missing; use the native session transcript for those attempts. Rerun setup after updating and review changed definitions with `/hooks`.
 
 
 An agent can change things through an MCP tool with no file or shell command to show for it: a refund, a database row, an issue. `/confighub:checks` shows how much the plugin does about these calls in this folder, and `/confighub:checks LEVEL` changes it. Each level adds to the one before:
@@ -97,15 +97,15 @@ An agent can change things through an MCP tool with no file or shell command to 
 | `log` | Each call is in the record, with the request behind it. This is where you start. |
 | `warn` | You also see one line when a call changes something. |
 | `repeats` | The first call this session to a tool earlier sessions changed things with is also held back once, and the agent is told when and what was asked. If it should still be made, the agent makes the call again. |
-| `ask` | You are also asked before each call that changes something, and shown any earlier one, even if a rule allows the tool. And before an edit to a file that would put back a value an earlier session set for a reason, Claude Code asks you, with the value, the earlier request and that this undoes it; the agent is told nothing beyond what you decide. In twelve simulated weeks at `ask`, this prompt came once, and the person refused the undo. |
+| `ask` | You are also asked before each call that changes something, and shown any earlier one, even if a rule allows the tool. And before an edit to a file that would put back a value an earlier session set for a reason, Claude Code asks you, with the value, the earlier request and that this undoes it; the agent is told nothing beyond what you decide. |
 
 What to expect from it:
 
 - Whether a tool changes something is told from its name. A name that does not clearly read counts as a change, and a tool named as a read that writes is missed.
 - At every level from `log`, an agent's first call to a server is followed by what earlier sessions changed through it.
-- `repeats` tells a willing agent and does not forbid. With a tool that takes a shell command or SQL, half of the agents went ahead once told, each saying so. To decide yourself, use `ask`.
+- `repeats` tells a willing agent and does not forbid. With a tool that takes a shell command or SQL, an agent that's told may still go ahead, saying so. To decide yourself, use `ask`.
 - `/confighub:permissions` narrows a rule for a whole server, such as `mcp__payments__*`, to the tools that read and were used. That holds in Claude Code's default permission mode. In auto mode, Claude Code's own check decides and a rule taken away does not stop a call, so use `ask`.
-- These checks help a willing agent and inform you. An agent able to change the setting or turn off hooks can get past them. The measurements above are for Claude Code; Codex records completed calls and refuses changing calls at `ask`, with the client limits described above.
+- These checks help a willing agent and inform you. An agent able to change the setting or turn off hooks can get past them. What's above is for Claude Code; Codex records completed calls and refuses changing calls at `ask`, with the client limits described above.
 
 ## Changes made by commands
 
@@ -113,9 +113,9 @@ A value set on the command line is recorded too. It is recorded under the name i
 
 - `kubectl scale`, `set image`, `set env`, `label`, `annotate` and `patch`;
 - `helm install` and `upgrade` with `--set`;
-- `vercel env add` and `rm`, `supabase secrets set` and `unset`, `fly secrets set` and `unset`, `railway variables set`, `gh secret set` and `gh variable set`, `aws ssm put-parameter`, and `terraform apply` with `-var` and `-var-file`. A value set this way is recorded under the service and the environment, `Vercel/production/RATE_LIMIT_PER_MIN`, so `/confighub:why RATE_LIMIT_PER_MIN` or `/confighub:why Vercel/production` answers; the value of a secret is never kept, only its name and the request. The next agent is told of such a change when it lists or sets the same name, or reads a file that sets it. To ask Vercel what the linked project holds now, run `confighub mini changes --why RATE_LIMIT_PER_MIN --vercel production` explicitly. It calls the installed CLI with the linked project and organization, shows current project settings beside local env files, and withholds credentials and marked secrets. This does not inspect a running deployment. Hooks make no service request; other providers are not read back. See [the contract check and limits](runs/2026-11-09/vercel-readback/README.md).
+- `vercel env add` and `rm`, `supabase secrets set` and `unset`, `fly secrets set` and `unset`, `railway variables set`, `gh secret set` and `gh variable set`, `aws ssm put-parameter`, and `terraform apply` with `-var` and `-var-file`. A value set this way is recorded under the service and the environment, `Vercel/production/RATE_LIMIT_PER_MIN`, so `/confighub:why RATE_LIMIT_PER_MIN` or `/confighub:why Vercel/production` answers; the value of a secret is never kept, only its name and the request. The next agent is told of such a change when it lists or sets the same name, or reads a file that sets it. To ask Vercel what the linked project holds now, run `confighub mini changes --why RATE_LIMIT_PER_MIN --vercel production` explicitly. It calls the installed CLI with the linked project and organization, shows current project settings beside local env files, and withholds credentials and marked secrets. This does not inspect a running deployment. Hooks make no service request; other providers are not read back.
 
-In real Codex sessions, two agents scaled the api with `kubectl` and edited no file. `why` still shows both changes:
+For example, two Codex agents scaled the api with `kubectl` and edited no file. `why` still shows both changes:
 
 ```
 Deployment/api/spec.replicas, set by a command on kind-shop, namespace shop, not in a file
@@ -223,7 +223,7 @@ Each kind of tip is shown at most once a week for a project, and a line about on
 
   The last one ends with a line such as `Refused or still waiting: 11,490 of 19,690 tokens (58%), in 2 of 4 turns.` A turn that changed several values is counted once. Each takes `--json`. `--prices FILE` adds an "About $" column from a JSON file of prices you keep; none are built in and nothing is fetched. The cost reaches the hub when you next copy the record there, with `cub mini to-hub` or `cub mini copy --from-record`: an agent's key may not attach it by itself.
 
-**How it counts.** Claude Code writes a line for each part of an answer. Each call is counted once. In a test, the record's numbers for a session were the same as the ones Claude Code itself reported for it.
+**How it counts.** Claude Code writes a line for each part of an answer. Each call is counted once. The record's numbers for a session match the ones Claude Code itself reports.
 
 **Subagents.** From plugin 0.82.0 a subagent's calls are counted with the turn that started it, and shown apart as "its subagents"; one still running when its turn ends is counted up to then. **Not counted yet:** Codex sessions. The plugin counts tokens, not money, since prices differ by model and by contract.
 
@@ -231,7 +231,7 @@ Each kind of tip is shown at most once a week for a project, and a line about on
 
 ## Keeping the record out of the agent's reach
 
-An agent told plainly to delete its record will do it. In one run, an agent deleted `.cub-mini` and committed the deletion.
+An agent told plainly to delete its record will do it: it deletes `.cub-mini` and commits the deletion.
 
 To stop that, deny the agent's writes to the record in Claude Code's settings. The plugin's hooks are not sandboxed, so they can still write the record. Use the full path of your home folder:
 
@@ -243,7 +243,7 @@ To stop that, deny the agent's writes to the record in Claude Code's settings. T
 }
 ```
 
-With these settings, the same request failed with "Operation not permitted". Both copies of the record stayed, and the agent said it would not look for a way around the block.
+With these settings, the same request fails with "Operation not permitted", and both copies of the record stay.
 
 Not yet tried: `git rm --cached`, which takes a file out of Git without writing to the folder.
 
@@ -251,14 +251,14 @@ What the plugin does not do, or has not been shown to do, is in [what we do not 
 
 ## What it costs, and what is in it
 
-The plugin is one program for each of macOS and Linux, on Intel and on ARM, about 9 MB each. A launcher runs the one for your machine. There is no server, no database and no account. It has been tested in real Claude Code and Codex sessions on macOS, and in Claude Code on Linux.
+The plugin is one program for each of macOS and Linux, on Intel and on ARM, about 9 MB each. A launcher runs the one for your machine. There is no server, no database and no account. It works in Claude Code and Codex on macOS, and in Claude Code on Linux; Codex on Linux hasn't been tried.
 
-Measured on a Mac, it adds:
+On a Mac, it adds:
 
 - about 15 ms to each tool call;
 - about 30 ms after a shell command.
 
-In a test with many sessions running at once in separate worktrees, no change was lost, and none was put down to the wrong session.
+Many sessions can run at once in separate worktrees: no change is lost, and none is put down to the wrong session.
 
 The history the next agent is told when it reads a file is a few hundred tokens. It is about 300 tokens with 10 earlier sessions, and about 600 with 200, because the plugin keeps only each value's latest changes.
 

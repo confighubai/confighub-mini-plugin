@@ -26,7 +26,7 @@ If Argo CD or Flux deploys the app from Git, read this page, then [an app that A
 
 ## What it costs
 
-- **Time.** 45 to 196 seconds in measured sessions, about two minutes on average, including the first download.
+- **Time.** About two minutes, including the first download.
 - **The download.** confighub mini, 48 to 73 MB, the first time, into `~/.confighub/mini`. It runs as two processes on this machine. No account and no sign-in.
 - **Your files.** Not changed. One new file, `.confighub-app`, a note of what the files match in the hub, which you commit. The agent's setup also writes `.claude/settings.local.json`, so that later Claude Code sessions in the repository run on the agent's key, and adds it to `.git/info/exclude`, so Git leaves it out.
 - **For a Kustomize repository,** `kubectl` or `kustomize` on the machine, to render it.
@@ -180,10 +180,6 @@ Your files were never changed, so there is nothing to undo in them. To leave:
 4. Delete `.confighub-app` from the repository.
 
 Every way out: [going back](going-back.md).
-
-## How this was tested
-
-On 7 November 2026, with the plugin 0.78.0 and the confighub mini 0.10.7-mini.9 its sessions downloaded, 32 non-interactive Claude Code sessions were asked the request in step 2: 16 on a Terraform folder and 16 on a Kustomize repository that an Argo CD Application deploys, on Sonnet and Opus. A program read the hub and the files afterwards. In 32 of 32, the hub held the person's staging and production values, the agent's key could edit nothing in production, and the person's files were unchanged. The output of each command on this page is from a run of the same steps on 12 November 2026, with the released confighub mini 0.10.7-mini.23; the agent's summary in step 4 is from a measured session.
 
 ## What you have now
 

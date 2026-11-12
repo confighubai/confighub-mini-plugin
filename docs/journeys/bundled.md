@@ -85,7 +85,3 @@ The package's `START-HERE.txt` lists `examples/gpu-platform`: a platform team gi
 ## How to go back
 
 The start page's hub is one more context in your own `cub`, and your current context is not changed. To remove it and its data, run `cub mini uninstall --delete-data`, then delete the package folder ([going back](going-back.md)).
-
-## How this was tested
-
-Both examples ship in the confighub mini package. The package's story checks run them, and passed before the release of confighub mini 0.10.7-mini.11.

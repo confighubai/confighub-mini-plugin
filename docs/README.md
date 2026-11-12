@@ -19,6 +19,7 @@ Words we use on these pages:
 | [A new app](journeys/new-app.md) | One request in Claude Code gives you the app, with staging and production settings in a hub |
 | [An app you already have](journeys/existing-app.md) | Attach `.env` files, Terraform var files, Kustomize or Helm values, with your values kept as they are |
 | [An app that Argo CD or Flux deploys](journeys/gitops-app.md) | A hub beside Git, a check on each pull request, or the hub as the app's source, and the way back |
+| [Install confighub mini](install-mini.md) | The hub on your laptop, free and with no account: from Claude Code in one step, or on its own without the plugin; upgrading and removing it |
 | [A first run of confighub mini](try-confighub-mini.md) | Fifteen minutes: keep your own values through a chart's next version, and put the record in the hub |
 
 ## Concepts
@@ -38,9 +39,8 @@ Words we use on these pages:
 | Page | What it's for |
 |---|---|
 | [`cub mini` and plain `cub`](cub-mini-and-cub.md) | Which ConfigHub commands each `cub mini` command stands for |
-| [Install confighub mini](install-mini.md) | Installing it from Claude Code, by hand or in a container; upgrading and removing it |
 | [What a repository deploys](inventory.md) | `/confighub:inventory`: each app and chart, and what deploys it |
-| [Working with the tools you already have](integrations.md) | What the plugin does with each tool, and how much of that we've tested |
+| [Working with the tools you already have](integrations.md) | What the plugin does with each tool, and how far along each one is |
 | [Going back](journeys/going-back.md) | Undoing a step, taking your apps out as plain files, and removing each part |
 | [Limits](limits.md) | What the plugin and confighub mini don't do, or haven't been shown to do |
 
@@ -67,6 +67,6 @@ Words we use on these pages:
 |---|---|
 | [What agents did with the plugin and without it](evidence.md) | Real sessions, quoted as the agents wrote them |
 | [Evaluate it yourself](../evaluate/README.md) | The same evaluation, with your own models, in one command |
-| [Run records](runs/README.md) | Each dated run the pages quote, as it came out |
+| [Run records](runs/README.md) | Each dated run, as it came out |
 
 [`llms.txt`](../llms.txt) lists every page for AI agents.

@@ -34,7 +34,7 @@ Pick a page by what the person is doing. Commands and outputs on these pages are
 
 ## confighub mini and a hub
 
-- [Install confighub mini](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/install-mini.md): `/confighub:install-mini`, by hand, in a container; moving to a newer release; removing it
+- [Install confighub mini](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/install-mini.md): what confighub mini is; `/confighub:install-mini`, or by hand without the plugin, or in a container; moving to a newer release; removing it
 - [A first run](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/try-confighub-mini.md): fifteen minutes with the package's start page example and the plugin's record
 - [Approvals](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/approvals.md): an agent proposes and only a named person approves, on confighub mini or an organization's ConfigHub; one agent asking another with `cub mini ask`; the pull-request check when Git deploys
 - [Your own Helm chart](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/your-own-chart.md): a chart in a hub with cub-helm, your values kept through its next version
@@ -51,7 +51,7 @@ Pick a page by what the person is doing. Commands and outputs on these pages are
 
 ## Optional
 
-- [Run records](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/runs/README.md): each dated run the pages quote, as it came out
+- [Run records](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/runs/README.md): each dated run, as it came out
 - [Documentation index](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/README.md): every page, grouped as get started, concepts, reference, other tools and setups, and how this was tested
 
 - [Four runnable examples](examples/roadmap/README.md): How do I exercise VM approval/recovery/rollback, reuse, a hub round trip and a scoped read-only extension?

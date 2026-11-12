@@ -1,6 +1,8 @@
 # Install confighub mini
 
-This page is for an engineer who wants to run ConfigHub on their own machine, to try it or to give an agent a hub of its own. It shows how to install confighub mini in one step from Claude Code, by hand, and in a container or CI job.
+confighub mini is ConfigHub made small enough to run on one machine: a hub on your laptop, free, with no account, no Docker and no cluster. It keeps your app's settings with the reason for each value, and can make changes to production wait for your approval.
+
+This page shows how to install it: in one step from Claude Code, on its own without the plugin, and in a container or CI job.
 
 ## What you are installing
 
@@ -10,7 +12,7 @@ A *hub* is one running ConfigHub server, with the database that holds your confi
 
 You work with a hub through `cub`, ConfigHub's command-line tool. The package includes `cub`.
 
-There is a package for macOS and one for Linux, each for ARM and for Intel. Each package is about 48 to 73 MB.
+There is a package for macOS and one for Linux, each for ARM and for Intel, on this repository's [releases page](https://github.com/confighubai/confighub-mini-plugin/releases). Each package is about 48 to 73 MB.
 
 ## Install in one step, from Claude Code
 
@@ -38,9 +40,9 @@ In a terminal, or in Codex, run `bin/confighub mini get` from the plugin. It doe
 
 The one-step install needs nothing else on the machine: no `tar`, `xz` or `curl`, and no system certificates. It works on Linux distributions that use glibc, such as Debian, Ubuntu, Fedora, Rocky and Amazon Linux, including their slim images. Alpine uses musl, and the bundled PostgreSQL does not run on it, so the install stops before it downloads anything and says so. Use a glibc image instead. In a container, run it as a user that has an account, since PostgreSQL will not start for a user ID without one.
 
-## Install by hand
+## Install by hand, without the plugin
 
-These are the same steps the one-step install takes.
+These are the same steps the one-step install takes, and they need no plugin and no Claude Code.
 
 On Linux you need `curl` and `xz`. On Debian or Ubuntu, install them with `apt-get install curl xz-utils`.
 
