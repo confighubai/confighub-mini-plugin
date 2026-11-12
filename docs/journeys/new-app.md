@@ -45,36 +45,53 @@ The app might run on your own machine, on another machine, in CI, on one or many
 
    You do not need special prompts for later app work. The [current workflow](../agent-workflow.md) first checks your existing setup. If you have not chosen ConfigHub, the agent explains the relevant benefit and setup cost before offering a hub. The walkthrough below records the earlier explicit ConfigHub setup.
 
-4. Let the agent work. It writes the app and its settings files (`.env`, `.env.staging`, `.env.production`). If no hub answers, it runs the plugin's own `confighub mini get`, which downloads confighub mini and starts a hub. On a machine without it, this took 22 seconds and printed:
+4. Let the agent work. It writes the app and its settings files (`.env`, `.env.staging`, `.env.production`). If no hub answers, it runs the plugin's own `confighub mini get`, which downloads confighub mini and starts a hub. On a machine without it, it printed:
 
    ```
-   Downloading confighub mini 0.10.7-mini.9 for darwin-arm64...
-   Checked against SHA256SUMS: 4179dcad…
-   ==> Signed in as context "shadow-bear"
+   Downloading confighub mini 0.10.7-mini.23 for darwin-arm64...
+   Checked against SHA256SUMS: bcda6262cb7cc10fcee287c61193632957c158317e1d8781af726244f1088839
+   ==> Signed in as context "growl-cub"
        It is the current context.
 
-   confighub mini 0.10.7-mini.9 is running on this machine. Next, ask here, in your own words, for example:
+   ConfigHub: one setting only you can turn on. With it on, when an agent works in a folder that holds an app's settings files, a hub (a ConfigHub server on this machine) starts by itself and keeps those settings. It is off. To turn it on, run this in your own terminal: ~/.confighub/mini/confighub-mini-0.10.7-mini.23-darwin-arm64/bin/cub mini install --arrival yes. To keep it off and stop this line, run it with --arrival no instead.
+
+   confighub mini 0.10.7-mini.23 is running on this machine. Next, ask here, in your own words, for example:
      "Put what the agents changed in this repository into the hub."
      "Make changes to production wait for my approval; agents may only propose them."
 
-   In a terminal, its cub is at: export PATH="…/confighub-mini-0.10.7-mini.9-darwin-arm64/bin:$PATH"
-   To stop the hub: cub mini stop. To remove it and its data: cub mini uninstall --delete-data.
+   To run its cub in a terminal of your own, with nothing added to your PATH: ~/.confighub/mini/confighub-mini-0.10.7-mini.23-darwin-arm64/bin/cub
+   …
    ```
 
-   From plugin 0.81.0, the output also has one line about a setting that is yours alone, `ConfigHub: one setting is yours alone: whether a hub may start by itself …`. It is off, and this walkthrough does not need it: you asked for this hub. To decide it, read [a hub that starts by itself](../agent-workflow.md#a-hub-that-starts-by-itself-only-if-you-say-yes).
+   A hub is now running on your machine, and the last line says where its `cub` is. The hub signed your `cub` in to itself, as a *context*: a named hub and sign-in that `cub` uses. You were asked for nothing. The setting the output names, whether a hub may start by itself in other folders, is yours alone, and it stays off. This walkthrough does not need it, because you asked for this hub. To decide it, read [a hub that starts by itself](../agent-workflow.md#a-hub-that-starts-by-itself-only-if-you-say-yes).
 
-   Then it runs `cub mini adopt greeter`, which makes the three copies from what the app reads at start:
+   Then the agent runs `cub mini adopt greeter`, which makes the three copies from what the app reads at start:
 
    ```
-   Adopted greeter from what greeter reads at start (.env, app.py, .env.staging for staging, .env.production for live), as an app made from pattern-web/web-service.
-     Commit greeter/.confighub-app with the app: it notes what the files match in the hub, so that cub mini upload from any clone proposes only what that clone changed.
-     Its own values, kept through pattern-web/web-service's next version: APP_ENV=base, ENV_FILE=.env, GREETING=Hello, RATE_LIMIT_PER_MINUTE=60
-     From pattern-web/web-service, as greeter does not set them: LOG_LEVEL=info, PUBLIC=false, RELEASE=none, REPLICAS=2
-     Staging: greeter-staging, with them now, and its own from .env.staging: APP_ENV=staging, GREETING=Hello (staging), RATE_LIMIT_PER_MINUTE=600.
-     Live: greeter-live, with its own from .env.production: APP_ENV=production, GREETING=Welcome, RATE_LIMIT_PER_MINUTE=120; the rest unchanged until you approve. cub mini waiting shows what it would take, and the commands that approve it.
+   Made a starter pattern, pattern-web: default settings for a small web service (pattern-web/web-service), and rules that each change must pass (replicas-limit, not-public, log-level, no-secret-values). You can change it or ignore it.
+   ConfigHub now keeps greeter's settings, from .env, with .env.staging for staging and .env.production for production. Your files are unchanged.
+     It keeps three copies of them: greeter-base, the shared settings that staging and production start from; greeter-staging; and greeter-live, for production.
+     Your settings that differ from the defaults in pattern-web/web-service: APP_ENV=base, GREETING=Hello, RATE_LIMIT_PER_MINUTE=60. A new version of those defaults will not overwrite them.
+     Defaults from pattern-web/web-service, for settings greeter does not set: LOG_LEVEL=info, PORT=8080, PUBLIC=false, RELEASE=none, REPLICAS=2.
+     Staging has the shared settings now, with its own settings from .env.staging: APP_ENV=staging, GREETING=Hello (staging), RATE_LIMIT_PER_MINUTE=600.
+     Production has its own settings from .env.production: APP_ENV=production, GREETING=Welcome, RATE_LIMIT_PER_MINUTE=120. The shared settings reach production only after you approve them: run cub mini waiting.
+     Commit greeter/.confighub-app with the app. It records what your files matched in ConfigHub, so that cub mini upload from any clone proposes only that clone's changes.
+   …
    ```
 
-   `pattern-web` is a starter pattern the first adopt makes: the defaults every small web service starts from, and four rules, such as one that refuses a value named like a password. It is yours to change or ignore. Last, the agent runs `cub mini require-approval greeter --variant live --agent greeter-agent`, which gives the agent its own key.
+   Your values are in the hub as your files have them, and your files are unchanged. `pattern-web` is the set of defaults every small web service starts from, with four rules, such as one that refuses a value named like a password. It is yours to change or ignore. (It is not one of the optional [starters](../starters.md), which are switched off unless you switch them on.)
+
+   Last, the agent runs `cub mini require-approval greeter --variant live --agent greeter-agent`. It makes the live copy (`--variant live`) wait for your approval, and gives the agent a key of its own. Its output ends with lines for you, which the agent passes on as they are:
+
+   ```
+   Tell the person this, in these words:
+     Staging and production now have their own settings. When an agent changes something that production uses, production waits for your yes.
+     Claude Code sessions you start in ~/baseline/greeter from now on change staging at once, and ask you before they change production.
+     One change waits for you now: production's starting settings, from this setup. To see it and approve it, run this in a terminal of your own:
+       ~/.confighub/mini/confighub-mini-0.10.7-mini.23-darwin-arm64/bin/cub mini approve greeter-base/adopt
+   ```
+
+   The approve command is the one ConfigHub command you need to type.
 
 5. Read the agent's summary. In our run it ended:
 
@@ -91,31 +108,31 @@ The app might run on your own machine, on another machine, in CI, on one or many
    >
    > Nothing is committed yet. Commit `greeter/`, including `.confighub-app`, so later uploads from any clone propose only that clone's changes.
 
-6. In your own terminal, run the `export PATH=...` line the agent gave you. `cub` comes with confighub mini and is not on your path until you do. Each new terminal needs it again.
-
-7. Let live take the base's values. Adopt left a change order for live, which waits for you. See it, then approve it:
+6. Approve production's starting settings. Adopt left a change order for live, which waits for you. Run the approve command the agent gave you, in a terminal of your own. It names confighub mini's own `cub` by its full path, so it runs as printed, and nothing needs to go on your PATH. With your version and platform, it is:
 
    ```
-   cub mini waiting
-   cub mini approve greeter-base/adopt
+   ~/.confighub/mini/confighub-mini-0.10.7-mini.23-darwin-arm64/bin/cub mini approve greeter-base/adopt
    ```
 
-   `cub mini approve` shows what the change would do and asks you first. When it worked, you see `Approved greeter-base/adopt.` In a run of an app with other values in its files, it showed:
+   `cub mini approve` shows what the change would do and asks you first:
 
    ```
-   greeter-base/adopt, for greeter-live: greeter adopted from what greeter reads at start (.env, .env.staging for staging, .env.production for live) (made just now)
-     what it would change on greeter-live:
-       app: LOG_LEVEL=warn stays, kept as this copy's own
-       app: RATE_LIMIT=500 stays, kept as this copy's own
-       …
-       app: GREETING=Hello added
+   A change to production waits for your approval: greeter's settings, from .env, with .env.staging for staging and .env.production for production. It was made just now; its name is greeter-base/adopt.
+     Approving it changes no value in production; it only records your approval.
+     Production keeps its own value for these, so approving does not change them there:
+       APP_ENV=production
+       GREETING=Welcome
+       RATE_LIMIT_PER_MINUTE=120
    Approved greeter-base/adopt.
    …
+   greeter-live: updated. No cluster or service takes its settings from ConfigHub yet
+   …
+   Done. Each copy kept its own values.
    ```
 
-   Live's own values, from `.env.production`, stay as they are. From plugin 0.82.0, where the agent wrote those files, this approval also approves them as production's starting values, and you see `Approved revision N of greeter-live/app too, its starting values, as shown above.` Until then nothing delivers live: `cub mini pull`, `pull-key` and `deploy-from-hub` refuse, and name this command.
+   In this run, production already had its own value for each setting the base holds, from `.env.production`, so approving changed no value there. It recorded that you read and approved production's settings. Where the agent wrote those files, this approval also approves them as production's starting values, and you see `Approved revision N of greeter-live/app too, its starting values, as shown above.` Until then nothing delivers live: `cub mini pull`, `pull-key` and `deploy-from-hub` refuse, and name this command.
 
-8. Commit the app with `.confighub-app`:
+7. Commit the app with `.confighub-app`:
 
    ```
    git add -A && git commit -m "greeter, with its staging and live copies"
@@ -123,31 +140,43 @@ The app might run on your own machine, on another machine, in CI, on one or many
 
 ## Changing the app later
 
-Ask for a change as you would. The agent edits `.env`, then proposes it with `cub mini upload`. Staging takes it at once. Live waits for you. When an agent on its key changed the greeting, the upload printed:
+Ask for a change as you would. The agent edits `.env`, then proposes it with `cub mini upload`. Staging takes it at once, unless staging has its own value. Live waits for you. When an agent on its key changed the greeting, the upload printed:
 
 ```
-greeter-staging has GREETING = howdy now, from .env.
+Changed the shared settings (greeter-base), with the reason: A warmer greeting
+  GREETING: Hello → howdy
+Staging keeps its own GREETING=Hello (staging), so this change does not reach it.
 
-greeter-live takes it only once approved: it waits for that, as greeter-base/upload-20261107-153104-r2jx.
-  To see it and approve it: cub mini approve greeter-base/upload-20261107-153104-r2jx
+Production keeps its current settings until you approve this change. To see the change and approve it:
+  ~/.confighub/mini/confighub-mini-0.10.7-mini.23-darwin-arm64/bin/cub mini approve greeter-base/upload-20261112-054905-acvw
 ```
 
-The agent's turn ends with one line that a change is waiting for you, with the command that approves it. `cub mini waiting` lists every change that waits:
+The change is in the shared settings, and staging keeps its own greeting. The agent's turn ends with one line that a change waits for you, with the command that approves it. `cub mini waiting` lists every change that waits:
 
 ```
-greeter-base/upload-20261107-153104-r2jx, for greeter-live: A warmer greeting (made just now)
-  what it proposes for greeter-live, from its files:
-    app: GREETING=hello → GREETING=howdy
-  promoting it would also carry what greeter-base took from other uploads before it was made:
-    app: LOG_LEVEL=warn stays, kept as this copy's own
-  to approve and promote it: cub mini approve greeter-base/upload-20261107-153104-r2jx
-  to refuse it: cub mini refuse greeter-base/upload-20261107-153104-r2jx --reason WHY
+A change to production waits for your approval: A warmer greeting. It was made just now; its name is greeter-base/upload-20261112-054905-acvw.
+  It proposes for production, from the app's files:
+    GREETING: Hello → howdy
+  Production keeps its own value for these, so approving does not change them there:
+    APP_ENV=production
+    GREETING=Welcome (not the howdy this change proposes)
+    RATE_LIMIT_PER_MINUTE=120
+  To approve it, which puts it in production: cub mini approve greeter-base/upload-20261112-054905-acvw
+  To refuse it: cub mini refuse greeter-base/upload-20261112-054905-acvw --reason WHY
 ```
 
-The agent cannot approve its own change. When it tried, on its key (named `g-agent` in that run), the hub answered:
+Here production has its own greeting, `Welcome`, from `.env.production`. Approving this change would record it for production, but production would keep `Welcome`: a change to the shared settings does not overwrite a copy's own value. To change production's greeting, change `.env.production`. The agent cannot approve its own change. When it tried, on its key, ConfigHub answered:
 
 ```
-cub mini: the hub did not take your approval: only someone its workflow for greeter-live names may approve, and g-agent is not one of them. Nothing was approved or promoted
+cub mini: ConfigHub did not take your approval: only a person named as an approver for production can approve this change, and greeter-agent is not one. Nothing was changed
+```
+
+Later an agent lowered the shared request limit to 5. You refused it with `cub mini refuse`, giving a reason the agent can read. Refusing keeps the change out of production; the value stays in the shared settings until someone changes it back:
+
+```
+Refused greeter-base/upload-20261112-054911-yipf, with your reason: Five a minute is too few for the launch
+The refused value stays in the shared settings (greeter-base) until someone changes it back, so the next change proposed from them includes it too. cub mini waiting and cub mini approve will show it as a value you refused, with your reason.
+With the ConfigHub plugin, the next agent on this machine that finds or sets RATE_LIMIT_PER_MINUTE=5 where production would take it is told your reason.
 ```
 
 ## A second app from the first
@@ -161,21 +190,24 @@ make me a second app like the first: a notes service with a health endpoint, the
 The agent writes the second app and runs `cub mini adopt notes --pattern greeter`. The second app's base is made from the first's. It keeps its own values, and takes what the first changes next. In our run, adopt printed:
 
 ```
-Adopted notes from what notes reads at start (.env, .env.staging for staging, .env.production for live), as an app made from greeter-base/app.
-  Commit notes/.confighub-app with the app: it notes what the files match in the hub, so that cub mini upload from any clone proposes only what that clone changed.
-  What greeter changes next reaches notes, keeping its own, by: cub mini upgrade greeter-base/app --change-desc WHY
-  Staging: notes-staging, with them now, and its own from .env.staging: ENVIRONMENT=staging, GREETING=Hello from staging, RATE_LIMIT_PER_MINUTE=600.
-  Live: notes-live, with its own from .env.production: ENVIRONMENT=production, GREETING=Welcome, PORT=8080; the rest unchanged until you approve. …
+ConfigHub now keeps notes's settings, from .env, with .env.staging for staging and .env.production for production. Your files are unchanged.
+  It keeps three copies of them: notes-base, the shared settings that staging and production start from; notes-staging; and notes-live, for production.
+  Your settings that differ from the defaults in greeter-base/app: ENVIRONMENT=base, GREETING=Hello from notes, RATE_LIMIT_PER_MINUTE=60. A new version of those defaults will not overwrite them.
+  Defaults from greeter-base/app, for settings notes does not set: APP_ENV=base, LOG_LEVEL=info, PORT=8080, PUBLIC=false, RELEASE=none, REPLICAS=2.
+  When greeter's settings change, notes can take the change and keep its own values: cub mini upgrade greeter-base/app --change-desc WHY
+…
 ```
 
-Approve its live copy as in step 7, with `cub mini approve notes-base/adopt`.
+The second app took the first app's settings as its defaults, and kept its own.
+
+Approve its live copy as in step 6, with `cub mini approve notes-base/adopt`.
 
 ## If something goes wrong
 
-- **`cub: command not found`.** Run the `export PATH=...` line from step 6 in this terminal. To see it again, type `/confighub:install-mini` in Claude Code.
+- **`cub: command not found`.** Use the command as the agent printed it, with `cub`'s full path. To type `cub` yourself, first run `export PATH="$HOME/.confighub/mini/confighub-mini-VERSION-OS-ARCH/bin:$PATH"`, with the folder name the agent's command shows.
 - **No hub answers after a restart.** Type `/confighub:install-mini` in Claude Code, or ask the agent to start the hub. It starts the hub you had, with everything in it.
 - **The agent wrote a setup script for you to run, or asked you to sign in.** The plugin's skill was not used. Check that the plugin is installed with `claude plugin list`, and ask again with the words "using ConfigHub".
-- **Adopt found no settings.** It prints `reads no settings adopt can find` when the app has no `.env`, compose file, `.env.example` or `.tfvars` file, and its code reads no setting. Ask the agent to put the app's settings in `.env`, then adopt again. From plugin 0.82.0, if the folder has an env file by another name, such as `api.env`, the message names it and gives the two ways on: rename it to `.env`, or keep it with `cub mini upload APP --variant live --target none`.
+- **Adopt found no settings.** It prints `reads no settings adopt can find` when the app has no `.env`, compose file, `.env.example` or `.tfvars` file, and its code reads no setting. Ask the agent to put the app's settings in `.env`, then adopt again. If the folder has an env file by another name, such as `api.env`, the message names it and gives the two ways on: rename it to `.env`, or keep it with `cub mini upload APP --variant live --target none`.
 - **Live does not have a production value you asked for.** The agent wrote it in `.env`, which the copies share, and not in `.env.production`. Live takes a shared value only when you approve it: `cub mini waiting` shows it, and `cub mini approve APP-base/adopt` gives it to live. To make it live's own from the start, ask the agent to put it in `.env.production` too.
 - **A value was left out and named.** A value that looks like a password or a token never goes into the hub. Keep it out of the file, and set it in a terminal with `cub mini secret set APP KEY --variant live --change-desc "WHY"` ([a secret for live](../from-plugin-to-confighub.md#a-secret-for-live-that-no-agent-can-read)).
 - **The second app did not start from the first.** In one measured session of eight, the second app was asked for inside the first app's repository. Sessions there run on the first app's agent key, which may not make a new app. Ask from a folder of its own.
@@ -183,7 +215,7 @@ Approve its live copy as in step 7, with `cub mini approve notes-base/adopt`.
 
 ## How to go back
 
-- **Refuse a change that waits:** `cub mini refuse APP-base/ORDER --reason "WHY"`. The agent can read your reason. The refused value stays in the base until someone changes it back, so the next change that waits would carry it; from plugin 0.82.0, `cub mini waiting` and `cub mini approve` mark it `refused before`, with your reason, so you do not approve it by accident.
+- **Refuse a change that waits:** `cub mini refuse APP-base/ORDER --reason "WHY"`. The agent can read your reason. The refused value stays in the base until someone changes it back, so the next change that waits would carry it; `cub mini waiting` and `cub mini approve` mark it as a value you refused, with your reason, so you do not approve it by accident.
 - **Undo a change live already has:** going back is a change like any other. Ask the agent to set the value back. It proposes it, and you approve it.
 - **Run sessions as yourself again:** `cub mini revoke-agent APP-agent` takes the agent's rights away at once. Then delete `.claude/settings.local.json`, or take out what the agent setup added to it if you keep other settings there.
 - **Leave the hub:** your app's files were never changed by the hub, so they are still yours as they are. To take the hub's copies out as plain files, with a `CHANGES.md` that says why each value is set, run `cub mini copy APP --to-dir DIR`. Then `cub mini stop` stops the hub, and `cub mini uninstall --delete-data` removes it and its data.
@@ -192,7 +224,7 @@ Every way out, step by step: [going back](going-back.md).
 
 ## How this was tested
 
-Each step ran in non-interactive Claude Code sessions (`claude -p`) in empty Git repositories, with no `cub` on the path, on 7 November 2026, with the plugin 0.78.0 and confighub mini 0.10.7-mini.9; a program read the hub and the files afterwards, not what the session said. The app came out with its three copies in 16 of 16 sessions, and a second app started from the first's base in 7 of 8 ([the evidence](../evidence.md#the-app-in-one-request)). The agent's upload, `cub mini waiting` and the refused approval are from a run the same day of the change that went out in confighub mini 0.10.7-mini.11, where an agent's key changes staging at once. The wording of a line may differ slightly in the current release.
+Each step ran in non-interactive Claude Code sessions (`claude -p`) in empty Git repositories, with no `cub` on the path, on 7 November 2026, with the plugin 0.78.0 and confighub mini 0.10.7-mini.9; a program read the hub and the files afterwards, not what the session said. The app came out with its three copies in 16 of 16 sessions, and a second app started from the first's base in 7 of 8 ([the evidence](../evidence.md#the-app-in-one-request)). The output of each command on this page is from a run of the same steps on 12 November 2026, with the plugin 0.83.0 and the released confighub mini 0.10.7-mini.23; the agent's summary in step 5 is from a measured session.
 
 ## What you have now
 

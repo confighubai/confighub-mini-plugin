@@ -87,7 +87,7 @@ stays off. The command in it is the package's own `cub`, with your version and p
 machine where `cub` is not yet on your `PATH`:
 
 ```
-ConfigHub: one setting is yours alone: whether a hub may start by itself to keep an app's settings files when an agent works in its folder. It is off. To turn it on, in your own terminal: ~/.confighub/mini/confighub-mini-VERSION-PLATFORM/bin/cub mini install --arrival yes (or --arrival no, and this line is not shown again).
+ConfigHub: one setting only you can turn on. With it on, when an agent works in a folder that holds an app's settings files, a hub (a ConfigHub server on this machine) starts by itself and keeps those settings. It is off. To turn it on, run this in your own terminal: ~/.confighub/mini/confighub-mini-0.10.7-mini.23-darwin-arm64/bin/cub mini install --arrival yes. To keep it off and stop this line, run it with --arrival no instead.
 ```
 
 **After a yes.** When an agent works in a Git project folder that holds one of those
@@ -104,13 +104,12 @@ ConfigHub: as chosen at setup on this machine, this folder's settings are now al
 **Values an agent wrote wait for you.** When an agent wrote the file production's copy
 starts from, such as the `.env` of a new app, that copy is marked "starting values, not
 approved". Nothing delivers it until you approve that exact revision. The line above then
-ends: `Production's copy starts from values an agent wrote, not approved, and nothing
-delivers it until you approve them: cub mini waiting.` `cub mini waiting` lists it first,
+ends: `An agent wrote production's settings, so nothing delivers them until you approve them: run cub mini waiting.` `cub mini waiting` lists it first,
 with who wrote the values and when, and the command that approves them,
 `cub mini approve APP-live`. Files you kept before any agent wrote to them are yours, and
 are not marked.
 
-The same holds when you ask for the app yourself. From plugin 0.82.0, `cub mini adopt`
+The same holds when you ask for the app yourself. `cub mini adopt`
 marks production's copy in the same way when an agent wrote its files, whoever runs the
 command. Approving `APP-base/adopt`, which [the new-app steps](journeys/new-app.md) already
 ask of you, approves those values too, so you type nothing extra; `cub mini waiting` names

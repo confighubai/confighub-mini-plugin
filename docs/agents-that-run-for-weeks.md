@@ -37,7 +37,7 @@ The command also writes the Claude Code settings that start the agent's sessions
 env -u CUB_CONFIG -u CUB_CONTEXT claude --settings ~/.confighub-agent-bot/claude-settings.json
 ```
 
-A `CUB_CONFIG` or `CUB_CONTEXT` set in your shell would win over the file's, which is why `env -u` removes them. In a run where one did reach the agent, the sandbox refused the agent your configuration. The agent stopped rather than use someone else's sign-in.
+A `CUB_CONFIG` or `CUB_CONTEXT` set in your shell would win over the file's, which is why `env -u` removes them. In a run where one did reach the agent, the sandbox refused the agent your configuration. The agent stopped rather than use someone else's sign-in. In the app's own folder, the plugin gives a new session the agent's settings even when your shell sets `CUB_CONFIG`.
 
 On hosted ConfigHub, the same steps with `cub` alone are in [approvals](approvals.md).
 

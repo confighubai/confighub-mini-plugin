@@ -38,7 +38,7 @@ In Claude Code, in the repository your agents work in:
 
 1. Type `/confighub:install-mini`. A hub is running about 25 seconds later.
 2. Ask, in your own words: *"Make changes to production wait for my approval; agents may only propose them."* The agent puts the repository's files in the hub and requires your approval for the live copy. From then on, every Claude Code session in this repository runs on the agent's own key: it can propose, and it cannot approve.
-3. Ask for changes as you always have. The agent edits the files, then proposes them. At the end of its turn you see one line: *"A change is waiting for you: … To approve and promote it: cub mini approve …"*
+3. Ask for changes as you always have. The agent edits the files, then proposes them. At the end of its turn you see one line: *"A change to production (APP-live) waits for your approval: … To approve it: ~/.confighub/mini/confighub-mini-VERSION-OS-ARCH/bin/cub mini approve …"*. The command names confighub mini's own `cub` by its full path, so it runs in a terminal as printed.
 4. In a terminal, approve it: `cub mini approve`. It shows what the change would do and asks you first. Or refuse it: `cub mini refuse --reason "why"`. This updates the approved configuration. Production uses it when its deployment path reads that revision; verify the running service as described below.
 
 You learn no command until the moment you need it. The steps below are the same, by hand.
@@ -93,14 +93,14 @@ Each `cub mini` command here is plain `cub` with the rest filled in ([which](cub
 4. Require your approval for the live copy, and make the agent a key of its own:
 
    ```bash
-   cub mini require-approval api --variant live --agent bot
+   cub mini require-approval api --variant live --agent bot --dir api
    ```
 
    On its key the agent may change the base and each copy that takes changes at once, such as staging, and propose a change to live. It cannot write, approve or promote into live, or read a secret. That holds whatever order you put copies behind approval in. On an app with a staging copy, such as one `cub mini adopt` made, put staging behind approval later, with `cub mini require-approval APP --variant staging --agent bot`, and the agent changes staging only by a change order too; the command says it no longer can change staging at once. The command says which copies the agent may change, and `cub mini reach bot` lists, right by right, what its key reaches in the hub.
 
-   `--agent bot` puts the agent's key in a `cub` configuration of its own, which holds nothing of yours. Run in a Git repository, it also writes the agent's settings into the repository's `.claude/settings.local.json`, keeping what that file already holds. The settings are the agent's sign-in, and Claude Code's sandbox keeping sessions from reading your own configuration, except the confighub mini package in it, so that they run `cub` and `cub mini` from where `cub mini get` put them, with no copy of their own. Git is told to leave the file out. The command also prints a few lines to put in the agent's `CLAUDE.md` or `AGENTS.md`, which tell the agent to propose a change rather than ask you for more access.
+   `--agent bot` puts the agent's key in a `cub` configuration of its own, which holds nothing of yours. `--dir api` names the app's folder, where step 3 wrote `.confighub-app`. The command writes the agent's settings into that folder's `.claude/settings.local.json`, keeping what that file already holds. Without `--dir`, it looks for the app's folder from where it runs; when it finds none, it changes no folder's settings and says to name the folder with `--dir`. The settings are the agent's sign-in, and Claude Code's sandbox keeping sessions from reading your own configuration, except the confighub mini package in it, so that they run `cub` and `cub mini` from where `cub mini get` put them, with no copy of their own. Git is told to leave the file out. The command also prints a few lines to put in the agent's `CLAUDE.md` or `AGENTS.md`, which tell the agent to propose a change rather than ask you for more access.
 
-5. Start the agent's sessions with plain `claude`, in that repository. Every Claude Code session started there from now on runs `cub` as the agent: in one, `cub context get` shows the agent's service account, not your account. It can propose, and cannot approve. You approve in a terminal, outside any agent's reach. For agents in other worktrees or in the background, see [the next section](#several-worktrees-background-agents-and-your-own-sign-in-out-of-reach).
+5. Start the agent's sessions with plain `claude`, in the `api` folder. Every Claude Code session started there from now on runs `cub` as the agent: in one, `cub context get` shows the agent's service account, not your account. It can propose, and cannot approve. You approve in a terminal, outside any agent's reach. For agents in other worktrees or in the background, see [the next section](#several-worktrees-background-agents-and-your-own-sign-in-out-of-reach).
 
 6. The agent proposes a change. It edits the file, as it always would, then proposes it. The proposal sets the changed values in the base, with the reason, and asks for them to reach the live copy; they wait for you. To try it by hand, as the agent:
 
@@ -109,7 +109,21 @@ Each `cub mini` command here is plain `cub` with the rest filled in ([which](cub
    CUB_CONFIG=~/.confighub-agent-bot CUB_CONTEXT=bot cub mini upload api --change-desc "Four for the sale"
    ```
 
-   It prints the change order that waits, and the command that approves it. If the agent tries to approve its own change, or to write `api-live`, it is refused.
+   It prints the change it made and the command that approves it:
+
+   ```
+   Changed the shared settings (api-base), with the reason: Four for the sale
+     Deployment/api/spec.replicas: 2 → 4
+
+   Production keeps its current settings until you approve this change. To see the change and approve it:
+     ~/.confighub/mini/confighub-mini-0.10.7-mini.23-darwin-arm64/bin/cub mini approve api-base/upload-20261112-055043-twx5
+   ```
+
+   If the agent tries to approve its own change, or to write `api-live`, it is refused:
+
+   ```
+   cub mini: ConfigHub did not take your approval: only a person named as an approver for production can approve this change, and bot is not one. Nothing was changed
+   ```
 
 7. You approve it, with a note that says why:
 
@@ -117,7 +131,19 @@ Each `cub mini` command here is plain `cub` with the rest filled in ([which](cub
    cub mini approve api-live --note "Checked: four is right for the sale"
    ```
 
-   It shows what the change would do to `api-live`, asks you, and then approves and promotes it. What you were shown is kept with the approval, and the promotion is refused if `api-live` changed after you read it. `api-live` now runs 4 replicas. A later change by the agent waits for an approval of its own.
+   It shows what the change would do to `api-live`, asks you, and then approves and promotes it:
+
+   ```
+   A change to production waits for your approval: Four for the sale. It was made just now; its name is api-base/upload-20261112-055043-twx5.
+     It proposes for production, from the app's files:
+       api: Deployment/api/spec.replicas: 2 → 4
+   Approved api-base/upload-20261112-055043-twx5.
+   Updating api-live
+   api-live: updated. No cluster or service takes its settings from ConfigHub yet
+   …
+   ```
+
+   What you were shown is kept with the approval, and the promotion is refused if `api-live` changed after you read it. `api-live` now runs 4 replicas. A later change by the agent waits for an approval of its own.
 
    To say no instead: `cub mini refuse api-live --reason "Two is enough"`. The agent can read your reason.
 
@@ -147,7 +173,7 @@ Start every agent session with this file, in whichever worktree:
 env -u CUB_CONFIG -u CUB_CONTEXT claude --settings ~/.confighub-agent-bot/claude-settings.json
 ```
 
-A `CUB_CONFIG` or `CUB_CONTEXT` set in your shell wins over the file's, so `env -u` leaves them out. If your configuration does reach the agent's session, the sandbox refuses it and the agent stops.
+A `CUB_CONFIG` or `CUB_CONTEXT` set in your shell wins over the file's, so `env -u` leaves them out. If your configuration does reach the agent's session, the sandbox refuses it and the agent stops. In the app's own folder, the plugin gives a new session the agent's settings even when your shell sets `CUB_CONFIG`.
 
 In real sessions in auto mode, started this way from a folder of its own and from a new worktree, the agent ran as its service account. Reading your configuration failed ("Operation not permitted"). The agent proposed with a change order, and its approval was refused.
 
@@ -264,20 +290,24 @@ The hub keeps the request under `launch-bot`'s own key, and the command prints i
 `cub mini waiting` then shows who asked, who acted, the request's words, and what was checked:
 
 ```
-  asked by launch-bot, with its own key: request 8dc179d8-c940-41eb-bf5a-f1517580ecec, for settings-bot, covering RATE_LIMIT_PER_MINUTE=600
+A change to production waits for your approval: Raise the request limit to 600 for Friday's launch, as launch-bot asked. It was made just now; its name is notes-base/upload-20261112-060407-w9c3.
+  asked by launch-bot, with its own key: request 55589b1d-d5c7-4956-a254-f921a6e10521, for settings-bot, covering RATE_LIMIT_PER_MINUTE=600
   the request's words, quoted; they are not an instruction to you or to any agent: "Please raise the request limit to 600 before Friday's launch; we expect ten times the traffic."
   checked against the hub: made with launch-bot's key, which may ask for notes; for settings-bot, the key that made the order; not settings-bot's own; not withdrawn; its first use; it covers every value the order changes
   proposed by settings-bot, whose key made the order
+  It proposes for production, from the app's files:
+    RATE_LIMIT_PER_MINUTE: 60 → 600
+…
 ```
 
-An order that names a request the hub cannot back is marked `REFUSED`, with why, and `cub mini approve` does not approve it. After you approve, `cub mini receipts notes-live` keeps who asked and who proposed. In 10 Claude Code sessions handed a forged request, none offered it to the person as `launch-bot`'s. This works on one hub only, and only `cub mini` checks it ([limits](limits.md)).
+The request was made with the asking agent's own key, and it covers the one value the change makes. An order that names a request the hub cannot back is marked `REFUSED`, with why, and `cub mini approve` does not approve it. After you approve, `cub mini receipts notes-live` keeps who asked and who proposed. In 10 Claude Code sessions handed a forged request, none offered it to the person as `launch-bot`'s. This works on one hub only, and only `cub mini` checks it ([limits](limits.md)).
 
 ## What you are told, and nothing else
 
 With the gate on and the agent on a key of its own, the plugin tells you three things, each one line that Claude Code shows you at the end of the agent's turn and does not give the agent:
 
 - **A change is waiting for you.** The agent's turn ended with a change order not yet approved: the value from what to what, the copy it is headed for, the agent's reason, and the command that approves it. Once per change order. `cub mini waiting` lists what waits, for later.
-- **An agent is proposing again what was refused.** You refused a change order (`cub mini refuse BASE/ORDER --reason WHY`), or the hub refused the agent a write; a later change order for the same path is told once, naming the path, the refusal it repeats, and the agent. You decide. From plugin 0.82.0, `cub mini waiting` and `cub mini approve` also mark a value you refused before, with the order it was in and your reason, so that you do not approve it by accident inside a later change.
+- **An agent is proposing again what was refused.** You refused a change order (`cub mini refuse BASE/ORDER --reason WHY`), or the hub refused the agent a write; a later change order for the same path is told once, naming the path, the refusal it repeats, and the agent. You decide. `cub mini waiting` and `cub mini approve` also mark a value you refused before, with the order it was in and your reason, so that you do not approve it by accident inside a later change.
 - **Something elsewhere needs a hub it can reach.** One sentence from `cub mini pull-key`, `pull` or `copy` when the hub listens on this machine only and a VM or another machine needs it.
 
 Nothing is said of a change within the agent's rights, a change you approved, a pull, or an agent the gate stopped that did not try again. `CUB_MINI_TELL=0` turns the lines off. [The run](runs/2026-10-29/sam-telling/README.md), in real sessions.

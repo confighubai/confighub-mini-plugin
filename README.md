@@ -5,13 +5,13 @@ Making or changing an app in Claude Code? The plugin gives it staging configurat
 - **A new app:** ask for one "using ConfigHub", with a staging and a production setup. The agent writes it and starts a hub: staging configuration takes changes at once; live waits for approval. This took 75 seconds in 16 of 16 measured sessions. A second app can start from it. [How to ask](#or-ask-for-the-app).
 - **An app you have:** `.env.staging`, Terraform var files, or a Kustomize repository deployed by Argo CD or Flux. "Attach ConfigHub to this app" keeps your values and makes live configuration changes wait for approval: 32 of 32 sessions.
 
-**You ship it; then someone hardens it, and your next app starts from their fixes.** You ask your agent for an app, and approve what reaches production. A colleague makes it fit for production, each value with its reason, and shares the setup as a file. Your next app is made from it with `cub mini adopt FOLDER --pattern NAME`, keeping its own values ([how](docs/from-plugin-to-confighub.md#an-app-from-a-setup-someone-shared)). Two people sharing one hub in the cloud is not available yet; today each of you runs a hub on your own machine, or you share one on a server you both reach.
+**You ship it; then someone hardens it, and your next app starts from their fixes.** You ask your agent for an app, and approve what reaches production. A colleague makes it fit for production, each value with its reason, and shares the setup as a file. Your next app is made from it with `cub mini adopt FOLDER --pattern NAME`, keeping its own values ([how](docs/from-plugin-to-confighub.md#an-app-from-a-setup-someone-shared)). Two people sharing one hub in the cloud is not available yet; today each of you runs a hub of your own, or you share one on a server you both reach.
 
 Your app can run anywhere from your laptop to production ([where the app runs](docs/README.md#where-the-app-runs)).
 
 Your agent makes the platform; the hub keeps it. The plugin records supported changes in files and services ([coverage](docs/integrations.md)). The next agent receives earlier reasons for [supported operations](docs/how-it-works.md#client-capabilities). In simulated weeks with model personas, no agent undid an earlier change silently ([the runs](docs/evidence.md)). See [ConfigHub for AI agents](https://confighub.github.io/helm-expt/ai-agents/) for examples.
 
-[Ordinary app requests](docs/agent-workflow.md) start no hub. One starts by itself only if you say yes to one question at setup. ConfigHub actions get a short notice.
+[Ordinary app requests](docs/agent-workflow.md) start no hub. One starts by itself only if you say yes to one question at setup.
 
 ## Install
 
@@ -44,7 +44,9 @@ vibe code me a baseline app using ConfigHub: a small web service with a health e
 a configurable greeting, and a staging and a production setup
 ```
 
-The agent writes the app, starts confighub mini on your machine if no hub answers, and ends with the three copies and the command that approves a change to live. Before you run that command, run the `export PATH=...` line the agent gives you: `cub` comes with confighub mini and is not on your path yet. Ask for a second app "like the first" and it starts from the first's base. [Step by step](docs/journeys/new-app.md).
+The agent writes the app, starts confighub mini on your machine if no hub answers, and ends with the three copies and the command that approves a change to live. That command names confighub mini's own `cub` by its full path, so you can paste it into a new terminal as it is. Ask for a second app "like the first" and it starts from the first's base. [Step by step](docs/journeys/new-app.md).
+
+For a kind of app your team makes often, an optional [starter](docs/starters.md), off by default, gives each new app its usual settings with reasons.
 
 For Codex CLI, run `plugins/confighub/bin/confighub mini codex-setup` from this checkout, then review `/hooks`; repeat after updates ([Codex](docs/codex.md)).
 
@@ -121,7 +123,7 @@ This is the way in to [ConfigHub](https://docs.confighub.com) for people who wor
 | **confighub mini** | A hub of your own: ConfigHub itself, packaged lean, as two processes on your laptop, in an agent's sandbox or in a CI job. No Docker, no cluster, no account, and it works with the network off. A download of 48 to 73 MB | `/confighub:install-mini` in Claude Code |
 | **`cub mini`** | A plugin for `cub`, ConfigHub's command-line tool, that fills in the rest of each request so the commands stay short. What you learn with it works unchanged on your organization's ConfigHub | Comes with confighub mini |
 
-It solves four problems: agents undo each other's changes ([step by step](#the-problem-it-solves)); nothing stands between an agent and production, since a rule in `CLAUDE.md` is only a request, while with a hub the agent proposes on a key of its own and only the person you name approves ([approvals](docs/approvals.md)); nobody knows what a repository deploys before they change it; and a vendor's next version overwrites your changes. [One team's path, step by step](docs/from-plugin-to-confighub.md).
+It solves four problems: agents undo each other's changes ([step by step](#the-problem-it-solves)); nothing stands between an agent and production, while with a hub the agent proposes on a key of its own and only the person you name approves ([approvals](docs/approvals.md)); nobody knows what a repository deploys before they change it; and a vendor's next version overwrites your changes. [One team's path, step by step](docs/from-plugin-to-confighub.md).
 
 ## The problem it solves
 
