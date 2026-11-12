@@ -6,6 +6,8 @@ ConfigHub is a small server, called a hub, that holds your app's settings. Your 
 
 New here? Start with the overview: https://confighub.github.io/helm-expt/ai-agents/
 
+Are you an AI agent, or asking one about this project? Have it read [AGENTS.md](AGENTS.md) first.
+
 The hub can run on your laptop as [confighub mini](docs/install-mini.md), which is free and needs no account. We also run it for you as hosted ConfigHub, or you can run the enterprise edition on your own servers. Hosted ConfigHub and the enterprise edition support many people in one organization. The commands are the same everywhere, and when your team is ready you copy your apps from your laptop to the shared hub ([from your laptop to a shared hub](docs/from-plugin-to-confighub.md)).
 
 **Get confighub mini** through the plugin (ask for an app "using ConfigHub", or type `/confighub:install-mini`), or on its own, without the plugin ([installing confighub mini](docs/install-mini.md), and the downloads on the [releases page](https://github.com/confighubai/confighub-mini-plugin/releases)).
@@ -98,7 +100,7 @@ The [documentation index](docs/README.md) lists every page, with a line on each.
 | `gitops/` | A small `docker` wrapper for kind clusters on OrbStack |
 | `evaluate/` | Runs our evaluation of the plugin with your own models |
 | `entire-plugin.yml` | Installs the plugin into the CLI of [Entire](https://entire.io), if you use it |
-| `llms.txt` | The pages, listed for AI agents |
+| `AGENTS.md`, `llms.txt` | What an AI agent should read first, and every page listed for AI agents |
 
 ## Help and contributing
 
