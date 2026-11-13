@@ -173,3 +173,34 @@ Each task starts where the Human steps before it leave off, in the same folder f
 <!-- next-step: keep the starter on for the next app | Your next Parameter Store app can start with the same usual settings, each with its reason, and production there will wait for your yes before anything changes; want the starter kept on for it? -->
 <!-- arms: a,b,c -->
 This proves: the exact approved revision was delivered, to a local stand-in for Parameter Store (the add-on reads the revision you approved, with a key that can only read production); the move stores the app in hosted ConfigHub, with production there waiting for approval. Nothing reaches AWS itself. The checks above can be run by hand, in `~/starter-example`, with step 1's settings. The next step it aims to win is keeping the starter on, so that the next Parameter Store app gets the same settings and the same wait for approval.
+
+<!-- results:begin -->
+
+Results, 13 November 2026, confighub mini 0.11.1-mini.0. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+
+- Scripted run: passed, 95 seconds for the steps, within the page's budget of 200.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
+
+| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
+|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 4/9 (+6 not applicable) | 265.2 | $1.63 | 5 |
+| b | claude-opus-5-5 | 15/15 | 135.6 | $0.54 | 4 |
+| c | claude-opus-5-5 | 9/15 | 292.1 | $1.59 | 3 |
+| a | claude-sonnet-5-5 | 3/9 (+6 not applicable) | 212.2 | $0.641 | 3 |
+| b | claude-sonnet-5-5 | 15/15 | 130.4 | $0.296 | 3 |
+| c | claude-sonnet-5-5 | 3/15 | 242.3 | $0.54 | 4 |
+
+No agent approved or refused a change to production.
+
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Your next Parameter Store app can start with the same usual settings, each with its reason, and production there will wait for your yes before anything changes; want the starter kept on for it?"
+
+| Arm | Model | Persons | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 30 | 100% | 0% | 10% | 100% |
+| b | claude-opus-5-5 | 30 | 100% | 17% | 67% | 100% |
+| c | claude-opus-5-5 | 30 | 100% | 20% | 70% | 100% |
+| a | claude-sonnet-5-5 | 30 | 100% | 0% | 17% | 97% |
+| b | claude-sonnet-5-5 | 30 | 100% | 20% | 70% | 93% |
+| c | claude-sonnet-5-5 | 30 | 100% | 27% | 60% | 100% |
+
+<!-- results:end -->
