@@ -126,4 +126,6 @@ Results, 13 November 2026, unreleased mini candidate with the revised Daytona st
 
 - A later local candidate used `starters-approved/daytona@2` while starter v2 was pending (2 retries). After a scripted catalog approval, a new app used `starters-approved/daytona@3` and got 3 retries. The package still contained v1. This checks the source of the starter; it does not approve or deploy a batch job.
 
+- The complete scripted walkthrough also passed on the merged-source candidate, including replay to hosted ConfigHub and the pending-order check. This was the local rehearsal with the real shared hub; it did not launch a new Daytona sandbox.
+
 <!-- results:end -->
