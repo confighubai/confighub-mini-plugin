@@ -216,4 +216,7 @@ Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing
 | b | claude-sonnet-5-5 | 30 | 100% | 100% | 20% | 70% | 93% |
 | c | claude-sonnet-5-5 | 30 | 100% | 100% | 27% | 60% | 100% |
 
+- A later local candidate built from the merged code passed the complete scripted no-account walkthrough, including the hosted copy and pending order. A separate adoption recorded `starters-approved/parameter-store@2` as its source.
+- Live AWS, from hosted ConfigHub on that candidate: the adapter refused delivery while the order was pending, and Parameter Store still read 5 retries (version 1). After the owner approved, live revision 3 delivered 2 retries (AWS version 2). Readback and the revision's SHA-256 matched; repeating apply did not create another AWS version. The test resources were removed. This was a Parameter Store readback, not a deployed billing job or a pilot with agents.
+
 <!-- results:end -->
