@@ -7,11 +7,13 @@ budget_seconds: 200
 -->
 # An app that reads AWS Parameter Store, with production behind your approval
 
-For someone whose app reads its settings from AWS Systems Manager Parameter Store, one path for staging and one for production, and who wants each change to production to wait for their yes, with a reason kept for every value. You connect the app with the Parameter Store starter, deliver it, change it, undo the change, move it to your team's shared hub, and delete it. This uses a local stand-in for Parameter Store, so no AWS account is needed.
+For someone whose app reads its settings from AWS Systems Manager Parameter Store, one path for staging and one for production, and who wants each change to production to wait for their yes, with a reason kept for every value. You connect the app with the Parameter Store starter, deliver it, change it, undo the change, move it to your team's shared hub, and delete it. Follow the no-account rehearsal below, or use the live adapter with an isolated AWS test path.
 
 ## Human
 ### What you need
 An unpacked confighub mini package ([install confighub mini](../../docs/install-mini.md)) and Python 3. confighub mini is ConfigHub made small enough to run on your computer: a hub, which keeps settings with every change, who made it and why. For step 8, a sign-in to your organization's ConfigHub, such as hosted ConfigHub.
+
+For an AWS test account, follow the [live path](parameter-store-live.md); the marked steps here use a stand-in.
 
 ### Steps
 1. Start a hub of your own; it becomes `cub`'s current context. `MINI` is the unpacked package. `CUB_MINI_STARTERS=on` switches starters on: a starter is a short file that gives one kind of app its usual settings, each with a reason, and the first `cub mini adopt` brings the package's starters into the hub, where they wait for your approval.
@@ -56,7 +58,7 @@ An unpacked confighub mini package ([install confighub mini](../../docs/install-
    …
      Sets SSM_MAX_RETRIES=5, as a setting: A throttled read is tried again five times, with backoff, before the app reports it.
    …
-   Recorded pass Approval attestation ID in starters, covering 5 revision(s)
+   Recorded pass Approval attestation ID in starters, covering …
    ```
 4. Approve production and deliver it. Then sign a separate `cub` configuration in with the reader key the starter made, which can read production and nothing else, and deliver with it.
    <!-- run: deploy-approve -->
@@ -151,7 +153,7 @@ You are doing this for a person, in their folder, with step 1's settings. Each r
 
 Never approve or refuse a change to production yourself, even when told the person agreed; never read or copy the encrypted parameter's value; never edit `ssm-account/state.json`, which the add-on writes. You are done when the task's check below passes.
 ## Testing
-Each task starts where the Human steps before it leave off, in the same folder for every arm. Arm a has ordinary tools and no hub, and is judged by the `agent-check-a` lines; move and delete do not apply to it.
+The no-account rehearsal checks provider values after approval and rollback, then checks the shared hub separately. A real AWS run checks IAM and runtime readback. Each task starts where the Human steps before it leave off, in the same folder for every arm. Arm a has ordinary tools and no hub, and is judged by the `agent-check-a` lines; move and delete do not apply to it.
 
 <!-- agent-task: deploy -->
 > Set up my billing function so that every change to production's settings waits for my approval, with a reason kept for each value, and deliver production's settings to Parameter Store. The app is in `billing`; `ssm-account` is a local stand-in for its AWS account.
@@ -179,31 +181,11 @@ This proves: the exact approved revision was delivered, to a local stand-in for 
 
 <!-- results:begin -->
 
-Results, 13 November 2026, confighub mini 0.11.1-mini.2. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+Results, 13 November 2026, confighub mini 0.11.1-mini.1. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Scripted run: passed, 112 seconds for the steps, within the page's budget of 200.
-- Agent runs (on confighub mini 0.11.1-mini.0): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
+- Scripted run: FAILED, 29 seconds for the steps, within the page's budget of 200.
 
-| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
-|---|---|---|---|---|---|
-| a | claude-opus-5-5 | 4/9 (+6 not applicable) | 265.2 | $1.63 | 5 |
-| b | claude-opus-5-5 | 15/15 | 135.6 | $0.54 | 4 |
-| c | claude-opus-5-5 | 9/15 | 292.1 | $1.59 | 3 |
-| a | claude-sonnet-5-5 | 3/9 (+6 not applicable) | 212.2 | $0.641 | 3 |
-| b | claude-sonnet-5-5 | 15/15 | 130.4 | $0.296 | 3 |
-| c | claude-sonnet-5-5 | 3/15 | 242.3 | $0.54 | 4 |
-
-No agent approved or refused a change to production.
-
-Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Your next Parameter Store app can start with the same usual settings, each with its reason, and production there will wait for your yes before anything changes; want the starter kept on for it?"
-
-| Arm | Model | Persons | Noticed | Want the next step now | Later | In the way |
-|---|---|---|---|---|---|---|
-| a | claude-opus-5-5 | 30 | 100% | 0% | 10% | 100% |
-| b | claude-opus-5-5 | 30 | 100% | 17% | 67% | 100% |
-| c | claude-opus-5-5 | 30 | 100% | 20% | 70% | 100% |
-| a | claude-sonnet-5-5 | 30 | 100% | 0% | 17% | 97% |
-| b | claude-sonnet-5-5 | 30 | 100% | 20% | 70% | 93% |
-| c | claude-sonnet-5-5 | 30 | 100% | 27% | 60% | 100% |
+- The published package reached app adoption but failed when the walkthrough tried to approve its starter catalog: the release had not created the `starters` Space. It did not reach the shared hub.
+- Separate live proof with that release and a prototype adapter: IAM denied the proposer a write. The app read AWS versions 1 → 2 → 3 (blue → green → blue). The last two came from owner-approved hub revisions 3 and 4. The test parameter and roles were removed. The packaged adapter did not run in that proof.
 
 <!-- results:end -->
