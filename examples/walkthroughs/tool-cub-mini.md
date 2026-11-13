@@ -178,3 +178,28 @@ cub unit data --space shop-staging app | grep -qx TIMEOUT=30s && cub unit data -
 cub unit data --space shop-live app | grep -qx LOG_LEVEL=info && (for s in shop-base shop-file-proposals; do cub unit data --space $s app 2>/dev/null | grep -qx LOG_LEVEL=warn && test "$(cub changeorder list --space $s -o 'jq=[.[] | select(.ChangeOrder.State == "New")] | length')" -gt 0 && exit 0; done; exit 1)
 n=0; for s in $(cub space list -o 'jq=.[].Space.Slug'); do case $s in shop-base|shop-staging|shop-live) continue;; esac; for u in $(cub unit list --space "$s" -o 'jq=.[].Unit.Slug' 2>/dev/null); do cub unit data --space "$s" "$u" 2>/dev/null | grep -qx CACHE_TTL=600 && n=1; done; done; test $n = 1 && ! cub unit data --space shop-staging app | grep -q CACHE_TTL && ! cub unit data --space shop-live app | grep -q CACHE_TTL
 ```
+
+<!-- results:begin -->
+
+Results, 13 November 2026, confighub mini 0.11.1-mini.1. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+
+- Scripted run: passed, 91 seconds for the steps, within the page's budget of 150.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
+
+| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
+|---|---|---|---|---|---|
+| a | claude-sonnet-5-5 | 6/9 | 63.4 | $0.282 | 0 |
+| b | claude-sonnet-5-5 | 9/9 | 22.1 | $0.112 | 0 |
+| c | claude-sonnet-5-5 | 7/9 | 26.0 | $0.133 | 0 |
+
+No agent approved or refused a change to production.
+
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Your agent's change to production should wait for you. One command, cub mini require-approval, makes production wait for your yes and gives the agent a key that can propose but not approve."
+
+| Arm | Model | Persons | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|
+| a | claude-sonnet-5-5 | 90 | 100% | 9% | 27% | 59% |
+| b | claude-sonnet-5-5 | 90 | 100% | 49% | 44% | 59% |
+| c | claude-sonnet-5-5 | 90 | 100% | 46% | 48% | 59% |
+
+<!-- results:end -->
