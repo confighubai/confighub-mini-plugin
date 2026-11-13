@@ -2,7 +2,7 @@
 
 Use a package containing `starters/addons/parameter-store/parameter-store-delivery`, AWS CLI, and two Standard String parameters under a new `/confighub-test/NAME` path: `staging/SSM_MAX_RETRIES` and `production/SSM_MAX_RETRIES`. Use a profile that can read both for import. Use a different profile that can read and overwrite only the production parameter for delivery; keep it out of agent sessions. A runtime profile should only read. This adapter never imports SecureString values.
 
-Start the hub as in step 1 of the [Parameter Store walkthrough](starter-parameter-store.md). In a new directory, create `billing`, then import with the actual profile, region and path:
+Start the hub as in step 1 of the [Parameter Store walkthrough](walkthroughs/starter-parameter-store.md). In a new directory, create `billing`, then import with the actual profile, region and path:
 
 ```sh
 ADDON="$MINI/starters/addons/parameter-store/run"

@@ -13,7 +13,7 @@ For someone whose app reads its settings from AWS Systems Manager Parameter Stor
 ### What you need
 An unpacked confighub mini package ([install confighub mini](../../docs/install-mini.md)) and Python 3. confighub mini is ConfigHub made small enough to run on your computer: a hub, which keeps settings with every change, who made it and why. For step 8, a sign-in to your organization's ConfigHub, such as hosted ConfigHub.
 
-For an AWS test account, follow the [live path](parameter-store-live.md); the marked steps here use a stand-in.
+For an AWS test account, follow the [live path](../parameter-store-live.md); the marked steps here use a stand-in.
 
 ### Steps
 1. Start a hub of your own; it becomes `cub`'s current context. `MINI` is the unpacked package. `CUB_MINI_STARTERS=on` switches starters on: a starter is a short file that gives one kind of app its usual settings, each with a reason, and the first `cub mini adopt` brings the package's starters into the hub, where they wait for your approval.
