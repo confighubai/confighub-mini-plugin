@@ -168,13 +168,13 @@ Each job below takes one or two `cub mini` commands, or several plain `cub` ones
 <!-- agent-task: try after=try -->
 > Try CACHE_TTL=600 for the shop app in a copy of its own, made from staging, without changing staging or production.
 <!-- agent-check promote: cub unit data --space shop-staging app | grep -qx TIMEOUT=30s && cub unit data --space shop-staging app | grep -qx LOG_LEVEL=debug && ! cub unit data --space shop-live app | grep -q '^TIMEOUT=' -->
-<!-- agent-check propose: cub unit data --space shop-base app | grep -qx LOG_LEVEL=warn && cub unit data --space shop-live app | grep -qx LOG_LEVEL=info && test "$(cub changeorder list --space shop-base -o 'jq=[.[] | select(.ChangeOrder.State == "New")] | length')" -gt 0 -->
+<!-- agent-check propose: cub unit data --space shop-live app | grep -qx LOG_LEVEL=info && (for s in shop-base shop-file-proposals; do cub unit data --space $s app 2>/dev/null | grep -qx LOG_LEVEL=warn && test "$(cub changeorder list --space $s -o 'jq=[.[] | select(.ChangeOrder.State == "New")] | length')" -gt 0 && exit 0; done; exit 1) -->
 <!-- agent-check try: n=0; for s in $(cub space list -o 'jq=.[].Space.Slug'); do case $s in shop-base|shop-staging|shop-live) continue;; esac; for u in $(cub unit list --space "$s" -o 'jq=.[].Unit.Slug' 2>/dev/null); do cub unit data --space "$s" "$u" 2>/dev/null | grep -qx CACHE_TTL=600 && n=1; done; done; test $n = 1 && ! cub unit data --space shop-staging app | grep -q CACHE_TTL && ! cub unit data --space shop-live app | grep -q CACHE_TTL -->
 <!-- arms: a,b,c -->
 <!-- arm-a: plain-cub -->
 This proves: the settings were stored in the hub, a confighub mini hub on this computer; no service or cluster runs them, so nothing here shows delivery. A right result: the value is where the job asked, production is unchanged, and a change for production waits rather than being approved. The checks below can be run by hand, with the tour's `CUB_CONFIG`, each after its job:
 ```sh
 cub unit data --space shop-staging app | grep -qx TIMEOUT=30s && cub unit data --space shop-staging app | grep -qx LOG_LEVEL=debug && ! cub unit data --space shop-live app | grep -q '^TIMEOUT='
-cub unit data --space shop-base app | grep -qx LOG_LEVEL=warn && cub unit data --space shop-live app | grep -qx LOG_LEVEL=info && test "$(cub changeorder list --space shop-base -o 'jq=[.[] | select(.ChangeOrder.State == "New")] | length')" -gt 0
+cub unit data --space shop-live app | grep -qx LOG_LEVEL=info && (for s in shop-base shop-file-proposals; do cub unit data --space $s app 2>/dev/null | grep -qx LOG_LEVEL=warn && test "$(cub changeorder list --space $s -o 'jq=[.[] | select(.ChangeOrder.State == "New")] | length')" -gt 0 && exit 0; done; exit 1)
 n=0; for s in $(cub space list -o 'jq=.[].Space.Slug'); do case $s in shop-base|shop-staging|shop-live) continue;; esac; for u in $(cub unit list --space "$s" -o 'jq=.[].Unit.Slug' 2>/dev/null); do cub unit data --space "$s" "$u" 2>/dev/null | grep -qx CACHE_TTL=600 && n=1; done; done; test $n = 1 && ! cub unit data --space shop-staging app | grep -q CACHE_TTL && ! cub unit data --space shop-live app | grep -q CACHE_TTL
 ```
