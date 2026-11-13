@@ -65,6 +65,7 @@ Words we use on these pages:
 
 | Page | What it's for |
 |---|---|
+| [Testing the plugin and confighub mini](testing.md) | Runnable checks, comparisons and evidence by task |
 | [What agents did with the plugin and without it](evidence.md) | Real sessions, quoted as the agents wrote them |
 | [Evaluate it yourself](../evaluate/README.md) | The same evaluation, with your own models, in one command |
 | [Run records](runs/README.md) | Each dated run, as it came out |
