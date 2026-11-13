@@ -34,7 +34,7 @@ It works on macOS and Linux. Codex needs [one more command](docs/codex.md). The 
 3. The agent writes the app, starts confighub mini if no hub is running, and puts the staging and production settings in it. It ends with one command for you to paste into your own terminal: `cub mini approve`, with the full path to `cub`, ConfigHub's command-line tool.
 4. Run it to approve production's starting settings. From then on, agents change staging right away, and production changes wait for you: `cub mini waiting` shows them, and `cub mini approve` or `cub mini refuse` decides.
 
-The [step-by-step guide](docs/journeys/new-app.md) shows what each step prints. Already have an app? Ask the agent to "attach ConfigHub to this app". It won't touch your files ([an app you already have](docs/journeys/existing-app.md)). To remove confighub mini, run `cub mini uninstall --delete-data`. More walkthroughs, one for each tool, starter and user story, are in [walkthroughs](examples/walkthroughs/README.md).
+[A new app](docs/journeys/new-app.md) explains each step, and the walkthrough [your first hour](examples/walkthroughs/story-13-first-hour.md) shows every command and what it prints. Already have an app? Ask the agent to "attach ConfigHub to this app". It won't touch your files ([an app you already have](docs/journeys/existing-app.md)). To remove confighub mini, run `cub mini uninstall --delete-data`. More walkthroughs, one for each tool, starter and user story, are in [walkthroughs](examples/walkthroughs/README.md).
 
 ## An example
 
