@@ -139,14 +139,14 @@ For an AI agent working where the plugin is installed.
 - **You are done** when the answer names the request behind the value, or, for the hub, when `cub mini to-hub` says how many changes it wrote.
 
 ## Testing
-Arm a is an agent with no plugin and no hub, in the same repository after the same first session: Git shows that `CACHE` changed but not why. Arm b has the plugin, and this page as reading; arm c the plugin without the page. The hub job needs a hub, so it is not judged in arm a.
+Arm a is an agent with no plugin and no hub, in the same repository after the same first session: Git shows that `CACHE` changed but not why, so arm a is judged only on what it can do, an answer in `WHY.md` with nothing else changed. Arm b has the plugin, and this page as reading; arm c the plugin without the page. The hub job needs a hub, so it is not judged in arm a.
 
 <!-- agent-task: why after=why -->
 > Why is the cache on in .env? Write the answer, with who asked for it and why, in WHY.md. Change nothing else.
 <!-- agent-task: to-hub after=to-hub -->
 > Put what the agents changed in this repository, with the requests behind each change, into the ConfigHub hub on this machine.
 <!-- agent-check why: grep -qi sale WHY.md && grep -qx CACHE=on .env -->
-<!-- agent-check-a why: grep -qi sale WHY.md && grep -qx CACHE=on .env -->
+<!-- agent-check-a why: test -s WHY.md && grep -qx CACHE=on .env && grep -qx LOG_LEVEL=warn .env -->
 <!-- agent-check to-hub: cub=$(ls -d ~/.confighub/mini/confighub-mini-*/bin/cub | tail -1) && s=$($cub space list -o 'jq=.[].Space.Slug' | grep -- '-local$' | head -1) && test -n "$s" && $cub unit list --space "$s" -o 'jq=.[].Unit.Slug' | while read u; do $cub revision list "$u" --space "$s" -o 'jq=.[].Revision.Description'; done | grep -q "sale" -->
 <!-- arms: a,b,c -->
 This proves: the record of changes and requests kept on this computer by the real plugin in real Claude Code sessions, and, in the last step, the changes stored in a confighub mini hub on this computer. Nothing is delivered to a service or cluster. A right result: `WHY.md` names next week's sale as the reason, and the hub holds each change with its request. The checks below can be run by hand, in `try-confighub`:
