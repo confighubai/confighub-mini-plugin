@@ -25,7 +25,7 @@ claude plugin marketplace add confighubai/confighub-mini-plugin
 claude plugin install confighub@confighub
 ```
 
-It works on macOS and Linux. Codex needs [one more command](docs/codex.md). The first time you ask for a hub, the agent downloads confighub mini, 48 to 73 MB. It doesn't need Docker.
+It works on macOS and Linux. Codex needs [one more command](docs/codex.md). The first time you ask for a hub, the agent downloads confighub mini ([its size](docs/install-mini.md#the-current-release)). It doesn't need Docker.
 
 ## A first try
 

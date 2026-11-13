@@ -87,7 +87,7 @@ stays off. The command in it is the package's own `cub`, with your version and p
 machine where `cub` is not yet on your `PATH`:
 
 ```
-ConfigHub: one setting only you can turn on. With it on, when an agent works in a folder that holds an app's settings files, a hub (a ConfigHub server on this machine) starts by itself and keeps those settings. It is off. To turn it on, run this in your own terminal: ~/.confighub/mini/confighub-mini-0.10.7-mini.23-darwin-arm64/bin/cub mini install --arrival yes. To keep it off and stop this line, run it with --arrival no instead.
+ConfigHub: one setting only you can turn on. With it on, when an agent works in a folder that holds an app's settings files, a hub (a ConfigHub server on this machine) starts by itself and keeps those settings. It is off. To turn it on, run this in your own terminal: ~/.confighub/mini/confighub-mini-VERSION-OS-ARCH/bin/cub mini install --arrival yes. To keep it off and stop this line, run it with --arrival no instead.
 ```
 
 **After a yes.** When an agent works in a Git project folder that holds one of those

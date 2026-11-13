@@ -29,7 +29,7 @@ If Argo CD or Flux deploys the app from Git, read this page, then [an app that A
 ## What it costs
 
 - **Time.** About two minutes, including the first download.
-- **The download.** confighub mini, 48 to 73 MB, the first time, into `~/.confighub/mini`. It runs as two processes on this machine. No account and no sign-in.
+- **The download.** confighub mini ([its size](../install-mini.md#the-current-release)), the first time, into `~/.confighub/mini`. It runs as two processes on this machine. No account and no sign-in.
 - **Your files.** Not changed. One new file, `.confighub-app`, a note of what the files match in the hub, which you commit. The agent's setup also writes `.claude/settings.local.json`, so that later Claude Code sessions in the repository run on the agent's key, and adds it to `.git/info/exclude`, so Git leaves it out.
 - **For a Kustomize repository,** `kubectl` or `kustomize` on the machine, to render it.
 
