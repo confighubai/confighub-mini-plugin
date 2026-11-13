@@ -3,7 +3,7 @@ id: starter-kustomize-flux
 starts_with: mini
 starter: kustomize-flux
 needs: [cub mini package, Docker, kind, kubectl, Python 3, Git, a hosted ConfigHub organization for step 8]
-budget_seconds: 450
+budget_seconds: 600
 -->
 # A Kustomize app that Flux deploys, with production behind your approval
 
@@ -67,13 +67,13 @@ An unpacked confighub mini package ([install confighub mini](../../docs/install-
    <!-- run: deploy -->
    ```sh
    cub mini adopt orders --kube-context kind-orders-flux --source orders > adopt.log; grep -m1 '^Starter: kustomize' adopt.log
-   cub variant approve starters --change-order starters/package-starters-v1 --note "Read them"
+   cub variant approve starters-approved --all --note "Read them"
    cub mini approve orders-live/connect --yes --note "Merge apply and pruning suit the orders service"
    cub mini deploy-from-hub orders --variant live --repo orders --kube-context kind-orders-flux --change-order orders-live/connect
    ```
    ```text
    Starter: kustomize-flux (version 1, kustomize-flux.yaml): A Kustomize repository that a Flux Kustomization deploys from a GitRepository.
-   Recorded pass Approval attestation ID in starters, covering 5 revision(s)
+   Recorded pass Approval attestation ID in starters-approved, covering 5 revision(s)
      It deploys 2 objects; the hub's copy holds the same, and its pod templates match what runs.
    ```
 5. Update it. Change the base in your repository, commit as usual, and propose it with its reason. Staging takes it at once; production waits under a change order, the hub's request to change production.
@@ -141,7 +141,7 @@ Your team's shared hub holds the orders service's base, staging and production m
 ## Agent
 You are doing this for a person, in their folder, with step 1's settings. Each request is one task; run the Human step of the same name.
 
-- **deploy**, "Set up the orders repository so that every change to production waits for my approval, with a reason kept for each value, and have Flux deploy production from there": run step 4's `adopt` alone. Starters are brought into the hub only under the person's own approval, which an agent session cannot do, so until then adopt uses the package's files. Then give the person `cub mini adopt orders --kube-context kind-orders-flux --source orders` to run again in their own terminal (it brings the starters in), then `cub variant approve starters --change-order starters/package-starters-v1 --note "Read them"`, and the `approve` and `deploy-from-hub` commands, to run themselves.
+- **deploy**, "Set up the orders repository so that every change to production waits for my approval, with a reason kept for each value, and have Flux deploy production from there": run step 4's `adopt` alone. Then give the person the starters approve, `cub variant approve starters-approved --all --note "Read them"`, and the `approve` and `deploy-from-hub` commands, to run themselves.
 - **update**, "Allow 250 orders a minute; I'll approve production": edit and commit as in step 5, run its `upload` with their reason, and give them the `cub mini approve` command it printed.
 - **undo**, "Undo the order limit change": revert and upload as in step 7, and give them the `cub mini approve` command.
 - **move**, "Move orders to our team's shared hub": run step 8 with their context. Then check that production there waits for approval, as the later step shows, and say so plainly if it does not.
@@ -153,7 +153,7 @@ Each task starts where the Human steps before it leave off, in the same folder f
 
 <!-- agent-task: deploy -->
 > Set up the orders repository so that every change to production waits for my approval, with a reason kept for each value, and have Flux deploy production from there. The cluster's context is `kind-orders-flux`.
-<!-- agent-person deploy: cub mini adopt orders --kube-context kind-orders-flux --source orders > /dev/null && cub variant approve starters --change-order starters/package-starters-v1 --note "Read them" && cub mini approve orders-live/connect --yes && cub mini deploy-from-hub orders --variant live --repo orders --kube-context kind-orders-flux --change-order orders-live/connect -->
+<!-- agent-person deploy: cub variant approve starters-approved --all --note "Read them" && cub mini approve orders-live/connect --yes && cub mini deploy-from-hub orders --variant live --repo orders --kube-context kind-orders-flux --change-order orders-live/connect -->
 <!-- agent-check deploy: cub changeworkflow get --space workflows orders-live-approval >/dev/null && kubectl -n flux-system get ocirepository orders-live >/dev/null && cub unit data app --space orders-base | grep -q 'kustomize.toolkit.fluxcd.io/ssa: Merge' -->
 <!-- agent-task: update -->
 > Allow 250 orders a minute; I'll approve production myself.
@@ -178,9 +178,9 @@ This proves: the exact approved revision was delivered and is running, under a r
 
 <!-- results:begin -->
 
-Results, 13 November 2026, confighub mini 0.11.1-mini.2. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+Results, 13 November 2026, confighub mini 0.11.1-mini.3. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Scripted run: passed, 342 seconds for the steps, within the page's budget of 450.
+- Scripted run: passed, 448 seconds for the steps, within the page's budget of 450.
 - Agent runs (on confighub mini 0.11.1-mini.0): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
@@ -196,13 +196,13 @@ No agent approved or refused a change to production.
 
 Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Your next Flux app can start with the same usual settings, each with its reason, and production there will wait for your yes before anything changes; want the starter kept on for it?"
 
-| Arm | Model | Persons | Noticed | Want the next step now | Later | In the way |
-|---|---|---|---|---|---|---|
-| a | claude-opus-5-5 | 30 | 100% | 0% | 3% | 87% |
-| b | claude-opus-5-5 | 30 | 100% | 17% | 53% | 100% |
-| c | claude-opus-5-5 | 30 | 100% | 37% | 50% | 87% |
-| a | claude-sonnet-5-5 | 30 | 100% | 0% | 10% | 97% |
-| b | claude-sonnet-5-5 | 30 | 100% | 33% | 43% | 87% |
-| c | claude-sonnet-5-5 | 30 | 100% | 30% | 53% | 93% |
+| Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 30 | 100% | 100% | 0% | 3% | 87% |
+| b | claude-opus-5-5 | 30 | 100% | 100% | 17% | 53% | 100% |
+| c | claude-opus-5-5 | 30 | 100% | 100% | 37% | 50% | 87% |
+| a | claude-sonnet-5-5 | 30 | 100% | 100% | 0% | 10% | 97% |
+| b | claude-sonnet-5-5 | 30 | 100% | 100% | 33% | 43% | 87% |
+| c | claude-sonnet-5-5 | 30 | 100% | 100% | 30% | 53% | 93% |
 
 <!-- results:end -->

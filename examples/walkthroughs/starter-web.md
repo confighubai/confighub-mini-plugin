@@ -3,7 +3,7 @@ id: starter-web
 starts_with: mini
 starter: web
 needs: [confighub mini package, a hosted ConfigHub organization for step 7]
-budget_seconds: 150
+budget_seconds: 200
 -->
 # A small web service: deploy it, update it, undo it, move it, delete it
 
@@ -132,12 +132,13 @@ Your `menu` folder, unchanged by ConfigHub; `menu-running/app.env`, production's
 
 ## Agent
 For an AI agent doing these jobs for a person: run the Human steps' commands, adjusted to their app.
-- **Deploy:** `cub mini adopt FOLDER`. Then stop, and give the person the exact command to approve production: `cub mini approve APP-base/adopt`.
-- **Update:** change the app's file, then `cub mini upload FOLDER --change-desc "WHY"`. End with the `cub mini approve` command for the person.
-- **Undo:** put the file back as it was and upload it again, with the reason, and hand the approval to the person. The person can also run `cub mini rollback`.
+- **Deploy:** `cub mini adopt FOLDER`. Then end your message with one sentence on what the person has now, in their words (for example, that production cannot change without them), and the one command the tool printed for them, such as `~/.confighub/bin/cub mini approve APP-base/adopt`. Copy it as printed.
+- **Update:** change the app's file, then `cub mini upload FOLDER --change-desc "WHY"`. End the same way, with the approve command `upload` printed.
+- **Undo:** put the file back as it was and upload it again, with the reason. End the same way.
 - **Move:** run step 8 with the shared hub's context, then read live back, and step 9 to see that production waits. If it does not, say so plainly.
 - **Delete:** step 10, only once the shared hub holds the app. Never delete the person's files.
-Never approve or refuse a change to production, and never roll production back yourself: those are the person's. Never put a password or token in a setting. You are done when `cub unit data app --space APP-live` shows what the person asked for, or, for a change that waits, when `cub mini waiting` shows it.
+
+Approving production is the person's, so give them the one command and nothing beside it. Never put a password or token in a setting. You are done when `cub unit data app --space APP-live` shows what the person asked for, or, for a change that waits, when `cub mini waiting` shows it.
 
 ## Testing
 Each task below is given to an agent in the folder that holds `menu`, after the steps before it. When a change waits for production, the person approves it.
