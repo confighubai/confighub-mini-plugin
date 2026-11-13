@@ -6,6 +6,8 @@ Pick a page by what the person is doing. Commands and outputs on these pages are
 
 Read [AGENTS.md](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/AGENTS.md) first: what the project is, what an agent may and may not do, the commands, and which page answers which question.
 
+Then read the matching walkthrough in [the walkthroughs index](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/examples/walkthroughs/README.md): one page for each tool, starter and user story, each with an "Agent" section written for an agent doing that job for a person.
+
 ## What are you doing
 
 - [A new app in Claude Code](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/journeys/new-app.md): the request to type, what the agent runs (`confighub mini get`, `cub mini adopt`, `cub mini require-approval --agent`), approving live, changing the app later, and a second app "like the first" with `--pattern`
