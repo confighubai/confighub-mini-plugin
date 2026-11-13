@@ -171,7 +171,7 @@ Each job below takes one or two `cub mini` commands, or several plain `cub` ones
 <!-- agent-check try: n=0; for s in $(cub space list -o 'jq=.[].Space.Slug'); do case $s in shop-base|shop-staging|shop-live) continue;; esac; for u in $(cub unit list --space "$s" -o 'jq=.[].Unit.Slug' 2>/dev/null); do cub unit data --space "$s" "$u" 2>/dev/null | grep -qx CACHE_TTL=600 && n=1; done; done; test $n = 1 && ! cub unit data --space shop-staging app | grep -q CACHE_TTL && ! cub unit data --space shop-live app | grep -q CACHE_TTL -->
 <!-- arms: a,b,c -->
 <!-- arm-a: plain-cub -->
-<!-- next-step: put production behind approval | Your agent's change to production should wait for you. One command, cub mini require-approval, makes production wait for your yes and gives the agent a key that can propose but not approve. -->
+<!-- next-step: put production behind approval | Today an agent's change to your app's production takes effect the moment it is made. cub mini require-approval makes it wait instead: an agent asked to log at warn in production made the change, production kept logging at info, and nothing moved until its owner said yes. -->
 This proves: the settings were stored in the hub, a confighub mini hub on this computer; no service or cluster runs them, so nothing here shows delivery. The step it aims to win: production behind approval, then a shared hub. A right result: the value is where the job asked, production is unchanged, and a change for production waits rather than being approved. The checks below can be run by hand, with the tour's `CUB_CONFIG`, each after its job:
 ```sh
 cub unit data --space shop-staging app | grep -qx TIMEOUT=30s && cub unit data --space shop-staging app | grep -qx LOG_LEVEL=debug && ! cub unit data --space shop-live app | grep -q '^TIMEOUT='
@@ -184,22 +184,28 @@ n=0; for s in $(cub space list -o 'jq=.[].Space.Slug'); do case $s in shop-base|
 Results, 13 November 2026, confighub mini 0.11.1-mini.1. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run: passed, 91 seconds for the steps, within the page's budget of 150.
-- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
 | a | claude-sonnet-5-5 | 6/9 | 63.4 | $0.282 | 0 |
 | b | claude-sonnet-5-5 | 9/9 | 22.1 | $0.112 | 0 |
 | c | claude-sonnet-5-5 | 7/9 | 26.0 | $0.133 | 0 |
+| a | claude-opus-5-5 | 7/9 | 75.6 | $0.548 | 1 |
+| b | claude-opus-5-5 | 8/9 | 22.6 | $0.202 | 1 |
+| c | claude-opus-5-5 | 8/9 | 51.3 | $0.346 | 1 |
 
 No agent approved or refused a change to production.
 
-Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Your agent's change to production should wait for you. One command, cub mini require-approval, makes production wait for your yes and gives the agent a key that can propose but not approve."
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Today an agent's change to your app's production takes effect the moment it is made. cub mini require-approval makes it wait instead: an agent asked to log at warn in production made the change, production kept logging at info, and nothing moved until its owner said yes."
 
 | Arm | Model | Persons | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|
-| a | claude-sonnet-5-5 | 90 | 100% | 9% | 27% | 59% |
-| b | claude-sonnet-5-5 | 90 | 100% | 49% | 44% | 59% |
-| c | claude-sonnet-5-5 | 90 | 100% | 46% | 48% | 59% |
+| a | claude-sonnet-5-5 | 90 | 100% | 10% | 19% | 59% |
+| b | claude-sonnet-5-5 | 90 | 100% | 59% | 40% | 60% |
+| c | claude-sonnet-5-5 | 90 | 100% | 54% | 40% | 59% |
+| a | claude-opus-5-5 | 90 | 100% | 3% | 11% | 72% |
+| b | claude-opus-5-5 | 90 | 100% | 56% | 34% | 67% |
+| c | claude-opus-5-5 | 90 | 100% | 61% | 36% | 53% |
 
 <!-- results:end -->
