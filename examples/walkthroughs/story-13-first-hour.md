@@ -120,7 +120,7 @@ For an AI agent asked to set this up in the person's project.
 
 ## Testing
 
-This proves: the settings were stored in the hub, and production's copy changed only by a person's approval while the agent's approval was refused. What was really used: confighub mini on this computer; the plugin's record (steps 1 and 9) needs a Claude Code session and is not part of the scripted run; nothing is delivered. The step it aims to win: putting the person's own agents on a key of their own.
+It proves: the settings were stored in the hub, and production's copy changed only by a person's approval while the agent's approval was refused. What was really used: confighub mini on this computer; the plugin's record (steps 1 and 9) needs a Claude Code session and is not part of the scripted run; nothing is delivered. The step it aims to win: putting the person's own agents on a key of their own.
 
 A correct agent result has `api` in the hub with production behind approval. The checks below can be run by hand, in bash, in the app's folder:
 
