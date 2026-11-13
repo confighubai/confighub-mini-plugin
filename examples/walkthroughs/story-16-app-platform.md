@@ -143,7 +143,7 @@ For an AI agent doing this for a person.
 
 ## Testing
 
-This proves: the exact approved revision, naming the release by digest, is delivered to the runtime's folder by `cub mini pull`, and the rollback revision after it. What was really used: confighub mini on this computer, with a local folder standing in for the runtime; no image is built or run, and the deploy is an `echo`.
+This proves: the exact approved revision, naming the release by digest, is delivered to the runtime's folder by `cub mini pull`, and the rollback revision after it. What was really used: confighub mini on this computer, with a local folder standing in for the runtime; no image is built or run, and the deploy is an `echo`. The step it aims to win: making production wait for a passing check of staging.
 
 The scripted run follows the Human steps on a hub of its own and checks that each quoted line is still printed. A correct agent result has release 1.1.0 in staging, a change order that asks for it in production, and production still on 1.0.0. The checks below hold right after step 5.
 
@@ -151,12 +151,13 @@ The scripted run follows the Human steps on a hub of its own and checks that eac
 > Ship release 1.1.0 of shop, digest sha256:6d51e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1. Staging first; I approve production.
 
 <!-- agent-check propose: cub unit data --space shop-staging app | grep -q 'RELEASE=shop-1.1.0@sha256:6d51e2f3' && cub changeorder list --space shop-base -o jq='.[].ChangeOrder.Slug' | grep -qvx adopt && cub unit data --space shop-live app | grep -q 'RELEASE=shop-1.0.0@' -->
-<!-- agent-check-a propose: grep -q 'shop-1.1.0@sha256:6d51e2f3' shop/.env -->
+<!-- agent-check-a propose: grep -rlsE 'shop-1[.]1[.]0@sha256:6d51e2f3' --exclude-dir='.*' --exclude-dir=Library * .env* | grep -q . -->
 <!-- arms: a,b,c -->
+<!-- next-step: live waits for staging's check | Production can wait until staging answers the new release's health check, so a broken release never reaches users; want live to wait for that check? -->
 
-The checks below can be run by hand in the walkthrough's folder:
+The checks below can be run by hand, in bash, in the walkthrough's folder:
 
 ```sh
 cub unit data --space shop-staging app | grep -q 'RELEASE=shop-1.1.0@sha256:6d51e2f3' && cub changeorder list --space shop-base -o jq='.[].ChangeOrder.Slug' | grep -qvx adopt && cub unit data --space shop-live app | grep -q 'RELEASE=shop-1.0.0@'
-grep -q 'shop-1.1.0@sha256:6d51e2f3' shop/.env
+grep -rlsE 'shop-1[.]1[.]0@sha256:6d51e2f3' --exclude-dir='.*' --exclude-dir=Library * .env* | grep -q .
 ```

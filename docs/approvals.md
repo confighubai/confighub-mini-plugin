@@ -2,6 +2,8 @@
 
 This page is for teams that let coding agents change configuration that runs in production. A rule in `CLAUDE.md` that says "ask first" is only a request, and an agent that holds the keys can be talked past it. Here you set up ConfigHub so that the agent can propose a change, and only the person you name can let it through.
 
+To see from a terminal what you are told when a change waits, and nothing else, follow the walkthrough [the three things you are told](../examples/walkthroughs/story-15-the-telling.md).
+
 ## What you end up with
 
 - The agent has an account and a key of its own. With them it can change configuration and propose a change for production. It cannot approve its own change, and it cannot write the copy that runs in production.

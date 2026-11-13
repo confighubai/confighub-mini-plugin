@@ -47,5 +47,7 @@ A starter gives a new app of one kind its usual settings, each with a reason ([s
 | [18. Ana asks for an app, and it fits the pattern](story-18-dev-intent.md) | A new app on the team's pattern, with rules that keep a value over the limit from reaching the service, and a second app made from the first | confighub mini |
 | [19. Sam's bad afternoon: stop it, find it, undo it](story-19-recovery.md) | One command stops every agent session and takes an agent's key away; then find its change and put it back | both |
 | [20. Noor's staging: more memory, and production left alone](story-20-noors-staging.md) | An agent changes staging's own file; production changes only with your approval | confighub mini |
+| 21. Ana's service, sized by what it used | Not built yet: a sandbox that measures what a new service uses, and sizes it from that | not built yet |
+| [23. Theo's first app: the setup travels with it from the first prompt](story-23-theo-first-app.md) | The reason for each setting an agent writes, kept with it from the first file, and where the app came from | the plugin |
 | [24. Priya's platform team's base: one base, ten apps, one bump](story-24-company-base.md) | One change to a shared base reaches every app, and each app keeps the values it set itself | confighub mini |
 | [25. Alice ships it, Bob hardens it](story-25-alice-bob-hardened.md) | A reviewer's fixes become the starter's next version: the next app starts with them, the first app takes them | confighub mini |

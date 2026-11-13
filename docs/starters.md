@@ -4,6 +4,8 @@ A starter gives any kind of app a good starting setup, much like Spring Boot's s
 
 ConfigHub keeps your apps' settings, with every change, who made it and why, and holds a change to production until a person approves it. A hub is one running ConfigHub server. It can run on your own computer, as confighub mini, or be shared by a team on a network; this page uses confighub mini. This page is for someone who gives each new app of one kind the same settings by hand: a time limit, a cache time, two instances, nothing public.
 
+To run the whole loop in a few minutes, a reviewer's fixes becoming the starter's next version, follow the walkthrough [each fix becomes where the next app starts](../examples/walkthroughs/story-25-alice-bob-hardened.md).
+
 Starters are an option, switched off unless you switch them on. They come with confighub mini from 0.10.7-mini.21; the output on this page is from 0.10.7-mini.23.
 
 You need an unpacked confighub mini package ([install confighub mini](install-mini.md)), a terminal, and Python 3 for the Vercel and author's-kit examples. Everything runs on your machine; no account is used and nothing is sent anywhere.

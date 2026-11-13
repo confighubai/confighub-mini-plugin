@@ -2,6 +2,8 @@
 
 This page is for teams that let AI agents change infrastructure configuration unattended, for days or weeks, several at once. Over that time, a team needs to know which agent made each change, who agreed to it, and how to stop an agent at once. This page says what ConfigHub and the ConfigHub plugin already do about each problem, what may still be needed, and what is left to other tools.
 
+To try stopping an agent, finding its change and putting it back, follow the walkthrough [an agent did something wrong](../examples/walkthroughs/story-19-recovery.md).
+
 The problems:
 - An agent acts with a person's sign-in, so nobody can tell who did what.
 - Nobody approved this particular change.

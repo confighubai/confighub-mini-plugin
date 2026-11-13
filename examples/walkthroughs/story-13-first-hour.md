@@ -113,24 +113,27 @@ The full story adds the page Sam starts from, a signed download, the hub's data 
 
 For an AI agent asked to set this up in the person's project.
 
-- The request: "Attach ConfigHub to this app: keep my staging and production values as they are, and make sure an agent cannot change production without my say."
+- The request: "Make sure an agent cannot change this app's production settings without my say. Staging can change freely."
 - If no hub answers, install one with `/confighub:install-mini`. Run `cub mini adopt . --name api --dry-run`, then without `--dry-run`, then `cub mini require-approval api --variant live --agent bot`.
-- End by giving the person the command to run in their own terminal: `cub mini approve api-base/adopt`. Never run it yourself, and never approve a later change to production.
-- Done when `cub mini receipts api --setup` names `api-live` behind approval and an agent key.
+- `require-approval` puts this folder's sessions, yours included, on the agent's key: after it, your `cub` cannot read the person's sign-in and fails with "operation not permitted". That is the protection working, not a fault; read the setup it printed instead of checking again.
+- End by giving the person the short command to run in their own terminal: `cub mini approve api-base/adopt`. Never run it yourself, and never approve a later change to production.
+- Done when `require-approval` has said that `api-live` waits for the person's approval and that the agent has a key of its own.
 
 ## Testing
 
-This proves: the settings were stored in the hub, and production's copy changed only by a person's approval while the agent's approval was refused. What was really used: confighub mini on this computer; the plugin's record (steps 1 and 9) needs a Claude Code session and is not part of the scripted run; nothing is delivered.
+This proves: the settings were stored in the hub, and production's copy changed only by a person's approval while the agent's approval was refused. What was really used: confighub mini on this computer; the plugin's record (steps 1 and 9) needs a Claude Code session and is not part of the scripted run; nothing is delivered. The step it aims to win: putting the person's own agents on a key of their own.
 
-A correct agent result has `api` in the hub with production behind approval. The checks below can be run by hand in the app's folder:
+A correct agent result has `api` in the hub with production behind approval. The checks below can be run by hand, in bash, in the app's folder:
 
 <!-- agent-task: attach after=attach -->
-> Attach ConfigHub to this app: keep my staging and production values as they are, and make sure an agent cannot change production without my say.
+> Make sure an agent cannot change this app's production settings without my say. Staging can change freely.
 
 <!-- agent-check attach: cub space get api-live >/dev/null && cub changeworkflow get --space workflows api-live-approval >/dev/null -->
+<!-- agent-check-a attach: find ~/walkthrough/api -name .git -prune -o -print | grep -qiE 'prod|live' -->
 <!-- arms: a,b,c -->
-The request asks for ConfigHub, so arm a, with no hub, is marked not applicable.
+<!-- next-step: agent key | Your next agent session here can run on a key of its own that can propose a change to production and never approve one; want that key set up for this folder? -->
 
 ```sh
 cub space get api-live >/dev/null && cub changeworkflow get --space workflows api-live-approval >/dev/null
+find ~/walkthrough/api -name .git -prune -o -print | grep -qiE 'prod|live'
 ```
