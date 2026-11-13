@@ -184,7 +184,7 @@ A starter file on one person's machine is easy to change by accident, and each p
      Sets API_TIMEOUT_SECONDS=10, as a setting: A request stops after ten seconds, so one slow caller cannot hold every worker.
      Leaves API_CACHE_SECONDS alone: it is set already, API_CACHE_SECONDS=30, by you, in .env.
      Wires: puts orders-live behind your approval, as adopt does; delivery is left to you.
-     Order: web (version 1, web.yaml), then team-api: team-api is after web, so its defaults go on top of web's; it fits this app too.
+     Order: web (version 1, starters-approved/web revision 2), then team-api: team-api is after web, so its defaults go on top of web's; it fits this app too.
      Sets PORT=8080, by web: Every small web service listens on one port, the same in every copy.
      Sets REPLICAS=2, by web: Two instances, so that one can restart without the service going down.
      Sets RELEASE=none, by web: Nothing is released until a copy names a release.
@@ -225,15 +225,15 @@ Starter: team-api (version 2, starters-approved/team-api revision 4): One of the
 …
 ```
 
-**An app connected earlier takes version 2 and keeps its own values.** Running `cub mini adopt orders` again offers it the new version:
+**An app connected earlier takes version 2 and keeps its own values.** Running `cub mini adopt orders` again offers it the new version. The new setting is in the second Unit already, written when `billing` was connected, so `orders` is told only that it holds version 2:
 
 ```
+Starter: orders was connected with web, version 1, beneath team-api, already; it writes nothing for web.
 Starter: team-api, version 2, is newer than version 1, which orders was connected with. It writes once, in pattern-team-api/team-api-service, what version 2 changes where the Unit still holds the starter's earlier value, and changes no value anyone else set.
-  Starter team-api, version 2, wrote API_MAX_REQUEST_BYTES=65536 in pattern-team-api/team-api-service (it held version 1): A request larger than 64 KiB is refused before it is read, which stopped last month's flood of oversized uploads.
   pattern-team-api/team-api-service now holds version 2. orders takes it by cub mini upgrade pattern-team-api/team-api-service --change-desc WHY, which keeps every value set by a person; staging then by cub mini promote orders-staging, and live by a change order you approve.
 ```
 
-Two Units are involved. `starters-approved/team-api` holds the starter file. `pattern-team-api/team-api-service` holds the settings the starter gives, and every app the starter connects is made from it. Version 2 wrote its new setting into the second; the output ends with the commands that bring it to the app. `WHY` stands for your reason. Run them:
+Two Units are involved. `starters-approved/team-api` holds the starter file. `pattern-team-api/team-api-service` holds the settings the starter gives, and every app the starter connects is made from it. Version 2 wrote its new setting into the second when `billing` was connected; the output ends with the commands that bring it to the app. `WHY` stands for your reason. Run them:
 
 ```bash
 cub mini upgrade pattern-team-api/team-api-service --change-desc "orders takes version 2 of the team's starter"
