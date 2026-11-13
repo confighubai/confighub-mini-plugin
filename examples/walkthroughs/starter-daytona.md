@@ -128,4 +128,6 @@ Results, 13 November 2026, unreleased mini candidate with the revised Daytona st
 
 - The complete scripted walkthrough also passed on the merged-source candidate, including replay to hosted ConfigHub and the pending-order check. This was the local rehearsal with the real shared hub; it did not launch a new Daytona sandbox.
 
+- Downloaded [mini-v0.11.1-mini.2](https://github.com/confighubai/confighub-mini-plugin/releases/tag/mini-v0.11.1-mini.2) and verified its SHA-256. The scripted walkthrough passed in 79.9 seconds, including the hosted handoff. The scripted path is a local rehearsal, not a new Daytona sandbox run. A separate run of the checksum-verified Linux package on a real EU Daytona sandbox verified loopback listeners, owner-key isolation, refused proposer approval and unchanged live settings. The proposal and its reason were recovered after sandbox deletion. In the separate catalog check, adoption used approved v1 while v2 was pending, then used v2 from the hub after scripted catalog approval. The package still held v1.
+
 <!-- results:end -->
