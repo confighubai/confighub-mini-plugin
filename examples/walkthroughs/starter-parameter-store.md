@@ -210,4 +210,6 @@ The plugin offers it once, after the answer at whose end it showed the moment th
 | b | claude-sonnet-5-5 | 30 | 100% | 100% | 10% | 83% | 97% |
 | c | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 100% |
 
+- Downloaded [mini-v0.11.1-mini.2](https://github.com/confighubai/confighub-mini-plugin/releases/tag/mini-v0.11.1-mini.2) and verified its SHA-256. The scripted walkthrough passed in 88.2 seconds, including the hosted handoff. A separate adoption recorded the approved Parameter Store starter revision from the hub. The live adapter refused the pending hosted order; no approved AWS delivery is recorded.
+
 <!-- results:end -->
