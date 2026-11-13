@@ -296,7 +296,7 @@ A starter file on one person's machine is easy to change by accident, and each p
    ME=$(cub user get "$(cub context get -o jq=.coordinate.user)" -o jq=.User.UserID)
    cub space create starters --label Stage=starters
    cub space create workflows --allow-exists
-   cub changeworkflow create --space workflows starters-approval --stage starters --attestation-prerequisite approval --attestation-prerequisite-from-user-ids approval=$ME --stage-prerequisites starters=approval
+   cub changeworkflow create --space workflows starters-approval --stage starters --attestation-prerequisite approval --attestation-prerequisite-from-users approval=$ME --stage-prerequisites starters=approval
    cub unit create --space starters team-api "$CUB_MINI_STARTERS/team-api.yaml" --toolchain AppConfig/Text --change-desc "The team's starter for its APIs, version 1"
    cub changeorder create --space starters team-api-v1 --in-scope-space starters --change-workflow workflows/starters-approval --description "Version 1 of the team-api starter"
    cub variant approve starters --change-order starters/team-api-v1 --note "Read it: the team's settings for an API"

@@ -197,7 +197,7 @@ These are the same steps with `cub` alone. If confighub mini is installed, `cub 
    cub space update --patch api-live --label Stage=live
    cub changeworkflow create --space workflows api-live-approval --stage live \
      --attestation-prerequisite approval \
-     --attestation-prerequisite-from-user-ids approval=YOUR_USER_ID \
+     --attestation-prerequisite-from-users approval=YOUR_USER_ID \
      --attestation-prerequisite-description "approval=read and approved by a person before it reaches api-live" \
      --stage-prerequisites live=approval
    cub component update --patch api --require-change-workflow \
@@ -219,7 +219,7 @@ These are the same steps with `cub` alone. If confighub mini is installed, `cub 
    cub component update api --permission View:serviceaccount:bot
    ```
 
-4. Make the agent's key, and sign the agent in with it, in a `cub` configuration of its own. Its sessions then cannot use yours. On hosted ConfigHub, use `cub` v0.10.7 or later: an earlier `cub` cannot sign in with a key there:
+4. Make the agent's key, and sign the agent in with it, in a `cub` configuration of its own. Its sessions then cannot use yours. On hosted ConfigHub, use `cub` v0.11 or later: hosted ConfigHub refuses an earlier `cub` as too old:
 
    ```bash
    cub serviceaccount key add bot --generate bot
