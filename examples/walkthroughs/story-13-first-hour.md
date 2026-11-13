@@ -128,10 +128,10 @@ A correct agent result has `api` in the hub with production behind approval. The
 > Make sure an agent cannot change this app's production settings without my say. Staging can change freely.
 
 <!-- agent-check attach: cub space get api-live >/dev/null && cub changeworkflow get --space workflows api-live-approval >/dev/null -->
-<!-- agent-check-a attach: ls -aR | grep -qiE 'prod|live' -->
+<!-- agent-check-a attach: find ~/walkthrough/api -name .git -prune -o -print | grep -qiE 'prod|live' -->
 <!-- arms: a,b,c -->
 
 ```sh
 cub space get api-live >/dev/null && cub changeworkflow get --space workflows api-live-approval >/dev/null
-ls -aR | grep -qiE 'prod|live'
+find ~/walkthrough/api -name .git -prune -o -print | grep -qiE 'prod|live'
 ```
