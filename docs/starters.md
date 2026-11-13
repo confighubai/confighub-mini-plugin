@@ -80,7 +80,7 @@ Two things are different. Spring Boot applies its auto-configuration every time 
 
 `cub mini adopt` uses starters only when you switch them on, with the environment variable `CUB_MINI_STARTERS=on`, or when your hub already keeps starters in a Space named `starters`. Otherwise it connects an app as [an app you already have](journeys/existing-app.md) shows.
 
-The package has five starters: `web`, for a small web service with a `.env`, `app.env` or compose file; `vercel`, for an app on Vercel; `parameter-store`, for an app that reads AWS Parameter Store; and `kustomize-argocd` and `kustomize-flux`, for a Kustomize repository that Argo CD or Flux deploys. The `vercel` and `parameter-store` starters run only against a stand-in: a small program in the package that answers as Vercel or AWS would, and keeps the settings in a local file. They use no account.
+The package has six starters: `web`, for a small web service with a `.env`, `app.env` or compose file; `vercel`, for an app on Vercel; `parameter-store`, for an app that reads AWS Parameter Store; `daytona`, for an experiment run in a disposable Daytona sandbox and brought back for review; and `kustomize-argocd` and `kustomize-flux`, for a Kustomize repository that Argo CD or Flux deploys. The `vercel` and `parameter-store` starters can deliver to a real Vercel project or AWS account you sign in to, or, with no account, to a stand-in: a small program in the package that answers as Vercel or AWS would and keeps the settings in a local file. The `daytona` starter can be rehearsed on your computer with no Daytona account. Each one's walkthrough says which path it shows.
 
 In a terminal, with `MINI` the folder of the unpacked package, such as `~/.confighub/mini/confighub-mini-VERSION-OS-ARCH`:
 
@@ -89,7 +89,7 @@ export PATH="$MINI/bin:$PATH"
 export CUB_MINI_STARTERS=on
 ```
 
-The steps below also need a hub. If none is running, start one with `cub mini install` ([install confighub mini](install-mini.md)). The first `cub mini adopt` with starters on puts the package's five starters into your hub, as version 1, and prints the one line that approves them, which is yours to run, not an agent's, even when an agent ran the adopt; until you run it, adopt uses the package's own files. After that the hub is where adopt reads starters from, and no folder is needed. To switch starters off again, `unset CUB_MINI_STARTERS`, and delete the Component's two Spaces and the Component with `cub space delete starters-approved --recursive`, `cub space delete starters-base --recursive` and `cub component delete starters`; apps you connected keep the settings they have.
+The steps below also need a hub. If none is running, start one with `cub mini install` ([install confighub mini](install-mini.md)). The first `cub mini adopt` with starters on puts the package's starters into your hub, as version 1, and prints the one line that approves them, which is yours to run, not an agent's, even when an agent ran the adopt; until you run it, adopt uses the package's own files. After that the hub is where adopt reads starters from, and no folder is needed. To switch starters off again, `unset CUB_MINI_STARTERS`, and delete the Component's two Spaces and the Component with `cub space delete starters-approved --recursive`, `cub space delete starters-base --recursive` and `cub component delete starters`; apps you connected keep the settings they have.
 
 ## What connecting an app shows
 
