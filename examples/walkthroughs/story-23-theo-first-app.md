@@ -68,7 +68,7 @@ For an AI agent asked to build the app.
 
 ## Testing
 
-This proves: what the plugin kept about each value an agent wrote, read from its record with `cub mini changes`. What was really used: Claude Code with the plugin from the confighub mini package; no hub and nothing delivered. The step it aims to win: keeping the plugin on for the next app.
+This proves: what the plugin kept about each value an agent wrote, read from its record with `cub mini changes`. What was really used: Claude Code with the plugin from the confighub mini package; no hub and nothing delivered. This story has no offer moment in its agent task: the plugin shows the person no line at the end of the turn, so the next step below is not offered and conversion is not measured; the simulated persons still say whether they noticed the result and whether anything was in the way.
 
 The scripted run makes only the folder; the rest needs a Claude Code session, so the checks are judged in the agent runs. A correct result in arm b has the starting repository and the limit's request in the record; in arm a, a visible file has the limit next to its reason. The checks below can be run by hand, in bash, in the app's folder:
 
@@ -78,7 +78,7 @@ The scripted run makes only the folder; the rest needs a Claude Code session, so
 <!-- agent-check build: /absolute/path/to/unpacked-confighub-mini/bin/confighub-mini-app mini changes --dir . 2>/dev/null | tr '\n' ' ' | grep -q 'example/yoga-bookings.*20 bookings a day' -->
 <!-- agent-check-a build: grep -rlsE '(^|[^0-9])20([^0-9]|$)' --exclude-dir='.*' --exclude-dir=Library --exclude-dir=node_modules * .env* | xargs grep -lsiE 'mats?|room' | grep -q . -->
 <!-- arms: a,b,c -->
-<!-- next-step: keep the plugin on | Your next app can keep the reason for each setting from its first file, so nobody has to guess later why a value is what it is; want the plugin kept on for it? -->
+<!-- next-step when "did not change": keep the plugin on | Your next app can keep the reason for each setting from its first file, so nobody has to guess later why a value is what it is; want the plugin kept on for it? -->
 
 ```sh
 cub mini changes --dir . | tr '\n' ' ' | grep -q 'example/yoga-bookings.*20 bookings a day'
@@ -102,11 +102,13 @@ No agent approved or refused a change to production.
 
 Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Your next app can keep the reason for each setting from its first file, so nobody has to guess later why a value is what it is; want the plugin kept on for it?"
 
-| Arm | Model | Persons | Noticed | Want the next step now | Later | In the way |
-|---|---|---|---|---|---|---|
-| a | claude-opus-5-5 | 30 | 100% | 0% | 3% | 90% |
-| b | claude-opus-5-5 | 30 | 100% | 0% | 53% | 43% |
-| a | claude-sonnet-5-5 | 30 | 90% | 0% | 0% | 27% |
-| b | claude-sonnet-5-5 | 30 | 100% | 7% | 67% | 87% |
+The plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
+
+| Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 70% |
+| b | claude-opus-5-5 | 30 | 0% | 87% | n/a | n/a | 3% |
+| a | claude-sonnet-5-5 | 30 | 0% | 83% | n/a | n/a | 27% |
+| b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 53% |
 
 <!-- results:end -->

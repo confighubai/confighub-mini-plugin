@@ -159,7 +159,7 @@ This proves: the settings and the starter's versions were stored in the hub, eac
 <!-- agent-check harden: cub unit data --space shop-base app | grep -qx 'DB_POOL_SIZE=20' && cub unit data --space shop-base app | grep -qx 'REPLICAS=3' && cub unit data --space starters-base web | grep -q '^version: 2' && cub unit data --space starters-base web | grep -q 'value: warn' && ! cub unit data --space starters-base web | grep -q DB_POOL_SIZE -->
 <!-- agent-check-a harden: g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g DB_POOL_SIZE 20 | grep -q shop && grep -rlsE '^version: 2' --exclude-dir='.*' team-starters | grep -q . && ! grep -rqs DB_POOL_SIZE team-starters -->
 <!-- arms: a,b,c -->
-<!-- next-step: keep the starter on | Your next app can start with Bob's fixes already in place, each with its reason; want the starter kept on for it? -->
+<!-- next-step when "did not change": keep the starter on | Your next app can start with Bob's fixes already in place, each with its reason; want the starter kept on for it? -->
 
 ```sh
 cub unit data --space shop-base app | grep -qx 'DB_POOL_SIZE=20' && cub unit data --space shop-base app | grep -qx 'REPLICAS=3' && cub unit data --space starters-base web | grep -q '^version: 2' && cub unit data --space starters-base web | grep -q 'value: warn' && ! cub unit data --space starters-base web | grep -q DB_POOL_SIZE
@@ -168,7 +168,7 @@ g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Lib
 
 <!-- results:begin -->
 
-Results, 13 November 2026, confighub mini 0.11.1-mini.2. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+Results, 13 November 2026, a build of confighub mini from main at f699fc25. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run: passed, 104 seconds for the steps, within the page's budget of 300.
 - Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
@@ -184,13 +184,13 @@ No agent approved or refused a change to production.
 
 Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Your next app can start with Bob's fixes already in place, each with its reason; want the starter kept on for it?"
 
-The plugin offers it once, after the answer at whose end it showed the moment the offer names; this page names none, so it was not offered. Offered is the share of persons it was shown to; want it now and later are over them.
+The plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|
-| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 47% |
-| b | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 53% |
-| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 13% |
-| b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 43% |
+| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 60% |
+| b | claude-opus-5-5 | 30 | 100% | 100% | 43% | 43% | 80% |
+| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 17% |
+| b | claude-sonnet-5-5 | 30 | 100% | 100% | 27% | 57% | 57% |
 
 <!-- results:end -->

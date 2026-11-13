@@ -128,7 +128,7 @@ For an AI agent doing this for a person.
 
 ## Testing
 
-This proves: the settings were stored in the hub on the team's pattern, and a value that breaks a rule was refused by `cub mini pull` while a valid one was written to a local folder. What was really used: confighub mini on this computer; no service runs. The step it aims to win: making the second app from the first.
+This proves: the settings were stored in the hub on the team's pattern, and a value that breaks a rule was refused by `cub mini pull` while a valid one was written to a local folder. What was really used: confighub mini on this computer; no service runs. This story has no offer moment in its agent task: the plugin shows the person no line at the end of the turn, so the next step below is not offered and conversion is not measured; the simulated persons still say whether they noticed the result and whether anything was in the way.
 
 A correct agent result has the notes app on `pattern-web`, with staging and a live copy behind approval. The checks below hold right after step 3. The checks below can be run by hand, in bash, in the walkthrough's folder:
 
@@ -138,7 +138,7 @@ A correct agent result has the notes app on `pattern-web`, with staging and a li
 <!-- agent-check adopt: test "$(cub unit get app --space notes-base -o jq=.Unit.UpstreamUnitID)" = "$(cub unit get web-service --space pattern-web -o jq=.Unit.UnitID)" && cub space get notes-staging >/dev/null && cub changeworkflow get --space workflows notes-live-approval >/dev/null -->
 <!-- agent-check-a adopt: find ~/walkthrough/notes -name .git -prune -o -print | grep -qi staging && find ~/walkthrough/notes -name .git -prune -o -print | grep -qiE 'live|prod' -->
 <!-- arms: a,b,c -->
-<!-- next-step: next app from this one | Your next app can start from this one, with its rules, staging and production already in place; want the next one made from notes? -->
+<!-- next-step when "did not change": next app from this one | Your next app can start from this one, with its rules, staging and production already in place; want the next one made from notes? -->
 
 ```sh
 test "$(cub unit get app --space notes-base -o jq=.Unit.UpstreamUnitID)" = "$(cub unit get web-service --space pattern-web -o jq=.Unit.UnitID)" && cub space get notes-staging >/dev/null && cub changeworkflow get --space workflows notes-live-approval >/dev/null
@@ -163,11 +163,13 @@ No agent approved or refused a change to production.
 
 Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Your next app can start from this one, with its rules, staging and production already in place; want the next one made from notes?"
 
-| Arm | Model | Persons | Noticed | Want the next step now | Later | In the way |
-|---|---|---|---|---|---|---|
-| a | claude-opus-5-5 | 30 | 100% | 0% | 7% | 97% |
-| b | claude-opus-5-5 | 30 | 100% | 7% | 77% | 100% |
-| a | claude-sonnet-5-5 | 30 | 100% | 0% | 17% | 97% |
-| b | claude-sonnet-5-5 | 30 | 100% | 0% | 73% | 97% |
+The plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
+
+| Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 97% |
+| b | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 90% |
+| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 97% |
+| b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 90% |
 
 <!-- results:end -->
