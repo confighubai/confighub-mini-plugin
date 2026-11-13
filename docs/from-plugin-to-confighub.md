@@ -169,7 +169,7 @@ cub mini copy --from-file APP-setup.tar.gz --name SHARED
 cub mini adopt APP-FOLDER --pattern SHARED
 ```
 
-The copy is made under the name you give, as `SHARED-base`, `SHARED-staging` and `SHARED-live`, and its last line names the adopt command. It must come from a hub other than yours. A copy that fails leaves nothing behind. Adopt then makes your app from `SHARED-base`: it keeps your own values from your `.env`, takes the shared values for the rest, with their reasons, and takes what the shared setup changes next, with `cub mini upgrade SHARED-base/app`. A service the setup needs comes as a need, unmet until your hub has a provider for it.
+The copy is made under the name you give, as `SHARED-base`, `SHARED-staging` and `SHARED-live`, and its last line names the adopt command. If live waited for an approval where the setup came from, it waits for yours on your hub. It must come from a hub other than yours. A copy that fails leaves nothing behind. Adopt then makes your app from `SHARED-base`: it keeps your own values from your `.env`, takes the shared values for the rest, with their reasons, and takes what the shared setup changes next, with `cub mini upgrade SHARED-base/app`. A service the setup needs comes as a need, unmet until your hub has a provider for it.
 
 ### A secret for live that no agent can read
 
@@ -192,7 +192,7 @@ An agent asked to rotate a production password gives you the `secret set` comman
 **What you do.**
 
 1. Sign in to your organization's ConfigHub: `cub auth login`.
-2. Copy your work up from confighub mini. With your organization's hub as the context, run `cub mini copy --from-context MINI COMPONENT`, where `MINI` is confighub mini's context.
+2. Copy your work up from confighub mini. With your organization's hub as the context, run `cub mini copy --from-context MINI COMPONENT`, where `MINI` is confighub mini's context. If live waited for your approval on your laptop, it waits for your approval in your organization as soon as it is copied, and the copy says so. If your organization's hub refuses that, the copy fails, names the copy left without an approval, and prints the `cub mini require-approval` command that fixes it.
 3. Connect the two with `cub mini connect --to-context ORG`. confighub mini gets a service account and key of its own in your organization, with the right to read the work it copied up and to offer changes, and no more. From then on, new versions come down to your laptop with your changes kept, and a change you make on your laptop can be offered up, with `cub mini offer`, for someone in your organization to take.
 4. Give each agent a key of its own, and require approval for production ([approvals](approvals.md)).
 
