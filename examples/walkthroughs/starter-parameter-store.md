@@ -183,7 +183,7 @@ This proves: the exact approved revision was delivered, to a local stand-in for 
 
 Results, 13 November 2026, locally built mini 0.11.1-mini.2 candidate (unreleased). Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Scripted run: passed, 86 seconds for the steps, within the page's budget of 200.
+- Scripted run: passed, 87 seconds for the steps, within the page's budget of 200.
 
 - The candidate run was scripted and used the no-account fixture. It verified the change and rollback, and verified a pending change on hosted ConfigHub with live still on the previous settings. It did not switch AWS delivery to the shared hub or run the new live adapter against AWS.
 - Published mini 0.11.1-mini.1 reached adoption, then failed because the release did not create the `starters` Space. The earlier live proof used that release and a prototype adapter: IAM denied a proposer write; the runtime read versions 1 → 2 → 3 (blue → green → blue), with owner approvals for the last two. The test parameter and roles were removed.
