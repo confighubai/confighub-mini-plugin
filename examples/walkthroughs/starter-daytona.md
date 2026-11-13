@@ -124,4 +124,6 @@ Results, 13 November 2026, unreleased mini candidate with the revised Daytona st
 
 - Hosted ConfigHub with released mini 0.11.1-mini.1: importing the already-changed archive did not leave a pending order. Importing the baseline and replaying 240 with the original reason did: the order was New and live still held 120. The shared app and approval workflow were removed. Upstream starter rules and version lineage were not transferred or verified.
 
+- A later local candidate used `starters-approved/daytona@2` while starter v2 was pending (2 retries). After a scripted catalog approval, a new app used `starters-approved/daytona@3` and got 3 retries. The package still contained v1. This checks the source of the starter; it does not approve or deploy a batch job.
+
 <!-- results:end -->
