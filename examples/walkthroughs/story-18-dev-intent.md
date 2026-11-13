@@ -144,3 +144,30 @@ A correct agent result has the notes app on `pattern-web`, with staging and a li
 test "$(cub unit get app --space notes-base -o jq=.Unit.UpstreamUnitID)" = "$(cub unit get web-service --space pattern-web -o jq=.Unit.UnitID)" && cub space get notes-staging >/dev/null && cub changeworkflow get --space workflows notes-live-approval >/dev/null
 find ~/walkthrough/notes -name .git -prune -o -print | grep -qi staging && find ~/walkthrough/notes -name .git -prune -o -print | grep -qiE 'live|prod'
 ```
+
+<!-- results:begin -->
+
+Results, 13 November 2026, confighub mini 0.11.1-mini.1. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+
+- Scripted run: passed, 35 seconds for the steps, within the page's budget of 240.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+
+| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
+|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 1/3 | 26.4 | $0.322 | 0 |
+| b | claude-opus-5-5 | 3/3 | 78.6 | $0.48 | 0 |
+| a | claude-sonnet-5-5 | 1/3 | 17.0 | $0.077 | 0 |
+| b | claude-sonnet-5-5 | 3/3 | 43.2 | $0.213 | 1 |
+
+No agent approved or refused a change to production.
+
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Your next app can start from this one, with its rules, staging and production already in place; want the next one made from notes?"
+
+| Arm | Model | Persons | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 30 | 100% | 0% | 7% | 97% |
+| b | claude-opus-5-5 | 30 | 100% | 7% | 77% | 100% |
+| a | claude-sonnet-5-5 | 30 | 100% | 0% | 17% | 97% |
+| b | claude-sonnet-5-5 | 30 | 100% | 0% | 73% | 97% |
+
+<!-- results:end -->
