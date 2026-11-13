@@ -137,3 +137,28 @@ A correct agent result has `api` in the hub with production behind approval. The
 cub space get api-live >/dev/null && cub changeworkflow get --space workflows api-live-approval >/dev/null
 find ~/walkthrough/api -name .git -prune -o -print | grep -qiE 'prod|live'
 ```
+
+<!-- results:begin -->
+
+Results, 13 November 2026, a development build of confighub mini after 0.11.1-mini.1. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+
+- Scripted run: passed, 48 seconds for the steps, within the page's budget of 180.
+- Agent runs (on a development build of confighub mini after 0.11.1-mini.1): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: b is the plugin, confighub mini and this page as reading.
+
+| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
+|---|---|---|---|---|---|
+| b | claude-opus-5-5 | 3/3 | 32.7 | $0.224 | 1 |
+| b | claude-sonnet-5-5 | 3/3 | 29.9 | $0.09 | 1 |
+
+No agent approved or refused a change to production.
+
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Your next agent session here can run on a key of its own that can propose a change to production and never approve one; want that key set up for this folder?"
+
+The plugin offers it once, after the answer at whose end it showed the moment the offer names; this page names none, so it was not offered. Offered is the share of persons it was shown to; want it now and later are over them.
+
+| Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|---|
+| b | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 60% |
+| b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 73% |
+
+<!-- results:end -->

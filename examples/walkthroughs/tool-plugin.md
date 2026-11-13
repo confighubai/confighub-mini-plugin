@@ -92,7 +92,7 @@ Claude Code, signed in, and Git. Each slash command below, such as `/confighub:c
    > log      each MCP call is in the record
    ```
 
-8. `/confighub:install-mini`: the step to a hub. confighub mini is ConfigHub, the server that keeps configuration with every change and can make production wait for your approval, made small enough for one computer. This downloads it (about 70 MB), checks it, and starts a hub, in about 30 seconds.
+8. `/confighub:install-mini`: the step to a hub. confighub mini is ConfigHub, the server that keeps configuration with every change and can make production wait for your approval, made small enough for one computer. This downloads it (49 to 74 MB, by platform), checks it, and starts a hub.
    <!-- run: install-mini -->
    ```sh
    claude -p "/confighub:install-mini"
@@ -149,7 +149,7 @@ Arm a is an agent with no plugin and no hub, in the same repository after the sa
 <!-- agent-check-a why: test -s WHY.md && grep -qx CACHE=on .env && grep -qx LOG_LEVEL=warn .env -->
 <!-- agent-check to-hub: cub=$(ls -d ~/.confighub/mini/confighub-mini-*/bin/cub | tail -1) && s=$($cub space list -o 'jq=.[].Space.Slug' | grep -- '-local$' | head -1) && test -n "$s" && $cub unit list --space "$s" -o 'jq=.[].Unit.Slug' | while read u; do $cub revision list "$u" --space "$s" -o 'jq=.[].Revision.Description'; done | grep -q "sale" -->
 <!-- arms: a,b,c -->
-<!-- next-step: connect a hub | The plugin keeps this record on your computer until it has gone 30 days unused. In a ConfigHub hub on this computer it is kept for good, next to each value, and production can wait for your yes before an agent's change reaches it. If you want that, type /confighub:install-mini; it takes about 30 seconds and you can remove it. -->
+<!-- next-step: connect a hub | The plugin keeps this record on your computer until it has gone 30 days unused. In a ConfigHub hub on this computer it is kept for good, next to each value, and production can wait for your yes before an agent's change reaches it. If you want that, type /confighub:install-mini; you can remove it. -->
 The step this aims to win: connecting a hub with `/confighub:install-mini`.
 
 This proves: the record of changes and requests kept on this computer by the real plugin in real Claude Code sessions, and, in the last step, the changes stored in a confighub mini hub on this computer. Nothing is delivered to a service or cluster. A right result: `WHY.md` names next week's sale as the reason, and the hub holds each change with its request. The checks below can be run by hand, in `try-confighub`:
@@ -160,30 +160,25 @@ cub=$(ls -d ~/.confighub/mini/confighub-mini-*/bin/cub | tail -1) && s=$($cub sp
 
 <!-- results:begin -->
 
-Results, 13 November 2026, confighub mini 0.11.1-mini.1. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+Results, 13 November 2026, a development build of confighub mini after 0.11.1-mini.1. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
+- Scripted run: passed, 138 seconds for the steps, within the page's budget of 300.
+- Agent runs (on a development build of confighub mini after 0.11.1-mini.1): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: b is the plugin, confighub mini and this page as reading.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
-| a | claude-sonnet-5-5 | 3/3 (+3 not applicable) | 24.8 | $0.079 | 0.0 |
-| b | claude-sonnet-5-5 | 6/6 | 17.2 | $0.086 | 0.0 |
-| c | claude-sonnet-5-5 | 3/6 | 31.8 | $0.118 | 0.5 |
-| a | claude-opus-5-5 | 3/3 (+3 not applicable) | 31.0 | $0.22 | 0.0 |
-| b | claude-opus-5-5 | 6/6 | 17.9 | $0.157 | 0.0 |
-| c | claude-opus-5-5 | 6/6 | 24.8 | $0.182 | 0.0 |
+| b | claude-opus-5-5 | 6/6 | 18.2 | $0.149 | 0.0 |
+| b | claude-sonnet-5-5 | 6/6 | 16.5 | $0.078 | 0.0 |
 
 No agent approved or refused a change to production.
 
 Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "The plugin keeps this record on your computer until it has gone 30 days unused. In a ConfigHub hub on this computer it is kept for good, next to each value, and production can wait for your yes before an agent's change reaches it. If you want that, type /confighub:install-mini; it takes about 30 seconds and you can remove it."
 
-| Arm | Model | Persons | Noticed | Want the next step now | Later | In the way |
-|---|---|---|---|---|---|---|
-| a | claude-sonnet-5-5 | 60 | 100% | 7% | 30% | 52% |
-| b | claude-sonnet-5-5 | 60 | 100% | 3% | 67% | 78% |
-| c | claude-sonnet-5-5 | 60 | 100% | 2% | 55% | 97% |
-| a | claude-opus-5-5 | 60 | 100% | 20% | 30% | 52% |
-| b | claude-opus-5-5 | 60 | 100% | 7% | 70% | 87% |
-| c | claude-opus-5-5 | 60 | 100% | 3% | 67% | 83% |
+The plugin offers it once, after the answer at whose end it showed the moment the offer names; this page names none, so it was not offered. Offered is the share of persons it was shown to; want it now and later are over them.
+
+| Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|---|
+| b | claude-opus-5-5 | 60 | 0% | 100% | n/a | n/a | 22% |
+| b | claude-sonnet-5-5 | 60 | 0% | 100% | n/a | n/a | 28% |
 
 <!-- results:end -->
