@@ -120,7 +120,7 @@ For an AI agent asked to set this up in the person's project.
 
 ## Testing
 
-This proves: the settings were stored in the hub, and production's copy changed only by a person's approval while the agent's approval was refused. What was really used: confighub mini on this computer; the plugin's record (steps 1 and 9) needs a Claude Code session and is not part of the scripted run; nothing is delivered.
+This proves: the settings were stored in the hub, and production's copy changed only by a person's approval while the agent's approval was refused. What was really used: confighub mini on this computer; the plugin's record (steps 1 and 9) needs a Claude Code session and is not part of the scripted run; nothing is delivered. The step it aims to win: putting the person's own agents on a key of their own.
 
 A correct agent result has `api` in the hub with production behind approval. The checks below can be run by hand, in bash, in the app's folder:
 
@@ -130,6 +130,7 @@ A correct agent result has `api` in the hub with production behind approval. The
 <!-- agent-check attach: cub space get api-live >/dev/null && cub changeworkflow get --space workflows api-live-approval >/dev/null -->
 <!-- agent-check-a attach: find ~/walkthrough/api -name .git -prune -o -print | grep -qiE 'prod|live' -->
 <!-- arms: a,b,c -->
+<!-- next-step: agent key | Your next agent session here can run on a key of its own that can propose a change to production and never approve one; want that key set up for this folder? -->
 
 ```sh
 cub space get api-live >/dev/null && cub changeworkflow get --space workflows api-live-approval >/dev/null

@@ -150,7 +150,7 @@ For an AI agent asked to help after the stop is lifted.
 
 ## Testing
 
-This proves: the settings were stored in the hub and put back there, and the agent's key was refused by the hub after `cub mini halt`. What was really used: confighub mini on this computer and a stop file of the walkthrough's own; no Claude Code session or service runs in the scripted run, and nothing is delivered.
+This proves: the settings were stored in the hub and put back there, and the agent's key was refused by the hub after `cub mini halt`. What was really used: confighub mini on this computer and a stop file of the walkthrough's own; no Claude Code session or service runs in the scripted run, and nothing is delivered. The step it aims to win: setting up the stop that a monitor fires.
 
 The scripted run follows the Human steps on a hub of its own, with a stop file of its own, and checks that each quoted line is still printed. A correct agent result, starting after the stop is lifted, puts staging's timeout back to 30 with production unchanged, and leaves no change to production waiting.
 
@@ -160,6 +160,7 @@ The scripted run follows the Human steps on a hub of its own, with a stop file o
 <!-- agent-check undo: cub unit data --space pay-staging app | grep -qx 'TIMEOUT_SECONDS=30' && cub unit data --space pay-live app | grep -qx 'TIMEOUT_SECONDS=30' && ! cub mini waiting | grep -q 'TIMEOUT_SECONDS: 30 → 5' -->
 <!-- agent-check-a undo: g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g TIMEOUT_SECONDS 30 | grep -q . && ! g TIMEOUT_SECONDS '5($|[^0-9])' | grep -q . -->
 <!-- arms: a,b,c -->
+<!-- next-step: stop on an alert | Your monitor can stop every agent the moment an alert fires, and name the last change to look at first; want the alert add-on set up? -->
 
 The checks below can be run by hand, in bash, in the walkthrough's folder:
 

@@ -128,7 +128,7 @@ For an AI agent doing this for a person.
 
 ## Testing
 
-This proves: the settings were stored in the hub on the team's pattern, and a value that breaks a rule was refused by `cub mini pull` while a valid one was written to a local folder. What was really used: confighub mini on this computer; no service runs.
+This proves: the settings were stored in the hub on the team's pattern, and a value that breaks a rule was refused by `cub mini pull` while a valid one was written to a local folder. What was really used: confighub mini on this computer; no service runs. The step it aims to win: making the second app from the first.
 
 A correct agent result has the notes app on `pattern-web`, with staging and a live copy behind approval. The checks below hold right after step 3. The checks below can be run by hand, in bash, in the walkthrough's folder:
 
@@ -138,6 +138,7 @@ A correct agent result has the notes app on `pattern-web`, with staging and a li
 <!-- agent-check adopt: test "$(cub unit get app --space notes-base -o jq=.Unit.UpstreamUnitID)" = "$(cub unit get web-service --space pattern-web -o jq=.Unit.UnitID)" && cub space get notes-staging >/dev/null && cub changeworkflow get --space workflows notes-live-approval >/dev/null -->
 <!-- agent-check-a adopt: find ~/walkthrough/notes -name .git -prune -o -print | grep -qi staging && find ~/walkthrough/notes -name .git -prune -o -print | grep -qiE 'live|prod' -->
 <!-- arms: a,b,c -->
+<!-- next-step: next app from this one | Your next app can start from this one, with its rules, staging and production already in place; want the next one made from notes? -->
 
 ```sh
 test "$(cub unit get app --space notes-base -o jq=.Unit.UpstreamUnitID)" = "$(cub unit get web-service --space pattern-web -o jq=.Unit.UnitID)" && cub space get notes-staging >/dev/null && cub changeworkflow get --space workflows notes-live-approval >/dev/null

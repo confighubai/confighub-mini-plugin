@@ -140,7 +140,7 @@ For an AI agent working for the platform team.
 
 ## Testing
 
-This proves: the settings were stored in the hub, the base's change reached each app's copy and each app's own values were kept. What was really used: confighub mini on this computer, with three apps for the story's ten; nothing is delivered and the story's hosted ConfigHub is not used.
+This proves: the settings were stored in the hub, the base's change reached each app's copy and each app's own values were kept. What was really used: confighub mini on this computer, with three apps for the story's ten; nothing is delivered and the story's hosted ConfigHub is not used. The step it aims to win: approving the bump for production, app by app.
 
 A correct agent result has the bump in the base and in every app's base, with billing's own `LOG_LEVEL=debug` kept. The checks below hold right after step 6. The checks below can be run by hand, in bash, in the walkthrough's folder:
 
@@ -150,6 +150,7 @@ A correct agent result has the bump in the base and in every app's base, with bi
 <!-- agent-check bump: cub unit data --space company-base app | grep -qx 'LOG_LEVEL=warn' && ! for a in billing search ledger; do cub unit data --space $a-base app | grep -qx 'HEALTH_PATH=/healthz' || echo missing; done | grep -q missing && cub unit data --space billing-base app | grep -qx 'LOG_LEVEL=debug' && cub unit data --space search-base app | grep -qx 'LOG_LEVEL=warn' -->
 <!-- agent-check-a bump: g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g LOG_LEVEL warn | grep -q company && g HEALTH_PATH /healthz | grep -q . && g LOG_LEVEL debug | grep -q billing -->
 <!-- arms: a,b,c -->
+<!-- next-step: production for every app | Every app's production can take the base's change with one approval each, all listed in one place; want them listed now? -->
 
 ```sh
 cub unit data --space company-base app | grep -qx 'LOG_LEVEL=warn' && ! for a in billing search ledger; do cub unit data --space $a-base app | grep -qx 'HEALTH_PATH=/healthz' || echo missing; done | grep -q missing && cub unit data --space billing-base app | grep -qx 'LOG_LEVEL=debug' && cub unit data --space search-base app | grep -qx 'LOG_LEVEL=warn'

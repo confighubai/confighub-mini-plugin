@@ -107,7 +107,6 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
    cub mini adopt cart
    ```
    ```text
-   …
    Starter: web (version 2, starters/web revision 3): A small web service whose settings are in a .env, app.env or compose file, made from adopt's starter pattern.
    …
      Sets LOG_LEVEL=warn, as a setting: Debug logs carry request bodies; warn keeps what an incident needs.
@@ -165,7 +164,7 @@ For an AI agent working as Bob, on Bob's key: run `cub` as `cub --context bob`.
 
 ## Testing
 
-This proves: the settings and the starter's versions were stored in the hub, each value with who set it and why, and production's copy changed only by an approved change order. What was really used: confighub mini on this computer, with Bob as a second key; nothing is delivered and no service runs. A correct agent result has Bob's three values on shop's base and a proposed version 2 of the starter with the two fixes for every app, and without shop's pool size. The checks below can be run by hand, in bash, in the walkthrough's folder:
+This proves: the settings and the starter's versions were stored in the hub, each value with who set it and why, and production's copy changed only by an approved change order. What was really used: confighub mini on this computer, with Bob as a second key; nothing is delivered and no service runs. A correct agent result has Bob's three values on shop's base and a proposed version 2 of the starter with the two fixes for every app, and without shop's pool size. The checks below can be run by hand, in bash, in the walkthrough's folder: The step it aims to win: keeping the starter on for the next app.
 
 <!-- agent-task: harden after=harden -->
 > Harden shop for production. Debug logs carry request bodies, so LOG_LEVEL should be warn; it needs 3 replicas so one can fail during a deploy; its database takes 20 connections (DB_POOL_SIZE). Then make the fixes that suit every web service version 2 of the team's web starter, each with its reason.
@@ -173,6 +172,7 @@ This proves: the settings and the starter's versions were stored in the hub, eac
 <!-- agent-check harden: cub unit data --space shop-base app | grep -qx 'DB_POOL_SIZE=20' && cub unit data --space shop-base app | grep -qx 'REPLICAS=3' && cub unit data --space starters web | grep -q '^version: 2' && cub unit data --space starters web | grep -q 'value: warn' && ! cub unit data --space starters web | grep -q DB_POOL_SIZE -->
 <!-- agent-check-a harden: g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g DB_POOL_SIZE 20 | grep -q shop && grep -rlsE '^version: 2' --exclude-dir='.*' team-starters | grep -q . && ! grep -rqs DB_POOL_SIZE team-starters -->
 <!-- arms: a,b,c -->
+<!-- next-step: keep the starter on | Your next app can start with Bob's fixes already in place, each with its reason; want the starter kept on for it? -->
 
 ```sh
 cub unit data --space shop-base app | grep -qx 'DB_POOL_SIZE=20' && cub unit data --space shop-base app | grep -qx 'REPLICAS=3' && cub unit data --space starters web | grep -q '^version: 2' && cub unit data --space starters web | grep -q 'value: warn' && ! cub unit data --space starters web | grep -q DB_POOL_SIZE

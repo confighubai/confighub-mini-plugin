@@ -139,7 +139,7 @@ For an AI agent acting as Sam's portal, on its own key: run `cub` as `cub --cont
 
 ## Testing
 
-This proves: the settings, the rule's verdict and the fix were stored in the hub and read back from it. What was really used: confighub mini on this computer; nothing is delivered and no service runs.
+This proves: the settings, the rule's verdict and the fix were stored in the hub and read back from it. What was really used: confighub mini on this computer; nothing is delivered and no service runs. The step it aims to win: adding a rule of the person's own.
 
 A correct agent result leaves no copy breaking a rule, with worker's staging private again and the rule itself in place. The checks below hold right after step 7. The checks below can be run by hand, in bash, in the walkthrough's folder:
 
@@ -149,6 +149,7 @@ A correct agent result leaves no copy breaking a rule, with worker's staging pri
 <!-- agent-check rules: cub unit data --space worker-staging app | grep -qx 'PUBLIC=false' && test "$(cub unit list --space '*' --where 'LEN(ApplyGates) > 0' -o jq='.[].Unit.Slug' | wc -l | tr -d ' ')" = 0 && cub trigger get --space pattern-web not-public >/dev/null -->
 <!-- agent-check-a rules: g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g PORT 3100 | grep -q . && ! g PUBLIC true | grep -q . -->
 <!-- arms: a,b,c -->
+<!-- next-step: a rule of your own | Any rule you choose, such as no debug logging in production, can be checked on every service the same way; want your first one added? -->
 
 ```sh
 cub unit data --space worker-staging app | grep -qx 'PUBLIC=false' && test "$(cub unit list --space '*' --where 'LEN(ApplyGates) > 0' -o jq='.[].Unit.Slug' | wc -l | tr -d ' ')" = 0 && cub trigger get --space pattern-web not-public >/dev/null
