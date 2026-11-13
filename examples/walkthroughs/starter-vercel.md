@@ -108,7 +108,7 @@ bash "${WALKTHROUGH_VERCEL_SCRIPT:-/absolute/path/to/vercel-hobby.sh}"
    ```sh
    cub --context shared mini copy --from-context "$LOCAL_HUB" shop --name "$TEAM_APP"
    ME=$(cub --context shared user get "$(cub --context shared context get -o jq=.coordinate.user)" -o jq=.User.UserID)
-   cub --context shared changeworkflow create --space workflows "$TEAM_APP-live-approval" --stage live --attestation-prerequisite approval --attestation-prerequisite-from-users approval="$ME" --stage-prerequisites live=approval
+   cub --context shared changeworkflow create --allow-exists --space workflows "$TEAM_APP-live-approval" --stage live --attestation-prerequisite approval --attestation-prerequisite-from-users approval="$ME" --stage-prerequisites live=approval
    WF=$(cub --context shared changeworkflow get --space workflows "$TEAM_APP-live-approval" -o jq=.ChangeWorkflow.ChangeWorkflowID)
    COMP=$(cub --context shared component get "$TEAM_APP" -o jq=.Component.ComponentID)
    echo "{\"RequireChangeWorkflow\": true, \"AllowedChangeWorkflowIDs\": [\"$WF\"]}" | cub --context shared api PATCH "component/$COMP" --content-type application/merge-patch+json --data - > /dev/null
