@@ -393,6 +393,16 @@ billing: team-api@2 from starters/team-api@3; order: web@1 then team-api@2
 
 Both apps are on version 2 of `team-api`, which is revision 3 of the Unit `starters/team-api`, on top of version 1 of `web`.
 
+**Every app at once.** With many apps made from the starter, one command takes the version through all of them: each app's base takes it, each app's staging takes it at once, and each app's production gets a change order of its own, behind that app's own approval.
+
+```bash
+cub mini upgrade pattern-team-api/team-api-service --change-desc "Take version 2 everywhere" --fleet
+```
+
+Each app keeps the values it set itself. `cub mini waiting` lists each production order, and approving one reaches that app and no other.
+
+**Which apps are behind.** `cub mini receipts APP --setup` says which apps use the starter at which version, which keys each sets itself, and which are behind the newest version you approved.
+
 ## Two starters on one app
 
 An app can fit two starters. The `orders` folder above fits both `web`, which looks for a `.env`, and `team-api`, which looks for a `package.json` and a `.env`. Two starters apply to one app only when one names the other in its `after` line. `team-api` says `after: [web]`, so the app takes both: the `web` settings beneath, and the team's on top. The plan's `Order:` line says so, and every setting is credited to the starter that set it (`by web`).
