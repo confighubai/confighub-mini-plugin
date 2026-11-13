@@ -177,31 +177,25 @@ cub --context shared unit data app --space "$TEAM_APP-live"
 
 <!-- results:begin -->
 
-Results, 13 November 2026, confighub mini 0.11.1-mini.1. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+Results, 13 November 2026, a development build of confighub mini after 0.11.1-mini.1. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Scripted run: passed, 65 seconds for the steps, within the page's budget of 150.
-- Agent runs (on confighub mini 0.11.1-mini.0): a pilot, 3 runs per arm on each of claude-opus-5-5, claude-sonnet-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
+- Scripted run: passed, 68 seconds for the steps, within the page's budget of 150.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: b is the plugin, confighub mini and this page as reading.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
-| a | claude-opus-5-5 | 6/9 (+6 not applicable) | 94.2 | $0.357 | 0 |
-| b | claude-opus-5-5 | 15/15 | 147.9 | $0.529 | 8 |
-| c | claude-opus-5-5 | 10/15 | 262.1 | $1.053 | 3 |
-| a | claude-sonnet-5-5 | 7/9 (+6 not applicable) | 67.5 | $0.21 | 0 |
-| b | claude-sonnet-5-5 | 15/15 | 125.7 | $0.303 | 3 |
-| c | claude-sonnet-5-5 | 9/15 | 122.6 | $0.392 | 4 |
+| b | claude-opus-5-5 | 15/15 | 130.3 | $0.427 | 7 |
+| b | claude-sonnet-5-5 | 15/15 | 107.0 | $0.244 | 3 |
 
 No agent approved or refused a change to production.
 
 Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Your next web service can start with these same settings and reasons, so you do not set them up again. Want the web starter kept on for it?"
 
-| Arm | Model | Persons | Noticed | Want the next step now | Later | In the way |
-|---|---|---|---|---|---|---|
-| a | claude-opus-5-5 | 30 | 100% | 0% | 0% | 87% |
-| b | claude-opus-5-5 | 30 | 100% | 20% | 60% | 73% |
-| c | claude-opus-5-5 | 30 | 100% | 7% | 73% | 100% |
-| a | claude-sonnet-5-5 | 30 | 100% | 0% | 0% | 93% |
-| b | claude-sonnet-5-5 | 30 | 100% | 30% | 57% | 90% |
-| c | claude-sonnet-5-5 | 30 | 100% | 13% | 67% | 100% |
+The plugin offers it once, after the answer at whose end it showed the moment the offer names; this page names none, so it was not offered. Offered is the share of persons it was shown to; want it now and later are over them.
+
+| Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|---|
+| b | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 50% |
+| b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 70% |
 
 <!-- results:end -->
