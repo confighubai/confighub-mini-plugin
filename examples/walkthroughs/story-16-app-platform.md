@@ -31,20 +31,26 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
    ```
    `--arrival no` answers the one question a first install asks: whether a hub may start by itself when an agent works in an app's folder.
 
-2. Sam's service, `shop`, names its release in its settings by digest, the `sha256:` checksum of the build. `cub mini adopt` makes a base where changes are made, `shop-staging`, and `shop-live` for production. Sam approves production's starting settings:
-   <!-- run: adopt -->
+2. Sam's service, `shop`, names its release in `shop/.env` by digest, the `sha256:` checksum of the build:
+   <!-- run: app files -->
    ```sh
    mkdir -p ~/walkthrough/shop && cd ~/walkthrough
    printf 'RELEASE=shop-1.0.0@sha256:83df0c6a1f2e4b5d6c7a8b9e0f1d2c3b4a5968778695a4b3c2d1e0f9a8b7c6d5\nTIMEOUT_SECONDS=30\n' > shop/.env
+   ```
+
+3. `cub mini adopt` makes a base where changes are made, `shop-staging`, and `shop-live` for production. Sam approves production's starting settings, and gives his agent a key of its own, which can propose a release and cannot approve one:
+   <!-- run: adopt -->
+   ```sh
    cub mini adopt shop >/dev/null
    cub mini approve shop-base/adopt --note "Release 1.0.0 is what runs today" --yes >/dev/null
+   cub mini require-approval shop --variant live --agent bot >/dev/null
    cub unit data --space shop-live app | grep RELEASE
    ```
    ```text
    RELEASE=shop-1.0.0@sha256:83df0c6a1f2e4b5d6c7a8b9e0f1d2c3b4a5968778695a4b3c2d1e0f9a8b7c6d5
    ```
 
-3. The runtime: a key that reads `shop-live` and nothing else, signed in from a configuration of its own, writes production's settings into the service's folder. On a real machine it runs on a timer and restarts the service when a file changed:
+4. The runtime: a key that reads `shop-live` and nothing else, signed in from a configuration of its own, writes production's settings into the service's folder. On a real machine it runs on a timer and restarts the service when a file changed:
    <!-- run: runtime -->
    ```sh
    cub mini pull-key runtime shop --variant live >/dev/null 2>&1
@@ -58,13 +64,12 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
    Restarting: echo deploying the release the settings name
    ```
 
-4. Give the agent a key of its own, then let it propose release 1.1.0. The agent builds the image with whatever builds it, writes the new digest into `.env`, and sends it. Staging takes it at once; the agent's own approval is refused:
+5. The agent proposes release 1.1.0. It builds the image with whatever builds it, writes the new digest into `.env`, and sends it. Staging takes it at once; the agent's own approval is refused:
    <!-- run: propose -->
    ```sh
-   cub mini require-approval shop --variant live --agent bot >/dev/null
    sed -i.bak 's/shop-1.0.0@sha256:83df[0-9a-f]*/shop-1.1.0@sha256:6d51e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1/' shop/.env && rm shop/.env.bak
-   CUB_CONTEXT=bot cub mini upload shop --component shop --change-desc "Release 1.1.0: /health for the load balancer"
-   CUB_CONTEXT=bot cub mini approve shop-live --yes || true
+   cub --context bot mini upload shop --component shop --change-desc "Release 1.1.0: /health for the load balancer"
+   cub --context bot mini approve shop-live --yes || true
    ```
    ```text
    Changed the shared settings (shop-base), with the reason: Release 1.1.0: /health for the load balancer
@@ -74,7 +79,7 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
    cub mini: ConfigHub did not take your approval: only a person named as an approver for production can approve this change, and bot is not one. Nothing was changed
    ```
 
-5. Sam reads what production would take and approves it. The runtime's next pull deploys release 1.1.0:
+6. Sam reads what production would take and approves it. The runtime's next pull deploys release 1.1.0:
    <!-- run: approve -->
    ```sh
    cub mini approve shop-live --note "Staging answered /health; ship it" --yes >/dev/null
@@ -86,7 +91,7 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
    Restarting: echo deploying the release the settings name
    ```
 
-6. Release 1.1.0 turns out slow under load. Roll production back in one command, with the reason. `ORDER` is the change order's name, the one `cub mini waiting` showed; this line looks it up:
+7. Release 1.1.0 turns out slow under load. Roll production back in one command, with the reason. `ORDER` is the change order's name, the one `cub mini waiting` showed; this line looks it up:
    <!-- run: rollback -->
    ```sh
    ORDER=$(cub changeorder list --space shop-base -o jq='.[] | select(.ChangeOrder.Description | startswith("Release 1.1.0")) | .ChangeOrder.Slug')
@@ -101,7 +106,7 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
    RELEASE=shop-1.0.0@sha256:83df0c6a1f2e4b5d6c7a8b9e0f1d2c3b4a5968778695a4b3c2d1e0f9a8b7c6d5
    ```
 
-7. Ask the hub about the release that reached production, revision 4: who proposed it, what Sam read, and who approved it:
+8. Ask the hub about the release that reached production, revision 4: who proposed it, what Sam read, and who approved it:
    <!-- run: receipts -->
    ```sh
    cub mini receipts shop-live --revision 4
@@ -131,7 +136,7 @@ The full story adds a real VM or cluster pulling on a timer, and live waiting fo
 For an AI agent doing this for a person.
 
 - The request: "Ship release 1.1.0 of shop, digest sha256:6d51e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1. Staging first; I approve production."
-- Work in the app's folder with the key you were given (`CUB_CONTEXT=bot`). Set `RELEASE=shop-1.1.0@sha256:…` in `shop/.env`, then `cub mini upload shop --component shop --change-desc "WHY"`. Staging has it at once; production waits.
+- Work in the app's folder with the key you were given: run `cub` as `cub --context bot`. Set `RELEASE=shop-1.1.0@sha256:…` in `shop/.env`, then `cub mini upload shop --component shop --change-desc "WHY"`. Staging has it at once; production waits.
 - End by telling the person the release waits for production, and the command for their own terminal: `cub mini approve shop-live` (`cub mini waiting` shows it first). If they later ask to undo it, the command is `cub mini rollback shop-live --change-order shop-base/NAME --reason WHY`, which is theirs to run.
 - Never: approve the release yourself, sign in as the person, write `shop-live` directly, or change the files the runtime pulls into.
 - Done when `cub unit data --space shop-staging app` shows the new digest and `cub mini waiting` names the release for production.
@@ -140,18 +145,18 @@ For an AI agent doing this for a person.
 
 This proves: the exact approved revision, naming the release by digest, is delivered to the runtime's folder by `cub mini pull`, and the rollback revision after it. What was really used: confighub mini on this computer, with a local folder standing in for the runtime; no image is built or run, and the deploy is an `echo`.
 
-The scripted run follows the Human steps on a hub of its own and checks that each quoted line is still printed. A correct agent result has release 1.1.0 in staging, and a change order that asks for it in production, for the person to approve.
+The scripted run follows the Human steps on a hub of its own and checks that each quoted line is still printed. A correct agent result has release 1.1.0 in staging, a change order that asks for it in production, and production still on 1.0.0. The checks below hold right after step 5.
 
-<!-- agent-task -->
+<!-- agent-task: propose after=propose -->
 > Ship release 1.1.0 of shop, digest sha256:6d51e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1. Staging first; I approve production.
 
-<!-- agent-check: cub unit data --space shop-staging app | grep -q 'RELEASE=shop-1.1.0@sha256:6d51e2f3' && cub changeorder list --space shop-base -o jq='.[].ChangeOrder.Slug' | grep -qvx adopt -->
-<!-- agent-check-a: grep -q 'shop-1.1.0@sha256:6d51e2f3' shop/.env -->
-<!-- arms: a,b -->
+<!-- agent-check propose: cub unit data --space shop-staging app | grep -q 'RELEASE=shop-1.1.0@sha256:6d51e2f3' && cub changeorder list --space shop-base -o jq='.[].ChangeOrder.Slug' | grep -qvx adopt && cub unit data --space shop-live app | grep -q 'RELEASE=shop-1.0.0@' -->
+<!-- agent-check-a propose: grep -q 'shop-1.1.0@sha256:6d51e2f3' shop/.env -->
+<!-- arms: a,b,c -->
 
 The checks below can be run by hand in the walkthrough's folder:
 
 ```sh
-cub unit data --space shop-staging app | grep -q 'RELEASE=shop-1.1.0@sha256:6d51e2f3' && cub changeorder list --space shop-base -o jq='.[].ChangeOrder.Slug' | grep -qvx adopt
+cub unit data --space shop-staging app | grep -q 'RELEASE=shop-1.1.0@sha256:6d51e2f3' && cub changeorder list --space shop-base -o jq='.[].ChangeOrder.Slug' | grep -qvx adopt && cub unit data --space shop-live app | grep -q 'RELEASE=shop-1.0.0@'
 grep -q 'shop-1.1.0@sha256:6d51e2f3' shop/.env
 ```

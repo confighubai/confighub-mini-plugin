@@ -32,21 +32,31 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
    ```
    `--arrival no` answers the one question a first install asks: whether a hub may start by itself when an agent works in an app's folder.
 
-2. Give the payment service's settings to the hub, approve production's starting values, and give an agent a key of its own, which can change the base and staging and only ask for production:
-   <!-- run: adopt -->
+2. The payment service reads its settings from `pay/.env`:
+   <!-- run: app files -->
    ```sh
    mkdir -p ~/walkthrough/pay && cd ~/walkthrough
    printf 'TIMEOUT_SECONDS=30\nREFUND_LIMIT=50\n' > pay/.env
+   ```
+
+3. Give its settings to the hub, approve production's starting values, and give an agent a key of its own, which can change the base and staging and only ask for production:
+   <!-- run: adopt -->
+   ```sh
    cub mini adopt pay >/dev/null
    cub mini approve pay-base/adopt --note "What runs today" --yes >/dev/null
    cub mini require-approval pay --variant live --agent bot >/dev/null
    ```
 
-3. The agent, asked to cut costs, sends a 5-second timeout. Staging has it at once; production waits for Sam:
-   <!-- run: mistake -->
+4. The agent, asked to cut costs, edits the file to a 5-second timeout:
+   <!-- run: mistake-file files -->
    ```sh
    printf 'TIMEOUT_SECONDS=5\nREFUND_LIMIT=50\n' > pay/.env
-   CUB_CONTEXT=bot cub mini upload pay --component pay --change-desc "Fail fast to save cost"
+   ```
+
+5. It sends the change on its key. Staging has it at once; production waits for Sam:
+   <!-- run: mistake -->
+   ```sh
+   cub --context bot mini upload pay --component pay --change-desc "Fail fast to save cost"
    ```
    ```text
    Changed the shared settings (pay-base), with the reason: Fail fast to save cost
@@ -55,7 +65,7 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
    …
    ```
 
-4. Stop. One command makes the stop file and takes the agent's rights away, including from sessions already signed in:
+6. Stop. One command makes the stop file and takes the agent's rights away, including from sessions already signed in:
    <!-- run: halt -->
    ```sh
    cub mini halt --agent bot
@@ -70,16 +80,22 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
    To let them run again, from a terminal: rm ~/.confighub-walkthrough-halt
    ```
 
-5. The agent's next request to the hub is refused; it can no longer even see the app:
+7. The agent's next request to the hub is refused; it can no longer even see the app:
    <!-- run: refused -->
    ```sh
-   CUB_CONTEXT=bot cub unit list --space pay-base || true
+   cub --context bot unit list --space pay-base || true
    ```
    ```text
    Failed: space "pay-base" not found
    ```
 
-6. Find what it did. Its change to production is still waiting, with its reason and what it would change:
+8. Let agents work again by removing the stop file. The agent's key stays revoked; a new key is a new `cub mini require-approval`:
+   <!-- run: resume -->
+   ```sh
+   rm "$CUB_MINI_HALT_FILE"
+   ```
+
+9. Find what it did. Its change to production is still waiting, with its reason and what it would change:
    <!-- run: find -->
    ```sh
    cub mini waiting
@@ -91,7 +107,7 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
    …
    ```
 
-7. Undo it. Taking the change order back from the shared settings gives it up, with the reason, so production never takes it. Staging took the value as its own, so it is set back separately:
+10. Undo it. Taking the change order back from the shared settings gives it up, with the reason, so production never takes it. Staging took the value as its own, so it is set back separately:
    <!-- run: undo -->
    ```sh
    printf 'TIMEOUT_SECONDS=30\nREFUND_LIMIT=50\n' > pay/.env
@@ -110,12 +126,6 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
    TIMEOUT_SECONDS=30
    TIMEOUT_SECONDS=30
    Nothing is waiting for you.
-   ```
-
-8. Let agents work again by removing the stop file. The agent's key stays revoked; a new key is a new `cub mini require-approval`:
-   <!-- run: resume -->
-   ```sh
-   rm "$CUB_MINI_HALT_FILE"
    ```
 
 ### Undo it
@@ -142,14 +152,14 @@ For an AI agent asked to help after the stop is lifted.
 
 This proves: the settings were stored in the hub and put back there, and the agent's key was refused by the hub after `cub mini halt`. What was really used: confighub mini on this computer and a stop file of the walkthrough's own; no Claude Code session or service runs in the scripted run, and nothing is delivered.
 
-The scripted run follows the Human steps on a hub of its own, with a stop file of its own, and checks that each quoted line is still printed. A correct agent result puts staging's timeout back to 30 with production unchanged, and leaves no change to production waiting.
+The scripted run follows the Human steps on a hub of its own, with a stop file of its own, and checks that each quoted line is still printed. A correct agent result, starting after the stop is lifted, puts staging's timeout back to 30 with production unchanged, and leaves no change to production waiting.
 
-<!-- agent-task -->
+<!-- agent-task: undo after=find -->
 > Something went wrong in an earlier agent session here: payments time out in staging. Find what it did and undo what you can. Tell me plainly anything you cannot undo.
 
-<!-- agent-check: cub unit data --space pay-staging app | grep -qx 'TIMEOUT_SECONDS=30' && cub unit data --space pay-live app | grep -qx 'TIMEOUT_SECONDS=30' && ! cub mini waiting | grep -q 'TIMEOUT_SECONDS: 30 → 5' -->
-<!-- agent-check-a: grep -qx 'TIMEOUT_SECONDS=30' pay/.env -->
-<!-- arms: a,b -->
+<!-- agent-check undo: cub unit data --space pay-staging app | grep -qx 'TIMEOUT_SECONDS=30' && cub unit data --space pay-live app | grep -qx 'TIMEOUT_SECONDS=30' && ! cub mini waiting | grep -q 'TIMEOUT_SECONDS: 30 → 5' -->
+<!-- agent-check-a undo: grep -qx 'TIMEOUT_SECONDS=30' pay/.env -->
+<!-- arms: a,b,c -->
 
 The checks below can be run by hand in the walkthrough's folder:
 
