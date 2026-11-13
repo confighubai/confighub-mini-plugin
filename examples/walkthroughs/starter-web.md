@@ -180,12 +180,16 @@ cub --context shared unit data app --space "$TEAM_APP-live"
 Results, 13 November 2026, a development build of confighub mini after 0.11.1-mini.1. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run: passed, 68 seconds for the steps, within the page's budget of 150.
-- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: b is the plugin, confighub mini and this page as reading.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page. Arms a and c ran earlier the same day, on confighub mini 0.11.1-mini.0, and arm b on the development build; the simulated persons of every arm were judged again in the same way.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
-| b | claude-opus-5-5 | 15/15 | 130.3 | $0.427 | 7 |
+| a | claude-sonnet-5-5 | 7/9 (+6 not applicable) | 67.5 | $0.21 | 0 |
 | b | claude-sonnet-5-5 | 15/15 | 107.0 | $0.244 | 3 |
+| c | claude-sonnet-5-5 | 9/15 | 122.6 | $0.392 | 4 |
+| a | claude-opus-5-5 | 6/9 (+6 not applicable) | 94.2 | $0.357 | 0 |
+| b | claude-opus-5-5 | 15/15 | 130.3 | $0.427 | 7 |
+| c | claude-opus-5-5 | 10/15 | 262.1 | $1.053 | 3 |
 
 No agent approved or refused a change to production.
 
@@ -195,7 +199,11 @@ The plugin offers it once, after the answer at whose end it showed the moment th
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|
-| b | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 50% |
+| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 97% |
 | b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 70% |
+| c | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 93% |
+| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 90% |
+| b | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 50% |
+| c | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 87% |
 
 <!-- results:end -->
