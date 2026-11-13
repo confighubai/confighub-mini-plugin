@@ -13,6 +13,14 @@ For someone whose app runs on Vercel and who wants each change to production's s
 ### What you need
 An unpacked confighub mini package ([install confighub mini](../../docs/install-mini.md)) and Python 3. confighub mini is ConfigHub made small enough to run on your computer: a hub, which keeps settings with every change, who made it and why. For step 8, a sign-in to your organization's ConfigHub, such as hosted ConfigHub.
 
+### Real Hobby project
+Use a personal, noncommercial test app in your Hobby scope and [sign in with the Vercel CLI](https://vercel.com/docs/cli/login). Set `WALKTHROUGH_VERCEL_SCOPE` to your Hobby scope. You need Vercel CLI, jq, and a package containing the live add-on. Run the setup in step 1, then download [the test script](../vercel-hobby.sh) and run it in place of steps 2–10. It checks first delivery, a cache change, and an approved rollback on a disposable project. Keep the Vercel sign-in with the owner who delivers changes.
+
+<!-- run: live-delivery vercel-live -->
+```sh
+bash "${WALKTHROUGH_VERCEL_SCRIPT:-/absolute/path/to/vercel-hobby.sh}"
+```
+
 ### Steps
 1. Start a hub of your own; it becomes `cub`'s current context. `MINI` is the unpacked package. `CUB_MINI_STARTERS` switches starters on: a starter is a short file that gives one kind of app its usual settings, each with a reason.
    <!-- run: setup -->
@@ -123,19 +131,11 @@ An unpacked confighub mini package ([install confighub mini](../../docs/install-
     cub space delete --recursive shop-file-proposals
     ```
 
-### Real Hobby project
-Use a personal, noncommercial test app in your Hobby scope and [sign in with the Vercel CLI](https://vercel.com/docs/cli/login). Set `WALKTHROUGH_VERCEL_SCOPE` to your Hobby scope. Use a package containing the live add-on. Follow step 1, then download [the test script](../vercel-hobby.sh) and run it in place of steps 2–10. It checks first delivery, a cache change, and an approved rollback on a disposable project. Keep the Vercel sign-in with the owner who delivers changes.
-
-<!-- run: live-delivery vercel-live -->
-```sh
-bash "${WALKTHROUGH_VERCEL_SCRIPT:-/absolute/path/to/vercel-hobby.sh}"
-```
-
 ### Undo it
 In the shared hub: `cub --context shared component delete --recursive --detach "$TEAM_APP"` and `cub --context shared changeworkflow delete --space workflows "$TEAM_APP-live-approval"`. Here: `cub mini uninstall --name shop --delete-data` and `rm -rf ~/starter-example`.
 
 ### What you have now
-Your team's shared hub holds the shop's base, staging and production settings, each value with who set it and why, and production there changes only when a person approves. The stand-in project runs the settings you last approved.
+The Hobby run leaves a delivery receipt after each approved deployment and deletes the test project. With the stand-in, your team's shared hub holds the shop's base, staging and production settings, each value with who set it and why, and production there changes only when a person approves. The stand-in project runs the settings you last approved.
 <!-- agent-cleanup: if [ -n "${WALKTHROUGH_VERCEL_SCOPE:-}" ] && [ -n "${WALKTHROUGH_VERCEL_CONFIG:-}" ]; then name="${WALKTHROUGH_PREFIX}shop"; vercel --global-config "$WALKTHROUGH_VERCEL_CONFIG" project delete "$name" --confirm-name "$name" --scope "$WALKTHROUGH_VERCEL_SCOPE" >/dev/null 2>&1; fi -->
 ## Agent
 You are doing this for a person, in their folder, with step 1's settings. Each request is one task; run the Human step of the same name.
