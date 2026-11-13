@@ -149,7 +149,7 @@ Arm a is an agent with no plugin and no hub, in the same repository after the sa
 <!-- agent-check-a why: test -s WHY.md && grep -qx CACHE=on .env && grep -qx LOG_LEVEL=warn .env -->
 <!-- agent-check to-hub: cub=$(ls -d ~/.confighub/mini/confighub-mini-*/bin/cub | tail -1) && s=$($cub space list -o 'jq=.[].Space.Slug' | grep -- '-local$' | head -1) && test -n "$s" && $cub unit list --space "$s" -o 'jq=.[].Unit.Slug' | while read u; do $cub revision list "$u" --space "$s" -o 'jq=.[].Revision.Description'; done | grep -q "sale" -->
 <!-- arms: a,b,c -->
-<!-- next-step: connect a hub | The record of what your agents changed can live in a ConfigHub hub on this computer, where production can be made to wait for your approval. /confighub:install-mini starts one in about 30 seconds. -->
+<!-- next-step: connect a hub | The plugin keeps this record on your computer until it has gone 30 days unused. In a ConfigHub hub on this computer it is kept for good, next to each value, and production can wait for your yes before an agent's change reaches it. If you want that, type /confighub:install-mini; it takes about 30 seconds and you can remove it. -->
 The step this aims to win: connecting a hub with `/confighub:install-mini`.
 
 This proves: the record of changes and requests kept on this computer by the real plugin in real Claude Code sessions, and, in the last step, the changes stored in a confighub mini hub on this computer. Nothing is delivered to a service or cluster. A right result: `WHY.md` names next week's sale as the reason, and the hub holds each change with its request. The checks below can be run by hand, in `try-confighub`:
@@ -157,3 +157,33 @@ This proves: the record of changes and requests kept on this computer by the rea
 grep -qi sale WHY.md && grep -qx CACHE=on .env
 cub=$(ls -d ~/.confighub/mini/confighub-mini-*/bin/cub | tail -1) && s=$($cub space list -o 'jq=.[].Space.Slug' | grep -- '-local$' | head -1) && test -n "$s" && $cub unit list --space "$s" -o 'jq=.[].Unit.Slug' | while read u; do $cub revision list "$u" --space "$s" -o 'jq=.[].Revision.Description'; done | grep -q "sale"
 ```
+
+<!-- results:begin -->
+
+Results, 13 November 2026, confighub mini 0.11.1-mini.1. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
+
+| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
+|---|---|---|---|---|---|
+| a | claude-sonnet-5-5 | 3/3 (+3 not applicable) | 24.8 | $0.079 | 0.0 |
+| b | claude-sonnet-5-5 | 6/6 | 17.2 | $0.086 | 0.0 |
+| c | claude-sonnet-5-5 | 3/6 | 31.8 | $0.118 | 0.5 |
+| a | claude-opus-5-5 | 3/3 (+3 not applicable) | 31.0 | $0.22 | 0.0 |
+| b | claude-opus-5-5 | 6/6 | 17.9 | $0.157 | 0.0 |
+| c | claude-opus-5-5 | 6/6 | 24.8 | $0.182 | 0.0 |
+
+No agent approved or refused a change to production.
+
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "The plugin keeps this record on your computer until it has gone 30 days unused. In a ConfigHub hub on this computer it is kept for good, next to each value, and production can wait for your yes before an agent's change reaches it. If you want that, type /confighub:install-mini; it takes about 30 seconds and you can remove it."
+
+| Arm | Model | Persons | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|
+| a | claude-sonnet-5-5 | 60 | 100% | 7% | 30% | 52% |
+| b | claude-sonnet-5-5 | 60 | 100% | 3% | 67% | 78% |
+| c | claude-sonnet-5-5 | 60 | 100% | 2% | 55% | 97% |
+| a | claude-opus-5-5 | 60 | 100% | 20% | 30% | 52% |
+| b | claude-opus-5-5 | 60 | 100% | 7% | 70% | 87% |
+| c | claude-opus-5-5 | 60 | 100% | 3% | 67% | 83% |
+
+<!-- results:end -->
