@@ -146,6 +146,7 @@ This proves: stored. The colleague's copy and George's update are kept in a hub 
 
 <!-- agent-check keep: d=$(find . -name .my-settings.yaml | head -1) && grep -q '^theme: dark' "$d" && grep -q '^footer: Support desk, floor 3' "$d" && grep -q '^columns: 4' "$d" && cd "$(dirname "$d")" && ./startpage why | grep -q 'theme: Easier on my eyes' -->
 <!-- agent-check-a keep: f=$(grep -rl --include='*.yaml' '^columns: 4' . | head -1) && grep -q '^theme: dark' "$f" && grep -q '^footer: Support desk, floor 3' "$f" -->
+<!-- agent-tools: ./startpage -->
 <!-- arms: a,b -->
 
 ```sh
