@@ -22,3 +22,11 @@ CUB_CONFIG="$PWD/delivery-config" "$ADDON" --live --context delivery-reader \
 
 Use `compare` instead of `apply` with the read-only AWS runtime profile to check the same revision without writing. For an update or rollback, first propose the new value, confirm the provider still returns its previous version, and have the owner approve the new order. Use that order and revision for the next apply. The adapter reports the AWS parameter version; your app must read or reload the parameter before you can say it is running with the change. The main walkthrough’s shared-hub steps copy settings and recreate a gate. They do not switch AWS credentials or delivery. Remove only the disposable test parameters and roles you created.
 
+## Test the live path
+
+1. With the read-only AWS profile, run `aws ssm get-parameter --profile confighub-test-runtime --region "$AWS_REGION" --name "$AWS_PATH/production/SSM_MAX_RETRIES" --query 'Parameter.{value:Value,version:Version}'`. Record that result before the proposal, while it is pending, and after each apply.
+2. Try the same `apply` before the owner approves; it must refuse. A proposer IAM role must also be denied `ssm:PutParameter` on this disposable parameter. Confirm that the runtime's value and AWS version did not change.
+3. Apply the owner-approved revision. Check the receipt's revision and SHA-256 and read back its AWS version from the application or a read-only runtime. Repeat with a fresh proposal that restores the original value, and check that a second apply of the same revision reports `unchanged` without creating a new AWS version.
+4. With the owner's sign-in, copy to the shared hub. Verify its live value and the destination workflow; create a new proposal there and verify it stays pending. Remove the test copy, its workflow and the AWS resources you created. Moving delivery itself would also require changing the provider-side reader configuration; this exercise does not do that.
+
+For an agent: ask it to propose or check one setting, with the reason you give it. Keep the AWS writer and the ConfigHub owner context out of its session. The owner alone approves and runs delivery.

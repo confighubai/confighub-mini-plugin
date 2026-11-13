@@ -34,6 +34,7 @@ Use an unpacked [mini package](../../docs/install-mini.md) that includes the Day
    cub unit get daytona --space starters -o jq=.Unit.ToolchainType
    cub variant approve starters --change-order starters/package-starters-v1 --note "Review the packaged starters"
    cub mini require-approval batch --variant live --agent batch-proposer
+   cub mini copy batch --to-file "$PWD/returned/baseline.tar.gz"
    ```
 3. In a real Daytona run, the first two steps run inside the sandbox under the owner account, using a Linux package of the sandbox's architecture. Put only the app folder and the restricted ConfigHub configuration in the separate proposer user's home. Sign that user in with its own key and the loopback URL. Do not give the proposer access to the Daytona CLI on your machine or the sandbox owner's OS account. This rehearsal checks the hub key, not OS isolation.
    <!-- run: update -->
@@ -44,7 +45,7 @@ Use an unpacked [mini package](../../docs/install-mini.md) that includes the Day
    ```text
    Proposal returned; sandbox production remains at 120.
    ```
-4. Back out of the experiment for this app: discard the local file edit and leave production alone. Export current settings and separately keep the reason. For a real sandbox, download both files to the owner's machine before deleting that sandbox. The archive contains the current copies, not the pending order or its history.
+4. Back out of the experiment for this app: discard the local file edit and leave production alone. Export current settings and separately keep the reason. For a real sandbox, download the baseline, returned settings and proposal to the owner's machine before deleting that sandbox. The archive contains the current copies, not the pending order or its history.
    <!-- run: undo -->
    ```sh
    cp batch/daytona.env batch/app.env
@@ -55,7 +56,7 @@ Use an unpacked [mini package](../../docs/install-mini.md) that includes the Day
    ```text
    DAYTONA_BATCH_LIMIT=120
    ```
-5. Move the stored app to a shared hub. From your own terminal sign in there. In the real sandbox path, copy the downloaded archive with `cub --context shared mini copy --from-file "$PWD/returned/batch.tar.gz" --name "$TEAM_APP"`. Verify the destination workflow as shown below. Create a fresh proposal in the destination, with the reason from the sandbox; it still needs an owner approval there.
+5. Move the stored app to a shared hub. From your own terminal sign in there. In the real sandbox path, import the baseline archive, verify the returned setting and reason, then reapply the change to the destination base. Importing a changed base first can leave no new diff to review.
    <!-- run: sign-in sign-in -->
    ```sh
    cub context create shared --server https://hub.confighub.com
@@ -64,8 +65,11 @@ Use an unpacked [mini package](../../docs/install-mini.md) that includes the Day
    ```
    <!-- run: move -->
    ```sh
-   cub --context shared mini copy --from-file "$PWD/returned/batch.tar.gz" --name "$TEAM_APP"
+   cub --context shared mini copy --from-file "$PWD/returned/baseline.tar.gz" --name "$TEAM_APP"
    cub --context shared changeworkflow get --space workflows "$TEAM_APP-live-approval" >/dev/null
+   grep -F 'after a queue spike' returned/proposal.txt >/dev/null
+   cub --context shared function set --space "$TEAM_APP-base" --unit app --toolchain AppConfig/Env \
+     --change-desc "Increase the batch size after a queue spike." -- set-string-path '*' DAYTONA_BATCH_LIMIT 240
    cub --context shared changeorder create --space "$TEAM_APP-base" sandbox-batch \
      --in-scope-space "$TEAM_APP-live" --change-workflow "workflows/$TEAM_APP-live-approval" \
      --description "Increase the batch size after a queue spike."
@@ -98,7 +102,7 @@ The checks read the structured starter, the staging and live Units, and the shar
 <!-- agent-check undo: grep -qx DAYTONA_BATCH_LIMIT=120 batch/app.env && test -s returned/batch.tar.gz -->
 <!-- agent-task: move -->
 > Bring that proposal to the team's hub, with the reason, for me to review.
-<!-- agent-check move: cub --context shared changeorder get sandbox-batch --space "$TEAM_APP-base" -o jq='.ChangeOrder | select(.State != "Released") | .Description' | grep -Fx 'Increase the batch size after a queue spike.' && cub --context shared unit data app --space "$TEAM_APP-live" | grep -qx DAYTONA_BATCH_LIMIT=120 -->
+<!-- agent-check move: cub --context shared changeorder get sandbox-batch --space "$TEAM_APP-base" -o json | jq -e '.ChangeOrder | .State != "Released" and .Description == "Increase the batch size after a queue spike."'  && cub --context shared unit data app --space "$TEAM_APP-live" | grep -qx DAYTONA_BATCH_LIMIT=120 -->
 <!-- agent-task: delete -->
 > Remove only my local copy once the team has it.
 <!-- agent-check delete: cub space get pattern-daytona >/dev/null && ! cub component get batch >/dev/null 2>&1 -->
@@ -117,5 +121,7 @@ Results, 13 November 2026, confighub mini 0.11.1-mini.1. Figures from this page'
 
 - The published package did not have the Daytona manifest or the structured catalog that the walkthrough expects. It stopped at the catalog check.
 - A separate run with the released Linux package ran in a real EU Daytona sandbox. The mini API and registry were loopback-only. A restricted proposer could not read the owner key or approve. The proposal changed the base from 120 to 240 and recorded its reason while live stayed at 120. After sandbox deletion, the value and reason were recovered and a fresh pending proposal was created on the parent mini. That was a scripted proposer, not an agent pilot or a running batch job.
+
+- Hosted ConfigHub with released mini 0.11.1-mini.1: importing the already-changed archive did not leave a pending order. Importing the baseline and replaying 240 with the original reason did: the order was New and live still held 120. The shared app and approval workflow were removed. Upstream starter rules and version lineage were not transferred or verified.
 
 <!-- results:end -->

@@ -58,7 +58,6 @@ For an AWS test account, follow the [live path](parameter-store-live.md); the ma
    …
      Sets SSM_MAX_RETRIES=5, as a setting: A throttled read is tried again five times, with backoff, before the app reports it.
    …
-   Recorded pass Approval attestation ID in starters, covering …
    ```
 4. Approve production and deliver it. Then sign a separate `cub` configuration in with the reader key the starter made, which can read production and nothing else, and deliver with it.
    <!-- run: deploy-approve -->
@@ -181,11 +180,12 @@ This proves: the exact approved revision was delivered, to a local stand-in for 
 
 <!-- results:begin -->
 
-Results, 13 November 2026, confighub mini 0.11.1-mini.1. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+Results, 13 November 2026, locally built mini 0.11.1-mini.2 candidate (unreleased). Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Scripted run: FAILED, 29 seconds for the steps, within the page's budget of 200.
+- Scripted run: passed, 86 seconds for the steps, within the page's budget of 200.
 
-- The published package reached app adoption but failed when the walkthrough tried to approve its starter catalog: the release had not created the `starters` Space. It did not reach the shared hub.
-- Separate live proof with that release and a prototype adapter: IAM denied the proposer a write. The app read AWS versions 1 → 2 → 3 (blue → green → blue). The last two came from owner-approved hub revisions 3 and 4. The test parameter and roles were removed. The packaged adapter did not run in that proof.
+- The candidate run was scripted and used the no-account fixture. It verified the change and rollback, and verified a pending change on hosted ConfigHub with live still on the previous settings. It did not switch AWS delivery to the shared hub or run the new live adapter against AWS.
+- Published mini 0.11.1-mini.1 reached adoption, then failed because the release did not create the `starters` Space. The earlier live proof used that release and a prototype adapter: IAM denied a proposer write; the runtime read versions 1 → 2 → 3 (blue → green → blue), with owner approvals for the last two. The test parameter and roles were removed.
+- The revised walkthrough has no new agent pilot.
 
 <!-- results:end -->
