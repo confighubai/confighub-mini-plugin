@@ -26,7 +26,7 @@ Claude Code, signed in, and Git. Each slash command below, such as `/confighub:c
    ```
 
 2. Make a small repository with one settings file, and ask an agent to change it, with a reason. `--permission-mode acceptEdits` lets it edit without asking; in a session of your own, you would say yes. Then read the record with `/confighub:changes`.
-   <!-- run: change -->
+   <!-- run: change files -->
    ```sh
    git init -q try-confighub && cd try-confighub
    printf 'CACHE=off\nLOG_LEVEL=warn\n' > .env && git add . && git commit -qm start
