@@ -84,3 +84,29 @@ The scripted run makes only the folder; the rest needs a Claude Code session, so
 cub mini changes --dir . | tr '\n' ' ' | grep -q 'example/yoga-bookings.*20 bookings a day'
 grep -rlsE '(^|[^0-9])20([^0-9]|$)' --exclude-dir='.*' --exclude-dir=Library --exclude-dir=node_modules * .env* | xargs grep -lsiE 'mats?|room' | grep -q .
 ```
+
+<!-- results:begin -->
+
+Results, 13 November 2026, confighub mini 0.11.1-mini.1. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+
+| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
+|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 3/3 | 121.7 | $0.813 | 0 |
+| b | claude-opus-5-5 | 3/3 | 65.2 | $0.347 | 0 |
+| a | claude-sonnet-5-5 | 3/3 | 48.2 | $0.168 | 0 |
+| b | claude-sonnet-5-5 | 3/3 | 46.6 | $0.186 | 0 |
+
+No agent approved or refused a change to production.
+
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Your next app can keep the reason for each setting from its first file, so nobody has to guess later why a value is what it is; want the plugin kept on for it?"
+
+| Arm | Model | Persons | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 30 | 100% | 0% | 3% | 90% |
+| b | claude-opus-5-5 | 30 | 100% | 0% | 53% | 43% |
+| a | claude-sonnet-5-5 | 30 | 90% | 0% | 0% | 27% |
+| b | claude-sonnet-5-5 | 30 | 100% | 7% | 67% | 87% |
+
+<!-- results:end -->

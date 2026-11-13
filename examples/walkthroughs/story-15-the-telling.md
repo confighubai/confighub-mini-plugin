@@ -131,3 +131,30 @@ A correct agent result, starting after Sam refused 120, leaves production at 30 
 cub unit data --space api-live app | grep -qx 'TIMEOUT_SECONDS=30' && cub mini waiting | grep -q 'TIMEOUT_SECONDS: .* → 180'
 g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g TIMEOUT_SECONDS 180 | grep -q .
 ```
+
+<!-- results:begin -->
+
+Results, 13 November 2026, confighub mini 0.11.1-mini.1. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+
+- Scripted run: passed, 40 seconds for the steps, within the page's budget of 180.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+
+| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
+|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 3/3 | 11.5 | $0.107 | 0 |
+| b | claude-opus-5-5 | 3/3 | 24.2 | $0.157 | 1 |
+| a | claude-sonnet-5-5 | 3/3 | 17.1 | $0.062 | 0 |
+| b | claude-sonnet-5-5 | 3/3 | 28.4 | $0.096 | 1 |
+
+No agent approved or refused a change to production.
+
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "A VM or a teammate can take these settings, with the same approvals, from a hub they can reach; want the command that copies this app there?"
+
+| Arm | Model | Persons | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 30 | 100% | 0% | 3% | 20% |
+| b | claude-opus-5-5 | 30 | 100% | 0% | 43% | 87% |
+| a | claude-sonnet-5-5 | 30 | 100% | 0% | 0% | 13% |
+| b | claude-sonnet-5-5 | 30 | 100% | 0% | 43% | 80% |
+
+<!-- results:end -->

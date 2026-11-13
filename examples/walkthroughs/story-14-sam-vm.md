@@ -176,3 +176,30 @@ The checks below can be run by hand, in bash, in the walkthrough's folder:
 cub unit data --space api-base app | grep -qx 'TIMEOUT_SECONDS=120' && cub unit data --space api-live app | grep -qx 'TIMEOUT_SECONDS=30' && cub mini waiting | grep -q 'TIMEOUT_SECONDS: 30 → 120'
 g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g TIMEOUT_SECONDS 120 | grep -q .
 ```
+
+<!-- results:begin -->
+
+Results, 13 November 2026, confighub mini 0.11.1-mini.1. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+
+- Scripted run: passed, 34 seconds for the steps, within the page's budget of 240.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+
+| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
+|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 3/3 | 12.8 | $0.105 | 0 |
+| b | claude-opus-5-5 | 3/3 | 21.6 | $0.165 | 1 |
+| a | claude-sonnet-5-5 | 3/3 | 13.7 | $0.063 | 0 |
+| b | claude-sonnet-5-5 | 3/3 | 21.3 | $0.093 | 1 |
+
+No agent approved or refused a change to production.
+
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Your VM can take only approved settings every 30 seconds, and your agents never need an SSH key to it; want the one command that starts the timer there?"
+
+| Arm | Model | Persons | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 30 | 100% | 0% | 3% | 17% |
+| b | claude-opus-5-5 | 30 | 100% | 0% | 70% | 80% |
+| a | claude-sonnet-5-5 | 30 | 100% | 0% | 0% | 17% |
+| b | claude-sonnet-5-5 | 30 | 100% | 0% | 60% | 83% |
+
+<!-- results:end -->
