@@ -181,5 +181,6 @@ This proves: the real Hobby run checks what the production endpoint serves befor
 Results, 13 November 2026, confighub mini 0.11.1-mini.1. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run on Vercel Hobby: passed, 467 seconds for the steps, within the page's budget of 1200.
+- Scripted run on the no-account path: passed, 89 seconds for the steps, within the page's budget of 1200.
 
 <!-- results:end -->
