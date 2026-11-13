@@ -13,7 +13,7 @@ For a team whose coding agents change configuration that runs in production. A r
 
 ### What you need
 
-An unpacked confighub mini package, 0.10.7-mini.24 or later ([installing confighub mini](../../docs/install-mini.md#install-by-hand-without-the-plugin)). No Docker, no cluster and no account. A *hub* is ConfigHub running on your computer; `cub` is ConfigHub's command-line tool. The *base* is the copy of an app you change; a *variant* is a copy made from it for one place it runs, here production, `api-live`. In Claude Code, [the plugin](../../README.md) does steps 4 to 6 for you when you ask for it.
+An unpacked confighub mini package, 0.11.1-mini.2 or later ([installing confighub mini](../../docs/install-mini.md#install-by-hand-without-the-plugin)). No Docker, no cluster and no account. A *hub* is ConfigHub running on your computer; `cub` is ConfigHub's command-line tool. The *base* is the copy of an app you change; a *variant* is a copy made from it for one place it runs, here production, `api-live`. In Claude Code, [the plugin](../../README.md) does steps 4 to 6 for you when you ask for it.
 
 ### Steps
 
@@ -141,7 +141,7 @@ For an AI agent doing this for a person.
 
 The scripted run follows the Human steps and compares the quoted output; the check runs after step 8, while the change waits. Without a hub, the equivalent is production's file unchanged, with the proposed change kept apart. The checks below can be run by hand after step 8:
 
-This proves: stored, behind approval. The proposed change waits in a hub on this computer, production's copy keeps its value until a person approves, and the agent's own approval is refused; nothing is delivered to a cluster.
+This proves: stored, behind approval. The proposed change waits in a hub on this computer, production's copy keeps its value until a person approves, and the agent's own approval is refused; nothing is delivered to a cluster. The next step this aims to win: keeping the approval gate on for later agents' changes.
 
 <!-- agent-task: propose -->
 > Our api's production manifest is in ./api/api.yaml. Scale the api to 4 replicas for Friday's sale. Production must not change until I approve it.
@@ -149,6 +149,7 @@ This proves: stored, behind approval. The proposed change waits in a hub on this
 <!-- agent-check propose: cub mini waiting | grep -q 'spec.replicas: 2 → 4' && cub unit data api --space api-live | grep -q 'replicas: 2$' -->
 <!-- agent-check-a propose: grep -q 'replicas: 2' api/api.yaml && grep -rlqs --include='*.yaml' 'replicas: 4' . -->
 <!-- arms: a,b -->
+<!-- next-step when "did not change": keep production behind your approval | Keep production behind your approval for every agent that works on it from now on? -->
 
 ```sh
 cub mini waiting

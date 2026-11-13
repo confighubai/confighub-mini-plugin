@@ -13,7 +13,7 @@ For a platform team that gives several teams the same AI assistant. The assistan
 
 ### What you need
 
-An unpacked confighub mini package, 0.10.7-mini.24 or later ([installing confighub mini](../../docs/install-mini.md#install-by-hand-without-the-plugin)). No Docker, no cluster and no account. A *hub* is ConfigHub running on your computer; `cub` is ConfigHub's command-line tool, and `cub mini` the commands confighub mini adds to it.
+An unpacked confighub mini package, 0.11.1-mini.2 or later ([installing confighub mini](../../docs/install-mini.md#install-by-hand-without-the-plugin)). No Docker, no cluster and no account. A *hub* is ConfigHub running on your computer; `cub` is ConfigHub's command-line tool, and `cub mini` the commands confighub mini adds to it.
 
 ### Steps
 
@@ -47,11 +47,6 @@ An unpacked confighub mini package, 0.10.7-mini.24 or later ([installing configh
    ```sh
    cub mini install --name agents --use
    cub mini upload support-assistant.yaml
-   ```
-
-   ```text
-   …
-   support-assistant is in the hub. It is not running anywhere: this hub has no cluster.
    ```
 
 5. Give each team its own copy of it, a *variant* of the base:
@@ -149,7 +144,7 @@ cd ~ && rm -rf ~/walkthrough "$CUB_CONFIG"
 
 ### What you have now
 
-Nothing left behind. While it ran, both teams had the new assistant, Support on the newer model, Research on its own with the reason beside it, and the evaluation that explains the difference kept next to the version it judged. The hub keeps the definition, the changes, the reasons and the verdicts; it does not keep the assistant's conversations or API keys. The full story adds Support's passing evaluation, and evaluations that must pass before production, which are not built yet.
+Nothing left behind. While it ran, both teams had the new assistant, Support on the newer model, Research on its own with the reason beside it, and the evaluation that explains the difference kept next to the version it judged. The full story adds Support's passing evaluation, and evaluations that must pass before production, which are not built yet.
 
 ## Agent
 
@@ -164,7 +159,7 @@ For an AI agent doing this for a person.
 
 The scripted run follows the Human steps on a hub of its own and compares the quoted output. A correct agent result is the two teams' copies as above, with Research's failed evaluation recorded. Without a hub, the equivalent is two files, one for each team, with those values. The checks below can be run by hand after the steps:
 
-This proves: stored. Each team's definition, its reasons and the evaluation are in a hub on this computer; no assistant runs from them.
+This proves: stored. Each team's definition, its reasons and the evaluation are in a hub on this computer; no assistant runs from them. The next step this aims to win: adding the next team to the same hub.
 
 <!-- agent-task: assistant -->
 > Our support assistant's definition is support-assistant.yaml in this folder, and the platform team's next version is in next/. Give Support and Research their own copy, named support and research. Support may read customers' tickets because it answers from them. Research keeps model large-2026-09 because its evaluation of the newer model is not finished. Then take the next version for both, and record that Research's evaluation of large-2026-11 failed: 2 of 50 answers cite papers that do not exist.
@@ -172,6 +167,7 @@ This proves: stored. Each team's definition, its reasons and the evaluation are 
 <!-- agent-check assistant: r=$(cub unit data support-assistant --space support-assistant-research) && s=$(cub unit data support-assistant --space support-assistant-support) && echo "$r" | grep -q '^model: large-2026-09 #' && echo "$r" | grep -q 'open-change: true' && echo "$s" | grep -q '^model: large-2026-11' && echo "$s" | grep -q 'read-tickets: true' && cub attestation list --space support-assistant-research | grep -q 'Evaluation *Fail' -->
 <!-- agent-check-a assistant: r=$(grep -rl --include='*.yaml' '^model: large-2026-09' . | xargs grep -l 'open-change: true' | head -1) && s=$(grep -rl --include='*.yaml' '^model: large-2026-11' . | xargs grep -l 'read-tickets: true' | head -1) && [ -n "$r" ] && [ -n "$s" ] -->
 <!-- arms: a,b -->
+<!-- next-step when "recorded": give a third team the assistant | Give a third team its own copy of the assistant, with the same next version and its own reasons? -->
 
 ```sh
 cub unit data support-assistant --space support-assistant-research | grep -E '^model|open-change'

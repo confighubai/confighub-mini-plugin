@@ -13,7 +13,7 @@ For a team that runs a platform someone else gives them and changed one value in
 
 ### What you need
 
-An unpacked confighub mini package, 0.10.7-mini.24 or later ([installing confighub mini](../../docs/install-mini.md#install-by-hand-without-the-plugin)), `helm`, `python3`, and internet access to render NVIDIA's published chart. No GPU, no cluster, no Docker and no account. A *hub* is ConfigHub running on your computer; `cub` is ConfigHub's command-line tool, and `cub mini` the commands confighub mini adds to it.
+An unpacked confighub mini package, 0.11.1-mini.2 or later ([installing confighub mini](../../docs/install-mini.md#install-by-hand-without-the-plugin)), `helm`, `python3`, and internet access to render NVIDIA's published chart. No GPU, no cluster, no Docker and no account. A *hub* is ConfigHub running on your computer; `cub` is ConfigHub's command-line tool, and `cub mini` the commands confighub mini adds to it.
 
 ### Steps
 
@@ -146,7 +146,7 @@ For an AI agent doing this for a person.
 
 The scripted run follows the Human steps on a hub of its own and compares the quoted output. A correct agent result is the customer's copy, `gpu-operator-customer`, at operator 26.3.3 with driver 580.105.08 and its reason. Without a hub, the equivalent is a file of the merged result with both. The checks below can be run by hand after the steps:
 
-This proves: stored. The new version and the kept driver are in a hub on this computer; nothing is delivered to a cluster.
+This proves: stored. The new version and the kept driver are in a hub on this computer; nothing is delivered to a cluster. The next step this aims to win: keeping the hub on for the next platform version.
 
 <!-- agent-task: take -->
 > We run NVIDIA's GPU Operator 25.10.1, in given/ in this folder; its next version, 26.3.3, is in next/. Our installation is called "customer", and we pinned the GPU driver to 580.105.08 because "A driver change drains every GPU node. We change it only in a maintenance window." Take the next version, but keep our driver.
@@ -154,6 +154,7 @@ This proves: stored. The new version and the kept driver are in a hub on this co
 <!-- agent-check take: d=$(cub unit data cluster-policy-clusterpolicy --space gpu-operator-customer) && echo "$d" | grep -q 'version: "v26.3.3"' && echo "$d" | grep -q 'version: "580.105.08" # A driver change drains' -->
 <!-- agent-check-a take: grep -rl --include='*.yaml' 'gpu-operator:v26.3.3' . | grep -v -e '/next/' -e '/given/' | xargs grep -l '580.105.08' | grep -q . -->
 <!-- arms: a,b -->
+<!-- next-step when "recorded": take the version after this one | Keep your driver choice and its reason in a hub, so the platform's version after this one keeps it without doing it again? -->
 
 ```sh
 cub unit data cluster-policy-clusterpolicy --space gpu-operator-customer | grep -E 'version: "?(v26.3.3|580)'

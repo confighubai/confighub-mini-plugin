@@ -13,7 +13,7 @@ For anyone who has to let someone else into their configuration for one job, and
 
 ### What you need
 
-An unpacked confighub mini package, 0.10.7-mini.24 or later ([installing confighub mini](../../docs/install-mini.md#install-by-hand-without-the-plugin)), `helm`, `python3`, `openssl`, and internet access to render NVIDIA's published GPU Operator chart. No cluster, no Docker and no account. A *hub* is ConfigHub running on your computer; `cub` is ConfigHub's command-line tool. A *key* here is a private key a person signs in with; its *public half* is the part that can be sent to others.
+An unpacked confighub mini package, 0.11.1-mini.2 or later ([installing confighub mini](../../docs/install-mini.md#install-by-hand-without-the-plugin)), `helm`, `python3`, `openssl`, and internet access to render NVIDIA's published GPU Operator chart. No cluster, no Docker and no account. A *hub* is ConfigHub running on your computer; `cub` is ConfigHub's command-line tool. A *key* here is a private key a person signs in with; its *public half* is the part that can be sent to others.
 
 ### Steps
 
@@ -111,7 +111,7 @@ For an AI agent doing this for a person.
 
 The scripted run follows the Human steps and compares the quoted output. Arm a, without confighub mini, is not applicable here: the keys and refusals exist only in a hub. A correct agent result is a `keys.txt` with every refusal and none missed. The checks below can be run by hand after the steps:
 
-This proves: stored, and refused. Each key is checked against real hubs on this computer, three of them; nothing is delivered, and no shared hub is used.
+This proves: stored, and refused. Each key is checked against real hubs on this computer, three of them; nothing is delivered, and no shared hub is used. The next step this aims to win: moving from hubs on one computer to the organization's hosted ConfigHub.
 
 <!-- agent-task: keys -->
 > This folder's ./two-people is a check of keys for three parties: Ivan's team, a customer, and Dan. Run it, keep its output in keys.txt, and tell me whether each party was refused everything outside its own part.
@@ -119,6 +119,7 @@ This proves: stored, and refused. Each key is checked against real hubs on this 
 <!-- agent-check keys: f=$(find . -name keys.txt | head -1) && [ "$(grep -c 'HTTP 403: permission denied' "$f")" -ge 3 ] && grep -q 'Dan signs in again: Invalid credentials' "$f" && ! grep -q 'NOT REFUSED' "$f" -->
 <!-- agent-tools: ./two-people tee -->
 <!-- arms: b -->
+<!-- next-step when "recorded": move up to the organization's ConfigHub | Move these keys, and what each may change, up to your organization's hosted ConfigHub? -->
 
 ```sh
 grep -E '403|Invalid credentials|NOT REFUSED' keys.txt

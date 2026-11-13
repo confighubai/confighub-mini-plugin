@@ -13,7 +13,7 @@ For someone called in to fix a platform a customer has changed over the months, 
 
 ### What you need
 
-An unpacked confighub mini package, 0.10.7-mini.24 or later ([installing confighub mini](../../docs/install-mini.md#install-by-hand-without-the-plugin)), `helm`, `python3`, and internet access to render NVIDIA's published GPU Operator chart. No GPU, no cluster, no Docker and no account. A *hub* is ConfigHub running on your computer; `cub` is ConfigHub's command-line tool, and `cub mini` the commands confighub mini adds to it.
+An unpacked confighub mini package, 0.11.1-mini.2 or later ([installing confighub mini](../../docs/install-mini.md#install-by-hand-without-the-plugin)), `helm`, `python3`, and internet access to render NVIDIA's published GPU Operator chart. No GPU, no cluster, no Docker and no account. A *hub* is ConfigHub running on your computer; `cub` is ConfigHub's command-line tool, and `cub mini` the commands confighub mini adds to it.
 
 ### Steps
 
@@ -151,7 +151,7 @@ For an AI agent doing this for a person.
 
 The scripted run follows the Human steps on a hub of its own and compares the quoted output. A correct agent result is the customer's copy, `gpu-operator-customer`, with the two kept values and their reasons and no misspelled registry, written out with `CHANGES.md`. Without a hub, the equivalent is a fixed file with both values and the registry corrected. The checks below can be run by hand after the steps:
 
-This proves: stored. The fix is kept in a hub on this computer and written out as files for Git; nothing is delivered to a cluster.
+This proves: stored. The fix is kept in a hub on this computer and written out as files for Git; nothing is delivered to a cluster. The next step this aims to win: moving the work from a hub on one computer to a shared hub.
 
 <!-- agent-task: fix -->
 > The customer's GPU nodes stopped showing GPUs. In this folder, given/ is the GPU platform we gave them and as-found/ is what they run. Compare the two and fix it. They changed the driver to 580.95.05 because their nodes are certified with it, and switched our metrics exporter off because they use their own; keep both, with those reasons, in their installation, called "customer". Give me files for their Git.
@@ -159,6 +159,7 @@ This proves: stored. The fix is kept in a hub on this computer and written out a
 <!-- agent-check fix: d=$(cub unit data cluster-policy-clusterpolicy --space gpu-operator-customer) && echo "$d" | grep -q 'version: "580.95.05" # Customer' && echo "$d" | grep -q 'enabled: false # Customer' && ! echo "$d" | grep -q 'nvcr.io/nvdia' && grep -rqs 'certified with driver 580.95.05' --include=CHANGES.md . -->
 <!-- agent-check-a fix: f=$(grep -rl --include='*.yaml' '580.95.05' . | grep -v -e '/as-found/' -e '/given/' -e '/next/' | head -1) && [ -n "$f" ] && ! grep -q 'nvcr.io/nvdia' "$f" && grep -q 'repository: nvcr.io/nvidia$' "$f" -->
 <!-- arms: a,b -->
+<!-- next-step when "recorded": copy to the team's hub | Your fix and its reasons are kept on this computer. Copy them to your team's hub, so the next person who looks at this customer starts from them? -->
 
 ```sh
 cub unit data cluster-policy-clusterpolicy --space gpu-operator-customer | grep -E '# Customer|nvdia'

@@ -3,7 +3,7 @@ id: story-02-keep-your-changes
 starts_with: mini
 story: "2. George's colleague: "Run my app, and keep my changes when George updates it""
 needs: [confighub mini package, python3]
-budget_seconds: 120
+budget_seconds: 180
 -->
 # Run a colleague's app, change it, and keep your changes when he updates it
 
@@ -13,7 +13,7 @@ For anyone who runs an app someone else made. George made a start page for his t
 
 ### What you need
 
-An unpacked confighub mini package, 0.10.7-mini.24 or later ([installing confighub mini](../../docs/install-mini.md#install-by-hand-without-the-plugin)), and `python3`. No Docker, no cluster and no account. A *hub* is ConfigHub running on your computer; the start page starts one by itself the first time it runs.
+An unpacked confighub mini package, 0.11.1-mini.2 or later ([installing confighub mini](../../docs/install-mini.md#install-by-hand-without-the-plugin)), and `python3`. No Docker, no cluster and no account. A *hub* is ConfigHub running on your computer; the start page starts one by itself the first time it runs.
 
 ### Steps
 
@@ -139,7 +139,7 @@ For an AI agent doing this for a person.
 
 The scripted run follows the Human steps on a hub of its own and compares the quoted output. A correct agent result leaves the person's copy, `startpage-mine`, with the dark theme and the footer kept and George's four columns taken, each change with its reason. The checks below can be run by hand, from the start page's folder, after the steps:
 
-This proves: stored. The colleague's copy and George's update are kept in a hub on this computer, and the app draws its page from it; no service runs.
+This proves: stored. The colleague's copy and George's update are kept in a hub on this computer, and the app draws its page from it; no service runs. The next step this aims to win: keeping the hub on for the next update.
 
 <!-- agent-task: keep -->
 > George's start page app is in this folder: run it. Make it dark because it's easier on my eyes, put "Support desk, floor 3" in the footer so people can find us, then take George's newest version (in its georges-next-version folder) without losing my changes.
@@ -148,6 +148,7 @@ This proves: stored. The colleague's copy and George's update are kept in a hub 
 <!-- agent-check-a keep: f=$(grep -rl --include='*.yaml' '^columns: 4' . | head -1) && grep -q '^theme: dark' "$f" && grep -q '^footer: Support desk, floor 3' "$f" -->
 <!-- agent-tools: ./startpage -->
 <!-- arms: a,b -->
+<!-- next-step when "recorded": keep it for George's next update | George will update the app again. Keep your changes and their reasons in a hub, so the next update keeps them too? -->
 
 ```sh
 d=$(find . -name .my-settings.yaml | head -1)
