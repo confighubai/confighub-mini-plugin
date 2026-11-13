@@ -2,6 +2,8 @@
 
 This page is for a platform team that runs Flux or Argo CD, and whose agents now propose changes to what those tools deploy. It shows how to make the cluster deploy only changes a named person has approved, with the reason for each value kept. It takes about 15 minutes on your laptop. To move an app that Argo CD or Flux already deploys from your Git, and hand it back, see [an app that Argo CD or Flux deploys](journeys/gitops-app.md).
 
+The walkthroughs [a Kustomize app that Argo CD deploys](../examples/walkthroughs/starter-kustomize-argocd.md) and [a Kustomize app that Flux deploys](../examples/walkthroughs/starter-kustomize-flux.md) do this on a kind cluster with a starter, with every command and what it prints.
+
 ## What "deploying from the hub over OCI" means
 
 Today, your cluster's Flux or Argo CD deploys whatever reaches the Git branch it watches. A person has to read every agent's diff to know whether it should ship. Nothing in Git says why a value is what it is.

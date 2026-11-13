@@ -2,6 +2,8 @@
 
 This page is for anyone who opens a GitOps repository they did not write, or have not looked at in a while, and needs to know what it deploys before they or an agent change it.
 
+The walkthrough [the plugin](../examples/walkthroughs/tool-plugin.md) runs `/confighub:inventory` with the plugin's other commands.
+
 A GitOps repository is a Git repository that a tool such as Flux or Argo CD reads to decide what runs on your clusters. Its folders do not say which of them reach a cluster. A folder can look deployed and be deployed by nothing. Two environments can differ in values nobody wrote down. And an agent's change to production can sit in a file nobody opens.
 
 `/confighub:inventory` reads the repository's files and tells you, in under a second:

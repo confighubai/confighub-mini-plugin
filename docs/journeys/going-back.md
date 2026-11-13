@@ -2,6 +2,8 @@
 
 This page is for anyone who added the ConfigHub plugin, confighub mini or a hub as a source, and wants to undo one step or all of them. Each step can be undone on its own. Nothing here asks you to keep ConfigHub to keep your work: it comes out as plain files, with the reason for each value.
 
+If an agent has done damage and you want it stopped at once, follow the walkthrough [Sam's bad afternoon](../../examples/walkthroughs/story-19-recovery.md): one command stops every agent session and takes the agent's key away, then you find its change and put it back.
+
 The words on this page, such as *hub*, *base* and *change order*, are explained in [the glossary](../README.md#words).
 
 ## What to undo, and how

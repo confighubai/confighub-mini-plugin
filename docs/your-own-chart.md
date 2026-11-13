@@ -1,6 +1,8 @@
-# Your own Helm chart, step by step: about 10 minutes
+# Your own Helm chart, step by step
 
-This walkthrough is for a platform engineer who runs a vendor's Helm chart with values of their own, such as a pinned driver, a scrape path, or a replica count for a busy week. It shows how to keep those values, each with its reason, through the chart's next version. You see what the next version would change before you take it, and you end with plain files you can apply to a cluster or commit to Git.
+This page is for a platform engineer who runs a vendor's Helm chart with values of their own, such as a pinned driver, a scrape path, or a replica count for a busy week. It shows how to keep those values, each with its reason, through the chart's next version. You see what the next version would change before you take it, and you end with plain files you can apply to a cluster or commit to Git.
+
+The walkthrough [take a platform's next version](../examples/walkthroughs/story-07-next-version.md) does the same with NVIDIA's GPU Operator, with every command and what it prints.
 
 ## The problem this solves
 

@@ -1,6 +1,6 @@
 # Documentation
 
-Every page about the ConfigHub plugin and confighub mini, grouped by what you're doing. New here? Start with the overview: https://confighub.github.io/helm-expt/ai-agents/, or the [README](../README.md) for installing and a first try.
+Every page about the ConfigHub plugin and confighub mini, grouped by what you're doing. To see a job done from start to finish, with every command and what it prints, pick one of [the walkthroughs](../examples/walkthroughs/README.md): one for each tool, each starter and each user story. New here? Start with the overview: https://confighub.github.io/helm-expt/ai-agents/, or the [README](../README.md) for installing and a first try.
 
 The words these pages use, such as *hub*, *base*, *change order* and *Space*, are explained in [Words](#words), at the end of this page.
 
@@ -8,6 +8,7 @@ The words these pages use, such as *hub*, *base*, *change order* and *Space*, ar
 
 | Page | What it's for |
 |---|---|
+| [Walkthroughs](../examples/walkthroughs/README.md) | One job from start to finish for each tool, starter and user story, with every command and what it prints |
 | [Try the plugin on its own](try-the-plugin.md) | See the record at work in a minute, with no hub; what it records, and setting it up for your whole team |
 | [A new app](journeys/new-app.md) | One request in Claude Code gives you the app, with staging and production settings in a hub |
 | [An app you already have](journeys/existing-app.md) | Attach `.env` files, Terraform var files, Kustomize or Helm values, with your values kept as they are |
@@ -71,7 +72,7 @@ Every page uses these words in the same sense. A page links here instead of repe
 - **confighub mini** is ConfigHub made small enough to run a hub on one machine, such as a laptop, a sandbox or a CI job. The server and its PostgreSQL database run as two ordinary processes. It is free and needs no account, no Docker and no cluster ([install it](install-mini.md)).
 - A **shared hub** is one your team reaches over the network: hosted ConfigHub, which we run for you, or ConfigHub's enterprise edition on your own servers. Both support many people in one organization. Some pages call it your organization's ConfigHub.
 - **`cub`** is ConfigHub's command-line tool, and works with every hub. **`cub mini`** is the set of commands confighub mini adds to it; each runs `cub`'s own commands and fills in the rest of the request ([which](cub-mini-and-cub.md)). A **context** is a named hub and sign-in that `cub` uses.
-- The **plugin** is the ConfigHub plugin for Claude Code and Codex. Its **record** is what it writes down about each change an agent makes: the value, from what to what, the request behind it and the reason.
+- The **plugin** is the ConfigHub plugin for Claude Code and Codex. Its **record** is what it writes down about each change an agent makes: the value, from what to what, the request behind it and the reason. A **session** is one Claude Code or Codex conversation, from start to `/exit`, and a **turn** is one request you make in it and the agent's work on that request.
 - A **Space** is a folder in a hub. It holds configuration as **Units**: one Unit for each file or resource. A name such as `pattern-web/web-service` is the Unit `web-service` in the Space `pattern-web`. A **revision** is one saved state of a Unit; the hub numbers each change to a Unit as its next revision.
 - A **Component** is one app or piece of software, such as `api`. Its **base**, such as the Space `api-base`, holds the settings every copy shares, so a change is made once. A **variant**, or **copy**, is made from the base for one place the app runs, and keeps its **own values**, the ones it sets differently, when the base changes. **Staging** takes a change to the base at once. **Production**, the copy `cub` commands call **live** (`api-live`), takes a change only when you approve it.
 - A **change order** asks for a change to reach a copy, usually production. It waits until a person **approves** it, with `cub mini approve`, or **refuses** it, with `cub mini refuse`. A **ChangeWorkflow** says what a change order needs first, such as a named person's approval. ConfigHub keeps each approval as an **attestation**: who approved, when and why, covering one revision.

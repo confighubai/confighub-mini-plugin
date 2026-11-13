@@ -120,7 +120,7 @@ On Linux you need `curl` and `xz`. On Debian or Ubuntu, install them with `apt-g
 
    This lists the hub's Spaces. A *Space* is where ConfigHub keeps a set of configuration. If you kept your earlier context, use the line `cub mini install` printed instead.
 
-The package's `START-HERE.txt` lists ten stories you can run on the hub. For a guided first run, see [Try confighub mini](try-confighub-mini.md).
+The package's `START-HERE.txt` lists ten stories you can run on the hub. For a guided first run, see [Try confighub mini](try-confighub-mini.md); to learn the commands, the walkthrough [the `cub mini` commands](../examples/walkthroughs/tool-cub-mini.md).
 
 ## Move to a newer confighub mini
 
