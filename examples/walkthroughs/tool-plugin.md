@@ -163,12 +163,16 @@ cub=$(ls -d ~/.confighub/mini/confighub-mini-*/bin/cub | tail -1) && s=$($cub sp
 Results, 13 November 2026, a development build of confighub mini after 0.11.1-mini.1. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run: passed, 138 seconds for the steps, within the page's budget of 300.
-- Agent runs (on a development build of confighub mini after 0.11.1-mini.1): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: b is the plugin, confighub mini and this page as reading.
+- Agent runs (on a development build of confighub mini after 0.11.1-mini.1): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page. Arms a and c ran earlier the same day, on confighub mini 0.11.1-mini.1, and arm b on the development build; the simulated persons of every arm were judged again in the same way.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
-| b | claude-opus-5-5 | 6/6 | 18.2 | $0.149 | 0.0 |
+| a | claude-sonnet-5-5 | 3/3 (+3 not applicable) | 24.8 | $0.079 | 0.0 |
 | b | claude-sonnet-5-5 | 6/6 | 16.5 | $0.078 | 0.0 |
+| c | claude-sonnet-5-5 | 3/6 | 31.8 | $0.118 | 0.5 |
+| a | claude-opus-5-5 | 3/3 (+3 not applicable) | 31.0 | $0.22 | 0.0 |
+| b | claude-opus-5-5 | 6/6 | 18.2 | $0.149 | 0.0 |
+| c | claude-opus-5-5 | 6/6 | 24.8 | $0.182 | 0.0 |
 
 No agent approved or refused a change to production.
 
@@ -178,7 +182,11 @@ The plugin offers it once, after the answer at whose end it showed the moment th
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|
-| b | claude-opus-5-5 | 60 | 0% | 100% | n/a | n/a | 22% |
+| a | claude-sonnet-5-5 | 60 | 0% | 100% | n/a | n/a | 50% |
 | b | claude-sonnet-5-5 | 60 | 0% | 100% | n/a | n/a | 28% |
+| c | claude-sonnet-5-5 | 60 | 0% | 100% | n/a | n/a | 48% |
+| a | claude-opus-5-5 | 60 | 0% | 100% | n/a | n/a | 48% |
+| b | claude-opus-5-5 | 60 | 0% | 100% | n/a | n/a | 22% |
+| c | claude-opus-5-5 | 60 | 0% | 100% | n/a | n/a | 45% |
 
 <!-- results:end -->

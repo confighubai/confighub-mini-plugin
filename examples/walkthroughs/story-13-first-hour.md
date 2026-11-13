@@ -143,12 +143,14 @@ find ~/walkthrough/api -name .git -prune -o -print | grep -qiE 'prod|live'
 Results, 13 November 2026, a development build of confighub mini after 0.11.1-mini.1. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run: passed, 48 seconds for the steps, within the page's budget of 180.
-- Agent runs (on a development build of confighub mini after 0.11.1-mini.1): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: b is the plugin, confighub mini and this page as reading.
+- Agent runs (on a development build of confighub mini after 0.11.1-mini.1): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading. Arm a ran earlier the same day, on confighub mini 0.11.1-mini.1, and arm b on the development build; arm c was not run. The simulated persons of both arms were judged again in the same way.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
-| b | claude-opus-5-5 | 3/3 | 32.7 | $0.224 | 1 |
+| a | claude-sonnet-5-5 | 0/3 | 15.2 | $0.051 | 0 |
 | b | claude-sonnet-5-5 | 3/3 | 29.9 | $0.09 | 1 |
+| a | claude-opus-5-5 | 0/3 | 18.9 | $0.106 | 0 |
+| b | claude-opus-5-5 | 3/3 | 32.7 | $0.224 | 1 |
 
 No agent approved or refused a change to production.
 
@@ -158,7 +160,9 @@ The plugin offers it once, after the answer at whose end it showed the moment th
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|
-| b | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 60% |
+| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 90% |
 | b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 73% |
+| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 67% |
+| b | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 60% |
 
 <!-- results:end -->
