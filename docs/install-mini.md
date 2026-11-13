@@ -8,7 +8,7 @@ This page shows how to install it: in one step from Claude Code, on its own with
 
 | What | Version |
 |---|---|
-| confighub mini | 0.11.1-mini.1 |
+| confighub mini | 0.11.1-mini.2 |
 | The ConfigHub server inside it | v0.11.1, the same version hosted ConfigHub runs |
 | `cub`, ConfigHub's command-line tool, inside it | v0.11.1 |
 | The download | 49 to 74 MB, depending on the platform |
@@ -60,7 +60,7 @@ On Linux you need `curl` and `xz`. On Debian or Ubuntu, install them with `apt-g
 1. Set the version, and work out the package name for your machine. Run the next steps in the same shell, since they use `V` and `P`:
 
    ```bash
-   V=0.11.1-mini.1
+   V=0.11.1-mini.2
    P=$(uname -s | tr A-Z a-z)-$(uname -m | sed 's/x86_64/amd64/; s/aarch64/arm64/')
    ```
 
@@ -164,7 +164,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates
 RUN useradd -m agent
 USER agent
 WORKDIR /home/agent
-ARG V=0.11.1-mini.1
+ARG V=0.11.1-mini.2
 RUN P=linux-$(uname -m | sed 's/x86_64/amd64/; s/aarch64/arm64/') \
  && curl -fsSLO https://github.com/confighubai/confighub-mini-plugin/releases/download/mini-v$V/confighub-mini-$V-$P.tar.xz \
  && curl -fsSLO https://github.com/confighubai/confighub-mini-plugin/releases/download/mini-v$V/SHA256SUMS \
@@ -202,7 +202,7 @@ The features of a hub are ConfigHub's own, not a separate version of them. That 
 
 Open an issue in [confighubai/confighub-mini-plugin](https://github.com/confighubai/confighub-mini-plugin/issues). It helps to include:
 
-- the package folder's name, which gives its version and platform, such as `confighub-mini-0.11.1-mini.1-darwin-arm64`;
+- the package folder's name, which gives its version and platform, such as `confighub-mini-0.11.1-mini.2-darwin-arm64`;
 - what `cub version` prints, which names the hub's server version too;
 - the command you ran, and what it printed.
 
