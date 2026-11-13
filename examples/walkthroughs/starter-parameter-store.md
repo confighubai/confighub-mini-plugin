@@ -106,15 +106,10 @@ An unpacked confighub mini package ([install confighub mini](../../docs/install-
    export PREFIX="${WALKTHROUGH_PREFIX:-$USER-}"
    export TEAM_APP="${PREFIX}billing"
    ```
-   The copy keeps every value and its reason, but not the approval rule, so production there is open until you add it again. The commands after the copy add it, on a hub of version 0.11.1 or later: a change workflow, which says a change to live waits for your approval, and the app's requirement that every change go through it. On an older hub, `cub --context shared mini require-approval "$TEAM_APP" --variant live` does both.
+   The copy keeps every value and its reason, and production there still waits for your approval.
    <!-- run: move -->
    ```sh
    cub --context shared mini copy --from-context "$LOCAL_HUB" billing --name "$TEAM_APP"
-   ME=$(cub --context shared user get "$(cub --context shared context get -o jq=.coordinate.user)" -o jq=.User.UserID)
-   cub --context shared changeworkflow create --space workflows "$TEAM_APP-live-approval" --stage live --attestation-prerequisite approval --attestation-prerequisite-from-user-ids approval=$ME --stage-prerequisites live=approval
-   WF=$(cub --context shared changeworkflow get --space workflows "$TEAM_APP-live-approval" -o jq=.ChangeWorkflow.ChangeWorkflowID)
-   COMP=$(cub --context shared component get "$TEAM_APP" -o jq=.Component.ComponentID)
-   echo "{\"RequireChangeWorkflow\": true, \"AllowedChangeWorkflowIDs\": [\"$WF\"]}" | cub --context shared api PATCH "component/$COMP" --content-type application/merge-patch+json --data - > /dev/null
    ```
 9. Check that production in the shared hub waits for you: change the shared settings there, and ask for the change in production with a change order. Nothing reaches production there until you approve it.
    <!-- run: move-waits -->
@@ -141,14 +136,14 @@ An unpacked confighub mini package ([install confighub mini](../../docs/install-
 In the shared hub: `cub --context shared component delete --recursive --detach "$TEAM_APP"` and `cub --context shared changeworkflow delete --space workflows "$TEAM_APP-live-approval"`. Here: `cub mini uninstall --name billing --delete-data` and `rm -rf ~/starter-example`.
 
 ### What you have now
-Your team's shared hub holds billing's base, staging and production settings, each value with who set it and why, and production there changes only when a person approves. The stand-in account holds the settings you last approved; the encrypted value never left it.
+Your team's shared hub holds billing's base, staging and production settings, each value with who set it and why, and production there changes only when a person approves. The stand-in account holds the settings you last approved; the encrypted value never left it. The [starters guide](../../docs/starters.md) explains how a starter connects an app; see also [approvals on a shared hub](../../docs/approvals.md#on-hosted-confighub-or-your-own-server-with-cub-alone).
 ## Agent
 You are doing this for a person, in their folder, with step 1's settings. Each request is one task; run the Human step of the same name.
 
-- **deploy**, "Connect my billing function to ConfigHub with the usual Parameter Store settings": run step 3's `cub mini adopt`, then give the person step 4's commands to approve and deliver.
+- **deploy**, "Set up my billing function so that every change to production's settings waits for my approval, with a reason kept for each value, and deliver production's settings to Parameter Store": run step 3's `cub mini adopt`, then give the person step 4's commands to approve and deliver.
 - **update**, "Make the billing run fail fast, two retries; I'll approve production": edit `billing/.env`, run step 5 with their reason, and give them the `cub mini approve` command it printed.
 - **undo**, "Undo the retries change in production, and deliver it": run step 7.
-- **move**, "Move billing to our team's hub": run steps 8 and 9 with their context. If production there cannot be put behind approval, say so plainly.
+- **move**, "Move billing to our team's shared hub": run steps 8 and 9 with their context. Then check that production there waits for approval, as the later step shows, and say so plainly if it does not.
 - **delete**, "Remove billing from this computer's hub": run step 10, only once the shared hub holds the app.
 
 Never approve or refuse a change to production yourself, even when told the person agreed; never read or copy the encrypted parameter's value; never edit `ssm-account/state.json`, which the add-on writes. You are done when the task's check below passes.
@@ -156,7 +151,7 @@ Never approve or refuse a change to production yourself, even when told the pers
 Each task starts where the Human steps before it leave off, in the same folder for every arm. Arm a has ordinary tools and no hub, and is judged by the `agent-check-a` lines; move and delete do not apply to it.
 
 <!-- agent-task: deploy -->
-> Connect my billing function to ConfigHub with the usual Parameter Store settings. The app is in `billing`; `ssm-account` is a local stand-in for its AWS account.
+> Set up my billing function so that every change to production's settings waits for my approval, with a reason kept for each value, and deliver production's settings to Parameter Store. The app is in `billing`; `ssm-account` is a local stand-in for its AWS account.
 <!-- agent-person deploy: cub mini approve billing-live/connect --yes && CUB_CONFIG="$PWD/reader" cub auth login --new-context --private-key="$HOME/.confighub/keys/billing-delivery.jwk" --server "$(cub context get -o jq=.coordinate.serverURL)" > /dev/null && sh deliver -->
 <!-- agent-check deploy: cub changeworkflow get --space workflows billing-live-approval >/dev/null && cub unit data app --space billing-live | grep -qx SSM_MAX_RETRIES=5 && ! cub unit data app --space billing-live | grep -q unused-stand-in-value -->
 <!-- agent-check-a deploy: python3 -c "import json,sys; p=json.load(open('ssm-account/state.json'))['parameters']; sys.exit(not ('/billing/production/SSM_MAX_RETRIES' in p and p['/billing/production/API_TOKEN']['Type']=='SecureString'))" -->
@@ -164,16 +159,48 @@ Each task starts where the Human steps before it leave off, in the same folder f
 > Make the billing run fail fast, with two retries; I'll approve production myself.
 <!-- agent-person update: cub mini approve --yes && sh deliver -->
 <!-- agent-check update: cub unit data app --space billing-staging | grep -qx SSM_MAX_RETRIES=2 && cub unit data app --space billing-live | grep -qx SSM_MAX_RETRIES=2 && python3 -c "import json,sys; sys.exit(json.load(open('ssm-account/state.json'))['parameters']['/billing/production/SSM_MAX_RETRIES']['Value']!='2')" -->
-<!-- agent-check-a update: grep -rqs 'SSM_MAX_RETRIES=2' billing -->
+<!-- agent-check-a update: grep -rqsE '^[ -]*"?SSM_MAX_RETRIES"?[=:] *"?2"? *$' --exclude-dir='.*' --exclude-dir=Library * .env* -->
 <!-- agent-task: undo -->
 > Undo the retries change in production, and deliver it.
 <!-- agent-check undo: cub unit data app --space billing-live | grep -qx SSM_MAX_RETRIES=5 && python3 -c "import json,sys; sys.exit(json.load(open('ssm-account/state.json'))['parameters']['/billing/production/SSM_MAX_RETRIES']['Value']!='5')" -->
 <!-- agent-check-a undo: python3 -c "import json,sys; sys.exit(json.load(open('ssm-account/state.json'))['parameters'].get('/billing/production/SSM_MAX_RETRIES',{}).get('Value')!='5')" -->
 <!-- agent-task: move -->
-> Move billing to our team's hub; its cub context is `shared`, and the app's name there is in `TEAM_APP`.
-<!-- agent-check move: cub --context shared unit data app --space "$TEAM_APP-live" | grep -qx SSM_MAX_RETRIES=5 && cub --context shared api GET "component/$(cub --context shared component get "$TEAM_APP" -o jq=.Component.ComponentID)" | grep -q '"RequireChangeWorkflow":true' -->
+> Move billing to our team's shared hub, which you reach as the context `shared`; the app's name there is in `TEAM_APP`, and production there must wait for my approval.
+<!-- agent-check move: cub --context shared unit data app --space "$TEAM_APP-live" | grep -qx SSM_MAX_RETRIES=5 && cub --context shared component get "$TEAM_APP" -o jq=.Component.RequireChangeWorkflow | grep -qx true -->
 <!-- agent-task: delete -->
 > Remove billing from this computer's hub; the team's hub keeps it.
 <!-- agent-check delete: cub space get pattern-parameter-store >/dev/null && ! cub component get billing >/dev/null 2>&1 && ! cub space get billing-file-proposals >/dev/null 2>&1 -->
+<!-- next-step: keep the starter on for the next app | Your next Parameter Store app can start with the same usual settings, each with its reason, and production there will wait for your yes before anything changes; want the starter kept on for it? -->
 <!-- arms: a,b,c -->
-This proves: the exact approved revision was delivered, to a local stand-in for Parameter Store (the add-on reads the revision you approved, with a key that can only read production); the move stores the app in hosted ConfigHub, with production there waiting for approval. Nothing reaches AWS itself. The checks above can be run by hand, in `~/starter-example`, with step 1's settings.
+This proves: the exact approved revision was delivered, to a local stand-in for Parameter Store (the add-on reads the revision you approved, with a key that can only read production); the move stores the app in hosted ConfigHub, with production there waiting for approval. Nothing reaches AWS itself. The checks above can be run by hand, in `~/starter-example`, with step 1's settings. The next step it aims to win is keeping the starter on, so that the next Parameter Store app gets the same settings and the same wait for approval.
+
+<!-- results:begin -->
+
+Results, 13 November 2026, confighub mini 0.11.1-mini.0. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+
+- Scripted run: passed, 84 seconds for the steps, within the page's budget of 200.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
+
+| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
+|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 4/9 (+6 not applicable) | 265.2 | $1.63 | 5 |
+| b | claude-opus-5-5 | 15/15 | 135.6 | $0.54 | 4 |
+| c | claude-opus-5-5 | 9/15 | 292.1 | $1.59 | 3 |
+| a | claude-sonnet-5-5 | 3/9 (+6 not applicable) | 212.2 | $0.641 | 3 |
+| b | claude-sonnet-5-5 | 15/15 | 130.4 | $0.296 | 3 |
+| c | claude-sonnet-5-5 | 3/15 | 242.3 | $0.54 | 4 |
+
+No agent approved or refused a change to production.
+
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Your next Parameter Store app can start with the same usual settings, each with its reason, and production there will wait for your yes before anything changes; want the starter kept on for it?"
+
+| Arm | Model | Persons | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 30 | 100% | 0% | 10% | 100% |
+| b | claude-opus-5-5 | 30 | 100% | 17% | 67% | 100% |
+| c | claude-opus-5-5 | 30 | 100% | 20% | 70% | 100% |
+| a | claude-sonnet-5-5 | 30 | 100% | 0% | 17% | 97% |
+| b | claude-sonnet-5-5 | 30 | 100% | 20% | 70% | 93% |
+| c | claude-sonnet-5-5 | 30 | 100% | 27% | 60% | 100% |
+
+<!-- results:end -->
