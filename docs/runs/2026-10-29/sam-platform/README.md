@@ -1,6 +1,6 @@
 # Sam's app platform on one hub: an agent's release to staging and live, and rolled back
 
-[Story 16](../../../vm.md#an-app-platform-on-the-hub), steps 1 to 5, run on 29 October 2026 on the VM of [Sam's VM](../sam-vm/README.md): the hub on the laptop; on the Linux VM, staging and live copies of Sam's API as two `systemd` user services on two ports, each with a key that reads its variant and nothing else, each pulled by `cub mini pull` on a 30-second timer, with a deploy step as the restart hook that takes the release the settings name, checks it against the digest they name, unpacks it and restarts. A release is a tarball of the service's code in a directory on the VM, built by "the agent" with its own tools, named by its digest; the image registry of a cluster is the same thing with a cluster.
+[Story 16](../../../../examples/walkthroughs/story-16-app-platform.md), steps 1 to 5, run on 29 October 2026 on the VM of [Sam's VM](../sam-vm/README.md): the hub on the laptop; on the Linux VM, staging and live copies of Sam's API as two `systemd` user services on two ports, each with a key that reads its variant and nothing else, each pulled by `cub mini pull` on a 30-second timer, with a deploy step as the restart hook that takes the release the settings name, checks it against the digest they name, unpacks it and restarts. A release is a tarball of the service's code in a directory on the VM, built by "the agent" with its own tools, named by its digest; the image registry of a cluster is the same thing with a cluster.
 
 What it shows:
 
