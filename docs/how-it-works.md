@@ -182,7 +182,7 @@ You set each setting in Claude Code's settings, under `env`.
 | `CUB_MINI_STOP_BEFORE_UNDO=0` | Turns off the stop before a deploy that would undo another agent's change on the cluster. The agent is then told only after the command has run. | When you do not want commands held back. |
 | `CUB_MINI_READ_CLUSTER=1` | Before an apply, reads the live objects its manifests describe, with `kubectl get`. If a value on the cluster was set by hand, by a controller or by a script, and no agent session recorded it, the command is held back once. | When values on the cluster are also changed outside agent sessions. It is off by default because it reads the cluster before each apply. |
 | `CUB_MINI_DECISIONS=0` | Turns off keeping what the agent said about each value it changed ([above](#what-it-records-and-what-it-does-not)). | When you do not want the agent's own words in the record. |
-| `CUB_MINI_SIGN=0` | Turns off signing the record. Signing is on by default: each entry is signed as it is written, at a cost of about 0.2 milliseconds ([signed records](signed-records.md)). | When you do not need to check that the record was not changed. |
+| `CUB_MINI_SIGN=0` | Turns off signing the record. Signing is on by default: each entry is signed as it is written ([signed records](signed-records.md)). | When you do not need to check that the record was not changed. |
 | `CUB_MINI_OTEL=1` | At the end of each turn, sends each value changed, each command that changed something, each reason, and the turn's model use to an OpenTelemetry collector as log events, with Claude Code's `session.id`. Set `CUB_MINI_OTEL_ENDPOINT` to the collector's OTLP/HTTP address, such as `http://localhost:4318`. The request itself is sent only with `OTEL_LOG_USER_PROMPTS=1`. | When you want these events in an OpenTelemetry collector. |
 | `CUB_MINI_USAGE=0` | Turns off keeping each turn's model use. It is on by default ([model use](#model-use)). | When you do not want model use in the record. |
 | `CUB_MINI_COUNT=0` | Turns off counting, on this machine, how often you use each part of the plugin. The count is never sent anywhere. | When you do not want even a local count. |
@@ -249,14 +249,11 @@ What the plugin does not do, or has not been shown to do, is in [what we do not 
 
 The plugin is one program for each of macOS and Linux, on Intel and on ARM, about 9 MB each. A launcher runs the one for your machine. There is no server, no database and no account. It works in Claude Code and Codex on macOS, and in Claude Code on Linux; Codex on Linux hasn't been tried.
 
-On a Mac, it adds:
-
-- about 15 ms to each tool call;
-- about 30 ms after a shell command.
+It runs as hooks around each tool call, so it adds a little time to each one.
 
 Many sessions can run at once in separate worktrees: no change is lost, and none is put down to the wrong session.
 
-The history the next agent is told when it reads a file is a few hundred tokens. It is about 300 tokens with 10 earlier sessions, and about 600 with 200, because the plugin keeps only each value's latest changes.
+The history the next agent is told when it reads a file stays short, because the plugin keeps only each value's latest changes.
 
 ## Moving from the old name
 

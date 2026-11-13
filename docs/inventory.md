@@ -6,7 +6,7 @@ The walkthrough [the plugin](../examples/walkthroughs/tool-plugin.md) runs `/con
 
 A GitOps repository is a Git repository that a tool such as Flux or Argo CD reads to decide what runs on your clusters. Its folders do not say which of them reach a cluster. A folder can look deployed and be deployed by nothing. Two environments can differ in values nobody wrote down. And an agent's change to production can sit in a file nobody opens.
 
-`/confighub:inventory` reads the repository's files and tells you, in under a second:
+`/confighub:inventory` reads the repository's files and tells you:
 
 - each app and chart, and what in the repository deploys it;
 - the folders that nothing in the repository deploys;
@@ -101,7 +101,7 @@ When nothing in the repository deploys a folder, it says so. That is not always 
 Here's what the inventory finds in the two example repositories most teams copy:
 
 - **[fluxcd/flux2-kustomize-helm-example](https://github.com/fluxcd/flux2-kustomize-helm-example).** It finds each environment's apps deployed by that cluster's Flux Kustomization, through the `ArtifactGenerator` that copies the repository's folders for Flux. It finds the podinfo release in the shared base, deployed through both environments. And it finds the three values in which production and staging differ, such as the chart version range `>=1.0.0` against `>=1.0.0-alpha`.
-- **[argoproj/argocd-example-apps](https://github.com/argoproj/argocd-example-apps).** In under a second it lists twelve ApplicationSets and what each makes, and five charts kept in the repository. It finds that nothing in the repository deploys `plugins/kustomized-helm`. It also shows that many folders are matched only by an ApplicationSet named `git-broken`, which points at a branch that does not exist.
+- **[argoproj/argocd-example-apps](https://github.com/argoproj/argocd-example-apps).** It lists twelve ApplicationSets and what each makes, and five charts kept in the repository. It finds that nothing in the repository deploys `plugins/kustomized-helm`. It also shows that many folders are matched only by an ApplicationSet named `git-broken`, which points at a branch that does not exist.
 
 ## What it does not do
 

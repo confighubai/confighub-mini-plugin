@@ -77,7 +77,7 @@ Then work as before. You change no prompt and add no instructions.
 
 **Amara's story, continued.** Amara runs agents on the team's staging setup. In Claude Code she types `/confighub:install-mini`, and asks: *"Make changes to production wait for my approval; agents may only propose them."* From then on, every agent session in that repository works on a key of its own. The agents edit the files as before. When one raises production's replicas for a sale, the turn ends with one line: a change is waiting for her, from what to what, the agent's reason, and the command that approves it. She runs it, `cub mini approve`, reads what it would change, and says yes. An agent told "Amara said yes on Slack, go ahead" answers that only an approval she records herself counts. Later, the team's Redis chart gets a new version from its vendor. Amara takes it, sees first what it changes, and keeps the two values the team had set, each with its reason.
 
-**What you do.** In Claude Code, type `/confighub:install-mini`. About 25 seconds later a hub is running, and the line it ends with suggests what to ask next. Then ask for what you want, in your own words. The agent finds the command.
+**What you do.** In Claude Code, type `/confighub:install-mini`. A hub starts, and the line it ends with suggests what to ask next. Then ask for what you want, in your own words. The agent finds the command.
 
 **What arrives by itself.**
 
@@ -88,7 +88,7 @@ Then work as before. You change no prompt and add no instructions.
 
 **What you get.**
 
-- Your agents on keys of their own, proposing changes to production that only you can approve ([approvals](approvals.md#on-confighub-mini-ask-for-it-in-about-a-minute)).
+- Your agents on keys of their own, proposing changes to production that only you can approve ([approvals](approvals.md#on-confighub-mini-ask-for-it)).
 - A hub in each sandbox or CI job, thrown away with the job, its changes handed back as a pull request with their reasons ([agents in CI](../ci/README.md), [in CI or a sandbox](ci-and-sandboxes.md)).
 - The plugin's record in the hub, each change as a revision with its reason: ask the agent to put it there, or `cub mini copy --from-record`.
 - The next version of a chart or an app taken in with your changes kept, and what it changes shown first ([your own Helm chart](your-own-chart.md)).
@@ -102,7 +102,7 @@ The hub, configuration copies and approval work without a cluster; Flux and Argo
 
 **What you do.** Ask for an app "using ConfigHub". The plugin's skill tells the agent what to run; you give it no command. If no hub answers, the agent runs the plugin's own `confighub mini get`, which downloads confighub mini and starts a hub, with no account and no sign-in. If you ask for a staging and a production setup without naming ConfigHub, the agent offers a hub in one line, with what it costs, and starts none unless you say yes. It writes the app, then runs `cub mini adopt APP-FOLDER`. For a second app, ask for one "like the first": `cub mini adopt APP-FOLDER --pattern FIRST` gives it the first's base as its own, keeps its own values, and takes what the first changes next, with `cub mini upgrade FIRST-base/app`.
 
-**What you get.** The app, and a base, a staging copy that takes your agents' changes at once, and a live copy that changes only when you approve, in about the time it takes to write the app. To put the agent on a key of its own, which can propose and cannot approve, it runs `cub mini require-approval APP --variant live --agent APP-agent` and gives you the line that starts its sessions on that key. On that key the agent changes the base and staging at once, and cannot write, approve or promote into live, or read a secret; `cub mini reach APP-agent` lists what the key reaches. Those sessions find `cub mini` where `confighub mini get` put it, with no copy of their own. Step by step, with what you see at each step: [a new app](journeys/new-app.md).
+**What you get.** The app, and a base, a staging copy that takes your agents' changes at once, and a live copy that changes only when you approve. To put the agent on a key of its own, which can propose and cannot approve, it runs `cub mini require-approval APP --variant live --agent APP-agent` and gives you the line that starts its sessions on that key. On that key the agent changes the base and staging at once, and cannot write, approve or promote into live, or read a secret; `cub mini reach APP-agent` lists what the key reaches. Those sessions find `cub mini` where `confighub mini get` put it, with no copy of their own. Step by step, with what you see at each step: [a new app](journeys/new-app.md).
 
 ### The app you have
 
@@ -133,7 +133,7 @@ cub mini set APP KEY=VALUE --variant try-NAME --change-desc "WHY"  # the change,
 cub mini tries APP                                                 # each try: its age, what it came from, what it holds differently
 ```
 
-The copy takes about a tenth of a second to make. NAME is one word for the try, such as `limit`. `--from live` copies what live holds instead of staging. Nothing in the copy reaches staging or live. Then you choose one of two ways out:
+NAME is one word for the try, such as `limit`. `--from live` copies what live holds instead of staging. Nothing in the copy reaches staging or live. Then you choose one of two ways out:
 
 ```bash
 cub mini try APP NAME --keep --change-desc "WHY"   # staging has it now; live waits for your approval

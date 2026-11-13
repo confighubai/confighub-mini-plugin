@@ -23,7 +23,7 @@ The words on this page, such as *hub*, *base* and *change order*, are explained 
 1. Add the secret `ANTHROPIC_API_KEY` to your repository. The job needs nothing else.
 2. Copy [agent-plugin-only.yml](agent-plugin-only.yml) into `.github/workflows/`.
 
-**What you will see.** Asked to raise an api to 3 replicas for a launch, the agent changed the file and committed it, "Raise the shop api to 3 replicas for Friday's launch", in 41 seconds. The commit carried the record of `spec.replicas`, 2 to 3, "raised to 3 for Friday's launch". This ran on GitHub's runner with this job and the plugin 0.49.1.
+**What you will see.** Asked to raise an api to 3 replicas for a launch, the agent changed the file and committed it, "Raise the shop api to 3 replicas for Friday's launch". The commit carried the record of `spec.replicas`, 2 to 3, "raised to 3 for Friday's launch". This ran on GitHub's runner with this job and the plugin 0.49.1.
 
 ## An agent in CI that keeps your team's reasons
 
@@ -116,4 +116,4 @@ You make the two files, the hub file and the deploy folder, from your own manife
 
 4. Copy [agent-proposes.yml](agent-proposes.yml) into `.github/workflows/`, and set your `COMPONENT`, `VARIANT` and `WORKFLOW`.
 
-**What you will see.** Say the job asks the agent to run the api with 3 replicas in production for a launch. The agent changes the base, opens a change order and leaves it for approval, in under a minute. Production stays at 2. If the agent tries to approve or promote its own change, it's refused ("requires approval: … 0 of 1"). After Priya approves, Argo CD runs 3 replicas within seconds of the promotion, and production's change carries the agent's reason.
+**What you will see.** Say the job asks the agent to run the api with 3 replicas in production for a launch. The agent changes the base, opens a change order and leaves it for approval. Production stays at 2. If the agent tries to approve or promote its own change, it's refused ("requires approval: … 0 of 1"). After Priya approves, Argo CD runs 3 replicas after the promotion, and production's change carries the agent's reason.
