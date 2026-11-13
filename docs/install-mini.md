@@ -45,7 +45,7 @@ It asks nothing in Claude Code. It prints one line about a setting that is yours
 
 If you run it again, it starts the hub if the hub is stopped, and moves it onto a newer release if there is one ([how](#move-to-a-newer-confighub-mini)).
 
-When it is done, it prints the full path of the package's `cub`, which runs in a terminal of your own with nothing added to your `PATH`, and what to do next: put a repository's record into the hub with `cub mini copy --from-record` ([how](try-confighub-mini.md#step-4-put-your-agents-record-into-the-hub)), or follow [a first run](try-confighub-mini.md).
+When it is done, it prints the full path of the package's `cub`, which runs in a terminal of your own with nothing added to your `PATH`, and what to do next: put a repository's record into the hub with `cub mini copy --from-record` ([how](try-confighub-mini.md#put-your-agents-record-into-the-hub)), or follow [a first run](try-confighub-mini.md).
 
 In a terminal, or in Codex, run `bin/confighub mini get` from the plugin. It does the same, and in a terminal, the first time on a machine, it asks that setting as a question before it starts the hub. Enter means no. The plugin on its own carries no server, so any `cub mini` command run as `bin/confighub mini COMMAND`, such as `bin/confighub mini install` or `bin/confighub mini need`, says it needs confighub mini when none is downloaded, and names `confighub mini get`.
 
