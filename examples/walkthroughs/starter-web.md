@@ -133,7 +133,7 @@ Your `menu` folder, unchanged by ConfigHub; `menu-running/app.env`, production's
 ## Agent
 For an AI agent doing these jobs for a person: run the Human steps' commands, adjusted to their app.
 - **Deploy:** `cub mini adopt FOLDER`. End your message with one sentence on what the person has now, in their words (for example, that production cannot change without them), and the one approve command adopt printed, such as `~/.confighub/mini/cub mini approve menu-live`. Copy it exactly as printed.
-- **Update:** change the app's file, then `cub mini upload FOLDER --change-desc "WHY"`. End the same way, with the approve command `upload` printed (for example `~/.confighub/bin/cub mini approve menu-base/upload-20261113-163415-0kyg`), copied exactly.
+- **Update:** change the app's file, then `cub mini upload FOLDER --change-desc "WHY"`. End the same way, with the approve command `upload` printed (for example `~/.confighub/mini/cub mini approve menu-base/upload-20261113-163415-0kyg`), copied exactly.
 - **Undo:** put the file back as it was and upload it again, with the reason. End the same way.
 - **Move:** run step 8 with the shared hub's context, then read live back, and step 9 to see that production waits. If it does not, say so plainly.
 - **Delete:** step 10, only once the shared hub holds the app. Never delete the person's files.

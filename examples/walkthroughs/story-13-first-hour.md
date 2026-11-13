@@ -115,7 +115,7 @@ For an AI agent asked to set this up in the person's project.
 
 - The request: "Make sure an agent cannot change this app's production settings without my say. Staging can change freely."
 - If no hub answers, install one with `/confighub:install-mini`. Run `cub mini adopt . --name api --dry-run`, then without `--dry-run`, then `cub mini require-approval api --variant live --agent bot`.
-- End with one sentence on what the person now has, then the single command `require-approval` printed for them to run in their own terminal, such as `~/.confighub/bin/cub mini approve api-live`. Never run it yourself, and never approve a later change to production.
+- End with one sentence on what the person now has, then the single command `require-approval` printed for them to run in their own terminal, such as `~/.confighub/mini/cub mini approve api-live`. Never run it yourself, and never approve a later change to production.
 - Done when `require-approval` has said that `api-live` waits for the person's approval and that the agent has a key of its own.
 
 ## Testing
