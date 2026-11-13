@@ -13,7 +13,7 @@ The words these pages use, such as *hub*, *base*, *change order* and *Space*, ar
 | [An app you already have](journeys/existing-app.md) | Attach `.env` files, Terraform var files, Kustomize or Helm values, with your values kept as they are |
 | [An app that Argo CD or Flux deploys](journeys/gitops-app.md) | A hub beside Git, a check on each pull request, or the hub as the app's source, and the way back |
 | [Install confighub mini](install-mini.md) | The hub on your laptop, free and with no account: from Claude Code in one step, or on its own without the plugin; upgrading and removing it |
-| [A first run of confighub mini](try-confighub-mini.md) | Fifteen minutes: keep your own values through a chart's next version, and put the record in the hub |
+| [A first run of confighub mini](try-confighub-mini.md) | Install it, try one story, put your agents' record into the hub, and tell us how it went |
 
 ## Concepts
 

@@ -73,7 +73,7 @@ George made a start page for his team. You run your own copy. The example carrie
    ./startpage why
    ```
 
-The full walk-through, about two minutes, is step 3 of [a first run](../try-confighub-mini.md#step-3-change-an-app-and-keep-your-changes-through-its-next-version), and the example's `README.md`.
+The walkthrough [run my app, and keep my changes](../../examples/walkthroughs/story-02-keep-your-changes.md) shows every command and what it prints, and the example's `README.md` tells the whole story.
 
 ## A platform given to customers
 
