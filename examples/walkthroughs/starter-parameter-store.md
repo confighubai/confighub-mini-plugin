@@ -3,7 +3,7 @@ id: starter-parameter-store
 starts_with: mini
 starter: parameter-store
 needs: [cub mini package, Python 3, a hosted ConfigHub organization for step 8]
-budget_seconds: 150
+budget_seconds: 200
 -->
 # An app that reads AWS Parameter Store, with production behind your approval
 
@@ -26,10 +26,11 @@ An unpacked confighub mini package ([install confighub mini](../../docs/install-
 2. Make the app and its stand-in AWS account. `billing/.env` holds the app's shared settings. In `ssm-account`, `state.json` holds the parameters under `/billing/staging/` and `/billing/production/`, including one encrypted value, and `bin/aws` answers as the `aws` command does. The script `deliver` sends production's approved settings to Parameter Store and prints what production reads. Last, the Parameter Store add-on, a small program in the package, reads the parameters into `billing/.env.staging` and `billing/.env.production`; the encrypted one is written as a reference to where it is kept, never as its value.
    <!-- run: app files -->
    ```sh
-   mkdir -p ~/starter-example/billing ~/starter-example/ssm-account/bin && cd ~/starter-example
+   export MINI=/absolute/path/to/unpacked-confighub-mini
+   mkdir -p ~/starter-example/billing ~/starter-example/ssm-account/bin; cd ~/starter-example
    printf 'LOG_LEVEL=info\n' > billing/.env
    printf 'ConfigHub SSM API stand-in v1\n' > ssm-account/.ssm-contract-stand-in
-   cp "$MINI/examples/extensions/delivery/aws-standin" ssm-account/bin/aws && chmod 700 ssm-account/bin/aws
+   cp "$MINI/examples/extensions/delivery/aws-standin" ssm-account/bin/aws; chmod 700 ssm-account/bin/aws
    cat > ssm-account/state.json <<'EOF'
    {"allowed_prefix": "/billing/", "writes": 0, "parameters": {
     "/billing/staging/INVOICE_DAY": {"Type": "String", "Value": "1"}, "/billing/production/INVOICE_DAY": {"Type": "String", "Value": "1"},

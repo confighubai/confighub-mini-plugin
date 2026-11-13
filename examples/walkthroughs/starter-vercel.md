@@ -3,7 +3,7 @@ id: starter-vercel
 starts_with: mini
 starter: vercel
 needs: [cub mini package, Python 3, a hosted ConfigHub organization for step 8]
-budget_seconds: 150
+budget_seconds: 200
 -->
 # An app on Vercel, with production behind your approval
 
@@ -26,11 +26,12 @@ An unpacked confighub mini package ([install confighub mini](../../docs/install-
 2. Make the app and its stand-in Vercel project. `shop/.vercel/project.json` links the app to the project, as `vercel link` does. In `shop-project`, `state.json` holds the project's settings, with production in Frankfurt (`fra1`), and `bin/vercel` answers as the `vercel` command does. The script `deliver` sends production's approved settings to the project and prints them. Last, the Vercel add-on, a small program in the package, reads the project's settings into `shop/.env.staging` and `shop/.env.production`.
    <!-- run: app files -->
    ```sh
-   mkdir -p ~/starter-example/shop/.vercel ~/starter-example/shop-project/bin && cd ~/starter-example
+   export MINI=/absolute/path/to/unpacked-confighub-mini
+   mkdir -p ~/starter-example/shop/.vercel ~/starter-example/shop-project/bin; cd ~/starter-example
    printf '{"projectId":"prj_shop","orgId":"team_shop"}\n' > shop/.vercel/project.json
    printf 'LOG_LEVEL=warn\n' > shop/.env
    printf 'ConfigHub CLI contract stand-in v1\n' > shop-project/.vercel-contract-stand-in
-   cp "$MINI/examples/extensions/delivery/vercel-standin" shop-project/bin/vercel && chmod 700 shop-project/bin/vercel
+   cp "$MINI/examples/extensions/delivery/vercel-standin" shop-project/bin/vercel; chmod 700 shop-project/bin/vercel
    cat > shop-project/state.json <<'EOF'
    {"envs": [{"id": "e1", "key": "SHOP_CURRENCY", "value": "EUR", "type": "encrypted", "visibility": "config", "target": ["preview", "production"]},
     {"id": "e2", "key": "EDGE_REGION", "value": "fra1", "type": "encrypted", "visibility": "config", "target": ["production"]}],

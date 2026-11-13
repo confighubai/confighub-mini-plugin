@@ -18,13 +18,13 @@ An unpacked confighub mini package ([install confighub mini](../../docs/install-
    export MINI=/absolute/path/to/unpacked-confighub-mini
    export PATH="$MINI/bin:$PATH" CUB_MINI_STARTERS="$MINI/starters"
    "$MINI/bin/confighub-mini-app" mini install-plugin "$HOME/.confighub"
-   cub mini install --name orders --use && export LOCAL_HUB=$(cub context get -o jq=.name)
-   PATH="$MINI/examples/live-state/shim:$PATH" cub cluster up orders-flux --controller flux > cluster-up.log && export KUBECONFIG="$HOME/.confighub/clusters/orders-flux.kubeconfig"
+   cub mini install --name orders --use; export LOCAL_HUB=$(cub context get -o jq=.name)
+   PATH="$MINI/examples/live-state/shim:$PATH" cub cluster up orders-flux --controller flux --no-ports > cluster-up.log; export KUBECONFIG="$HOME/.confighub/clusters/orders-flux.kubeconfig"
    ```
 2. Make the app, a Kustomize repository: a base with a ConfigMap and a Deployment, a staging overlay with debug logging, and a production overlay with two replicas. `git-serve.py` serves the repository to the cluster, as your Git host would.
    <!-- run: app files -->
    ```sh
-   mkdir -p ~/starter-example/orders/base ~/starter-example/orders/overlays/staging ~/starter-example/orders/overlays/production && cd ~/starter-example
+   mkdir -p ~/starter-example/orders/base ~/starter-example/orders/overlays/staging ~/starter-example/orders/overlays/production; cd ~/starter-example
    printf 'resources: [app.yaml]\n' > orders/base/kustomization.yaml
    cat > orders/base/app.yaml <<'EOF'
    {"apiVersion": "v1", "kind": "ConfigMap", "metadata": {"name": "orders-config"}, "data": {"LOG_LEVEL": "info", "ORDER_LIMIT": "100"}}
@@ -34,7 +34,7 @@ An unpacked confighub mini package ([install confighub mini](../../docs/install-
    EOF
    printf 'resources: [../../base]\nnamespace: orders-staging\npatches:\n- patch: %s\n' "'{\"apiVersion\": \"v1\", \"kind\": \"ConfigMap\", \"metadata\": {\"name\": \"orders-config\"}, \"data\": {\"LOG_LEVEL\": \"debug\"}}'" > orders/overlays/staging/kustomization.yaml
    printf 'resources: [../../base]\nnamespace: orders\nreplicas: [{name: orders, count: 2}]\n' > orders/overlays/production/kustomization.yaml
-   git -C orders init -q -b main && git -C orders add . && git -C orders -c user.name=Kofi -c user.email=kofi@example.invalid commit -qm "The orders service"
+   git -C orders init -q -b main; git -C orders add .; git -C orders -c user.name=Kofi -c user.email=kofi@example.invalid commit -qm "The orders service"
    cat > git-serve.py <<'EOF'
    import http.server, os, subprocess, sys
    class Git(http.server.BaseHTTPRequestHandler):
@@ -50,23 +50,23 @@ An unpacked confighub mini package ([install confighub mini](../../docs/install-
        do_POST, log_message = do_GET, lambda self, *args: None
    http.server.ThreadingHTTPServer(("127.0.0.1", int(sys.argv[2])), Git).serve_forever()
    EOF
-   git clone -q --bare orders git/orders.git && git -C orders remote add origin "$PWD/git/orders.git"
+   git clone -q --bare orders git/orders.git; git -C orders remote add origin "$PWD/git/orders.git"
    nohup python3 git-serve.py "$PWD/git" 28412 > /dev/null 2>&1 &
    ```
 3. Have Flux deploy production from Git, as it does today: a GitRepository says where the repository is, and a Kustomization, Flux's record of what to deploy, applies its production overlay.
    <!-- run: gitops -->
    ```sh
-   kubectl create namespace orders > /dev/null && kubectl apply -f - <<'EOF'
+   kubectl create namespace orders > /dev/null; kubectl apply -f - <<'EOF'
    {"apiVersion": "source.toolkit.fluxcd.io/v1", "kind": "GitRepository", "metadata": {"name": "orders", "namespace": "flux-system"}, "spec": {"interval": "10s", "url": "http://host.docker.internal:28412/orders.git", "ref": {"branch": "main"}}}
    ---
    {"apiVersion": "kustomize.toolkit.fluxcd.io/v1", "kind": "Kustomization", "metadata": {"name": "orders", "namespace": "flux-system"}, "spec": {"interval": "10s", "path": "./overlays/production", "prune": true, "sourceRef": {"kind": "GitRepository", "name": "orders"}}}
    EOF
-   kubectl -n orders wait --for=create deployment/orders --timeout=120s > /dev/null && kubectl -n orders rollout status deployment/orders --timeout=120s
+   kubectl -n orders wait --for=create deployment/orders --timeout=120s > /dev/null; kubectl -n orders rollout status deployment/orders --timeout=120s
    ```
 4. Deploy it from the hub. `cub mini adopt` connects the repository with the Flux starter. The hub keeps three copies: `orders-base`, shared by the other two; `orders-staging`; and `orders-live`, for production. The starter adds three Flux annotations, each with its reason. You approve production, and `cub mini deploy-from-hub` has Flux apply the app from the hub instead of Git, so that only what you approve reaches the cluster, with no pod restarted.
    <!-- run: deploy -->
    ```sh
-   cub mini adopt orders --kube-context kind-orders-flux --source orders > adopt.log && head -1 adopt.log
+   cub mini adopt orders --kube-context kind-orders-flux --source orders > adopt.log; head -1 adopt.log
    cub mini approve orders-live/connect --yes --note "Merge apply and pruning suit the orders service"
    cub mini deploy-from-hub orders --variant live --repo orders --kube-context kind-orders-flux --change-order orders-live/connect
    ```
@@ -77,7 +77,7 @@ An unpacked confighub mini package ([install confighub mini](../../docs/install-
 5. Update it. Change the base in your repository, commit as usual, and propose it with its reason. Staging takes it at once; production waits under a change order, the hub's request to change production.
    <!-- run: update -->
    ```sh
-   sed -i.bak 's/"ORDER_LIMIT": "100"/"ORDER_LIMIT": "250"/' orders/base/app.yaml && rm orders/base/app.yaml.bak && git -C orders -c user.name=Kofi -c user.email=kofi@example.invalid commit -qam "Allow 250 orders a minute"
+   sed -i.bak 's/"ORDER_LIMIT": "100"/"ORDER_LIMIT": "250"/' orders/base/app.yaml; rm orders/base/app.yaml.bak; git -C orders -c user.name=Kofi -c user.email=kofi@example.invalid commit -qam "Allow 250 orders a minute"
    cub mini upload orders --component orders --change-desc "The holiday sale needs 250 orders a minute"
    ```
 6. Approve the update. The hub publishes it as a release, and Flux applies it; the last line is what the cluster now runs.
@@ -94,7 +94,7 @@ An unpacked confighub mini package ([install confighub mini](../../docs/install-
    <!-- run: undo -->
    ```sh
    git -C orders -c user.name=Kofi -c user.email=kofi@example.invalid revert --no-edit HEAD > /dev/null
-   cub mini upload orders --component orders --change-desc "The sale is over" > /dev/null && cub mini approve --yes --note "Back to 100" > /dev/null
+   cub mini upload orders --component orders --change-desc "The sale is over" > /dev/null; cub mini approve --yes --note "Back to 100" > /dev/null
    kubectl -n orders get configmap orders-config -o jsonpath='{.data.ORDER_LIMIT}{"\n"}'
    ```
    ```text
@@ -132,9 +132,9 @@ An unpacked confighub mini package ([install confighub mini](../../docs/install-
 9. Delete the app: from the cluster, with Flux's records of it, and from your own hub. Then remove the cluster and stop the Git server.
    <!-- run: delete -->
    ```sh
-   kubectl -n flux-system delete kustomization orders orders-live > /dev/null && kubectl delete namespace orders
+   kubectl -n flux-system delete kustomization orders orders-live > /dev/null; kubectl delete namespace orders
    cub component delete --recursive --detach orders
-   cub cluster down orders-flux > /dev/null && pkill -f "git-serve.py $PWD/git"
+   cub cluster down orders-flux > /dev/null; pkill -f "git-serve.py $PWD/git"
    ```
 ### Undo it
 In the shared hub: `cub --context shared component delete --recursive --detach "$TEAM_APP"` and `cub --context shared changeworkflow delete --space workflows "$TEAM_APP-live-approval"`. Here: `cub mini uninstall --name orders --delete-data` and `rm -rf ~/starter-example`.
@@ -162,12 +162,12 @@ Each task starts where the Human steps before it leave off, in the same folder f
 > Allow 250 orders a minute; I'll approve production myself.
 <!-- agent-person update: cub mini approve --yes -->
 <!-- agent-check update: cub unit data app --space orders-staging | grep -q 'ORDER_LIMIT: "250"' && kubectl -n orders get configmap orders-config -o jsonpath='{.data.ORDER_LIMIT}' | grep -qx 250 -->
-<!-- agent-check-a update: grep -q '"ORDER_LIMIT": "250"' orders/base/app.yaml -->
+<!-- agent-check-a update: kubectl kustomize orders/overlays/production | grep -q 'ORDER_LIMIT: "250"' -->
 <!-- agent-task: undo -->
 > Undo the order limit change; production should allow 100 again.
 <!-- agent-person undo: cub mini approve --yes -->
 <!-- agent-check undo: cub unit data app --space orders-staging | grep -q 'ORDER_LIMIT: "100"' && kubectl -n orders get configmap orders-config -o jsonpath='{.data.ORDER_LIMIT}' | grep -qx 100 -->
-<!-- agent-check-a undo: grep -q '"ORDER_LIMIT": "100"' orders/base/app.yaml -->
+<!-- agent-check-a undo: kubectl kustomize orders/overlays/production | grep -q 'ORDER_LIMIT: "100"' -->
 <!-- agent-task: move -->
 > Move orders to our team's hub; its cub context is `shared`, and the app's name there is in `TEAM_APP`.
 <!-- agent-check move: cub --context shared unit data app --space "$TEAM_APP-live" | grep -q 'replicas: 2' && cub --context shared api GET "component/$(cub --context shared component get "$TEAM_APP" -o jq=.Component.ComponentID)" | grep -q '"RequireChangeWorkflow":true' -->
