@@ -23,11 +23,11 @@ With the setup on this page, the agent proposed the change in ConfigHub instead.
 
 The words on this page, such as *hub*, *base* and *change order*, are explained in [the glossary](README.md#words).
 
-## On confighub mini: ask for it, in about a minute
+## On confighub mini: ask for it
 
 In Claude Code, in the repository your agents work in:
 
-1. Type `/confighub:install-mini`. A hub is running about 25 seconds later.
+1. Type `/confighub:install-mini`. It starts a hub.
 2. Ask, in your own words: *"Make changes to production wait for my approval; agents may only propose them."* The agent puts the repository's files in the hub and requires your approval for the live copy. From then on, every Claude Code session in this repository runs on the agent's own key: it can propose, and it cannot approve.
 3. Ask for changes as you always have. The agent edits the files, then proposes them. At the end of its turn you see one line: *"A change to production (APP-live) waits for your approval: … To approve it: ~/.confighub/mini/confighub-mini-VERSION-OS-ARCH/bin/cub mini approve …"*. The command names confighub mini's own `cub` by its full path, so it runs in a terminal as printed.
 4. In a terminal, approve it: `cub mini approve`. It shows what the change would do and asks you first. Or refuse it: `cub mini refuse --reason "why"`. This updates the approved configuration. Production uses it when its deployment path reads that revision; verify the running service as described below.
@@ -50,7 +50,7 @@ The launcher selects the app, the proposal key and separate Codex settings, and 
 
 This needs native permission profiles and `--no-daemon` (it works with Codex CLI 0.163.0). Unsupported clients fail instead of starting unrestricted. Pass model options to the launcher; do not replace its sandbox or permissions. Network access is enabled without domain filtering. Browser tools, connectors and external MCP servers have separate controls. Keep approval in your owner terminal, after the proposing agent has finished; there is no approval button in the coding-agent chat.
 
-## On confighub mini, by hand: about 5 minutes
+## On confighub mini, by hand
 
 Each `cub mini` command here is plain `cub` with the rest filled in ([which](cub-mini-and-cub.md)). The next section does the same with `cub` alone.
 

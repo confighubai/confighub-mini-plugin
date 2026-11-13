@@ -33,7 +33,7 @@ George made a start page for his team. You run your own copy. The example carrie
    ./startpage
    ```
 
-   The page opens in your browser. The first time takes about ten seconds.
+   The page opens in your browser.
 
 3. Change it, with a reason each time:
 

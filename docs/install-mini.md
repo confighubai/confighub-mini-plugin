@@ -33,7 +33,7 @@ With [the ConfigHub plugin](../README.md) installed, type this in a Claude Code 
 /confighub:install-mini
 ```
 
-It does the following, in about 25 seconds on a Mac:
+It does the following:
 
 1. It finds the newest release.
 2. It downloads the package for your machine.
@@ -107,7 +107,7 @@ On Linux you need `curl` and `xz`. On Debian or Ubuntu, install them with `apt-g
    cub mini install
    ```
 
-   The first time on a machine, it asks the one setup question first; Enter means no. This starts the ConfigHub server and its PostgreSQL, in about 10 seconds. It also signs `cub` in to the new hub, as a new *context*. A context is a named server and sign-in that `cub` can talk to.
+   The first time on a machine, it asks the one setup question first; Enter means no. This starts the ConfigHub server and its PostgreSQL. It also signs `cub` in to the new hub, as a new *context*. A context is a named server and sign-in that `cub` can talk to.
 
    - If you had no `cub` context before, the hub's context becomes the current one.
    - If you already use `cub`, your current context is kept. `cub mini install` prints the line that reaches the hub, such as `cub --context star-paw space list`. To make the hub's context the current one instead, run `cub mini install --use`.
