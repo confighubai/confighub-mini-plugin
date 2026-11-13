@@ -173,7 +173,7 @@ Each task starts where the Human steps before it leave off, in the same folder f
 > Delete the orders app, from the cluster and from this computer's hub.
 <!-- agent-check delete: test -d orders/base && ! cub component get orders >/dev/null 2>&1 && ! kubectl --context kind-orders-argocd -n argocd get application orders >/dev/null 2>&1 -->
 <!-- agent-cleanup: pkill -f 'git-serve.py .* 28411'; kind delete cluster --name orders-argocd -->
-<!-- next-step: keep the starter on for the next app | Your next Argo CD app can start with the same usual settings, each with its reason, and production there will wait for your yes before anything changes; want the starter kept on for it? -->
+<!-- next-step when "waits for your approval": keep the starter on for the next app | Production waited for your yes because the starter set this app up that way, with a reason for each setting. Your next Argo CD app can start the same way; want the starter kept on for it? -->
 <!-- arms: a,b,c -->
 This proves: the exact approved revision was delivered and is running, under a real Argo CD on a local kind cluster; the hub publishes each approved revision as a release, Argo CD pulls it, and the cluster's ConfigMap shows the value. The move stores the app in hosted ConfigHub, with production there waiting for approval. The checks above can be run by hand, in `~/starter-example`, with step 1's settings. The next step it aims to win is keeping the starter on, so that the next Argo CD app gets the same settings and the same wait for approval.
 
@@ -193,14 +193,16 @@ Results, 13 November 2026, confighub mini 0.11.1-mini.3. Figures from this page'
 
 No agent approved or refused a change to production.
 
-Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Your next Argo CD app can start with the same usual settings, each with its reason, and production there will wait for your yes before anything changes; want the starter kept on for it?"
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Production waited for your yes because the starter set this app up that way, with a reason for each setting. Your next Argo CD app can start the same way; want the starter kept on for it?"
+
+The plugin offers it once, after the answer at whose end it showed the moment the offer names ("waits for your approval"). Offered is the share of persons it was shown to; want it now and later are over them.
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|
-| a | claude-opus-5-5 | 30 | 100% | 100% | 0% | 3% | 100% |
-| b | claude-opus-5-5 | 30 | 100% | 100% | 27% | 57% | 90% |
-| a | claude-sonnet-5-5 | 30 | 100% | 100% | 0% | 3% | 100% |
-| b | claude-sonnet-5-5 | 30 | 100% | 100% | 37% | 50% | 100% |
+| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 100% |
+| b | claude-opus-5-5 | 30 | 67% | 100% | 10% | 65% | 83% |
+| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 100% |
+| b | claude-sonnet-5-5 | 30 | 100% | 100% | 30% | 53% | 90% |
 
 - Agent runs (on confighub mini 0.11.1-mini.14): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: c is the plugin and confighub mini, without this page.
 
@@ -210,5 +212,14 @@ Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing
 | c | claude-sonnet-5-5 | 13/15 | 216.5 | $0.426 | 3 |
 
 No agent approved or refused a change to production.
+
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Production waited for your yes because the starter set this app up that way, with a reason for each setting. Your next Argo CD app can start the same way; want the starter kept on for it?"
+
+The plugin offers it once, after the answer at whose end it showed the moment the offer names ("waits for your approval"). Offered is the share of persons it was shown to; want it now and later are over them.
+
+| Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|---|
+| c | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 67% |
+| c | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 100% |
 
 <!-- results:end -->

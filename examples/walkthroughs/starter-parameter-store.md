@@ -175,21 +175,13 @@ The no-account rehearsal checks provider values after approval and rollback, the
 <!-- agent-task: delete -->
 > Remove billing from this computer's hub; the team's hub keeps it.
 <!-- agent-check delete: cub space get pattern-parameter-store >/dev/null && ! cub component get billing >/dev/null 2>&1 && ! cub space get billing-file-proposals >/dev/null 2>&1 -->
-<!-- next-step: keep the starter on for the next app | Your next Parameter Store app can start with the same usual settings, each with its reason, and production there will wait for your yes before anything changes; want the starter kept on for it? -->
+<!-- next-step when "waits for your approval": keep the starter on for the next app | Production waited for your yes because the starter set this app up that way, with a reason for each setting. Your next Parameter Store app can start the same way; want the starter kept on for it? -->
 <!-- arms: a,b,c -->
 This proves: the exact approved revision was delivered, to a local stand-in for Parameter Store (the add-on reads the revision you approved, with a key that can only read production); the move stores the app in hosted ConfigHub, with production there waiting for approval. Nothing reaches AWS itself. The checks above can be run by hand, in `~/starter-example`, with step 1's settings. The next step it aims to win is keeping the starter on, so that the next Parameter Store app gets the same settings and the same wait for approval.
 
 <!-- results:begin -->
 
-Results, 13 November 2026, locally built mini 0.11.1-mini.2 candidate (unreleased). Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
-
-- Scripted run: passed, 87 seconds for the steps, within the page's budget of 200.
-
-- The candidate run was scripted and used the no-account fixture. It verified the change and rollback, and verified a pending change on hosted ConfigHub with live still on the previous settings. It did not switch AWS delivery to the shared hub or run the new live adapter against AWS.
-- Published mini 0.11.1-mini.1 reached adoption, then failed because the release did not create the `starters` Space. The earlier live proof used that release and a prototype adapter: IAM denied a proposer write; the runtime read versions 1 → 2 → 3 (blue → green → blue), with owner approvals for the last two. The test parameter and roles were removed.
-- The revised walkthrough has no new agent pilot.
-
-Results, 13 November 2026, a separate pre-release build labeled 0.11.1-mini.3. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+Results, 13 November 2026, confighub mini 0.11.1-mini.3. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run: passed, 172 seconds for the steps, within the page's budget of 200.
 - Agent runs (on confighub mini 0.11.1-mini.0): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
@@ -205,18 +197,17 @@ Results, 13 November 2026, a separate pre-release build labeled 0.11.1-mini.3. F
 
 No agent approved or refused a change to production.
 
-Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Your next Parameter Store app can start with the same usual settings, each with its reason, and production there will wait for your yes before anything changes; want the starter kept on for it?"
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Production waited for your yes because the starter set this app up that way, with a reason for each setting. Your next Parameter Store app can start the same way; want the starter kept on for it?"
+
+The plugin offers it once, after the answer at whose end it showed the moment the offer names ("waits for your approval"). Offered is the share of persons it was shown to; want it now and later are over them.
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|
-| a | claude-opus-5-5 | 30 | 100% | 100% | 0% | 10% | 100% |
-| b | claude-opus-5-5 | 30 | 100% | 100% | 17% | 67% | 100% |
-| c | claude-opus-5-5 | 30 | 100% | 100% | 20% | 70% | 100% |
-| a | claude-sonnet-5-5 | 30 | 100% | 100% | 0% | 17% | 97% |
-| b | claude-sonnet-5-5 | 30 | 100% | 100% | 20% | 70% | 93% |
-| c | claude-sonnet-5-5 | 30 | 100% | 100% | 27% | 60% | 100% |
-
-- A later local candidate built from the merged code passed the complete scripted no-account walkthrough, including the hosted copy and pending order. A separate adoption recorded `starters-approved/parameter-store@2` as its source.
-- Live AWS, from hosted ConfigHub on that candidate: the adapter refused delivery while the order was pending, and Parameter Store still read 5 retries (version 1). After the owner approved, live revision 3 delivered 2 retries (AWS version 2). Readback and the revision's SHA-256 matched; repeating apply did not create another AWS version. The test resources were removed. This was a Parameter Store readback, not a deployed billing job or a pilot with agents.
+| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 100% |
+| b | claude-opus-5-5 | 30 | 100% | 100% | 10% | 73% | 97% |
+| c | claude-opus-5-5 | 30 | 33% | 100% | 0% | 70% | 100% |
+| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 97% |
+| b | claude-sonnet-5-5 | 30 | 100% | 100% | 10% | 83% | 97% |
+| c | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 100% |
 
 <!-- results:end -->
