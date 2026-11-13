@@ -8,7 +8,7 @@ To run the whole loop in a few minutes, a reviewer's fixes becoming the starter'
 
 Starters are an option, switched off unless you switch them on. They come with confighub mini ([the current release](install-mini.md#the-current-release)).
 
-You need an unpacked confighub mini package ([install confighub mini](install-mini.md)), a terminal, and Python 3 for the Vercel and author's-kit examples. Everything runs on your machine; no account is used and nothing is sent anywhere.
+You need an unpacked confighub mini package ([install confighub mini](install-mini.md)), a terminal, and Python 3 for the author's kit. Everything runs on your machine; no account is used and nothing is sent anywhere.
 
 The words on this page, such as *hub*, *base* and *change order*, are explained in [the glossary](README.md#words).
 
@@ -91,184 +91,50 @@ export CUB_MINI_STARTERS=on
 
 The steps below also need a hub. If none is running, start one with `cub mini install` ([install confighub mini](install-mini.md)). The first `cub mini adopt` with starters on puts the package's five starters into your hub, as version 1, and prints the one line that approves them; until you run it, adopt uses the package's own files. After that the hub is where adopt reads starters from, and no folder is needed. To switch starters off again, `unset CUB_MINI_STARTERS` and delete the Space with `cub space delete starters --recursive`; apps you connected keep the settings they have.
 
-## Connect a small web service
+## What connecting an app shows
 
-The whole path for this starter, from connecting the app to moving it to a shared hub and deleting it, is one page with every command: [the web starter's walkthrough](../examples/walkthroughs/starter-web.md).
+Each starter's walkthrough connects an app with it, delivers it, changes it, undoes the change, moves it to a shared hub and deletes it, with every command and what it prints: [web](../examples/walkthroughs/starter-web.md), [vercel](../examples/walkthroughs/starter-vercel.md), [parameter-store](../examples/walkthroughs/starter-parameter-store.md), [kustomize-argocd](../examples/walkthroughs/starter-kustomize-argocd.md) and [kustomize-flux](../examples/walkthroughs/starter-kustomize-flux.md). This section explains what `cub mini adopt` prints when starters are on.
 
-The folder `menu` holds a small web service's settings. To make it:
+**Which starter fits, and why.** `cub mini adopt FOLDER --dry-run` starts with each starter it considered, and the first test that did not hold, much as Spring Boot's condition report does:
 
-```bash
-mkdir menu
-printf 'PORT=5000\nLOG_LEVEL=warn\nMENU_SOURCE=kitchen.json\n' > menu/.env
-printf 'MENU_SOURCE=kitchen-staging.json\n' > menu/.env.staging
-printf 'LOG_LEVEL=error\n' > menu/.env.production
+```
+Starters considered: 5, each with the first test that did not hold, or why it was chosen.
+  kustomize-argocd, version 1: does not fit: none of kustomization.yaml, base/kustomization.yaml.
+  kustomize-flux, version 1: does not fit: none of kustomization.yaml, base/kustomization.yaml.
+  parameter-store, version 1: does not fit: no --provider-root: a parameter-store starter runs only against a marked stand-in.
+  vercel, version 1: does not fit: no .vercel/project.json: the folder is not linked to a vercel project.
+  web, version 1: fits, and is the one used: .env is there.
 ```
 
-1. See what adopt would do, without changing anything:
+**The plan, before anything is written.** Then adopt prints what the starter will do, one line each:
 
-   ```bash
-   cub mini adopt menu --dry-run
-   ```
+```
+Starter: web (version 1, web.yaml): A small web service whose settings are in a .env, app.env or compose file, made from adopt's starter pattern.
+  It fits: .env is there.
+  Sets REPLICAS=2, as a setting: Two instances, so that one can restart without the service going down.
+  Leaves PORT alone: it is set already, PORT=5000, by you, in .env.
+  Leaves LOG_LEVEL alone in live: it is set already, LOG_LEVEL=error, by you, in .env.production.
+  Wires: puts menu-live behind your approval, as adopt does; delivery is left to you.
+```
 
-   With starters on, the output starts with each starter it considered, and why it fits or not. A test that "did not hold" is the first thing the starter looks for that the folder lacks:
+- `Sets` is a setting the starter gives, with its reason.
+- `Leaves ... alone` is a value you set already, with who set it and where. The starter never replaces it.
+- `Wires` is what else it sets up. Production is always behind your approval. `delivery is left to you` means it sets up nothing that sends production's settings anywhere; you run the app from them as you do now.
 
-   ```
-   Starters considered: 5, each with the first test that did not hold, or why it was chosen.
-     kustomize-argocd, version 1: does not fit: none of kustomization.yaml, base/kustomization.yaml.
-     kustomize-flux, version 1: does not fit: none of kustomization.yaml, base/kustomization.yaml.
-     parameter-store, version 1: does not fit: no --provider-root: a parameter-store starter runs only against a marked stand-in.
-     vercel, version 1: does not fit: no .vercel/project.json: the folder is not linked to a vercel project.
-     web, version 1: fits, and is the one used: .env is there.
-   …
-   ```
+For an app that a provider runs, such as Vercel, the `Wires` lines also say how production is delivered: a change order, such as `shop-live/connect`, that you approve before anything is delivered; a reader key that can read production and nothing else; and the add-on that delivers the revision you approved with that key, and writes a receipt naming it.
 
-   The rest of the output is the plan shown in the next step, and ends by saying that nothing was changed.
+The `web` starter is the one `cub mini adopt` has always used, written as a starter file. The hub keeps its settings in the Unit `pattern-web/web-service`, which the output calls a starter pattern, and the app's copies are made from it.
 
-2. Connect it:
-
-   ```bash
-   cub mini adopt menu
-   ```
-
-   The first lines are the plan, printed before anything is written:
-
-   ```
-   Starter: web (version 1, web.yaml): A small web service whose settings are in a .env, app.env or compose file, made from adopt's starter pattern.
-     It fits: .env is there.
-     Sets REPLICAS=2, as a setting: Two instances, so that one can restart without the service going down.
-     Sets RELEASE=none, as a setting: Nothing is released until a copy names a release.
-     Sets PUBLIC=false, as a setting: A service is private until someone decides it is public.
-     Leaves PORT alone: it is set already, PORT=5000, by you, in .env.
-     Leaves LOG_LEVEL alone: it is set already, LOG_LEVEL=warn, by you, in .env.
-     Leaves LOG_LEVEL alone in live: it is set already, LOG_LEVEL=error, by you, in .env.production.
-     Wires: puts menu-live behind your approval, as adopt does; delivery is left to you.
-   …
-   ConfigHub now keeps menu's settings, from .env, with .env.staging for staging and .env.production for production. Your files are unchanged.
-   …
-     Production has its own settings from .env.production: LOG_LEVEL=error. The shared settings reach production only after you approve them: run cub mini waiting.
-   …
-   ```
-
-   The starter added three settings, each with its reason. It left your port and your two log levels alone, and said who set each one and where. `delivery is left to you` means the starter sets up nothing that sends production's settings anywhere; you run the app from them as you do now.
-
-   The `web` starter is the one `cub mini adopt` has always used, written as a starter file. The hub keeps its settings in the Unit `pattern-web/web-service`, which the output calls a starter pattern, and the app's copies are made from it.
-
-3. Approve production's settings. This is the only approval the app needs. Adopt named the waiting change order `menu-base/adopt`; `cub mini waiting` lists every change order that waits.
-
-   ```bash
-   cub mini approve menu-base/adopt
-   ```
-
-   It shows what production would get and asks you first:
-
-   ```
-   A change to production waits for your approval: menu's settings, from .env, with .env.staging for staging and .env.production for production. It was made just now; its name is menu-base/adopt.
-     Approving it changes production:
-       PORT: 8080 → 5000
-       MENU_SOURCE: (not set) → kitchen.json
-     Production keeps its own value for these, so approving does not change them there:
-       LOG_LEVEL=error
-   …
-   Approved menu-base/adopt.
-   ```
-
-   Until you approved, production held the starter's settings, including its usual `PORT=8080`, and its own log level. Approving gave it your shared values, `PORT=5000` and `MENU_SOURCE`, and production kept its own `LOG_LEVEL=error`.
-
-`cub mini receipts menu --setup` shows each setting, who set it, and why, as the hub holds it:
+**What the hub holds afterwards.** `cub mini receipts APP --setup` shows each setting, who set it, and why:
 
 ```
   Starter: web, version 1, connected menu; its defaults are kept in pattern-web/web-service, which the app is made from.
-    LOG_LEVEL=warn in menu-base and menu-staging: the starter backed off: set by a person in the app's own file, .env.
     LOG_LEVEL=error in menu-live: the starter backed off: set by a person in the app's own file, .env.production.
-    PORT=5000 in menu-base, menu-live and menu-staging: the starter backed off: set by a person in the app's own file, .env.
     PUBLIC=false in menu-base, menu-live and menu-staging: set by the starter web, version 1: A service is private until someone decides it is public.
 …
 ```
 
 "The starter backed off" means it left a value alone because a person had set it.
-
-## Connect an app on Vercel: one command and one approval
-
-For an app that a provider runs, the starter also sets up what delivers production's settings to the provider. Here the provider is the package's Vercel stand-in, which keeps a project's settings in a file and needs no Vercel account.
-
-The folder `shop` is linked to a Vercel project: its `.vercel/project.json` names the project, and its `.env` sets `LOG_LEVEL=warn`. The folder `shop-project` is the stand-in project. It holds `SHOP_CURRENCY=EUR` for Vercel's preview environment, which becomes staging, and for production, and `EDGE_REGION=fra1` for production only. To make both folders:
-
-```bash
-mkdir -p shop/.vercel shop-project/bin
-printf '{"projectId":"prj_shop","orgId":"team_shop"}\n' > shop/.vercel/project.json
-printf 'LOG_LEVEL=warn\n' > shop/.env
-printf 'ConfigHub CLI contract stand-in v1\n' > shop-project/.vercel-contract-stand-in
-cp "$MINI/examples/extensions/delivery/vercel-standin" shop-project/bin/vercel
-chmod 700 shop-project/bin/vercel
-cat > shop-project/state.json <<'EOF'
-{"envs": [
- {"id": "env_currency_preview", "key": "SHOP_CURRENCY", "value": "EUR", "type": "encrypted", "visibility": "config", "target": ["preview"]},
- {"id": "env_currency_production", "key": "SHOP_CURRENCY", "value": "EUR", "type": "encrypted", "visibility": "config", "target": ["production"]},
- {"id": "env_region_production", "key": "EDGE_REGION", "value": "fra1", "type": "encrypted", "visibility": "config", "target": ["production"]}],
- "writes": 0, "redeploys": 0,
- "deployments": {"preview": {"SHOP_CURRENCY": "EUR"}, "production": {"SHOP_CURRENCY": "EUR", "EDGE_REGION": "fra1"}}}
-EOF
-```
-
-The file `.vercel-contract-stand-in` marks the folder as a stand-in; the add-on refuses to write to a folder without it. `state.json` is where the stand-in keeps the project's settings.
-
-1. Read the project's settings into the app's folder, with the Vercel add-on, a small program in the package that moves settings between a hub and Vercel. `VERCEL_STANDIN_AUTH=owner` signs in to the stand-in as its owner; the other options name the stand-in's folder, the app's folder, and the project:
-
-   ```bash
-   VERCEL_STANDIN_AUTH=owner python3 "$MINI/examples/extensions/delivery/vercel.py" import --provider-root shop-project --dir shop --project prj_shop --scope team_shop --deployment shop.vercel.invalid
-   ```
-
-   It writes `shop/.env.staging` from the project's preview settings and `shop/.env.production` from its production settings, and prints `Imported environment files; owner can now run cub mini adopt.`
-
-2. Connect the app. This is the one command:
-
-   ```bash
-   cub mini adopt shop --provider-root shop-project
-   ```
-
-   ```
-   Starter: vercel (version 1, vercel.yaml): An app deployed by Vercel, whose settings are its project's environment variables.
-     It fits: .env.production is there; .vercel/project.json links a vercel project, and shop-project is its stand-in.
-     Sets EDGE_CACHE_SECONDS=60, as a setting: Pages are cached at the edge for a minute, so a change to a setting is seen within a minute of delivery.
-     Sets EDGE_REGION=iad1 (not in live, which set it already), as a setting: Functions run in Vercel's default region, stated so that a copy cannot move away from its database unnoticed.
-     Sets EDGE_MAX_DURATION=10, as a setting: A function stops after ten seconds, the Hobby plan's limit, so a slow request fails the same way in every copy.
-     Leaves EDGE_REGION alone in live: it is set already, EDGE_REGION=fra1, by you, in .env.production.
-     Wires: puts shop-live behind your approval, and opens the order shop-live/connect that you approve before anything is delivered.
-     Wires: makes the reader key shop-delivery, which can read shop-live and nothing else, for delivery.
-     Wires: names the vercel add-on as what delivers shop-live to production: after you approve, its apply reads the approved revision with the reader key.
-   …
-     Production has what the folder held. It is not delivered until you approve the order shop-live/connect: cub mini approve shop-live/connect
-   …
-   ```
-
-   The starter set three settings, each with its reason. It set the region `iad1` in the base and staging, and left production's region in Frankfurt (`fra1`), as the project had it. It also made a reader key, a sign-in that can read production and nothing else, for the add-on to deliver with, and opened a change order, `shop-live/connect`, for your approval.
-
-3. Approve production. This is the one approval:
-
-   ```bash
-   cub mini approve shop-live/connect
-   ```
-
-   ```
-   A change to production waits for your approval: Connect the existing app without changing its running configuration. It was made just now; its name is shop-live/connect.
-     It changes no setting. Once you approve it, production can be delivered as it is now: revision 4 of app.
-   Approved shop-live/connect. Production can now be delivered as it was when you read it.
-   ```
-
-   `app` is the Unit that holds the app's settings in each copy, and revision 4 is the state of production you read and approved.
-
-4. Deliver it. Adopt wrote the reader key to `~/.confighub/keys/shop-delivery.jwk`. The first command signs in with it, in a `cub` configuration of its own (`CUB_CONFIG`), so that the add-on runs with that key and not yours. The second applies the approved revision to the stand-in project:
-
-   ```bash
-   CUB_CONFIG="$PWD/reader-shop" cub auth login --new-context --private-key="$HOME/.confighub/keys/shop-delivery.jwk" --server "$(cub context get -o jq=.coordinate.serverURL)" > /dev/null
-   CUB_CONFIG="$PWD/reader-shop" VERCEL_STANDIN_AUTH=owner python3 "$MINI/examples/extensions/delivery/vercel.py" apply --provider-root shop-project --target production --space shop-live --unit app --project prj_shop --scope team_shop --deployment shop.vercel.invalid --dir shop --receipt shop-receipt.json
-   ```
-
-   ```
-   {"contract": "confighub.delivery-receipt/v1", "provider": "vercel-cli-stand-in", "target": "production", "space": "shop-live", "unit": "app", "revision": 4, "sha256": "9e14d628498ddd2060156dcbea4fe04a73a57abd62b64efe9250ebe90f193277", "result": "applied"}
-   ```
-
-   The output is the add-on's receipt: it read revision 4 of production, the one you approved, and applied it to the stand-in. `sha256` is a fingerprint of what it delivered. The stand-in project's production in `shop-project/state.json` now holds the currency and region it had, your log level, and the starter's cache time and time limit. Nothing was sent to Vercel.
 
 ## What a starter never does
 
@@ -328,7 +194,7 @@ A starter file on one person's machine is easy to change by accident, and each p
    …
    ```
 
-   The starter came from the hub: its version 1 is revision 2 of the Unit `starters/team-api`. Both starters set settings here, as [two starters on one app](#two-starters-on-one-app) explains; `web` left the log level alone in the base and in production. The `admin@local.confighub.dev` it names is the sign-in that `cub mini install` makes for you. Approve production's settings with `cub mini approve orders-base/adopt`, as for the menu service.
+   The starter came from the hub: its version 1 is revision 2 of the Unit `starters/team-api`. Both starters set settings here, as [two starters on one app](#two-starters-on-one-app) explains; `web` left the log level alone in the base and in production. The `admin@local.confighub.dev` it names is the sign-in that `cub mini install` makes for you. Approve production's settings with `cub mini approve orders-base/adopt`.
 
 ### How a team's fixes become the next version
 
