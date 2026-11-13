@@ -2,6 +2,8 @@
 
 Ask Claude Code for an app in one sentence, and end with the app, staging configuration that takes your agent's changes at once, and live configuration that changes only when you approve. A second app can start from the first. This page is for someone who makes apps with Claude Code and wants production to change only with their say: an agent can change production settings as easily as staging ones, and a rule in `CLAUDE.md` is only a request.
 
+To see a new app fit a team's pattern and its rules from a terminal, follow the walkthrough [a new app that fits the team's pattern](../../examples/walkthroughs/story-18-dev-intent.md).
+
 The app might run on your own machine, on another machine, in CI, on one or many sandbox nodes, in a shared development cluster, or eventually in production. This walkthrough creates staging and live configuration in the hub. Connect the running copies to that configuration using the deployment path for your target ([where the app runs](../agent-workflow.md#where-the-app-runs)).
 
 ## Words used on this page

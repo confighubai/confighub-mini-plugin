@@ -2,6 +2,8 @@
 
 This page is for someone whose service runs on a VM, bare or in a cloud, reads its settings from files such as an `.env` and a `config.toml`, and whose agents change those settings. What you get: the service's files are written from the hub on a timer, only the values a person approved reach them, and the agents hold a hub key and no SSH key.
 
+To try it on your own computer in a few minutes, with a folder standing in for the VM, follow the walkthroughs [a service that takes its settings from the hub](../examples/walkthroughs/story-14-sam-vm.md) and [releases you approve and roll back](../examples/walkthroughs/story-16-app-platform.md).
+
 ## What goes wrong without it
 
 An agent with SSH to the VM edits the file and restarts the service; nothing says what it changed or why, and the next agent, or the next deploy, writes over it. An agent without SSH asks you to make the change, and you make it by hand.

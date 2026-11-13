@@ -2,6 +2,8 @@
 
 Ask Claude Code to attach ConfigHub to your app, and keep working as before: your staging and production values stay exactly as they are, your files are not changed, and changes to production wait for your approval. This page is for someone whose app already keeps its settings in files, one set for staging and one for production, and who lets Claude Code change them; without this, an agent that can edit the staging file can edit the production file too.
 
+To try the same thing from a terminal, step by step, follow the walkthrough [your first hour](../../examples/walkthroughs/story-13-first-hour.md); for an agent that changes only staging, [more memory for staging](../../examples/walkthroughs/story-20-noors-staging.md).
+
 The app might run on your own machine, on another machine, in CI, on one or many sandbox nodes, in a shared development cluster, or in production. Attaching it creates configuration copies in the hub. Its running services use the hub's approved settings once their deployment path is connected ([where the app runs](../agent-workflow.md#where-the-app-runs)).
 
 It works for these kinds of files:
