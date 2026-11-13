@@ -82,18 +82,18 @@ Two things are different. Spring Boot applies its auto-configuration every time 
 
 ## Switch starters on
 
-`cub mini adopt` uses starters only when the environment variable `CUB_MINI_STARTERS` names a folder of starter files. When it is not set, adopt connects an app as [an app you already have](journeys/existing-app.md) shows.
+`cub mini adopt` uses starters only when you switch them on, with the environment variable `CUB_MINI_STARTERS=on`, or when your hub already keeps starters in a Space named `starters`. Otherwise it connects an app as [an app you already have](journeys/existing-app.md) shows.
 
-The package has five starters in its `starters` folder: `web`, for a small web service with a `.env`, `app.env` or compose file; `vercel`, for an app on Vercel; `parameter-store`, for an app that reads AWS Parameter Store; and `kustomize-argocd` and `kustomize-flux`, for a Kustomize repository that Argo CD or Flux deploys. The `vercel` and `parameter-store` starters run only against a stand-in: a small program in the package that answers as Vercel or AWS would, and keeps the settings in a local file. They use no account.
+The package has five starters: `web`, for a small web service with a `.env`, `app.env` or compose file; `vercel`, for an app on Vercel; `parameter-store`, for an app that reads AWS Parameter Store; and `kustomize-argocd` and `kustomize-flux`, for a Kustomize repository that Argo CD or Flux deploys. The `vercel` and `parameter-store` starters run only against a stand-in: a small program in the package that answers as Vercel or AWS would, and keeps the settings in a local file. They use no account.
 
 In a terminal, with `MINI` the folder of the unpacked package, such as `~/.confighub/mini/confighub-mini-0.10.7-mini.23-darwin-arm64`:
 
 ```bash
 export PATH="$MINI/bin:$PATH"
-export CUB_MINI_STARTERS="$MINI/starters"
+export CUB_MINI_STARTERS=on
 ```
 
-The steps below also need a hub. If none is running, start one with `cub mini install` ([install confighub mini](install-mini.md)). To switch starters off again, `unset CUB_MINI_STARTERS`; apps you connected keep the settings they have.
+The steps below also need a hub. If none is running, start one with `cub mini install` ([install confighub mini](install-mini.md)). The first `cub mini adopt` with starters on puts the package's five starters into your hub, as version 1, and prints the one line that approves them; until you run it, adopt uses the package's own files. After that the hub is where adopt reads starters from, and no folder is needed. To switch starters off again, `unset CUB_MINI_STARTERS` and delete the Space with `cub space delete starters --recursive`; apps you connected keep the settings they have.
 
 ## Connect a small web service
 
@@ -286,27 +286,23 @@ After a starter has written its settings, they belong to you and your team, to c
 
 A starter file on one person's machine is easy to change by accident, and each person may have a different copy. You can keep it in the hub instead, so that everyone connects apps with the same one, and each version of it is one you approved.
 
-1. Put the starter file in a folder of your team's starters, with the package's `web` starter beside it, and point `CUB_MINI_STARTERS` at that folder:
+1. Switch starters on with `export CUB_MINI_STARTERS=on` and run `cub mini adopt` once, as [above](#switch-starters-on) says. The hub then has the Space `starters`, the rule `workflows/starters-approval` that names you as the approver, and the package's starters as version 1. Approve them with the line adopt printed, which looks like this:
 
    ```bash
-   mkdir team-starters && cp "$MINI/starters/web.yaml" team-starters/
-   # write team-starters/team-api.yaml, as above
-   export CUB_MINI_STARTERS="$PWD/team-starters"
+   cub variant approve starters --change-order starters/package-starters-v1 --note "Read them"
    ```
 
-2. Make a Space named `starters` in the hub for starter files, and a rule that a change to a file there needs your approval. ConfigHub calls such a rule a change workflow; this one is `starters-approval`, kept in the Space `workflows`. Then put the file in as a Unit, propose it as version 1 with a change order, and approve it. The first line finds your own user ID, which the rule names as the approver:
+   It prints `Recorded pass Approval attestation … in starters`. An attestation is ConfigHub's record of an approval: who gave it, with the note, for which revision. From now on, `cub mini adopt` uses the starters the hub holds and needs no folder.
+
+2. Put your team's starter in the hub. Write `team-api.yaml` anywhere, as above, then three ordinary `cub` commands: put the file in as a Unit of data, propose it as version 1 with a change order, and approve it:
 
    ```bash
-   ME=$(cub user get "$(cub context get -o jq=.coordinate.user)" -o jq=.User.UserID)
-   cub space create starters --label Stage=starters
-   cub space create workflows --allow-exists
-   cub changeworkflow create --space workflows starters-approval --stage starters --attestation-prerequisite approval --attestation-prerequisite-from-users approval=$ME --stage-prerequisites starters=approval
-   cub unit create --space starters team-api "$CUB_MINI_STARTERS/team-api.yaml" --toolchain AppConfig/Text --change-desc "The team's starter for its APIs, version 1"
+   cub unit create --space starters team-api team-api.yaml --toolchain AppConfig/YAML --change-desc "The team's starter for its APIs, version 1"
    cub changeorder create --space starters team-api-v1 --in-scope-space starters --change-workflow workflows/starters-approval --description "Version 1 of the team-api starter"
    cub variant approve starters --change-order starters/team-api-v1 --note "Read it: the team's settings for an API"
    ```
 
-   The last line prints `Recorded pass Approval attestation … in starters`. An attestation is ConfigHub's record of an approval: who gave it, with the note, for which revision. From now on, `cub mini adopt` uses the starter the hub holds. It uses a file in the folder only for a starter the hub does not hold.
+   The starter is kept as data, so one default and its reason can be read, changed and asked about with `cub`: `cub unit list --space starters --where-data "defaults.*.key = 'API_TIMEOUT_SECONDS'"` names the starters that set that key.
 
 3. Connect an app. The folder `orders` has a `package.json`, a `.env` with `LOG_LEVEL=warn` and `API_CACHE_SECONDS=30`, and a `.env.production` with `LOG_LEVEL=error`:
 
@@ -339,7 +335,7 @@ A starter file on one person's machine is easy to change by accident, and each p
 
 ### How a team's fixes become the next version
 
-Say the team finds that every API should refuse a request larger than 64 KiB. Someone copies the starter file to `team-api-v2.yaml`, adds that setting with its reason under `defaults`, raises `version` to 2, and proposes it in the hub:
+Say the team finds that every API should refuse a request larger than 64 KiB. Someone adds that setting with its reason under `defaults`, raises `version` to 2, and proposes it in the hub. The new default, in the starter file:
 
 ```yaml
   - key: API_MAX_REQUEST_BYTES
@@ -352,6 +348,8 @@ cub unit update --space starters team-api team-api-v2.yaml --change-desc "Versio
 cub changeorder create --space starters team-api-v2 --in-scope-space starters --change-workflow workflows/starters-approval --description "Version 2 of the team-api starter"
 cub variant approve starters --change-order starters/team-api-v2 --note "Read it: every API should refuse oversized requests"
 ```
+
+To change one default that exists, with its reason, one command is enough, because the starter is data: `cub function set --space starters --unit team-api --toolchain AppConfig/YAML --change-desc WHY -- set-yq '.version = 2 | (.defaults[] | select(.key == "API_TIMEOUT_SECONDS") | .value) = "5"'`. Then the change order and approval are the same two lines.
 
 Anyone the hub lets change the Space `starters` can propose a version. Only a person the rule names can approve it, and an agent's key never can.
 
@@ -466,6 +464,6 @@ It starts a hub of its own and removes it at the end. "The contract" in its outp
 
 ## Undo it
 
-- **Switch starters off:** `unset CUB_MINI_STARTERS`. Apps already connected keep their settings.
+- **Switch starters off:** `unset CUB_MINI_STARTERS`, and `cub space delete starters --recursive` if the hub keeps starters. Apps already connected keep their settings.
 - **Change a setting a starter gave:** change it like any other, for example `cub mini set APP KEY=VALUE --change-desc "WHY"`. The starter never sets it again.
 - **Disconnect an app:** your files were never changed. `cub mini copy APP --to-dir DIR` writes the hub's copies out as plain files, with the reason for each value. Every way out is in [going back](journeys/going-back.md).
