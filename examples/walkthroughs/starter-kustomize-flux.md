@@ -178,7 +178,7 @@ This proves: the exact approved revision was delivered and is running, under a r
 
 Results, 13 November 2026, confighub mini 0.11.1-mini.0. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Scripted run: passed, 206 seconds for the steps, within the page's budget of 450.
+- Scripted run: passed, 299 seconds for the steps, within the page's budget of 450.
 - Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
