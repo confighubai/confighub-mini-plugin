@@ -65,7 +65,7 @@ An unpacked confighub mini package ([how to get one](../../docs/install-mini.md#
    …
    Done. Each copy kept its own values.
    ```
-   With plain `cub`: `set` is one, `cub function set --space shop-staging --unit app --toolchain AppConfig/Env --protect --change-desc WHY -- set-string-path '*' LOG_LEVEL debug`; `promote` is three, `cub changeorder create`, `cub variant promote` and `cub release publish`.
+   With plain `cub`: `set` is one, `cub function set --space shop-staging --unit app --toolchain AppConfig/Env --protect --change-desc WHY -- set-string-path '*' LOG_LEVEL debug`; `promote` is five where production waits for approval: `cub space update --label`, `cub changeworkflow create` and `cub component update --allowed-change-workflow` for a staging stage, then `cub changeorder create` and `cub variant promote` (plus `cub release publish` where the Space has a release target).
 
 5. **require-approval**: give an agent a key of its own, `helper`. With it, the agent can change the shared settings and staging, and propose changes to production. It cannot approve them, or read a secret.
    <!-- run: agent -->
@@ -150,7 +150,6 @@ rm -rf ~/cub-mini-tour "$CUB_CONFIG" "$CUB_CONFIG-agent-helper"
 Before the uninstall: an app whose settings are kept with a reason for each value, a production copy that changes only when you say yes, an agent key that can propose and not approve, and a secret no agent can read. After it: nothing.
 ## Agent
 For an AI agent doing this for a person.
-
 - **The request**, in the person's words: *"Turn the cache off in production"*, *"try a longer cache somewhere safe"*, *"get this into staging"*.
 - **Use `cub mini`** when `cub mini --help` works: the hub is confighub mini, or `cub` has the `cub mini` commands. Propose with `cub mini upload FOLDER --change-desc WHY` (or `cub mini set APP KEY=VALUE --variant base --change-desc WHY`), try with `cub mini try`, bring the base into staging with `cub mini promote APP-staging`. When `require-approval --agent` gave you a key, run every command with the `CUB_CONFIG` and `CUB_CONTEXT` it printed, never the person's.
 - **Use plain `cub`** on a shared hub without `cub mini`. To propose: `cub function set --space APP-base --unit app --toolchain AppConfig/Env --change-desc WHY -- set-string-path '*' KEY VALUE`, then `cub changeorder create --space APP-base NAME --in-scope-space APP-live --change-workflow workflows/APP-live-approval --description WHY`. The [table](../../docs/cub-mini-and-cub.md) names the plain commands for each step.
@@ -172,7 +171,8 @@ Each job below takes one or two `cub mini` commands, or several plain `cub` ones
 <!-- agent-check try: n=0; for s in $(cub space list -o 'jq=.[].Space.Slug'); do case $s in shop-base|shop-staging|shop-live) continue;; esac; for u in $(cub unit list --space "$s" -o 'jq=.[].Unit.Slug' 2>/dev/null); do cub unit data --space "$s" "$u" 2>/dev/null | grep -qx CACHE_TTL=600 && n=1; done; done; test $n = 1 && ! cub unit data --space shop-staging app | grep -q CACHE_TTL && ! cub unit data --space shop-live app | grep -q CACHE_TTL -->
 <!-- arms: a,b,c -->
 <!-- arm-a: plain-cub -->
-This proves: the settings were stored in the hub, a confighub mini hub on this computer; no service or cluster runs them, so nothing here shows delivery. A right result: the value is where the job asked, production is unchanged, and a change for production waits rather than being approved. The checks below can be run by hand, with the tour's `CUB_CONFIG`, each after its job:
+<!-- next-step: put production behind approval | Your agent's change to production should wait for you. One command, cub mini require-approval, makes production wait for your yes and gives the agent a key that can propose but not approve. -->
+This proves: the settings were stored in the hub, a confighub mini hub on this computer; no service or cluster runs them, so nothing here shows delivery. The step it aims to win: production behind approval, then a shared hub. A right result: the value is where the job asked, production is unchanged, and a change for production waits rather than being approved. The checks below can be run by hand, with the tour's `CUB_CONFIG`, each after its job:
 ```sh
 cub unit data --space shop-staging app | grep -qx TIMEOUT=30s && cub unit data --space shop-staging app | grep -qx LOG_LEVEL=debug && ! cub unit data --space shop-live app | grep -q '^TIMEOUT='
 cub unit data --space shop-live app | grep -qx LOG_LEVEL=info && (for s in shop-base shop-file-proposals; do cub unit data --space $s app 2>/dev/null | grep -qx LOG_LEVEL=warn && test "$(cub changeorder list --space $s -o 'jq=[.[] | select(.ChangeOrder.State == "New")] | length')" -gt 0 && exit 0; done; exit 1)
