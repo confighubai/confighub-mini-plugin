@@ -7,13 +7,12 @@ budget_seconds: 200
 -->
 # An app that reads AWS Parameter Store, with production behind your approval
 
-For someone whose app reads its settings from AWS Systems Manager Parameter Store, one path for staging and one for production, and who wants each change to production to wait for their yes, with a reason kept for every value. You connect the app with the Parameter Store starter, deliver it, change it, undo the change, move it to your team's shared hub, and delete it. Follow the no-account rehearsal below, or use the live adapter with an isolated AWS test path.
+Your billing job retries a failed request five times. For invoice week, you want to try two retries in staging without changing production. This walkthrough shows what the job reads before approval, after approval, and after you restore five retries. It also shows how to hand the settings to a team without handing over your AWS credentials.
 
 ## Human
-### What you need
 An unpacked confighub mini package ([install confighub mini](../../docs/install-mini.md)) and Python 3. confighub mini is ConfigHub made small enough to run on your computer: a hub, which keeps settings with every change, who made it and why. For step 8, a sign-in to your organization's ConfigHub, such as hosted ConfigHub.
 
-For an AWS test account, follow the [live path](../parameter-store-live.md); the marked steps here use a stand-in.
+Start here if you have no AWS account: the marked steps use a stand-in. For AWS itself, follow the [live path](../parameter-store-live.md); it requires a package that includes the live adapter.
 
 ### Steps
 1. Start a hub of your own; it becomes `cub`'s current context. `MINI` is the unpacked package. `CUB_MINI_STARTERS=on` switches starters on: a starter is a short file that gives one kind of app its usual settings, each with a reason, and the first `cub mini adopt` brings the package's starters into the hub, where they wait for your approval.
@@ -25,7 +24,7 @@ For an AWS test account, follow the [live path](../parameter-store-live.md); the
    cub mini install --name billing --use
    export LOCAL_HUB=$(cub context get -o jq=.name)
    ```
-2. Make the app and its stand-in AWS account. `billing/.env` holds the app's shared settings. In `ssm-account`, `state.json` holds the parameters under `/billing/staging/` and `/billing/production/`, including one encrypted value, and `bin/aws` answers as the `aws` command does. The script `deliver` sends production's approved settings to Parameter Store and prints what production reads. Last, the Parameter Store add-on, a small program in the package, reads the parameters into `billing/.env.staging` and `billing/.env.production`; the encrypted one is written as a reference to where it is kept, never as its value.
+2. Make the app and its stand-in AWS account. The job reads the settings that the stand-in returns. `billing/.env` holds the app's shared settings. In `ssm-account`, `state.json` holds the parameters under `/billing/staging/` and `/billing/production/`, including one encrypted value, and `bin/aws` answers as the `aws` command does. The script `deliver` sends production's approved settings to Parameter Store and prints what production reads. Last, the Parameter Store add-on, a small program in the package, reads the parameters into `billing/.env.staging` and `billing/.env.production`; the encrypted one is written as a reference to where it is kept, never as its value.
    <!-- run: app files -->
    ```sh
    export MINI=/absolute/path/to/unpacked-confighub-mini
@@ -80,9 +79,11 @@ For an AWS test account, follow the [live path](../parameter-store-live.md); the
    Changed the shared settings (billing-base), with the reason: The billing run must fail fast and be started again before invoices go out
      SSM_MAX_RETRIES: 5 → 2
    ```
-6. Approve the update and deliver it. `cub mini waiting` lists what waits; with one change waiting, `cub mini approve` needs no name.
+6. Check what production still reads before approval, then approve the update and deliver it. `cub mini waiting` lists what waits; with one change waiting, `cub mini approve` needs no name.
    <!-- run: update-ship -->
    ```sh
+   cub unit data app --space billing-staging | grep -Fx SSM_MAX_RETRIES=2; cub unit data app --space billing-live | grep -Fx SSM_MAX_RETRIES=5
+   python3 -c 'import json; assert json.load(open("ssm-account/state.json"))["parameters"]["/billing/production/SSM_MAX_RETRIES"]["Value"] == "5"'
    cub mini approve --yes --note "Invoice week"
    sh deliver
    ```
@@ -142,7 +143,7 @@ In the shared hub: `cub --context shared component delete --recursive --detach "
 ### What you have now
 Your team's shared hub holds billing's base, staging and production settings, each value with who set it and why, and production there changes only when a person approves. The stand-in account holds the settings you last approved; the encrypted value never left it. The [starters guide](../../docs/starters.md) explains how a starter connects an app; see also [approvals on a shared hub](../../docs/approvals.md#on-hosted-confighub-or-your-own-server-with-cub-alone).
 ## Agent
-You are doing this for a person, in their folder, with step 1's settings. Each request is one task; run the Human step of the same name.
+A useful first request is: “Try two retries for the billing job in staging. Leave production alone and tell me what I need to approve.” Work in the app’s folder with the proposer context. Report what staging has, what production still reads, and the exact owner approval command.
 
 - **deploy**, "Set up my billing function so that every change to production's settings waits for my approval, with a reason kept for each value, and deliver production's settings to Parameter Store": run step 3's `cub mini adopt`, then tell the person that starters are brought into the hub only under their own approval, which an agent session cannot do (until then adopt uses the package's files), and give them `cub mini adopt billing --provider-root ssm-account` to run again in their own terminal (it brings the starters in), then `cub variant approve starters --change-order starters/package-starters-v1 --note "Read them"` and then step 4's commands to approve and deliver.
 - **update**, "Make the billing run fail fast, two retries; I'll approve production": edit `billing/.env`, run step 5 with their reason, and give them the `cub mini approve` command it printed.

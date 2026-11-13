@@ -7,11 +7,11 @@ budget_seconds: 240
 -->
 # Bring a sandbox experiment back for review
 
-Try a larger batch in a disposable environment, then take its settings and reason to your team without letting the experiment change production.
+A queue spikes and you want to try batches of 240 instead of 120. Use a disposable Daytona sandbox so the experiment cannot approve its own change. When you delete the sandbox, your team can still review the setting and the reason. Production stays at 120.
 
 ## Human
 
-Use an unpacked [mini package](../../docs/install-mini.md) that includes the Daytona starter. The commands below run a local rehearsal first. Use an empty working directory and keep its keys and evidence private. The shared step needs a disposable app name in an organization where you can create and remove test resources.
+Use an unpacked [mini package](../../docs/install-mini.md) that includes the Daytona starter. Start with the local rehearsal: it needs no Daytona account and tests the proposal, export, and shared review. It does not run a batch job. Use an empty working directory and keep its keys and evidence private. The shared step needs a disposable app name in an organization where you can create and remove test resources.
 
 ### Steps
 
@@ -85,7 +85,7 @@ For cleanup, remove only the app named by `TEAM_APP` from the shared hub, then i
 
 ## Agent
 
-Use only the supplied proposer context. Try the new batch size and give the owner the proposed value, reason, and approval command. Ask the owner to install or approve a starter, create or delete a cloud sandbox, and copy to the shared hub if you lack access. Never approve a production change. If a sandbox was deleted, use the downloaded files; do not report the original approval history as transferred.
+Ask: “Try a batch size of 240 because the queue spiked. Leave production at 120 and bring me back a proposal I can review.” Use only the supplied proposer context. Report what changed in staging, what live still holds, the reason, and where the owner can review it. Ask the owner to install or approve a starter, create or delete a cloud sandbox, and copy to the shared hub if you lack access. Never approve a production change. If a sandbox was deleted, use the downloaded files; do not report the original approval history as transferred.
 
 ## Testing
 
@@ -115,9 +115,9 @@ This proves: the starter and the settings are stored and the experiment can beco
 
 <!-- results:begin -->
 
-Results, 13 November 2026, confighub mini 0.11.1-mini.1. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+Results, 13 November 2026, unreleased mini candidate with the revised Daytona starter. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Scripted run: FAILED, 39 seconds for the steps, within the page's budget of 240.
+- Scripted run: passed, 71 seconds for the steps, within the page's budget of 240.
 
 - The published package did not have the Daytona manifest or the structured catalog that the walkthrough expects. It stopped at the catalog check.
 - A separate run with the released Linux package ran in a real EU Daytona sandbox. The mini API and registry were loopback-only. A restricted proposer could not read the owner key or approve. The proposal changed the base from 120 to 240 and recorded its reason while live stayed at 120. After sandbox deletion, the value and reason were recovered and a fresh pending proposal was created on the parent mini. That was a scripted proposer, not an agent pilot or a running batch job.
