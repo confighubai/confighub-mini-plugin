@@ -182,16 +182,14 @@ This proves: the exact approved revision was delivered and is running, under a r
 Results, 13 November 2026, confighub mini 0.11.1-mini.3. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run: passed, 367 seconds for the steps, within the page's budget of 450.
-- Agent runs (on confighub mini 0.11.1-mini.0): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
+- Agent runs (on confighub mini 0.11.1-mini.0): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
 | a | claude-opus-5-5 | 4/6 (+9 not applicable) | 178.3 | $0.49 | 0 |
 | b | claude-opus-5-5 | 15/15 | 140.8 | $0.586 | 6 |
-| c | claude-opus-5-5 | 0/15 | 116.8 | $0.627 | 3 |
 | a | claude-sonnet-5-5 | 5/6 (+9 not applicable) | 80.8 | $0.288 | 0 |
 | b | claude-sonnet-5-5 | 15/15 | 126.0 | $0.3 | 5 |
-| c | claude-sonnet-5-5 | 0/15 | 131.8 | $0.371 | 3 |
 
 No agent approved or refused a change to production.
 
@@ -201,9 +199,16 @@ Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing
 |---|---|---|---|---|---|---|---|
 | a | claude-opus-5-5 | 30 | 100% | 100% | 0% | 3% | 100% |
 | b | claude-opus-5-5 | 30 | 100% | 100% | 27% | 57% | 90% |
-| c | claude-opus-5-5 | 30 | 100% | 100% | 23% | 60% | 97% |
 | a | claude-sonnet-5-5 | 30 | 100% | 100% | 0% | 3% | 100% |
 | b | claude-sonnet-5-5 | 30 | 100% | 100% | 37% | 50% | 100% |
-| c | claude-sonnet-5-5 | 30 | 100% | 100% | 17% | 57% | 100% |
+
+- Agent runs (on confighub mini 0.11.1-mini.14): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: c is the plugin and confighub mini, without this page.
+
+| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
+|---|---|---|---|---|---|
+| c | claude-opus-5-5 | 15/15 | 211.0 | $0.966 | 3 |
+| c | claude-sonnet-5-5 | 13/15 | 216.5 | $0.426 | 3 |
+
+No agent approved or refused a change to production.
 
 <!-- results:end -->
