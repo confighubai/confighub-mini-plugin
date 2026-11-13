@@ -17,14 +17,7 @@ It works for these kinds of files:
 
 If Argo CD or Flux deploys the app from Git, read this page, then [an app that Argo CD or Flux deploys](gitops-app.md).
 
-## Words used on this page
-
-- **A hub** is one running ConfigHub: a server that keeps your app's settings, with every change, who made it and why. A hub can run on your own computer, or be shared on a network: a **shared hub**, hosted ConfigHub or ConfigHub's enterprise edition, is one that a team, its agents and its CI jobs all reach. This guide uses a hub on your own computer, confighub mini. The same app can move to a shared hub later ([from the plugin to ConfigHub](../from-plugin-to-confighub.md)).
-- **confighub mini** is ConfigHub made small enough to run on your laptop. `cub` is ConfigHub's command-line tool, and comes with confighub mini.
-- **The base** holds the values every environment shares. **The staging copy** is made from it and takes each change at once. **The live copy** holds the settings intended for production. It takes a change only when you approve it. Each copy keeps its **own values**, the ones your staging or production file sets differently, through later changes to the base.
-- **A Space** is where the hub keeps one copy, such as `orders-live`.
-- **A change order** is a request for a change to reach the live copy. It waits until you approve or refuse it.
-- **The agent's key** is a sign-in of the agent's own. On it, the agent can change the base and staging, and propose changes to live. It cannot approve them.
+The words on this page, such as *hub*, *base* and *change order*, are explained in [the glossary](../README.md#words).
 
 ## What it costs
 

@@ -68,6 +68,4 @@ PASS the approved revision changes production behaviour
 
 The default uses scripted calls under the agent's key and a scripted approval under the owner's key. `--agent` records the real sessions; `--interactive` uses a person's terminal prompt. Neither is approval inside a coding agent's chat UI. The VM runs on the development Mac; this is not a cloud deployment. The example does not change an existing user service: it brings up isolated copies of the example API.
 
-## Words used here
-
-A **hub** holds configuration. A **variant** is a configuration copy, here staging or live. A **change order** proposes a revision for live. An **approval** covers that revision. A **reader key** may fetch one variant and cannot change it. A systemd **timer** fetches the settings every five seconds; a changed file or an outstanding failed restart requires a restart.
+The words on this page, such as *hub*, *base* and *change order*, are explained in [the glossary](../../docs/README.md#words).

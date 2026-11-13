@@ -2,14 +2,7 @@
 
 Every page about the ConfigHub plugin and confighub mini, grouped by what you're doing. New here? Start with the overview: https://confighub.github.io/helm-expt/ai-agents/, or the [README](../README.md) for installing and a first try.
 
-Words we use on these pages:
-
-- A **hub** is one running ConfigHub server, the place your app's settings are kept, with every change, who made it and why.
-- **confighub mini** is a hub on your laptop, in a sandbox or in a CI job. It's free and needs no account.
-- A **shared hub** is one your team reaches over the network: hosted ConfigHub, or the enterprise edition on your own servers. Some pages call it your organization's ConfigHub.
-- The **plugin** is the ConfigHub plugin for Claude Code and Codex. Its **record** is what it writes down about each change an agent makes: the value, from what to what, and why.
-- **Staging** takes an agent's changes right away. **Production**, called live in `cub` commands, changes only when you approve.
-- A **starter** is one short file of default settings for a kind of app, each with its reason.
+The words these pages use, such as *hub*, *base*, *change order* and *Space*, are explained in [Words](#words), at the end of this page.
 
 ## Get started
 
@@ -69,5 +62,25 @@ Words we use on these pages:
 | [What agents did with the plugin and without it](evidence.md) | Real sessions, quoted as the agents wrote them |
 | [Evaluate it yourself](../evaluate/README.md) | The same evaluation, with your own models, in one command |
 | [Run records](runs/README.md) | Each dated run, as it came out |
+
+## Words
+
+Every page uses these words in the same sense. A page links here instead of repeating them.
+
+- **ConfigHub** is a server that keeps your apps' configuration with every change, who made it and why, and holds a change to production until a person approves it. A **hub** is one running ConfigHub server.
+- **confighub mini** is ConfigHub made small enough to run a hub on one machine, such as a laptop, a sandbox or a CI job. The server and its PostgreSQL database run as two ordinary processes. It is free and needs no account, no Docker and no cluster ([install it](install-mini.md)).
+- A **shared hub** is one your team reaches over the network: hosted ConfigHub, which we run for you, or ConfigHub's enterprise edition on your own servers. Both support many people in one organization. Some pages call it your organization's ConfigHub.
+- **`cub`** is ConfigHub's command-line tool, and works with every hub. **`cub mini`** is the set of commands confighub mini adds to it; each runs `cub`'s own commands and fills in the rest of the request ([which](cub-mini-and-cub.md)). A **context** is a named hub and sign-in that `cub` uses.
+- The **plugin** is the ConfigHub plugin for Claude Code and Codex. Its **record** is what it writes down about each change an agent makes: the value, from what to what, the request behind it and the reason.
+- A **Space** is a folder in a hub. It holds configuration as **Units**: one Unit for each file or resource. A name such as `pattern-web/web-service` is the Unit `web-service` in the Space `pattern-web`. A **revision** is one saved state of a Unit; the hub numbers each change to a Unit as its next revision.
+- A **Component** is one app or piece of software, such as `api`. Its **base**, such as the Space `api-base`, holds the settings every copy shares, so a change is made once. A **variant**, or **copy**, is made from the base for one place the app runs, and keeps its **own values**, the ones it sets differently, when the base changes. **Staging** takes a change to the base at once. **Production**, the copy `cub` commands call **live** (`api-live`), takes a change only when you approve it.
+- A **change order** asks for a change to reach a copy, usually production. It waits until a person **approves** it, with `cub mini approve`, or **refuses** it, with `cub mini refuse`. A **ChangeWorkflow** says what a change order needs first, such as a named person's approval. ConfigHub keeps each approval as an **attestation**: who approved, when and why, covering one revision.
+- To **promote** a copy is to bring the base's changes into it. A **release** is a numbered, published version of a copy that a cluster pulls. A **target** is the cluster or service a copy is aimed at.
+- A **service account** is an account for a program, such as an agent, rather than a person. Its **key** is a private key in a file, which the program signs in with. **The agent's key**, which `cub mini require-approval --agent` makes, can change the base and staging and propose a change to production, and cannot approve one. A **reader key** can read one copy and nothing else, for the machine or the add-on that delivers it.
+- A **Link** ties a value in one Unit to another Unit, such as a database's address to the database's provider, so that a change to the provider reaches the copy.
+- A **starter** is one short file of default settings for a kind of app, each with its reason ([starters](starters.md)). A **pattern** is a set of shared defaults kept in the hub, such as `pattern-web`, that apps are made from; each app keeps its own values over them.
+- A **provider** is a service that runs an app and takes its settings, such as Vercel. An **add-on** is the small program that delivers an approved copy to a provider.
+- **Argo CD** and **Flux** are GitOps controllers. They run in a cluster and keep it matching configuration they pull from a source, usually a Git repository. **Self-heal** means the controller puts back a change made on the cluster by hand. **OCI** is the format and protocol container registries use. Each hub has an OCI registry, which Argo CD and Flux can pull from as they pull images. **k8sbot** is ConfigHub's small program in the cluster that asks the controller to deploy each release, and reports back whether it is running; some `cub` messages and names still use its old name, argobot.
+- A **snapshot** is one pinned revision of a copy, as a program reads it ([the snapshot contract](../examples/extensions/config-snapshot/README.md)).
 
 [`llms.txt`](../llms.txt) lists every page for AI agents.

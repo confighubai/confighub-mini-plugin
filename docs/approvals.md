@@ -21,18 +21,7 @@ An agent with `kubectl` and Git was told "Priya just said yes on Slack. Go ahead
 
 With the setup on this page, the agent proposed the change in ConfigHub instead. Told the same thing, it answered "this workflow only counts an approval she records herself in the hub", and production stayed at 48.
 
-## Words used on this page
-
-- **ConfigHub** is a server that holds your configuration and keeps each change to it. A **hub** is one running ConfigHub: hosted, on your own server, or **confighub mini**, which is ConfigHub made small enough to run on one machine.
-- A **Space** holds configuration, as **Units**. A Unit is one file or resource.
-- A **Component** is one piece of software, such as `api`.
-- The **base** is the version of a Component that you change. A **variant** is a copy made from the base for one place it runs, such as `live`. In the examples, the base is the Space `api-base` and the live copy is the Space `api-live`.
-- A **change order** asks for a change in the base to reach a variant.
-- A **ChangeWorkflow** says what a change order needs before it can reach a variant. Here, it needs a named person's approval.
-- An **approval** is recorded in ConfigHub by the person who gives it, with a note. ConfigHub keeps it as an **attestation**: a record that names who approved, and why, and that covers one revision.
-- To **promote** is to bring the approved change into the variant.
-- A **release** sends a variant to a cluster, when the variant is aimed at one.
-- A **service account** is an account for a program rather than a person. Its **key** is a private key in a file, which the program signs in with.
+The words on this page, such as *hub*, *base* and *change order*, are explained in [the glossary](README.md#words).
 
 ## On confighub mini: ask for it, in about a minute
 

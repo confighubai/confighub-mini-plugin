@@ -104,6 +104,4 @@ PASS retrying the same revision is idempotent
 
 Each section above names its assertions and limits. A failed assertion stops the example, exits nonzero and attempts cleanup. A scripted approval does not count as a real person's acceptance.
 
-## Words used here
-
-A **variant** holds one environment's settings. A **pattern** supplies shared settings while an app keeps its own choices. A **change order** proposes a revision; approval covers that revision. A **snapshot** is one pinned revision read by the extension.
+The words on this page, such as *hub*, *base* and *change order*, are explained in [the glossary](../../docs/README.md#words).

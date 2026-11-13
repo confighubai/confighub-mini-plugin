@@ -10,13 +10,9 @@ Starters are an option, switched off unless you switch them on. They come with c
 
 You need an unpacked confighub mini package ([install confighub mini](install-mini.md)), a terminal, and Python 3 for the Vercel and author's-kit examples. Everything runs on your machine; no account is used and nothing is sent anywhere.
 
-## Words used on this page
+The words on this page, such as *hub*, *base* and *change order*, are explained in [the glossary](README.md#words).
 
-- **A hub** is one running ConfigHub. `cub` is ConfigHub's command-line tool, and `cub mini` is the set of commands confighub mini adds to it.
-- **Connecting an app** is running `cub mini adopt FOLDER`. It reads the app's settings files (such as `.env`, `.env.staging` and `.env.production`) and keeps three copies of the settings in the hub: **the base**, the shared settings, where a change is made once; **staging**, which gets a change to the base at once; and **live**, the copy for production, which gets a change only when you approve it. Your files are not changed.
-- **A change order** is a proposed change that waits until a person approves it with `cub mini approve`, or refuses it. Most change orders are for the live copy; the ones in [keep a starter in your hub](#keep-a-starter-in-your-hub-with-versions-you-approve) are for a starter.
-- **A Space** is a folder in the hub, and **a Unit** is one piece of configuration in a Space. A name such as `menu-live` is a Space; a name such as `pattern-web/web-service` is the Unit `web-service` in the Space `pattern-web`.
-- **A revision** is one saved state of a Unit. The hub numbers every change to a Unit as its next revision. A starter's **version** is the number in its own file. They are counted separately.
+**Connecting an app** is running `cub mini adopt FOLDER`: it reads the app's settings files, such as `.env`, `.env.staging` and `.env.production`, and keeps a base, a staging copy and a production copy of them in the hub, without changing your files. A starter's **version** is the number in its own file, and is counted apart from the hub's revisions.
 
 ## What a starter is
 

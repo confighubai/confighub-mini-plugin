@@ -2,12 +2,7 @@
 
 This page is for anyone who added the ConfigHub plugin, confighub mini or a hub as a source, and wants to undo one step or all of them. Each step can be undone on its own. Nothing here asks you to keep ConfigHub to keep your work: it comes out as plain files, with the reason for each value.
 
-## Words used on this page
-
-- **The plugin** runs in your Claude Code sessions and keeps **the record**: each value an agent changes, with the request and the reason.
-- **A hub** is one running ConfigHub, which keeps your configuration with every change, who made it and why. **confighub mini** is ConfigHub on your laptop.
-- **The agent's key** is the sign-in of its own that `cub mini require-approval --agent` gives an agent.
-- **A change order** is a request for a change to reach the live copy, which waits for your approval.
+The words on this page, such as *hub*, *base* and *change order*, are explained in [the glossary](../README.md#words).
 
 ## What to undo, and how
 
