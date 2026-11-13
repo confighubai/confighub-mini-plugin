@@ -203,6 +203,7 @@ printf '{"projectId":"prj_shop","orgId":"team_shop"}\n' > shop/.vercel/project.j
 printf 'LOG_LEVEL=warn\n' > shop/.env
 printf 'ConfigHub CLI contract stand-in v1\n' > shop-project/.vercel-contract-stand-in
 cp "$MINI/examples/extensions/delivery/vercel-standin" shop-project/bin/vercel
+chmod 700 shop-project/bin/vercel
 cat > shop-project/state.json <<'EOF'
 {"envs": [
  {"id": "env_currency_preview", "key": "SHOP_CURRENCY", "value": "EUR", "type": "encrypted", "visibility": "config", "target": ["preview"]},

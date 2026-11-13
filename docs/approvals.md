@@ -181,7 +181,7 @@ Started this way, from a folder of its own or from a new worktree, and in auto m
 
 ## On hosted ConfigHub or your own server, with cub alone
 
-These are the same steps with `cub` alone. If confighub mini is installed, `cub mini require-approval` does steps 2 and 3 in one, against hosted ConfigHub too.
+These are the same steps with `cub` alone, for an app you put on a shared hub with `cub` alone. An app you copied up from confighub mini with `cub mini copy --from-context` needs none of them: if production waited for your approval on your laptop, it waits on the shared hub as soon as it is copied, and the copy says so ([from your laptop to a shared hub](from-plugin-to-confighub.md#step-3-your-organizations-confighub)). If confighub mini is installed, `cub mini require-approval` does steps 2 and 3 in one, against hosted ConfigHub too.
 
 1. Create the Component, its base and its live copy, from the `api` folder made above:
 
