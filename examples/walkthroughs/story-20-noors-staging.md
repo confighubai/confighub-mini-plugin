@@ -131,7 +131,7 @@ For an AI agent doing this for a person.
 
 ## Testing
 
-This proves: the settings were stored in the hub, staging's and production's apart, with production's change held for approval. What was really used: confighub mini on this computer; nothing is delivered, and no pods run, so whether 1Gi stops the out-of-memory kills is not shown. The step it aims to win: trying a change in a copy of its own with `cub mini try`.
+This proves: the settings were stored in the hub, staging's and production's apart, with production's change held for approval. What was really used: confighub mini on this computer; nothing is delivered, and no pods run, so whether 1Gi stops the out-of-memory kills is not shown. The step it aims to win: trying a change in a copy of its own with `cub mini try`. Its moment is the plugin's line at the end of a turn that production did not change and waits for a yes; in the runs below the plugin showed no line at the end of the agent's turn, so the offer was not made and conversion was not measured.
 
 The scripted run follows the Human steps on a hub of its own and checks that each quoted line is still printed. A correct agent result gives staging 1Gi and leaves production and the shared default at 512Mi; in plain files, the shared `.env` stays at 512Mi and only a staging file has 1Gi. The checks below hold right after step 5.
 
@@ -141,7 +141,7 @@ The scripted run follows the Human steps on a hub of its own and checks that eac
 <!-- agent-check staging: cub unit data --space image-processor-staging app | grep -qx 'MEMORY_LIMIT=1Gi' && cub unit data --space image-processor-live app | grep -qx 'MEMORY_LIMIT=512Mi' && cub unit data --space image-processor-base app | grep -qx 'MEMORY_LIMIT=512Mi' -->
 <!-- agent-check-a staging: g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g MEMORY_LIMIT 1Gi | grep -qi staging && ! g MEMORY_LIMIT 1Gi | grep -vqi staging -->
 <!-- arms: a,b,c -->
-<!-- next-step: try a change first | Your next change can be tried in a copy of staging of its own, then kept or dropped, with staging and production untouched; want a try copy for it? -->
+<!-- next-step when "did not change": try a change first | Your next change can be tried in a copy of staging of its own, then kept or dropped, with staging and production untouched; want a try copy for it? -->
 
 The checks below can be run by hand, in bash, in the walkthrough's folder:
 
@@ -152,7 +152,7 @@ g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Lib
 
 <!-- results:begin -->
 
-Results, 13 November 2026, confighub mini 0.11.1-mini.2. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+Results, 13 November 2026, a build of confighub mini from main at c564cd36. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run: passed, 65 seconds for the steps, within the page's budget of 180.
 - Agent runs (on confighub mini 0.11.1-mini.1): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
@@ -168,11 +168,13 @@ No agent approved or refused a change to production.
 
 Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Your next change can be tried in a copy of staging of its own, then kept or dropped, with staging and production untouched; want a try copy for it?"
 
-| Arm | Model | Persons | Noticed | Want the next step now | Later | In the way |
-|---|---|---|---|---|---|---|
-| a | claude-opus-5-5 | 30 | 100% | 3% | 10% | 40% |
-| b | claude-opus-5-5 | 30 | 100% | 10% | 73% | 37% |
-| a | claude-sonnet-5-5 | 30 | 100% | 7% | 7% | 53% |
-| b | claude-sonnet-5-5 | 30 | 100% | 10% | 70% | 47% |
+The plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
+
+| Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 30% |
+| b | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 13% |
+| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 60% |
+| b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 7% |
 
 <!-- results:end -->
