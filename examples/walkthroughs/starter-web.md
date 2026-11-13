@@ -44,7 +44,7 @@ confighub mini, unpacked as [installing confighub mini](../../docs/install-mini.
    …
      Leaves PORT alone: it is set already, PORT=5000, by you, in .env.
    …
-     Production takes the shared settings only after you approve them: run cub mini waiting.
+     Production takes the shared settings only after you approve them. To see them and approve them, in a terminal of your own: ~/.confighub/mini/cub mini approve menu-live
    ```
 4. Deploy it, part two: approve production's first settings, and write them where the service reads them. `cub mini pull` writes live's settings as `menu-running/app.env`; start the service from that file as you do now.
    <!-- run: deploy-live -->
@@ -132,7 +132,7 @@ Your `menu` folder, unchanged by ConfigHub; `menu-running/app.env`, production's
 
 ## Agent
 For an AI agent doing these jobs for a person: run the Human steps' commands, adjusted to their app.
-- **Deploy:** `cub mini adopt FOLDER`, then `cub mini waiting`. End your message with one sentence on what the person has now, in their words (for example, that production cannot change without them), and the one approve command `cub mini waiting` printed, such as `cub mini approve menu-base/adopt`. Copy it exactly as printed.
+- **Deploy:** `cub mini adopt FOLDER`. End your message with one sentence on what the person has now, in their words (for example, that production cannot change without them), and the one approve command adopt printed, such as `~/.confighub/mini/cub mini approve menu-live`. Copy it exactly as printed.
 - **Update:** change the app's file, then `cub mini upload FOLDER --change-desc "WHY"`. End the same way, with the approve command `upload` printed (for example `~/.confighub/bin/cub mini approve menu-base/upload-20261113-163415-0kyg`), copied exactly.
 - **Undo:** put the file back as it was and upload it again, with the reason. End the same way.
 - **Move:** run step 8 with the shared hub's context, then read live back, and step 9 to see that production waits. If it does not, say so plainly.
@@ -165,7 +165,7 @@ Each task below is given to an agent in the folder that holds `menu`, after the 
 <!-- agent-check-a deploy: grep -rlsE '^[ -]*"?PORT"?[=:] *"?5000' --exclude-dir='.*' --exclude-dir=Library * .env* | grep -vqxE 'menu/\.env(\.staging)?' -->
 <!-- agent-check-a update: grep -rlsE '^[ -]*"?LOG_LEVEL"?[=:] *"?info' --exclude-dir='.*' --exclude-dir=Library * .env* | grep -q . && grep -qx LOG_LEVEL=debug menu/.env.staging -->
 <!-- agent-check-a undo: ! grep -rqsE '^[ -]*"?LOG_LEVEL"?[=:] *"?info' --exclude-dir='.*' --exclude-dir=Library * .env* && grep -rlsE '^[ -]*"?LOG_LEVEL"?[=:] *"?warn' --exclude-dir='.*' --exclude-dir=Library * .env* | grep -q . -->
-<!-- next-step: keep the web starter on | Your next web service can start with these same settings and reasons, so you do not set them up again. Want the web starter kept on for it? -->
+<!-- next-step when "did not change": keep the web starter on | Production waited for your yes because the web starter set this app up that way, with a reason for each setting. Your next web service can start the same way; want the web starter kept on for it? -->
 <!-- arms: a,b,c -->
 This proves: the settings were stored in the hub, on confighub mini and on hosted ConfigHub, with production there waiting for approval, and production's approved revision was written to the file a service reads, with `cub mini pull`. No service is started, and no controller is used. The page aims to win one next step: that the person keeps the starter on for their next app.
 
@@ -180,31 +180,31 @@ cub --context shared unit data app --space "$TEAM_APP-live"
 
 Results, 13 November 2026, a development build of confighub mini after 0.11.1-mini.1. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Scripted run: passed, 68 seconds for the steps, within the page's budget of 150.
-- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page. Arms a and c ran earlier the same day, on confighub mini 0.11.1-mini.0, and arm b on the development build; the simulated persons of every arm were judged again in the same way.
+- Scripted run: passed, 57 seconds for the steps, within the page's budget of 200.
+- Agent runs (on a development build of confighub mini after 0.11.1-mini.1): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page. Arm a ran earlier the same day, on confighub mini 0.11.1-mini.0; arms b and c ran on the development build. The simulated persons of every arm were judged in the same way.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
 | a | claude-sonnet-5-5 | 7/9 (+6 not applicable) | 67.5 | $0.21 | 0 |
-| b | claude-sonnet-5-5 | 15/15 | 107.0 | $0.244 | 3 |
-| c | claude-sonnet-5-5 | 9/15 | 122.6 | $0.392 | 4 |
+| b | claude-sonnet-5-5 | 15/15 | 116.3 | $0.234 | 4 |
+| c | claude-sonnet-5-5 | 8/15 | 117.2 | $0.282 | 3 |
 | a | claude-opus-5-5 | 6/9 (+6 not applicable) | 94.2 | $0.357 | 0 |
-| b | claude-opus-5-5 | 15/15 | 130.3 | $0.427 | 7 |
-| c | claude-opus-5-5 | 10/15 | 262.1 | $1.053 | 3 |
+| b | claude-opus-5-5 | 15/15 | 107.6 | $0.445 | 3 |
+| c | claude-opus-5-5 | 9/15 | 159.1 | $0.669 | 3 |
 
 No agent approved or refused a change to production.
 
-Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Your next web service can start with these same settings and reasons, so you do not set them up again. Want the web starter kept on for it?"
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Production waited for your yes because the web starter set this app up that way, with a reason for each setting. Your next web service can start the same way; want the web starter kept on for it?"
 
-The plugin offers it once, after the answer at whose end it showed the moment the offer names; this page names none, so it was not offered. Offered is the share of persons it was shown to; want it now and later are over them.
+The plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|
 | a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 97% |
-| b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 70% |
-| c | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 93% |
+| b | claude-sonnet-5-5 | 30 | 100% | 100% | 23% | 70% | 70% |
+| c | claude-sonnet-5-5 | 30 | 33% | 100% | 30% | 70% | 80% |
 | a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 90% |
-| b | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 50% |
-| c | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 87% |
+| b | claude-opus-5-5 | 30 | 100% | 100% | 13% | 73% | 43% |
+| c | claude-opus-5-5 | 30 | 67% | 100% | 15% | 65% | 73% |
 
 <!-- results:end -->
