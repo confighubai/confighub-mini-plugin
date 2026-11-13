@@ -7,7 +7,8 @@ budget_seconds: 450
 -->
 # A Kustomize app that Flux deploys, with production behind your approval
 
-For someone whose app is a Kustomize repository that Flux deploys from Git, who wants each change to production to wait for their yes, with a reason kept for every value. You connect the app with the Flux starter, move its delivery to the hub with no pod restarted, change it, undo the change, move it to your team's shared hub, and delete it. Everything runs on your computer, in a kind cluster with a real Flux.
+Flux already deploys your Kustomize app from Git. Move delivery to ConfigHub’s OCI gateway without replacing the running pods, then verify which approved revision Flux actually reconciles. Try it in a local kind cluster with the real controller before using it on your own app.
+
 ## Human
 ### What you need
 An unpacked confighub mini package ([install confighub mini](../../docs/install-mini.md)), Docker, `kind`, `kubectl`, Git and Python 3. confighub mini is ConfigHub made small enough to run on your computer: a hub, which keeps configuration with every change, who made it and why. For step 8, a sign-in to your organization's ConfigHub, such as hosted ConfigHub.

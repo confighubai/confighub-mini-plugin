@@ -7,7 +7,7 @@ budget_seconds: 150
 -->
 # A small web service: deploy it, update it, undo it, move it, delete it
 
-For a developer with a small web service whose settings are in a `.env` file. You end up knowing the five things you do with an app in ConfigHub, each with the commands it takes.
+You run a small service from a `.env` file. Try a settings change in staging, check what production still holds, then approve it and undo it. At the end, copy the setup to your team so the next change can start there.
 
 ## Human
 For a person following along in a terminal.
