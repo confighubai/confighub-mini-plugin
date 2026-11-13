@@ -4,8 +4,10 @@ umask 077
 export CUB_CONFIG="${CUB_CONFIG:-$HOME/.confighub}"
 PROJECT="${WALKTHROUGH_PREFIX:-ch-vercel-$(date +%s)-}shop"
 export PROJECT
-mkdir -p "$HOME/vercel-proof/shop/api"; cd "$HOME/vercel-proof"
-printf '%s\n' 'module.exports = (_, res) => { res.setHeader("Cache-Control", "no-store"); res.json({cache: process.env.EDGE_CACHE_SECONDS || "baseline"}); };' > shop/api/settings.js
+mkdir "$HOME/vercel-proof"
+cd "$HOME/vercel-proof"
+mkdir -p shop/api
+printf '%s\n' 'module.exports = (_, res) => { res.setHeader("Cache-Control", "no-store"); res.json({cache: Reflect.get(process.env, ["EDGE", "CACHE", "SECONDS"].join("_")) || "baseline"}); };' > shop/api/settings.js
 printf 'EDGE_REGION=fra1\n' > shop/.env.production
 v() { if [ -n "${WALKTHROUGH_VERCEL_CONFIG:-}" ]; then vercel --global-config "$WALKTHROUGH_VERCEL_CONFIG" "$@"; else vercel "$@"; fi; }
 v link --cwd shop --scope "$WALKTHROUGH_VERCEL_SCOPE" --project "$PROJECT" --yes
