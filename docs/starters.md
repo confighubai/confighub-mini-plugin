@@ -97,6 +97,8 @@ The steps below also need a hub. If none is running, start one with `cub mini in
 
 ## Connect a small web service
 
+The whole path for this starter, from connecting the app to moving it to a shared hub and deleting it, is one page with every command: [the web starter's walkthrough](../examples/walkthroughs/starter-web.md).
+
 The folder `menu` holds a small web service's settings. To make it:
 
 ```bash
