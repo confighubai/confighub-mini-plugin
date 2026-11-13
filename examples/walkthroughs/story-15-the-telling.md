@@ -58,8 +58,8 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
    A change to production waits for your approval: Raise the timeout to 120 s so the large model's requests do not time out. It was made just now; its name is api-base/upload-20261113-081043-yeny.
      It proposes for production, from the app's files:
        TIMEOUT_SECONDS: 30 → 120
-     To approve it, which puts it in production: cub mini approve api-base/upload-20261113-081043-yeny
-     To refuse it: cub mini refuse api-base/upload-20261113-081043-yeny --reason WHY
+     To approve it, which puts it in production: ~/.confighub-walkthrough/mini/cub mini approve api-base/upload-20261113-081043-yeny
+     To refuse it: ~/.confighub-walkthrough/mini/cub mini refuse api-base/upload-20261113-081043-yeny --reason WHY
    ```
 
 5. Sam refuses it, with a reason. Then nothing is waiting, and he is told so in one line:
@@ -125,7 +125,7 @@ A correct agent result, starting after Sam refused 120, leaves production at 30 
 <!-- agent-check again: cub unit data --space api-live app | grep -qx 'TIMEOUT_SECONDS=30' && cub mini waiting | grep -q 'TIMEOUT_SECONDS: .* → 180' -->
 <!-- agent-check-a again: g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g TIMEOUT_SECONDS 180 | grep -q . -->
 <!-- arms: a,b,c -->
-<!-- next-step: hub others can reach | A VM or a teammate can take these settings, with the same approvals, from a hub they can reach; want the command that copies this app there? -->
+<!-- next-step when "needs a hub it can reach": hub others can reach | A VM or a teammate can take these settings, with the same approvals, from a hub they can reach; want the command that copies this app there? -->
 
 ```sh
 cub unit data --space api-live app | grep -qx 'TIMEOUT_SECONDS=30' && cub mini waiting | grep -q 'TIMEOUT_SECONDS: .* → 180'
@@ -134,27 +134,29 @@ g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Lib
 
 <!-- results:begin -->
 
-Results, 13 November 2026, confighub mini 0.11.1-mini.1. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+Results, 13 November 2026, a development build of confighub mini after 0.11.1-mini.1. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Scripted run: passed, 40 seconds for the steps, within the page's budget of 180.
-- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+- Scripted run: passed, 37 seconds for the steps, within the page's budget of 180.
+- Agent runs (on confighub mini 0.11.1-mini.1): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading. Arms a and b ran on confighub mini 0.11.1-mini.1; their simulated persons were judged again with the offer made only at its moment, which this task does not reach.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
-| a | claude-opus-5-5 | 3/3 | 11.5 | $0.107 | 0 |
-| b | claude-opus-5-5 | 3/3 | 24.2 | $0.157 | 1 |
 | a | claude-sonnet-5-5 | 3/3 | 17.1 | $0.062 | 0 |
 | b | claude-sonnet-5-5 | 3/3 | 28.4 | $0.096 | 1 |
+| a | claude-opus-5-5 | 3/3 | 11.5 | $0.107 | 0 |
+| b | claude-opus-5-5 | 3/3 | 24.2 | $0.157 | 1 |
 
 No agent approved or refused a change to production.
 
 Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "A VM or a teammate can take these settings, with the same approvals, from a hub they can reach; want the command that copies this app there?"
 
-| Arm | Model | Persons | Noticed | Want the next step now | Later | In the way |
-|---|---|---|---|---|---|---|
-| a | claude-opus-5-5 | 30 | 100% | 0% | 3% | 20% |
-| b | claude-opus-5-5 | 30 | 100% | 0% | 43% | 87% |
-| a | claude-sonnet-5-5 | 30 | 100% | 0% | 0% | 13% |
-| b | claude-sonnet-5-5 | 30 | 100% | 0% | 43% | 80% |
+The plugin offers it once, after the answer at whose end it showed the moment the offer names ("needs a hub it can reach"). Offered is the share of persons it was shown to; want it now and later are over them.
+
+| Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|---|
+| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 7% |
+| b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 53% |
+| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 17% |
+| b | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 67% |
 
 <!-- results:end -->
