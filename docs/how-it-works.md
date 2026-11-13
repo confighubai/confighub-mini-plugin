@@ -213,7 +213,7 @@ Each kind of tip is shown at most once a week for a project, and a line about on
   The record added to a pull request has the same line.
 - `bin/confighub mini changes --usage`, run from the plugin's folder, lists each session kept for the repository, latest first, with its model use and its first request, and the total.
 - With `CUB_MINI_OTEL=1`, each turn's use is sent as a `confighub.model_use` event, with the counts as attributes.
-- **In a hub, from plugin 0.82.0.** When a change is kept in a hub, the turn's model use goes with it, beside the revision the turn made. Then, in a terminal:
+- **In a hub.** When a change is kept in a hub, the turn's model use goes with it, beside the revision the turn made. Then, in a terminal:
 
   ```
   cub mini receipts APP-COPY UNIT --revision N     one change: a Cost line beside who made it, why, and who approved it
@@ -225,7 +225,7 @@ Each kind of tip is shown at most once a week for a project, and a line about on
 
 **How it counts.** Claude Code writes a line for each part of an answer. Each call is counted once. The record's numbers for a session match the ones Claude Code itself reports.
 
-**Subagents.** From plugin 0.82.0 a subagent's calls are counted with the turn that started it, and shown apart as "its subagents"; one still running when its turn ends is counted up to then. **Not counted yet:** Codex sessions. The plugin counts tokens, not money, since prices differ by model and by contract.
+**Subagents.** A subagent's calls are counted with the turn that started it, and shown apart as "its subagents"; one still running when its turn ends is counted up to then. **Not counted yet:** Codex sessions. The plugin counts tokens, not money, since prices differ by model and by contract.
 
 `CUB_MINI_USAGE=0` turns it off.
 

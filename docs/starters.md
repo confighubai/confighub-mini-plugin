@@ -6,7 +6,7 @@ ConfigHub keeps your apps' settings, with every change, who made it and why, and
 
 To run the whole loop in a few minutes, a reviewer's fixes becoming the starter's next version, follow the walkthrough [each fix becomes where the next app starts](../examples/walkthroughs/story-25-alice-bob-hardened.md).
 
-Starters are an option, switched off unless you switch them on. They come with confighub mini from 0.10.7-mini.21; the output on this page is from 0.10.7-mini.23.
+Starters are an option, switched off unless you switch them on. They come with confighub mini ([the current release](install-mini.md#the-current-release)).
 
 You need an unpacked confighub mini package ([install confighub mini](install-mini.md)), a terminal, and Python 3 for the Vercel and author's-kit examples. Everything runs on your machine; no account is used and nothing is sent anywhere.
 
@@ -86,7 +86,7 @@ Two things are different. Spring Boot applies its auto-configuration every time 
 
 The package has five starters: `web`, for a small web service with a `.env`, `app.env` or compose file; `vercel`, for an app on Vercel; `parameter-store`, for an app that reads AWS Parameter Store; and `kustomize-argocd` and `kustomize-flux`, for a Kustomize repository that Argo CD or Flux deploys. The `vercel` and `parameter-store` starters run only against a stand-in: a small program in the package that answers as Vercel or AWS would, and keeps the settings in a local file. They use no account.
 
-In a terminal, with `MINI` the folder of the unpacked package, such as `~/.confighub/mini/confighub-mini-0.10.7-mini.23-darwin-arm64`:
+In a terminal, with `MINI` the folder of the unpacked package, such as `~/.confighub/mini/confighub-mini-VERSION-OS-ARCH`:
 
 ```bash
 export PATH="$MINI/bin:$PATH"

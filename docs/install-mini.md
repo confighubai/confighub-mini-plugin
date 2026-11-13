@@ -2,7 +2,18 @@
 
 confighub mini is ConfigHub made small enough to run on one machine: a hub on your laptop, free, with no account, no Docker and no cluster. It keeps your app's settings with the reason for each value, and can make changes to production wait for your approval.
 
-This page shows how to install it: in one step from Claude Code, on its own without the plugin, and in a container or CI job.
+This page shows how to install it: in one step from Claude Code, on its own without the plugin, and in a container or CI job. It is also the one page that says which versions are current; other pages link here rather than name a version.
+
+## The current release
+
+| What | Version |
+|---|---|
+| confighub mini | 0.11.1-mini.1 |
+| The ConfigHub server inside it | v0.11.1, the same version hosted ConfigHub runs |
+| `cub`, ConfigHub's command-line tool, inside it | v0.11.1 |
+| The download | 49 to 74 MB, depending on the platform |
+
+The ConfigHub plugin's own version is on the [releases page](https://github.com/confighubai/confighub-mini-plugin/releases). `/confighub:install-mini` always gets the newest confighub mini.
 
 ## What you are installing
 
@@ -12,7 +23,7 @@ A *hub* is one running ConfigHub server, with the database that holds your confi
 
 You work with a hub through `cub`, ConfigHub's command-line tool. The package includes `cub`.
 
-There is a package for macOS and one for Linux, each for ARM and for Intel, on this repository's [releases page](https://github.com/confighubai/confighub-mini-plugin/releases). Each package is about 48 to 73 MB.
+There is a package for macOS and one for Linux, each for ARM and for Intel, on this repository's [releases page](https://github.com/confighubai/confighub-mini-plugin/releases). The sizes are in [the current release](#the-current-release).
 
 ## Install in one step, from Claude Code
 
@@ -183,7 +194,7 @@ Things to know:
 
 Each package has a `provenance.json` file. It names the ConfigHub release the package was built from, and the PostgreSQL build inside it, with that build's SHA-256.
 
-The package includes `cub` v0.10.7, and every `cub mini` command runs that one, whichever `cub` comes first on your `PATH`. If you type plain `cub` commands with a `cub` of your own, v0.9.0 or later works with a hub from this package. To sign in with a key to hosted ConfigHub, which runs v0.10.7, use v0.10.7: v0.9.0 is refused there with "Not Found".
+The package includes its own `cub` ([which version](#the-current-release)), and every `cub mini` command runs that one, whichever `cub` comes first on your `PATH`. If you type plain `cub` commands with a `cub` of your own, use the same version. The commands on these pages use the flag names of ConfigHub v0.11, such as `--require-change-workflow`, which an older `cub` does not know, and hosted ConfigHub refuses a `cub` older than v0.11 as too old.
 
 The features of a hub are ConfigHub's own, not a separate version of them. That includes approvals, and ChangeWorkflows, which say what a change needs before it goes ahead, such as a person's approval. The steps for approvals are in [approvals.md](approvals.md).
 

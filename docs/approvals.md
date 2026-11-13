@@ -55,7 +55,7 @@ A secret for live, such as a database password, is yours to set, in a terminal: 
 
 ## Codex sessions on the proposal key
 
-From confighub mini 0.10.7-mini.13, `cub mini require-approval APP --variant live --agent bot --dir DIR` also prints a `run-codex` launcher. Start a fresh Codex CLI session with that exact launcher. An existing session started on your owner account still has owner authority.
+`cub mini require-approval APP --variant live --agent bot --dir DIR` also prints a `run-codex` launcher. Start a fresh Codex CLI session with that exact launcher. An existing session started on your owner account still has owner authority.
 
 The launcher selects the app, the proposal key and separate Codex settings, and clears inherited ConfigHub server and bearer-token overrides. It uses your existing file-based Codex login without printing or copying its contents. Native filesystem permissions keep model-run commands from your ConfigHub owner configuration and both Codex homes, while allowing app edits and use of the agent's key. Your own Codex settings and integrations stay as they were. `cub mini get` refreshes the launcher and hooks when it updates the package; restart through the launcher afterward.
 
@@ -118,7 +118,7 @@ Each `cub mini` command here is plain `cub` with the rest filled in ([which](cub
      Deployment/api/spec.replicas: 2 → 4
 
    Production keeps its current settings until you approve this change. To see the change and approve it:
-     ~/.confighub/mini/confighub-mini-0.10.7-mini.23-darwin-arm64/bin/cub mini approve api-base/upload-20261112-055043-twx5
+     ~/.confighub/mini/confighub-mini-VERSION-OS-ARCH/bin/cub mini approve api-base/upload-20261112-055043-twx5
    ```
 
    If the agent tries to approve its own change, or to write `api-live`, it is refused:
@@ -221,7 +221,7 @@ These are the same steps with `cub` alone, for an app you put on a shared hub wi
    cub component update api --permission View:serviceaccount:bot
    ```
 
-4. Make the agent's key, and sign the agent in with it, in a `cub` configuration of its own. Its sessions then cannot use yours. On hosted ConfigHub, use `cub` v0.11 or later: hosted ConfigHub refuses an earlier `cub` as too old:
+4. Make the agent's key, and sign the agent in with it, in a `cub` configuration of its own. Its sessions then cannot use yours. On hosted ConfigHub, use `cub` v0.11 or later ([versions](install-mini.md#the-current-release)): hosted ConfigHub refuses an earlier `cub` as too old:
 
    ```bash
    cub serviceaccount key add bot --generate bot

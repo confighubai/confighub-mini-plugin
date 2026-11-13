@@ -139,7 +139,7 @@ Flux's Kustomization `shop` is then Ready at the hand-back commit, nothing on th
 
 The same round trip works for an app synced by an Argo CD Application: onto the hub under the same Argo CD, with no pod restarted, and back to Git with the hub stopped and the same Deployment running.
 
-From confighub mini 0.10.7-mini.19, one command does each move, for an app adopted from a Kustomize repository or uploaded with `cub mini upload FOLDER --variant live --target none`:
+One command does each move, for an app adopted from a Kustomize repository or uploaded with `cub mini upload FOLDER --variant live --target none`:
 
 - `cub mini deploy-from-hub APP --variant live --repo DIR` finds the one Argo CD Application or Flux Kustomization that deploys the copy, and points it at the hub. It refuses, and says what it found, when none or several deploy it, when the copy holds other objects than Git deploys, or when its pod templates differ from what runs. It checks that the same pods run before and after. `--dry-run` says what it would change. A person runs it: on an agent's key it refuses.
 - `cub mini back-to-git APP --variant live --repo DIR` writes the copy into the folder the controller deployed from, with `CHANGES.md`, commits it, and once the controller's Git source has the commit, puts the controller back as it found it. `--push` pushes the commit; `--stop-hub` stops the hub once no copy deploys from it.
@@ -153,7 +153,7 @@ From confighub mini 0.10.7-mini.19, one command does each move, for an app adopt
 
 ## What it costs
 
-- **Way 1:** what [attaching the app](existing-app.md#what-it-costs) costs: about two minutes, and a 48 to 73 MB download.
+- **Way 1:** what [attaching the app](existing-app.md#what-it-costs) costs, including the confighub mini download ([its size](../install-mini.md#the-current-release)).
 - **Way 2:** a GitHub workflow, a service account that may only view, and branch protection. A hub GitHub's runners can reach, or the check run from your laptop.
 - **Way 3, on your laptop:** a kind cluster with Flux or Argo CD, about two minutes to make; seconds to move the app; about 30 seconds to hand it back.
 
