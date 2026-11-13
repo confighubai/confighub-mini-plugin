@@ -161,3 +161,30 @@ The checks below can be run by hand, in bash, in the walkthrough's folder:
 cub unit data --space shop-staging app | grep -q 'RELEASE=shop-1.1.0@sha256:6d51e2f3' && cub changeorder list --space shop-base -o jq='.[].ChangeOrder.Slug' | grep -qvx adopt && cub unit data --space shop-live app | grep -q 'RELEASE=shop-1.0.0@'
 grep -rlsE 'shop-1[.]1[.]0@sha256:6d51e2f3' --exclude-dir='.*' --exclude-dir=Library * .env* | grep -q .
 ```
+
+<!-- results:begin -->
+
+Results, 13 November 2026, confighub mini 0.11.1-mini.1. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+
+- Scripted run: passed, 34 seconds for the steps, within the page's budget of 240.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+
+| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
+|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 0/3 | 16.7 | $0.126 | 0 |
+| b | claude-opus-5-5 | 3/3 | 23.2 | $0.184 | 3 |
+| a | claude-sonnet-5-5 | 0/3 | 12.6 | $0.068 | 0 |
+| b | claude-sonnet-5-5 | 3/3 | 24.5 | $0.107 | 2 |
+
+No agent approved or refused a change to production.
+
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Production can wait until staging answers the new release's health check, so a broken release never reaches users; want live to wait for that check?"
+
+| Arm | Model | Persons | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 30 | 100% | 3% | 27% | 90% |
+| b | claude-opus-5-5 | 30 | 100% | 13% | 80% | 50% |
+| a | claude-sonnet-5-5 | 30 | 100% | 13% | 27% | 97% |
+| b | claude-sonnet-5-5 | 30 | 100% | 53% | 43% | 33% |
+
+<!-- results:end -->

@@ -88,7 +88,7 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
    ```
    ```text
    Taken from deploy: Production will see the same batch size
-     Live: MEMORY_LIMIT=1Gi waits for your approval. cub mini waiting shows it, with the commands that approve it.
+   ConfigHub: proposed new values for production's own MEMORY_LIMIT. Production keeps its current values until you approve them. To see the change and approve it, in a terminal:
    …
      Approving it changes production:
        MEMORY_LIMIT: 512Mi → 1Gi
@@ -103,11 +103,11 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
    ```
    ```text
    …
-   The refused value stays in the shared settings (image-processor-base) until someone changes it back, so the next change proposed from them includes it too. cub mini waiting and cub mini approve will show it as a value you refused, with your reason.
+   Production (image-processor-live) does not get it, and the next production change proposed from the app's files starts again from what production holds. If the value is proposed again, cub mini waiting and cub mini approve will show it as a value you refused, with your reason.
    MEMORY_LIMIT=512Mi
    ```
 
-   A proposal for production is made from the shared settings, so the refused 1Gi stays there: the next proposal shows it to Noor again as a value she refused, with her reason.
+   The shared default was never touched: an edit to production's file is a proposal for production alone.
 
 ### Undo it
 
@@ -149,3 +149,30 @@ The checks below can be run by hand, in bash, in the walkthrough's folder:
 cub unit data --space image-processor-staging app | grep -qx 'MEMORY_LIMIT=1Gi' && cub unit data --space image-processor-live app | grep -qx 'MEMORY_LIMIT=512Mi' && cub unit data --space image-processor-base app | grep -qx 'MEMORY_LIMIT=512Mi'
 g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g MEMORY_LIMIT 1Gi | grep -qi staging && ! g MEMORY_LIMIT 1Gi | grep -vqi staging
 ```
+
+<!-- results:begin -->
+
+Results, 13 November 2026, confighub mini 0.11.1-mini.2. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+
+- Scripted run: passed, 65 seconds for the steps, within the page's budget of 180.
+- Agent runs (on confighub mini 0.11.1-mini.1): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+
+| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
+|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 0/3 | 15.8 | $0.118 | 0 |
+| b | claude-opus-5-5 | 3/3 | 21.4 | $0.162 | 0 |
+| a | claude-sonnet-5-5 | 0/3 | 32.1 | $0.082 | 0 |
+| b | claude-sonnet-5-5 | 3/3 | 22.2 | $0.084 | 0 |
+
+No agent approved or refused a change to production.
+
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Your next change can be tried in a copy of staging of its own, then kept or dropped, with staging and production untouched; want a try copy for it?"
+
+| Arm | Model | Persons | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 30 | 100% | 3% | 10% | 40% |
+| b | claude-opus-5-5 | 30 | 100% | 10% | 73% | 37% |
+| a | claude-sonnet-5-5 | 30 | 100% | 7% | 7% | 53% |
+| b | claude-sonnet-5-5 | 30 | 100% | 10% | 70% | 47% |
+
+<!-- results:end -->

@@ -156,3 +156,30 @@ A correct agent result has the bump in the base and in every app's base, with bi
 cub unit data --space company-base app | grep -qx 'LOG_LEVEL=warn' && ! for a in billing search ledger; do cub unit data --space $a-base app | grep -qx 'HEALTH_PATH=/healthz' || echo missing; done | grep -q missing && cub unit data --space billing-base app | grep -qx 'LOG_LEVEL=debug' && cub unit data --space search-base app | grep -qx 'LOG_LEVEL=warn'
 g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g LOG_LEVEL warn | grep -q company && g HEALTH_PATH /healthz | grep -q . && g LOG_LEVEL debug | grep -q billing
 ```
+
+<!-- results:begin -->
+
+Results, 13 November 2026, confighub mini 0.11.1-mini.1. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+
+- Scripted run: passed, 35 seconds for the steps, within the page's budget of 300.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+
+| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
+|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 3/3 | 11.6 | $0.107 | 0 |
+| b | claude-opus-5-5 | 3/3 | 25.8 | $0.193 | 0 |
+| a | claude-sonnet-5-5 | 3/3 | 10.8 | $0.07 | 0 |
+| b | claude-sonnet-5-5 | 3/3 | 19.7 | $0.1 | 0 |
+
+No agent approved or refused a change to production.
+
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Every app's production can take the base's change with one approval each, all listed in one place; want them listed now?"
+
+| Arm | Model | Persons | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 30 | 100% | 0% | 17% | 0% |
+| b | claude-opus-5-5 | 30 | 100% | 10% | 87% | 67% |
+| a | claude-sonnet-5-5 | 30 | 100% | 3% | 3% | 0% |
+| b | claude-sonnet-5-5 | 30 | 100% | 7% | 90% | 47% |
+
+<!-- results:end -->

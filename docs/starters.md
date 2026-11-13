@@ -89,7 +89,7 @@ export PATH="$MINI/bin:$PATH"
 export CUB_MINI_STARTERS=on
 ```
 
-The steps below also need a hub. If none is running, start one with `cub mini install` ([install confighub mini](install-mini.md)). The first `cub mini adopt` with starters on puts the package's five starters into your hub, as version 1, and prints the one line that approves them; until you run it, adopt uses the package's own files. After that the hub is where adopt reads starters from, and no folder is needed. To switch starters off again, `unset CUB_MINI_STARTERS` and delete the Space with `cub space delete starters --recursive`; apps you connected keep the settings they have.
+The steps below also need a hub. If none is running, start one with `cub mini install` ([install confighub mini](install-mini.md)). The first `cub mini adopt` with starters on puts the package's five starters into your hub, as version 1, and prints the one line that approves them, which is yours to run, not an agent's, even when an agent ran the adopt; until you run it, adopt uses the package's own files. After that the hub is where adopt reads starters from, and no folder is needed. To switch starters off again, `unset CUB_MINI_STARTERS`, and delete the Component's two Spaces and the Component with `cub space delete starters-approved --recursive`, `cub space delete starters-base --recursive` and `cub component delete starters`; apps you connected keep the settings they have.
 
 ## What connecting an app shows
 
@@ -149,10 +149,10 @@ After a starter has written its settings, they belong to you and your team, to c
 
 A starter file on one person's machine is easy to change by accident, and each person may have a different copy. You can keep it in the hub instead, so that everyone connects apps with the same one, and each version of it is one you approved.
 
-1. Switch starters on with `export CUB_MINI_STARTERS=on` and run `cub mini adopt` once, as [above](#switch-starters-on) says. The hub then has the Space `starters`, the rule `workflows/starters-approval` that names you as the approver, and the package's starters as version 1. Approve them with the line adopt printed, which looks like this:
+1. Switch starters on with `export CUB_MINI_STARTERS=on` and run `cub mini adopt` once, as [above](#switch-starters-on) says. The hub then keeps the starters the way ConfigHub keeps an app: a Component `starters`, whose base, the Space `starters-base`, is where a version is proposed, and whose approved Variant, the Space `starters-approved`, is where a version waits for your approval and is read from. The rule `workflows/starters-approved-approval` names you as the approver, and the package's starters are there as version 1. Approve them with the line adopt printed, which looks like this:
 
    ```bash
-   cub variant approve starters --change-order starters/package-starters-v1 --note "Read them"
+   cub variant approve starters-approved --all --note "Read them"
    ```
 
    It prints `Recorded pass Approval attestation … in starters`. An attestation is ConfigHub's record of an approval: who gave it, with the note, for which revision. From now on, `cub mini adopt` uses the starters the hub holds and needs no folder.
@@ -160,12 +160,12 @@ A starter file on one person's machine is easy to change by accident, and each p
 2. Put your team's starter in the hub. Write `team-api.yaml` anywhere, as above, then three ordinary `cub` commands: put the file in as a Unit of data, propose it as version 1 with a change order, and approve it:
 
    ```bash
-   cub unit create --space starters team-api team-api.yaml --toolchain AppConfig/YAML --change-desc "The team's starter for its APIs, version 1"
-   cub changeorder create --space starters team-api-v1 --in-scope-space starters --change-workflow workflows/starters-approval --description "Version 1 of the team-api starter"
-   cub variant approve starters --change-order starters/team-api-v1 --note "Read it: the team's settings for an API"
+   cub unit create --space starters-base team-api team-api.yaml --toolchain AppConfig/YAML --change-desc "The team's starter for its APIs, version 1"
+   cub changeorder create --space starters-base team-api-v1 --in-scope-space starters-approved --change-workflow workflows/starters-approved-approval --description "Version 1 of the team-api starter"
+   cub mini approve starters-base/team-api-v1 --note "Read it: the team's settings for an API"
    ```
 
-   The starter is kept as data, so one default and its reason can be read, changed and asked about with `cub`: `cub unit list --space starters --where-data "defaults.*.key = 'API_TIMEOUT_SECONDS'"` names the starters that set that key.
+   The starter is kept as data, so one default and its reason can be read, changed and asked about with `cub`: `cub unit list --space starters-approved --where-data "defaults.*.key = 'API_TIMEOUT_SECONDS'"` names the starters that set that key.
 
 3. Connect an app. The folder `orders` has a `package.json`, a `.env` with `LOG_LEVEL=warn` and `API_CACHE_SECONDS=30`, and a `.env.production` with `LOG_LEVEL=error`:
 
@@ -178,13 +178,13 @@ A starter file on one person's machine is easy to change by accident, and each p
    ```
 
    ```
-   Starter: team-api (version 1, starters/team-api revision 2): One of the team's Node APIs, with its settings in .env.
-     Kept in the hub: version 1 is starters/team-api revision 2, approved by admin@local.confighub.dev.
+   Starter: team-api (version 1, starters-approved/team-api revision 3): One of the team's Node APIs, with its settings in .env.
+     Kept in the hub: version 1 is starters-approved/team-api revision 3, approved by admin@local.confighub.dev.
      It fits: package.json is there; .env is there.
      Sets API_TIMEOUT_SECONDS=10, as a setting: A request stops after ten seconds, so one slow caller cannot hold every worker.
      Leaves API_CACHE_SECONDS alone: it is set already, API_CACHE_SECONDS=30, by you, in .env.
      Wires: puts orders-live behind your approval, as adopt does; delivery is left to you.
-     Order: web (version 1, web.yaml), then team-api: team-api is after web, so its defaults go on top of web's; it fits this app too.
+     Order: web (version 1, starters-approved/web revision 2), then team-api: team-api is after web, so its defaults go on top of web's; it fits this app too.
      Sets PORT=8080, by web: Every small web service listens on one port, the same in every copy.
      Sets REPLICAS=2, by web: Two instances, so that one can restart without the service going down.
      Sets RELEASE=none, by web: Nothing is released until a copy names a release.
@@ -194,7 +194,7 @@ A starter file on one person's machine is easy to change by accident, and each p
    …
    ```
 
-   The starter came from the hub: its version 1 is revision 2 of the Unit `starters/team-api`. Both starters set settings here, as [two starters on one app](#two-starters-on-one-app) explains; `web` left the log level alone in the base and in production. The `admin@local.confighub.dev` it names is the sign-in that `cub mini install` makes for you. Approve production's settings with `cub mini approve orders-base/adopt`.
+   The starter came from the hub: its version 1 is a revision of the Unit `starters-approved/team-api`. Both starters set settings here, as [two starters on one app](#two-starters-on-one-app) explains; `web` left the log level alone in the base and in production. The `admin@local.confighub.dev` it names is the sign-in that `cub mini install` makes for you. Approve production's settings with `cub mini approve orders-base/adopt`.
 
 ### How a team's fixes become the next version
 
@@ -207,33 +207,33 @@ Say the team finds that every API should refuse a request larger than 64 KiB. So
 ```
 
 ```bash
-cub unit update --space starters team-api team-api-v2.yaml --change-desc "Version 2: a limit on request size"
-cub changeorder create --space starters team-api-v2 --in-scope-space starters --change-workflow workflows/starters-approval --description "Version 2 of the team-api starter"
-cub variant approve starters --change-order starters/team-api-v2 --note "Read it: every API should refuse oversized requests"
+cub unit update --space starters-base team-api team-api-v2.yaml --change-desc "Version 2: a limit on request size"
+cub changeorder create --space starters-base team-api-v2 --in-scope-space starters-approved --change-workflow workflows/starters-approved-approval --description "Version 2 of the team-api starter"
+cub mini approve starters-base/team-api-v2 --note "Read it: every API should refuse oversized requests"
 ```
 
-To change one default that exists, with its reason, one command is enough, because the starter is data: `cub function set --space starters --unit team-api --toolchain AppConfig/YAML --change-desc WHY -- set-yq '.version = 2 | (.defaults[] | select(.key == "API_TIMEOUT_SECONDS") | .value) = "5"'`. Then the change order and approval are the same two lines.
+To change one default that exists, with its reason, one command is enough, because the starter is data: `cub function set --space starters-base --unit team-api --toolchain AppConfig/YAML --change-desc WHY -- set-yq '.version = 2 | (.defaults[] | select(.key == "API_TIMEOUT_SECONDS") | .value) = "5"'`. Then the change order and approval are the same two lines. The approval promotes it into `starters-approved`, the way a change to an app goes from staging to production.
 
-Anyone the hub lets change the Space `starters` can propose a version. Only a person the rule names can approve it, and an agent's key never can.
+Anyone the hub lets change the Space `starters-base` can propose a version. Only a person the rule names can approve it, and an agent's key never can.
 
 **The next app starts from version 2.** A new app, `billing`, with a `package.json` and a `.env` that sets `LOG_LEVEL=info`, connected after the approval, gets the new setting with no one typing it:
 
 ```
-Starter: team-api (version 2, starters/team-api revision 3): One of the team's Node APIs, with its settings in .env.
+Starter: team-api (version 2, starters-approved/team-api revision 4): One of the team's Node APIs, with its settings in .env.
 …
   Sets API_MAX_REQUEST_BYTES=65536, as a setting: A request larger than 64 KiB is refused before it is read, which stopped last month's flood of oversized uploads.
 …
 ```
 
-**An app connected earlier takes version 2 and keeps its own values.** Running `cub mini adopt orders` again offers it the new version:
+**An app connected earlier takes version 2 and keeps its own values.** Running `cub mini adopt orders` again offers it the new version. The new setting is in the second Unit already, written when `billing` was connected, so `orders` is told only that it holds version 2:
 
 ```
+Starter: orders was connected with web, version 1, beneath team-api, already; it writes nothing for web.
 Starter: team-api, version 2, is newer than version 1, which orders was connected with. It writes once, in pattern-team-api/team-api-service, what version 2 changes where the Unit still holds the starter's earlier value, and changes no value anyone else set.
-  Starter team-api, version 2, wrote API_MAX_REQUEST_BYTES=65536 in pattern-team-api/team-api-service (it held version 1): A request larger than 64 KiB is refused before it is read, which stopped last month's flood of oversized uploads.
   pattern-team-api/team-api-service now holds version 2. orders takes it by cub mini upgrade pattern-team-api/team-api-service --change-desc WHY, which keeps every value set by a person; staging then by cub mini promote orders-staging, and live by a change order you approve.
 ```
 
-Two Units are involved. `starters/team-api` holds the starter file. `pattern-team-api/team-api-service` holds the settings the starter gives, and every app the starter connects is made from it. Version 2 wrote its new setting into the second; the output ends with the commands that bring it to the app. `WHY` stands for your reason. Run them:
+Two Units are involved. `starters-approved/team-api` holds the starter file. `pattern-team-api/team-api-service` holds the settings the starter gives, and every app the starter connects is made from it. Version 2 wrote its new setting into the second when `billing` was connected; the output ends with the commands that bring it to the app. `WHY` stands for your reason. Run them:
 
 ```bash
 cub mini upgrade pattern-team-api/team-api-service --change-desc "orders takes version 2 of the team's starter"
@@ -250,11 +250,11 @@ cub component list -o jq='.[] | "\(.Component.Slug): \(.Component.Annotations["c
 
 ```
 …
-orders: team-api@2 from starters/team-api@3; order: web@1 then team-api@2
-billing: team-api@2 from starters/team-api@3; order: web@1 then team-api@2
+orders: team-api@2 from starters-approved/team-api@4; order: web@1 then team-api@2
+billing: team-api@2 from starters-approved/team-api@4; order: web@1 then team-api@2
 ```
 
-Both apps are on version 2 of `team-api`, which is revision 3 of the Unit `starters/team-api`, on top of version 1 of `web`.
+Both apps are on version 2 of `team-api`, which is a revision of the Unit `starters-approved/team-api`, on top of version 1 of `web`.
 
 **Every app at once.** With many apps made from the starter, one command takes the version through all of them: each app's base takes it, each app's staging takes it at once, and each app's production gets a change order of its own, behind that app's own approval.
 
@@ -337,6 +337,6 @@ It starts a hub of its own and removes it at the end. "The contract" in its outp
 
 ## Undo it
 
-- **Switch starters off:** `unset CUB_MINI_STARTERS`, and `cub space delete starters --recursive` if the hub keeps starters. Apps already connected keep their settings.
+- **Switch starters off:** `unset CUB_MINI_STARTERS`, and the Component's Spaces (`cub space delete starters-approved --recursive`, `cub space delete starters-base --recursive`, `cub component delete starters`) if the hub keeps starters. Apps already connected keep their settings.
 - **Change a setting a starter gave:** change it like any other, for example `cub mini set APP KEY=VALUE --change-desc "WHY"`. The starter never sets it again.
 - **Disconnect an app:** your files were never changed. `cub mini copy APP --to-dir DIR` writes the hub's copies out as plain files, with the reason for each value. Every way out is in [going back](journeys/going-back.md).

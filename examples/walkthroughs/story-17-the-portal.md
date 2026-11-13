@@ -155,3 +155,30 @@ A correct agent result leaves no copy breaking a rule, with worker's staging pri
 cub unit data --space worker-staging app | grep -qx 'PUBLIC=false' && test "$(cub unit list --space '*' --where 'LEN(ApplyGates) > 0' -o jq='.[].Unit.Slug' | wc -l | tr -d ' ')" = 0 && cub trigger get --space pattern-web not-public >/dev/null
 g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g PORT 3100 | grep -q . && ! g PUBLIC true | grep -q .
 ```
+
+<!-- results:begin -->
+
+Results, 13 November 2026, confighub mini 0.11.1-mini.1. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+
+- Scripted run: passed, 50 seconds for the steps, within the page's budget of 240.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+
+| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
+|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 0/3 | 19.9 | $0.179 | 0 |
+| b | claude-opus-5-5 | 3/3 | 19.6 | $0.165 | 0 |
+| a | claude-sonnet-5-5 | 0/3 | 16.4 | $0.067 | 0 |
+| b | claude-sonnet-5-5 | 3/3 | 21.2 | $0.085 | 0 |
+
+No agent approved or refused a change to production.
+
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Any rule you choose, such as no debug logging in production, can be checked on every service the same way; want your first one added?"
+
+| Arm | Model | Persons | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 30 | 100% | 27% | 17% | 90% |
+| b | claude-opus-5-5 | 30 | 100% | 3% | 80% | 63% |
+| a | claude-sonnet-5-5 | 30 | 100% | 13% | 17% | 80% |
+| b | claude-sonnet-5-5 | 30 | 100% | 0% | 73% | 77% |
+
+<!-- results:end -->

@@ -31,8 +31,8 @@ Use an unpacked [mini package](../../docs/install-mini.md) that includes the Day
    printf 'DAYTONA_BATCH_LIMIT=120\n' > batch/daytona.env
    cp batch/daytona.env batch/app.env
    cub mini adopt batch
-   cub unit get daytona --space starters -o jq=.Unit.ToolchainType
-   cub variant approve starters --change-order starters/package-starters-v1 --note "Review the packaged starters"
+   cub unit get daytona --space starters-base -o jq=.Unit.ToolchainType
+   cub variant approve starters-approved --all --note "Review the packaged starters"
    cub mini require-approval batch --variant live --agent batch-proposer
    cub mini copy batch --to-file "$PWD/returned/baseline.tar.gz"
    ```
@@ -93,7 +93,7 @@ The checks read the structured starter, the staging and live Units, and the shar
 
 <!-- agent-task: deploy -->
 > Set up my batch job so I can try changes while keeping production at 120.
-<!-- agent-check deploy: cub unit get daytona --space starters -o jq=.Unit.ToolchainType | grep -qx AppConfig/YAML && cub unit data app --space batch-live | grep -qx DAYTONA_BATCH_LIMIT=120 -->
+<!-- agent-check deploy: cub unit get daytona --space starters-base -o jq=.Unit.ToolchainType | grep -qx AppConfig/YAML && cub unit data app --space batch-live | grep -qx DAYTONA_BATCH_LIMIT=120 -->
 <!-- agent-task: update -->
 > Try 240 because the queue spiked, and leave production at 120.
 <!-- agent-check update: cub unit data app --space batch-staging | grep -qx DAYTONA_BATCH_LIMIT=240 && cub unit data app --space batch-live | grep -qx DAYTONA_BATCH_LIMIT=120 && grep -q 'after a queue spike' returned/proposal.txt -->
