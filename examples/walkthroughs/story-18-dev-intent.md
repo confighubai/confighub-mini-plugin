@@ -31,11 +31,16 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
    ```
    `--arrival no` answers the one question a first install asks: whether a hub may start by itself when an agent works in an app's folder.
 
-2. Ana's agent wrote the notes API with its settings in `.env`. One command puts it on the team's pattern, `pattern-web`: default settings for a small web service, and rules each change must pass. A rule here is a validating Trigger, which ConfigHub runs on every change:
-   <!-- run: adopt -->
+2. Ana's agent wrote the notes API, with its settings in `.env`:
+   <!-- run: app files -->
    ```sh
    mkdir -p ~/walkthrough/notes && cd ~/walkthrough
    printf 'PORT=3000\nLOG_LEVEL=info\n' > notes/.env
+   ```
+
+3. One command puts it on the team's pattern, `pattern-web`: default settings for a small web service, and rules each change must pass. A rule here is a validating Trigger, which ConfigHub runs on every change:
+   <!-- run: adopt -->
+   ```sh
    cub mini adopt notes | sed -n 1,4p
    cub mini approve notes-base/adopt --note "Ana's starting values" --yes >/dev/null
    ```
@@ -46,7 +51,7 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
      Your settings that differ from the defaults in pattern-web/web-service: PORT=3000. A new version of those defaults will not overwrite them.
    ```
 
-3. The rules are ordinary ConfigHub, kept with the pattern:
+4. The rules are ordinary ConfigHub, kept with the pattern:
    <!-- run: rules any-order -->
    ```sh
    cub trigger list --space pattern-web -o jq='.[].Trigger.Slug'
@@ -58,17 +63,17 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
    replicas-limit
    ```
 
-4. An agent, on a key of its own, sets 50 replicas for staging. The value is kept in the hub, the agent is told it breaks a rule, and it is not released:
+5. An agent, on a key of its own, sets 50 replicas for staging. The value is kept in the hub, the agent is told it breaks a rule, and it is not released:
    <!-- run: break -->
    ```sh
    cub mini require-approval notes --variant live --agent bot >/dev/null
-   CUB_CONTEXT=bot cub mini set notes REPLICAS=50 --variant staging --change-desc "Handle the launch" | grep rules
+   cub --context bot mini set notes REPLICAS=50 --variant staging --change-desc "Handle the launch" | grep rules
    ```
    ```text
    This breaks the rules set for app (pattern-web/replicas-limit/vet-cel). The value is in the hub, and it will not be released or reach the service until it is fixed.
    ```
 
-5. The machine that runs staging keeps what it has: `cub mini pull`, which writes a copy's settings into the service's folder, refuses:
+6. The machine that runs staging keeps what it has: `cub mini pull`, which writes a copy's settings into the service's folder, refuses:
    <!-- run: pull-refused -->
    ```sh
    cub mini pull notes --variant staging --dir ~/walkthrough/service || true
@@ -77,10 +82,10 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
    cub mini: notes-staging/app breaks the rules set for it (pattern-web/replicas-limit/vet-cel), so nothing was written and the service keeps what it has; fix the value in the hub
    ```
 
-6. The agent asks Ana, who settles on 3. The next pull writes it:
+7. The agent asks Ana, who settles on 3. The next pull writes it:
    <!-- run: fix -->
    ```sh
-   CUB_CONTEXT=bot cub mini set notes REPLICAS=3 --variant staging --change-desc "Three for the launch, within the team's limit" >/dev/null
+   cub --context bot mini set notes REPLICAS=3 --variant staging --change-desc "Three for the launch, within the team's limit" >/dev/null
    cub mini pull notes --variant staging --dir ~/walkthrough/service
    grep REPLICAS service/app.env
    ```
@@ -89,7 +94,7 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
    REPLICAS=3
    ```
 
-7. Ana's second app, a blog, starts like the first. It is made from the notes app, keeps its own values, and takes what notes changes next:
+8. Ana's second app, a blog, starts like the first. It is made from the notes app, keeps its own values, and takes what notes changes next:
    <!-- run: second-app -->
    ```sh
    mkdir blog && printf 'PORT=3001\nRELEASE=blog-1.0.0\n' > blog/.env
@@ -125,14 +130,14 @@ For an AI agent doing this for a person.
 
 This proves: the settings were stored in the hub on the team's pattern, and a value that breaks a rule was refused by `cub mini pull` while a valid one was written to a local folder. What was really used: confighub mini on this computer; no service runs.
 
-A correct agent result has the notes app on `pattern-web`, with staging and a live copy behind approval. The checks below can be run by hand in the walkthrough's folder:
+A correct agent result has the notes app on `pattern-web`, with staging and a live copy behind approval. The checks below hold right after step 3. The checks below can be run by hand in the walkthrough's folder:
 
-<!-- agent-task -->
+<!-- agent-task: adopt after=adopt -->
 > Build me a small notes API, with its settings in an env file, and set it up in our ConfigHub to fit the team's pattern, pattern-web, with a staging and a live copy.
 
-<!-- agent-check: test "$(cub unit get app --space notes-base -o jq=.Unit.UpstreamUnitID)" = "$(cub unit get web-service --space pattern-web -o jq=.Unit.UnitID)" && cub space get notes-staging >/dev/null && cub changeworkflow get --space workflows notes-live-approval >/dev/null -->
-<!-- agent-check-a: ls notes/.env* >/dev/null && ls -a notes | grep -qi staging && ls -a notes | grep -qiE 'live|prod' -->
-<!-- arms: a,b -->
+<!-- agent-check adopt: test "$(cub unit get app --space notes-base -o jq=.Unit.UpstreamUnitID)" = "$(cub unit get web-service --space pattern-web -o jq=.Unit.UnitID)" && cub space get notes-staging >/dev/null && cub changeworkflow get --space workflows notes-live-approval >/dev/null -->
+<!-- agent-check-a adopt: ls notes/.env* >/dev/null && ls -a notes | grep -qi staging && ls -a notes | grep -qiE 'live|prod' -->
+<!-- arms: a,b,c -->
 
 ```sh
 test "$(cub unit get app --space notes-base -o jq=.Unit.UpstreamUnitID)" = "$(cub unit get web-service --space pattern-web -o jq=.Unit.UnitID)" && cub space get notes-staging >/dev/null && cub changeworkflow get --space workflows notes-live-approval >/dev/null
