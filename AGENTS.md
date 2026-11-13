@@ -14,6 +14,8 @@ There are three ways to run a hub. They are the same server, and `cub`, ConfigHu
 
 Hosted ConfigHub and the enterprise edition support many people in one organization. An app made on confighub mini can be copied to a shared hub ([from your laptop to a shared hub](docs/from-plugin-to-confighub.md)).
 
+Every starter, user story and tool has a walkthrough in [examples/walkthroughs/](examples/walkthroughs/README.md): one page that does one job from start to finish. Each has an "Agent" section written for you. Before you do one of those jobs for a person, read the matching walkthrough.
+
 **The plugin** in this repository, for Claude Code and Codex, is the easy way to start. On its own, with no hub, it records each setting an agent changes, with the request and the reason, and tells the next agent before it undoes an earlier change. When the person asks for an app "using ConfigHub", it sets up confighub mini.
 
 ## How an app lives in a hub
@@ -59,6 +61,7 @@ A starter is one short YAML file that gives every new app of one kind a team's d
 
 | The person asks | Read |
 |---|---|
+| Show me how to do X, step by step | [walkthroughs](examples/walkthroughs/README.md): one page for each tool, starter and user story |
 | How do I start? | [README](README.md), then [a new app](docs/journeys/new-app.md) or [an app you already have](docs/journeys/existing-app.md) |
 | My app is deployed by Argo CD or Flux | [an app Argo CD or Flux deploys](docs/journeys/gitops-app.md) |
 | How do approvals work? | [approvals](docs/approvals.md) |
