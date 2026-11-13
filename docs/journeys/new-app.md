@@ -6,15 +6,7 @@ To see a new app fit a team's pattern and its rules from a terminal, follow the 
 
 The app might run on your own machine, on another machine, in CI, on one or many sandbox nodes, in a shared development cluster, or eventually in production. This walkthrough creates staging and live configuration in the hub. Connect the running copies to that configuration using the deployment path for your target ([where the app runs](../agent-workflow.md#where-the-app-runs)).
 
-## Words used on this page
-
-- **A hub** is one running ConfigHub: a server that keeps your app's settings, with every change, who made it and why. A hub can run on your own computer, or be shared on a network: a **shared hub**, hosted ConfigHub or ConfigHub's enterprise edition, is one that a team, its agents and its CI jobs all reach. This guide uses a hub on your own computer, confighub mini. The same app can move to a shared hub later ([from the plugin to ConfigHub](../from-plugin-to-confighub.md)).
-- **confighub mini** is ConfigHub made small enough to run on your laptop, as two processes: the server and its PostgreSQL database. It needs no Docker, no cluster and no account.
-- **`cub`** is ConfigHub's command-line tool. It comes with confighub mini.
-- **The base** is the version of the app's settings that changes first. **The staging copy** is made from the base and takes each change at once. **The live copy** holds the settings intended for production. It takes a change only when you approve it. A running service uses those settings once its deployment path is connected.
-- **A Space** is where a hub keeps one copy. The app `greeter` has three: `greeter-base`, `greeter-staging` and `greeter-live`.
-- **A change order** is a request for a change to reach the live copy. It waits until you **approve** it, or **refuse** it.
-- **The agent's key** is a sign-in of the agent's own, for a **service account**: an account for a program rather than a person. On it, the agent can change the base and staging, and propose changes to live. It cannot approve them.
+The words on this page, such as *hub*, *base* and *change order*, are explained in [the glossary](../README.md#words).
 
 ## What it costs
 

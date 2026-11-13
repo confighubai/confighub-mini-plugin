@@ -28,11 +28,4 @@ What you do with confighub mini on your laptop works the same on your organizati
 
 Where the table says "Nothing yet", plain `cub` has no equivalent, and only `cub mini` does it for now. These are the commands that carry work between hubs: out to files and Git, and up from a hub of your own to your organization's ConfigHub.
 
-## Words used in the table
-
-- A *hub* is one running ConfigHub server. *confighub mini* runs a hub on one machine.
-- A *Space* holds configuration, as *Units*: one Unit per file or resource.
-- A *Component* is one piece of software. Its *base* is the version you change. A *variant*, such as `live`, is a copy made from the base for one place it runs. Its Space is named `COMPONENT-V`, such as `api-live`.
-- To *promote* a variant is to bring the base's changes into it. A *release* is a published version of a variant that a cluster pulls.
-- A *Link* ties one Unit to another, so that a value in one comes from the other. The hub keeps it resolved, so a change to the provider reaches the copy.
-- A *ChangeWorkflow* says what a change needs before it reaches a variant, such as a person's approval. A *service account* is the identity an agent uses, with a key of its own.
+The words on this page, such as *hub*, *base* and *change order*, are explained in [the glossary](README.md#words).

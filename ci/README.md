@@ -8,13 +8,7 @@ This page is for teams that run a coding agent in a CI job to change their confi
 | [agent-task.yml](agent-task.yml) | An agent that works in a ConfigHub of its own for the length of the job, and hands back a pull request | `ANTHROPIC_API_KEY`, and a hub file in the repository |
 | [agent-proposes.yml](agent-proposes.yml) | An agent that proposes a change in your organization's ConfigHub, for a person to approve | Your organization's ConfigHub, and a key for the agent |
 
-## Words used on this page
-
-- **ConfigHub** is a server that holds your configuration and keeps each change to it. A **hub** is one running ConfigHub: hosted, on your own server, or **confighub mini**, which is ConfigHub made small enough to run on one machine.
-- The **ConfigHub plugin** runs in the agent's Claude Code session. It keeps a **record** of each value the agent changes, with the request and the reason.
-- The **base** is the version of an app's configuration that you change. Each environment, such as dev or prod, has its own **copy** made from the base.
-- A **change order** is how an agent asks for a change in the base to reach an environment's copy. An **approval** is a person's yes to that change, recorded in ConfigHub.
-- An agent's **key** is the private key of a **service account**, an account for a program rather than a person.
+The words on this page, such as *hub*, *base* and *change order*, are explained in [the glossary](../docs/README.md#words).
 
 ## An agent in CI with the plugin alone
 

@@ -2,14 +2,7 @@
 
 Let your agents propose changes to an app that Argo CD or Flux deploys, keep your values, and have production take only what you approve, with the same controller and the same pods. This page is for a team whose app is deployed from a Git repository. It shows three ways to set it up, from the hub beside Git to the hub as the app's source, how to move one app with no pod restarted, and how to hand it back to Git. Until you move an app, Argo CD or Flux still deploys whatever reaches the branch it watches.
 
-## Words used on this page
-
-- **Argo CD** and **Flux** are GitOps controllers. They run in a cluster and keep it matching configuration they pull from a source, usually a Git repository.
-- **A hub** is one running ConfigHub, which keeps your configuration with every change, who made it and why. **confighub mini** is ConfigHub made small enough to run on your laptop. `cub` is its command-line tool.
-- **The base**, **the staging copy** and **the live copy** are the app's configuration in the hub: the version that changes first, the copy that takes changes at once, and the copy that takes them only when you approve. Each is kept in a **Space**, such as `api-live`.
-- **A change order** is a request for a change to reach the live copy. It waits until you approve or refuse it.
-- **OCI** is the format and protocol container registries use. Argo CD and Flux can pull configuration from an OCI registry as they pull images. Each hub has one.
-- **A release** is a numbered, published version of a copy that a cluster pulls. **argobot** is ConfigHub's small program in the cluster that asks the controller to deploy each release, and reports back whether it is running.
+The words on this page, such as *hub*, *base* and *change order*, are explained in [the glossary](../README.md#words).
 
 ## Three ways to set it up
 

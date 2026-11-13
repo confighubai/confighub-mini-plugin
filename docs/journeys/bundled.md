@@ -2,10 +2,7 @@
 
 This page is for someone who was given an app, a Helm chart or a platform by someone else, a vendor, a platform team or a colleague, and wants to change it to suit them without losing those changes at the next version. The way in is for that software to come with a hub inside it, so that each change you make is kept with its reason and the next version arrives with your changes kept. This page says plainly what of that exists today, and what does not.
 
-## Words used on this page
-
-- **A hub** is one running ConfigHub: a server that keeps configuration with every change, who made it and why. **confighub mini** is ConfigHub made small enough to run on one machine, as two processes, with no Docker and no account. It is small enough to travel inside an app's download ([its size](../install-mini.md#the-current-release)).
-- **The base** is the configuration as its author ships it. **Your copy** is made from the base, and keeps what you change as your own when the base changes.
+The words on this page, such as *hub*, *base* and *change order*, are explained in [the glossary](../README.md#words). confighub mini, a hub on one machine, is small enough to travel inside an app's download ([its size](../install-mini.md#the-current-release)).
 
 ## What exists today
 

@@ -30,15 +30,7 @@ You do not have to move delivery off Git to get anything on this page. Each step
 
 Steps 1 to 3 have run; the rest of this page is step 3. Step 4's write-back to Git is not built. Nothing on this page is a migration: a GitOps team meets the hub as the source for one app, beside its Git, and goes back by committing files.
 
-## Words used here
-
-- **Flux** and **Argo CD** are GitOps controllers. They run in a cluster and keep it matching configuration they pull from a source, usually a Git repository. *Self-heal* means the controller puts back a change made on the cluster by hand.
-- **OCI** is the standard format and protocol that container registries use. Flux and Argo CD can pull configuration from an OCI registry as they pull images. Each hub has an OCI registry of its own.
-- **[ConfigHub](https://docs.confighub.com)** keeps your configuration with the reason each value is set. A *hub* is one running ConfigHub server. *confighub mini* runs a hub on your machine. `cub` is ConfigHub's command-line tool.
-- A **Space** holds configuration, as **Units**: one Unit per file or resource. A **Component** is one piece of software, here `api`. Its **base**, here `api-base`, is the version you change. A **variant**, here `live`, is a copy made from the base for one place it runs. Its Space is `api-live`.
-- A **change order** asks for a change to reach a variant. A **ChangeWorkflow** says what it needs first, here a person's approval.
-- A **release** is a numbered, published version of a variant that a cluster pulls. A **target** is the cluster a variant is aimed at.
-- **k8sbot** is ConfigHub's small bot in the cluster. It asks Flux or Argo CD to deploy as soon as a release is published, and reports each release's sync and health back to ConfigHub. `cub`'s messages, and some names `cub` creates, still use its old name, argobot.
+The words on this page, such as *hub*, *base* and *change order*, are explained in [the glossary](README.md#words).
 
 ## What you need
 

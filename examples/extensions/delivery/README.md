@@ -90,6 +90,4 @@ The reader key cannot attach the receipt to the hub's revision, so the receipt s
 - **A running service.** The stand-in holds settings; nothing restarts or reloads.
 - **A person.** In the trials so far, the owner's approval was scripted.
 
-## Words used here
-
-A **hub** keeps configuration with every change, who made it and why. A **copy** (a variant) is one environment's configuration in the hub, such as staging or live. A **revision** is one numbered version of a copy. A **reader key** may read one copy and nothing else. A **provider** is the service the settings go to.
+The words on this page, such as *hub*, *base* and *change order*, are explained in [the glossary](../../../docs/README.md#words).
