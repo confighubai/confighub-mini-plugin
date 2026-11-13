@@ -74,7 +74,7 @@ An unpacked confighub mini package ([install confighub mini](../../docs/install-
    ```
    ```text
    Starter: kustomize-argocd (version 1, kustomize-argocd.yaml): A Kustomize repository that an Argo CD Application deploys from Git.
-   Recorded pass Approval attestation ID in starters-approved, covering 5 revision(s)
+   Recorded pass Approval attestation ID in starters-approved, covering 6 revision(s)
      It deploys 2 objects; the hub's copy holds the same, and its pod templates match what runs.
    ```
 5. Update it. Change the base in your repository, commit as usual, and propose it with its reason. Staging takes it at once; production waits under a change order, the hub's request to change production.
@@ -179,9 +179,9 @@ This proves: the exact approved revision was delivered and is running, under a r
 
 <!-- results:begin -->
 
-Results, 13 November 2026, confighub mini 0.11.1-mini.3. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+Results, 13 November 2026, confighub mini 0.11.1-mini.2. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Scripted run: passed, 367 seconds for the steps, within the page's budget of 450.
+- Scripted run, on confighub mini 0.11.1-mini.2: passed, 261 seconds for the steps, within the page's budget of 550; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
 - Agent runs (on confighub mini 0.11.1-mini.0): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
