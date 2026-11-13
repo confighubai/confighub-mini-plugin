@@ -5,9 +5,20 @@ are not proof that a service runs them. Inspect the actual delivery path.
 
 ## 0. An app that Argo CD or Flux already deploys, with a starter
 
-When `CUB_MINI_STARTERS` is set (`echo $CUB_MINI_STARTERS` shows it) and Argo CD or Flux
-already deploys the app from Git, the person connects it with one line, and approves with
-a second. This section replaces
+When Argo CD or Flux already deploys the app from Git, one adopt line connects it and the
+person approves with a second. When a hub already answers (`cub context get` names one and
+`cub space list` works), run the adopt line yourself, in the app's folder, and give the person
+only the approval it prints. Run it without `--agent` and `--attach`: they make your own key and
+attach the cluster, which are the owner's steps, and adopt refuses them from your session. Use them
+only in the line you hand the person when no hub answers; when the cluster is already attached
+(`cub cluster up` or `cub cluster attach` made it), leave `--attach` out for the person too. Give the person the adopt line too only when no hub answers. Starters are on when `CUB_MINI_STARTERS` names a folder
+(`echo $CUB_MINI_STARTERS` shows it). When it is empty, they are on for one command by naming the
+package's own folder in front of it: the `starters` folder beside the package's `bin`, for
+example `CUB_MINI_STARTERS="$(dirname "$(dirname CUB))/starters" cub mini adopt ...` with `CUB` the
+full path of the package's `cub`. The approval line adopt prints is what moves the controller
+from Git to the hub: it changes the Application or Kustomization to take the hub's OCI release of
+the approved revision. Until the person runs it, Argo CD or Flux still deploys from Git, so your
+task is not finished at the adopt; end with the two lines the person runs. This section replaces
 sections 1 to 3 for such an app. Do not give the person `cub mini install`,
 `require-approval` or `cub cluster attach` before it. Do not add `--note-dir`,
 `--note-outside` or `--own-values` to it: the line already leaves the app's files unchanged.
@@ -38,6 +49,37 @@ only the plugin is installed, give the adopt line with the plugin's program in p
 `cub` (see section 1); it installs confighub mini first, and its last line names the
 person's `cub` in full.
 
+Changing an app a starter connected: the app's files are the person's repository. Make the change
+in the repository's base, so staging takes it too, and commit it. Then `cub mini upload APP-FOLDER
+--component APP --change-desc WHY` proposes it: staging takes it at once and production waits.
+Give the person `cub mini approve`, which `upload` prints. To undo, revert the commit, upload again
+and hand over the approval again. Do not set a value in production directly, or edit only the
+production overlay, for a change the person wants everywhere.
+
+Deleting an app a starter connected: first remove what runs on the cluster, then the app from the
+hub. For Argo CD, delete the Application with its finalizer, so Argo CD removes what it deployed.
+For Flux, deleting a Kustomization removes what it applied only when its `spec.prune` is true, and
+the Kustomization the hub's cutover made does not prune. Find it, and the Git one it suspended, with
+`kubectl get kustomizations -A`: after the cutover the hub's is named `APP-live`, in Flux's own
+namespace (usually `flux-system`), beside an OCIRepository of the same name. Turn pruning on, then
+delete it:
+
+```
+kubectl -n flux-system patch kustomization APP-live --type merge -p '{"spec":{"prune":true}}'
+kubectl -n flux-system delete kustomization APP-live
+kubectl -n flux-system delete ocirepository APP-live
+```
+
+Delete the suspended Git Kustomization while it is still suspended, so that it does not apply the app
+again; a suspended Kustomization removes nothing when deleted. Before a cutover, the Git
+Kustomization is the one that deploys: if its `spec.prune` is false, turn it on the same way before
+deleting it. Check with `kubectl get` that the app's workloads are gone. Then delete the app from
+the hub as a whole: `cub component delete --recursive --detach APP`, which removes the Component and its Spaces, then
+`cub space delete --recursive APP-file-proposals` when that Space exists. Deleting only the Spaces
+leaves the Component, so the app still shows in `cub component get APP`. Leave the cluster, the
+person's repository and the shared hub as they are unless asked. Say what remains: the app's
+approval rules in the `workflows` Space, and the folder's `.confighub-app`.
+
 Check before you hand it over, with your own commands: `cub mini adopt APP-FOLDER
 --kube-context CONTEXT --source NAME --dry-run` shows the starter's plan and needs no hub.
 After the adopt line, read with the key it made for you, using the `CUB_CONFIG` and
@@ -63,6 +105,11 @@ already asked for ConfigHub, or accepted this setup. Then run:
 ```
 "${PLUGIN_ROOT:-$CLAUDE_PLUGIN_ROOT}/bin/confighub" mini get
 ```
+
+Claude Code sets `CLAUDE_PLUGIN_ROOT` for the plugin's hooks and commands only, so it is empty in a
+shell you run yourself. There, find the program by its path, in the same command, since each shell
+call starts fresh, and use that path in place of the variable. In Claude Code:
+`PLUGIN_PROGRAM=$(ls -d "$HOME"/.claude/plugins/cache/*/confighub/*/bin/confighub | tail -1)`.
 
 For Codex hook-only setup, use `${CODEX_HOME:-$HOME/.codex}/confighub/bin/confighub mini get`
 instead. A restricted agent with an existing app must use its configured hub, not install another.
