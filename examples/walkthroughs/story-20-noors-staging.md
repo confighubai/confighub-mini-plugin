@@ -31,31 +31,36 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
    ```
    `--arrival no` answers the one question a first install asks: whether a hub may start by itself when an agent works in an app's folder.
 
-2. Give the image-processor's settings to the hub. `cub mini adopt` keeps a base, the default staging and production share, and two copies made from it: `image-processor-staging` and `image-processor-live`, production's. Noor approves production's starting values:
-   <!-- run: adopt -->
+2. The image-processor reads its settings from one `.env`, the default staging and production share:
+   <!-- run: app files -->
    ```sh
    mkdir -p ~/walkthrough/image-processor && cd ~/walkthrough
    printf 'MEMORY_LIMIT=512Mi\nBATCH_SIZE=64\n' > image-processor/.env
-   cub mini adopt image-processor >/dev/null
-   cub mini approve image-processor-base/adopt --note "What runs today" --yes >/dev/null
    ```
 
-3. Give the agent a key of its own, which can change staging and only ask for production, and write each copy's settings into a folder of plain files, one per copy:
+3. Give its settings to the hub. `cub mini adopt` keeps a base, the shared default, and two copies made from it: `image-processor-staging` and `image-processor-live`, production's. Noor approves production's starting values and gives the agent a key of its own, which can change staging and only ask for production:
+   <!-- run: adopt -->
+   ```sh
+   cub mini adopt image-processor >/dev/null
+   cub mini approve image-processor-base/adopt --note "What runs today" --yes >/dev/null
+   cub mini require-approval image-processor --variant live --agent bot >/dev/null
+   ```
+
+4. The agent writes each copy's settings into a folder of plain files, one per copy:
    <!-- run: copies -->
    ```sh
-   cub mini require-approval image-processor --variant live --agent bot >/dev/null
-   CUB_CONTEXT=bot cub mini copies image-processor --to deploy
+   cub --context bot mini copies image-processor --to deploy
    ```
    ```text
    Wrote image-processor's copies in deploy: live/app.env, staging/app.env.
      Edit the copy you mean. Then cub mini copies image-processor --from deploy --change-desc WHY makes each edit that copy's change: staging's now, and live's once you approve.
    ```
 
-4. The agent edits staging's file only, and hands the edit back. It becomes staging's own value, kept through later changes to the shared default:
+5. The agent edits staging's file only, and hands the edit back. It becomes staging's own value, kept through later changes to the shared default:
    <!-- run: staging -->
    ```sh
    sed -i.bak 's/MEMORY_LIMIT=512Mi/MEMORY_LIMIT=1Gi/' deploy/staging/app.env && rm deploy/staging/app.env.bak
-   CUB_CONTEXT=bot cub mini copies image-processor --from deploy --change-desc "OOMKilled in staging since the batch size went up"
+   cub --context bot mini copies image-processor --from deploy --change-desc "OOMKilled in staging since the batch size went up"
    ```
    ```text
    Taken from deploy: OOMKilled in staging since the batch size went up
@@ -63,7 +68,7 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
      Live: unchanged.
    ```
 
-5. Noor checks production without reading its plan: its memory is as it was, and nothing waits for her:
+6. Noor checks production without reading its plan: its memory is as it was, and nothing waits for her:
    <!-- run: check -->
    ```sh
    cub unit data --space image-processor-live app | grep MEMORY_LIMIT
@@ -74,11 +79,11 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
    Nothing is waiting for you.
    ```
 
-6. Had the agent also edited production's file, production would not take it. The edit waits for Noor, and she is told before anything changes:
+7. Had the agent also edited production's file, production would not take it. The edit waits for Noor, and she is told before anything changes:
    <!-- run: live -->
    ```sh
    sed -i.bak 's/MEMORY_LIMIT=512Mi/MEMORY_LIMIT=1Gi/' deploy/live/app.env && rm deploy/live/app.env.bak
-   CUB_CONTEXT=bot cub mini copies image-processor --from deploy --change-desc "Production will see the same batch size"
+   cub --context bot mini copies image-processor --from deploy --change-desc "Production will see the same batch size"
    cub mini waiting
    ```
    ```text
@@ -90,7 +95,7 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
    …
    ```
 
-7. Noor wants production left alone until staging has run with the new size for a while. She refuses the change, with a reason the next agent is told:
+8. Noor wants production left alone until staging has run with the new size for a while. She refuses the change, with a reason the next agent is told:
    <!-- run: refuse -->
    ```sh
    cub mini refuse image-processor-live --reason "Production keeps 512Mi until staging has run a week at 1Gi"
@@ -119,7 +124,7 @@ The full story also compares the same request in Git with a base and an overlay 
 For an AI agent doing this for a person.
 
 - The request: "image-processor keeps getting OOMKilled in staging since we raised the batch size. Give it 1Gi of memory."
-- Work with the key you were given (`CUB_CONTEXT=bot`). Write each copy's settings: `cub mini copies image-processor --to deploy`. Edit `deploy/staging/app.env` only, then `cub mini copies image-processor --from deploy --change-desc "WHY"`.
+- Work with the key you were given: run `cub` as `cub --context bot`. Write each copy's settings: `cub mini copies image-processor --to deploy`. Edit `deploy/staging/app.env` only, then `cub mini copies image-processor --from deploy --change-desc "WHY"`.
 - The person asked about staging. Do not edit `deploy/live/app.env` or the shared `image-processor/.env` unless they ask for production; if you think production needs it too, say so and let them decide.
 - Never approve a change for production, sign in as the person, or write `image-processor-live` directly.
 - Done when `cub unit data --space image-processor-staging app` shows `MEMORY_LIMIT=1Gi` and `cub unit data --space image-processor-live app` still shows `MEMORY_LIMIT=512Mi`. Tell the person both.
@@ -128,18 +133,18 @@ For an AI agent doing this for a person.
 
 This proves: the settings were stored in the hub, staging's and production's apart, with production's change held for approval. What was really used: confighub mini on this computer; nothing is delivered, and no pods run, so whether 1Gi stops the out-of-memory kills is not shown.
 
-The scripted run follows the Human steps on a hub of its own and checks that each quoted line is still printed. A correct agent result gives staging 1Gi and leaves production at 512Mi.
+The scripted run follows the Human steps on a hub of its own and checks that each quoted line is still printed. A correct agent result gives staging 1Gi and leaves production and the shared default at 512Mi; in plain files, the shared `.env` stays at 512Mi and only a staging file has 1Gi. The checks below hold right after step 5.
 
-<!-- agent-task -->
+<!-- agent-task: staging after=copies -->
 > image-processor keeps getting OOMKilled in staging since we raised the batch size. Give it 1Gi of memory.
 
-<!-- agent-check: cub unit data --space image-processor-staging app | grep -qx 'MEMORY_LIMIT=1Gi' && cub unit data --space image-processor-live app | grep -qx 'MEMORY_LIMIT=512Mi' -->
-<!-- agent-check-a: grep -qx 'MEMORY_LIMIT=1Gi' deploy/staging/app.env && grep -qx 'MEMORY_LIMIT=512Mi' deploy/live/app.env -->
-<!-- arms: a,b -->
+<!-- agent-check staging: cub unit data --space image-processor-staging app | grep -qx 'MEMORY_LIMIT=1Gi' && cub unit data --space image-processor-live app | grep -qx 'MEMORY_LIMIT=512Mi' && cub unit data --space image-processor-base app | grep -qx 'MEMORY_LIMIT=512Mi' -->
+<!-- agent-check-a staging: grep -qx 'MEMORY_LIMIT=512Mi' image-processor/.env && grep -rqx 'MEMORY_LIMIT=1Gi' --include='*staging*' . && ! grep -rqx 'MEMORY_LIMIT=1Gi' --include='*prod*' --include='*live*' . -->
+<!-- arms: a,b,c -->
 
 The checks below can be run by hand in the walkthrough's folder:
 
 ```sh
-cub unit data --space image-processor-staging app | grep -qx 'MEMORY_LIMIT=1Gi' && cub unit data --space image-processor-live app | grep -qx 'MEMORY_LIMIT=512Mi'
-grep -qx 'MEMORY_LIMIT=1Gi' deploy/staging/app.env && grep -qx 'MEMORY_LIMIT=512Mi' deploy/live/app.env
+cub unit data --space image-processor-staging app | grep -qx 'MEMORY_LIMIT=1Gi' && cub unit data --space image-processor-live app | grep -qx 'MEMORY_LIMIT=512Mi' && cub unit data --space image-processor-base app | grep -qx 'MEMORY_LIMIT=512Mi'
+grep -qx 'MEMORY_LIMIT=512Mi' image-processor/.env && grep -rqx 'MEMORY_LIMIT=1Gi' --include='*staging*' . && ! grep -rqx 'MEMORY_LIMIT=1Gi' --include='*prod*' --include='*live*' .
 ```

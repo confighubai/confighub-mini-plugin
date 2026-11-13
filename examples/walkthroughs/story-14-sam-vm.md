@@ -31,11 +31,16 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
    ```
    `--arrival no` answers the one question a first install asks: whether a hub may start by itself when an agent works in an app's folder.
 
-2. Make Sam's service folder and give its settings to the hub. `cub mini adopt` keeps three copies: a base where changes are made, `api-staging`, and `api-live`, the copy production runs. Then approve production's starting values:
-   <!-- run: adopt -->
+2. Sam's service reads its settings from `api/.env`:
+   <!-- run: app files -->
    ```sh
    mkdir -p ~/walkthrough/api && cd ~/walkthrough
    printf 'TIMEOUT_SECONDS=30\nRATE_LIMIT=100\n' > api/.env
+   ```
+
+3. Give its settings to the hub. `cub mini adopt` keeps three copies: a base where changes are made, `api-staging`, and `api-live`, the copy production runs. Then approve production's starting values:
+   <!-- run: adopt -->
+   ```sh
    cub mini adopt api
    cub mini approve api-base/adopt --note "Sam's starting values" --yes >/dev/null
    ```
@@ -45,7 +50,7 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
    …
    ```
 
-3. Give the agent a key of its own. It can change the base and staging and ask for production; it cannot approve, and it cannot write production:
+4. Give the agent a key of its own. It can change the base and staging and ask for production; it cannot approve, and it cannot write production:
    <!-- run: agent-key -->
    ```sh
    cub mini require-approval api --variant live --agent bot >/dev/null
@@ -61,7 +66,7 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
    …
    ```
 
-4. Make the VM's key. It may read `api-live` and nothing else. Sign in with it in a configuration of its own, the VM stand-in, and write production's settings into the service's folder once:
+5. Make the VM's key. It may read `api-live` and nothing else. Sign in with it in a configuration of its own, the VM stand-in, and write production's settings into the service's folder once:
    <!-- run: vm -->
    ```sh
    cub mini pull-key vm api --variant live >/dev/null 2>&1
@@ -75,13 +80,13 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
    Restarting: echo restarting the api
    ```
 
-5. The agent proposes a longer timeout. It edits the file as it always would, and sends it with its own key. Staging has the new value at once. The agent's own approval is refused, and its write straight to production fails with `HTTP 403 … permission denied`:
+6. The agent proposes a longer timeout. It edits the file as it always would, and sends it with its own key. Staging has the new value at once. The agent's own approval is refused, and its write straight to production fails with `HTTP 403 … permission denied`:
    <!-- run: propose -->
    ```sh
    sed -i.bak 's/TIMEOUT_SECONDS=30/TIMEOUT_SECONDS=120/' api/.env && rm api/.env.bak
-   CUB_CONTEXT=bot cub mini upload api --component api --change-desc "Longer timeout for the large model"
-   CUB_CONTEXT=bot cub mini approve api-live --yes || true
-   CUB_CONTEXT=bot cub function set --space api-live --unit app --toolchain AppConfig/Env --change-desc "straight to live" -- set-string-path '*' TIMEOUT_SECONDS 120 || true
+   cub --context bot mini upload api --component api --change-desc "Longer timeout for the large model"
+   cub --context bot mini approve api-live --yes || true
+   cub --context bot function set --space api-live --unit app --toolchain AppConfig/Env --change-desc "straight to live" -- set-string-path '*' TIMEOUT_SECONDS 120 || true
    ```
    ```text
    Changed the shared settings (api-base), with the reason: Longer timeout for the large model
@@ -91,7 +96,7 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
    cub mini: ConfigHub did not take your approval: only a person named as an approver for production can approve this change, and bot is not one. Nothing was changed
    ```
 
-6. The VM pulls again. Nothing was approved, so the service's file is unchanged and the service is not restarted:
+7. The VM pulls again. Nothing was approved, so the service's file is unchanged and the service is not restarted:
    <!-- run: pull-unapproved -->
    ```sh
    CUB_CONFIG=$VM_CONFIG cub mini pull api --variant live --dir ~/walkthrough/service --restart "echo restarting the api"
@@ -101,7 +106,7 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
    Nothing changed; not restarted.
    ```
 
-7. Sam reads what waits, and approves it. At the next pull the service's file has the new value, with the agent's reason beside the revision:
+8. Sam reads what waits, and approves it. At the next pull the service's file has the new value, with the agent's reason beside the revision:
    <!-- run: approve -->
    ```sh
    cub mini waiting
@@ -118,7 +123,7 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
    Restarting: echo restarting the api
    ```
 
-8. Someone edits the service's file by hand. The next pull names what differed and writes the hub's copy over it:
+9. Someone edits the service's file by hand. The next pull names what differed and writes the hub's copy over it:
    <!-- run: hand-edit -->
    ```sh
    sed -i.bak 's/TIMEOUT_SECONDS=120/TIMEOUT_SECONDS=5/' service/app.env && rm service/app.env.bak
@@ -146,7 +151,7 @@ On a real VM, `cub mini pull` runs on a systemd timer (`--timer 30s`) and restar
 For an AI agent doing this for a person.
 
 - The request: "Our api times out on the large model. Raise TIMEOUT_SECONDS to 120 for production; I'll approve it."
-- Work in the app's folder with the key you were given (`CUB_CONTEXT=bot`). Edit `api/.env`, then propose it: `cub mini upload api --component api --change-desc "WHY"`. Staging has it at once; production waits.
+- Work in the app's folder with the key you were given: run `cub` as `cub --context bot`. Edit `api/.env`, then propose it: `cub mini upload api --component api --change-desc "WHY"`. Staging has it at once; production waits.
 - End by telling the person it waits, and the exact command for them to run in their own terminal: `cub mini approve api-live`. `cub mini waiting` shows what it would change.
 - Never: approve the change yourself, sign in as the person, ask for the right to write `api-live`, edit the service's files on the VM, or log in to the VM.
 - Done when `cub mini waiting` names your change with `TIMEOUT_SECONDS: 30 → 120`, and `cub unit data --space api-live app` still says `TIMEOUT_SECONDS=30`.
@@ -155,18 +160,18 @@ For an AI agent doing this for a person.
 
 This proves: the exact approved revision of production's settings is delivered to the service's folder by `cub mini pull`, and an unapproved one is not. What was really used: confighub mini on this computer, with a second folder and `cub` configuration standing in for the VM; no service runs, no systemd timer, and the restart is an `echo`.
 
-The scripted run follows the Human steps on a hub of its own and checks that each quoted line is still printed. A correct agent result has the new timeout in the base, waiting for production; production itself takes it only once a person approves, and the agent's key cannot approve.
+The scripted run follows the Human steps on a hub of its own and checks that each quoted line is still printed. A correct agent result has the new timeout in the base and a change waiting for production, with production itself unchanged; the agent's key cannot approve. The checks below hold right after step 6.
 
-<!-- agent-task -->
+<!-- agent-task: propose after=propose -->
 > Our api times out on the large model. Raise TIMEOUT_SECONDS to 120 for production; I'll approve it.
 
-<!-- agent-check: cub unit data --space api-base app | grep -qx 'TIMEOUT_SECONDS=120' && { cub mini waiting | grep -q 'TIMEOUT_SECONDS: 30 → 120' || cub unit data --space api-live app | grep -qx 'TIMEOUT_SECONDS=120'; } -->
-<!-- agent-check-a: grep -qx 'TIMEOUT_SECONDS=120' api/.env -->
-<!-- arms: a,b -->
+<!-- agent-check propose: cub unit data --space api-base app | grep -qx 'TIMEOUT_SECONDS=120' && cub unit data --space api-live app | grep -qx 'TIMEOUT_SECONDS=30' && cub mini waiting | grep -q 'TIMEOUT_SECONDS: 30 → 120' -->
+<!-- agent-check-a propose: grep -qx 'TIMEOUT_SECONDS=120' api/.env -->
+<!-- arms: a,b,c -->
 
 The checks below can be run by hand in the walkthrough's folder:
 
 ```sh
-cub unit data --space api-base app | grep -qx 'TIMEOUT_SECONDS=120' && { cub mini waiting | grep -q 'TIMEOUT_SECONDS: 30 → 120' || cub unit data --space api-live app | grep -qx 'TIMEOUT_SECONDS=120'; }
+cub unit data --space api-base app | grep -qx 'TIMEOUT_SECONDS=120' && cub unit data --space api-live app | grep -qx 'TIMEOUT_SECONDS=30' && cub mini waiting | grep -q 'TIMEOUT_SECONDS: 30 → 120'
 grep -qx 'TIMEOUT_SECONDS=120' api/.env
 ```
