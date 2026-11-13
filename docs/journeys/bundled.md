@@ -77,6 +77,8 @@ The walkthrough [run my app, and keep my changes](../../examples/walkthroughs/st
 
 ## A platform given to customers
 
+Three walkthroughs show it with every command: [take a platform's next version and keep your change](../../examples/walkthroughs/story-07-next-version.md), [find the fault in a customer's platform](../../examples/walkthroughs/story-01-find-the-fault.md) and [what each customer runs, and why](../../examples/walkthroughs/story-06-what-runs-and-why.md). For an AI assistant given to several teams, see [an agent's own configuration](../../examples/walkthroughs/story-08-agent-config.md).
+
 The package's `START-HERE.txt` lists `examples/gpu-platform`: a platform team gives customers NVIDIA's GPU Operator. A customer keeps the driver version they pinned, with the reason "A driver change drains every GPU node. We change it only in a maintenance window.", and takes the operator's next version, shown first what it would take and keep. It needs no GPU, no cluster and no Docker, and Helm only to render the chart. Its README, sections 1 to 4, takes about three minutes.
 
 ## How to go back

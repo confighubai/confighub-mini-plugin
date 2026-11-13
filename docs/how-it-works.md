@@ -2,11 +2,7 @@
 
 This page is for anyone who has installed the ConfigHub plugin, or is deciding whether to, and wants to know what it does in detail. The plugin keeps a record of each configuration value an agent changes, and of why. This page covers what the next agent is told and when, when the plugin stops a command, what is recorded, the settings, and what it costs. To install it, see [the README](../README.md).
 
-A few words used on this page:
-
-- A **session** is one Claude Code or Codex conversation, from start to `/exit`.
-- A **turn** is one request you make in a session and the agent's work on it.
-- The **record** is the plugin's list of what agents changed, with the request that caused each change and the reason given.
+The words on this page, such as *session*, *turn* and *record*, are explained in [the glossary](README.md#words). The walkthrough [the plugin](../examples/walkthroughs/tool-plugin.md) shows the plugin at work, with every command and what it prints.
 
 ## Client capabilities
 

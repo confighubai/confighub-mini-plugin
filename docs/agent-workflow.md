@@ -5,6 +5,8 @@ words. Recording does not need a hub or account. In Codex, run the existing
 [setup command](codex.md) again after updating so fresh sessions get the app workflow
 as well as the recording hooks.
 
+The walkthrough [Theo's first app](../examples/walkthroughs/story-23-theo-first-app.md) shows the plugin keeping the reason for each setting an agent writes, from the first prompt, with no hub; [a new app that fits the team's pattern](../examples/walkthroughs/story-18-dev-intent.md) shows an app asked for with ConfigHub.
+
 ## Start with the app
 
 “Build a small API” is an ordinary coding request. The agent builds it using your current

@@ -2,6 +2,8 @@
 
 This page is for someone who uses the ConfigHub plugin in a Git repository and wants to know what it does with Git and GitHub, whether they need confighub mini, and how to add a hub later.
 
+The walkthrough [the plugin](../examples/walkthroughs/tool-plugin.md) ends with `/confighub:to-hub`, copying the record into a hub.
+
 **What goes wrong without it.** Git keeps the latest value of each setting and the commit message, not why an agent set it. A teammate's agent, or a CI job's, starts from the files and undoes a change it was never told about. A pull request shows changed lines, not which values change and why.
 
 **What you get.** The record of what agents changed, and why, kept with your commits. A comment on each pull request that lists every changed value. And a hub when you want approvals, whether it is your organization's ConfigHub or a hub of your own.

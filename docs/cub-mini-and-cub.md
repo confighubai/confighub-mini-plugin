@@ -2,6 +2,8 @@
 
 What you do with confighub mini on your laptop works the same on your organization's ConfigHub, because it is the same ConfigHub server and the same `cub`, ConfigHub's command-line tool. Each `cub mini` command runs `cub`'s own commands and fills in the rest of the request for you. So, except where the table says "Nothing yet", you can do everything shown with `cub mini` in plain `cub`, on any ConfigHub. The table lists which `cub` commands each `cub mini` command stands for.
 
+The walkthrough [the `cub mini` commands](../examples/walkthroughs/tool-cub-mini.md) uses each command on one small app, with what it prints and the plain `cub` commands next to it.
+
 | `cub mini` | Plain `cub` | What `cub mini` fills in |
 |---|---|---|
 | `cub mini install` | `cub server install` | The server and its PostgreSQL run as processes on this machine, with no Docker and no Kubernetes |
