@@ -31,10 +31,11 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
    export CUB_MINI_STARTERS=~/walkthrough/team-starters
    ```
 
-2. The files: the team's starters, beginning with the package's `web` starter, and `shop`, which Alice's agents wrote:
+2. The files: the team's starters, beginning with the package's `web` starter (the package's folder is the one in step 1), and `shop`, which Alice's agents wrote:
    <!-- run: files files -->
    ```sh
-   mkdir -p ~/walkthrough/team-starters && cd ~/walkthrough && cp "$MINI/starters/web.yaml" team-starters/
+   mkdir -p ~/walkthrough/team-starters && cd ~/walkthrough
+   cp /absolute/path/to/unpacked-confighub-mini/starters/web.yaml team-starters/
    mkdir shop && printf 'PORT=3000\nLOG_LEVEL=debug\nRELEASE=shop-1.0.0\nDB_POOL_SIZE=5\n' > shop/.env && printf 'LOG_LEVEL=error\n' > shop/.env.production
    ```
 
@@ -44,7 +45,7 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
    ME=$(cub user get "$(cub context get -o jq=.coordinate.user)" -o jq=.User.UserID)
    cub space create starters --label Stage=starters >/dev/null
    cub space create workflows --allow-exists >/dev/null
-   cub changeworkflow create --space workflows starters-approval --stage starters --attestation-prerequisite approval --attestation-prerequisite-from-user-ids approval=$ME --stage-prerequisites starters=approval >/dev/null
+   cub changeworkflow create --space workflows starters-approval --stage starters --attestation-prerequisite approval --attestation-prerequisite-from-users approval=$ME --stage-prerequisites starters=approval >/dev/null
    cub unit create --space starters web team-starters/web.yaml --toolchain AppConfig/Text --change-desc "The team's web starter, version 1" >/dev/null
    cub changeorder create --space starters web-v1 --in-scope-space starters --change-workflow workflows/starters-approval --description "Version 1 of the web starter" >/dev/null
    cub variant approve starters --change-order starters/web-v1 --note "Read it: the team's settings for a web service"
@@ -164,16 +165,16 @@ For an AI agent working as Bob, on Bob's key: run `cub` as `cub --context bob`.
 
 ## Testing
 
-This proves: the settings and the starter's versions were stored in the hub, each value with who set it and why, and production's copy changed only by an approved change order. What was really used: confighub mini on this computer, with Bob as a second key; nothing is delivered and no service runs. A correct agent result has Bob's three values on shop's base and a proposed version 2 of the starter with the two fixes for every app, and without shop's pool size. The checks below can be run by hand in the walkthrough's folder:
+This proves: the settings and the starter's versions were stored in the hub, each value with who set it and why, and production's copy changed only by an approved change order. What was really used: confighub mini on this computer, with Bob as a second key; nothing is delivered and no service runs. A correct agent result has Bob's three values on shop's base and a proposed version 2 of the starter with the two fixes for every app, and without shop's pool size. The checks below can be run by hand, in bash, in the walkthrough's folder:
 
 <!-- agent-task: harden after=harden -->
 > Harden shop for production. Debug logs carry request bodies, so LOG_LEVEL should be warn; it needs 3 replicas so one can fail during a deploy; its database takes 20 connections (DB_POOL_SIZE). Then make the fixes that suit every web service version 2 of the team's web starter, each with its reason.
 
 <!-- agent-check harden: cub unit data --space shop-base app | grep -qx 'DB_POOL_SIZE=20' && cub unit data --space shop-base app | grep -qx 'REPLICAS=3' && cub unit data --space starters web | grep -q '^version: 2' && cub unit data --space starters web | grep -q 'value: warn' && ! cub unit data --space starters web | grep -q DB_POOL_SIZE -->
-<!-- agent-check-a harden: grep -qx 'DB_POOL_SIZE=20' shop/.env && grep -q '^version: 2' team-starters/web.yaml && ! grep -q DB_POOL_SIZE team-starters/web.yaml -->
+<!-- agent-check-a harden: g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g DB_POOL_SIZE 20 | grep -q shop && grep -rlsE '^version: 2' --exclude-dir='.*' team-starters | grep -q . && ! grep -rqs DB_POOL_SIZE team-starters -->
 <!-- arms: a,b,c -->
 
 ```sh
 cub unit data --space shop-base app | grep -qx 'DB_POOL_SIZE=20' && cub unit data --space shop-base app | grep -qx 'REPLICAS=3' && cub unit data --space starters web | grep -q '^version: 2' && cub unit data --space starters web | grep -q 'value: warn' && ! cub unit data --space starters web | grep -q DB_POOL_SIZE
-grep -qx 'DB_POOL_SIZE=20' shop/.env && grep -q '^version: 2' team-starters/web.yaml && ! grep -q DB_POOL_SIZE team-starters/web.yaml
+g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g DB_POOL_SIZE 20 | grep -q shop && grep -rlsE '^version: 2' --exclude-dir='.*' team-starters | grep -q . && ! grep -rqs DB_POOL_SIZE team-starters
 ```

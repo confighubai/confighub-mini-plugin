@@ -120,7 +120,7 @@ The full story asks for all of this in one request to an agent, which can also r
 
 For an AI agent doing this for a person.
 
-- The request: "Build me a small notes API, with its settings in an env file, and set it up in our ConfigHub to fit the team's pattern, pattern-web, with a staging and a live copy."
+- The request: "Build me a small notes API, with its settings in an env file, that fits the team's pattern, pattern-web, with a staging and a live copy."
 - Write the app and its `.env` in `notes/`, then `cub mini adopt notes`. It makes the base, staging and live copies on `pattern-web`, with live behind the person's approval.
 - When `cub mini set` or `cub mini upload` says a value breaks a rule, tell the person which rule and ask whether to change the value or have the rule's owner change the limit. Do not work around the rule.
 - Never approve production's starting values yourself; end with the command for the person: `cub mini approve notes-base/adopt`.
@@ -130,15 +130,16 @@ For an AI agent doing this for a person.
 
 This proves: the settings were stored in the hub on the team's pattern, and a value that breaks a rule was refused by `cub mini pull` while a valid one was written to a local folder. What was really used: confighub mini on this computer; no service runs.
 
-A correct agent result has the notes app on `pattern-web`, with staging and a live copy behind approval. The checks below hold right after step 3. The checks below can be run by hand in the walkthrough's folder:
+A correct agent result has the notes app on `pattern-web`, with staging and a live copy behind approval. The checks below hold right after step 3. The checks below can be run by hand, in bash, in the walkthrough's folder:
 
 <!-- agent-task: adopt after=adopt -->
-> Build me a small notes API, with its settings in an env file, and set it up in our ConfigHub to fit the team's pattern, pattern-web, with a staging and a live copy.
+> Build me a small notes API, with its settings in an env file, that fits the team's pattern, pattern-web, with a staging and a live copy.
 
 <!-- agent-check adopt: test "$(cub unit get app --space notes-base -o jq=.Unit.UpstreamUnitID)" = "$(cub unit get web-service --space pattern-web -o jq=.Unit.UnitID)" && cub space get notes-staging >/dev/null && cub changeworkflow get --space workflows notes-live-approval >/dev/null -->
+<!-- agent-check-a adopt: ls -aR notes | grep -qi staging && ls -aR notes | grep -qiE 'live|prod' -->
 <!-- arms: a,b,c -->
-The request asks for ConfigHub, so arm a, with no hub, is marked not applicable.
 
 ```sh
 test "$(cub unit get app --space notes-base -o jq=.Unit.UpstreamUnitID)" = "$(cub unit get web-service --space pattern-web -o jq=.Unit.UnitID)" && cub space get notes-staging >/dev/null && cub changeworkflow get --space workflows notes-live-approval >/dev/null
+ls -aR notes | grep -qi staging && ls -aR notes | grep -qiE 'live|prod'
 ```

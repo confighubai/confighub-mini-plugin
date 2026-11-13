@@ -139,12 +139,12 @@ The scripted run follows the Human steps on a hub of its own and checks that eac
 > image-processor keeps getting OOMKilled in staging since we raised the batch size. Give it 1Gi of memory.
 
 <!-- agent-check staging: cub unit data --space image-processor-staging app | grep -qx 'MEMORY_LIMIT=1Gi' && cub unit data --space image-processor-live app | grep -qx 'MEMORY_LIMIT=512Mi' && cub unit data --space image-processor-base app | grep -qx 'MEMORY_LIMIT=512Mi' -->
-<!-- agent-check-a staging: grep -qx 'MEMORY_LIMIT=512Mi' image-processor/.env && grep -rqx 'MEMORY_LIMIT=1Gi' --include='*staging*' . && ! grep -rqx 'MEMORY_LIMIT=1Gi' --include='*prod*' --include='*live*' . -->
+<!-- agent-check-a staging: g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g MEMORY_LIMIT 1Gi | grep -qi staging && ! g MEMORY_LIMIT 1Gi | grep -vqi staging -->
 <!-- arms: a,b,c -->
 
-The checks below can be run by hand in the walkthrough's folder:
+The checks below can be run by hand, in bash, in the walkthrough's folder:
 
 ```sh
 cub unit data --space image-processor-staging app | grep -qx 'MEMORY_LIMIT=1Gi' && cub unit data --space image-processor-live app | grep -qx 'MEMORY_LIMIT=512Mi' && cub unit data --space image-processor-base app | grep -qx 'MEMORY_LIMIT=512Mi'
-grep -qx 'MEMORY_LIMIT=512Mi' image-processor/.env && grep -rqx 'MEMORY_LIMIT=1Gi' --include='*staging*' . && ! grep -rqx 'MEMORY_LIMIT=1Gi' --include='*prod*' --include='*live*' .
+g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g MEMORY_LIMIT 1Gi | grep -qi staging && ! g MEMORY_LIMIT 1Gi | grep -vqi staging
 ```

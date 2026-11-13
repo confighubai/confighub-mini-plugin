@@ -113,7 +113,7 @@ The full story adds the page Sam starts from, a signed download, the hub's data 
 
 For an AI agent asked to set this up in the person's project.
 
-- The request: "Attach ConfigHub to this app: keep my staging and production values as they are, and make sure an agent cannot change production without my say."
+- The request: "Make sure an agent cannot change this app's production settings without my say. Staging can change freely."
 - If no hub answers, install one with `/confighub:install-mini`. Run `cub mini adopt . --name api --dry-run`, then without `--dry-run`, then `cub mini require-approval api --variant live --agent bot`.
 - End by giving the person the command to run in their own terminal: `cub mini approve api-base/adopt`. Never run it yourself, and never approve a later change to production.
 - Done when `cub mini receipts api --setup` names `api-live` behind approval and an agent key.
@@ -122,15 +122,16 @@ For an AI agent asked to set this up in the person's project.
 
 This proves: the settings were stored in the hub, and production's copy changed only by a person's approval while the agent's approval was refused. What was really used: confighub mini on this computer; the plugin's record (steps 1 and 9) needs a Claude Code session and is not part of the scripted run; nothing is delivered.
 
-A correct agent result has `api` in the hub with production behind approval. The checks below can be run by hand in the app's folder:
+A correct agent result has `api` in the hub with production behind approval. The checks below can be run by hand, in bash, in the app's folder:
 
 <!-- agent-task: attach after=attach -->
-> Attach ConfigHub to this app: keep my staging and production values as they are, and make sure an agent cannot change production without my say.
+> Make sure an agent cannot change this app's production settings without my say. Staging can change freely.
 
 <!-- agent-check attach: cub space get api-live >/dev/null && cub changeworkflow get --space workflows api-live-approval >/dev/null -->
+<!-- agent-check-a attach: ls -aR | grep -qiE 'prod|live' -->
 <!-- arms: a,b,c -->
-The request asks for ConfigHub, so arm a, with no hub, is marked not applicable.
 
 ```sh
 cub space get api-live >/dev/null && cub changeworkflow get --space workflows api-live-approval >/dev/null
+ls -aR | grep -qiE 'prod|live'
 ```

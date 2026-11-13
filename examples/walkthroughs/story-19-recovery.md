@@ -158,12 +158,12 @@ The scripted run follows the Human steps on a hub of its own, with a stop file o
 > Something went wrong in an earlier agent session here: payments time out in staging. Find what it did and undo what you can. Tell me plainly anything you cannot undo.
 
 <!-- agent-check undo: cub unit data --space pay-staging app | grep -qx 'TIMEOUT_SECONDS=30' && cub unit data --space pay-live app | grep -qx 'TIMEOUT_SECONDS=30' && ! cub mini waiting | grep -q 'TIMEOUT_SECONDS: 30 → 5' -->
-<!-- agent-check-a undo: grep -qx 'TIMEOUT_SECONDS=30' pay/.env -->
+<!-- agent-check-a undo: g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g TIMEOUT_SECONDS 30 | grep -q . && ! g TIMEOUT_SECONDS '5($|[^0-9])' | grep -q . -->
 <!-- arms: a,b,c -->
 
-The checks below can be run by hand in the walkthrough's folder:
+The checks below can be run by hand, in bash, in the walkthrough's folder:
 
 ```sh
 cub unit data --space pay-staging app | grep -qx 'TIMEOUT_SECONDS=30' && cub unit data --space pay-live app | grep -qx 'TIMEOUT_SECONDS=30' && ! cub mini waiting | grep -q 'TIMEOUT_SECONDS: 30 → 5'
-grep -qx 'TIMEOUT_SECONDS=30' pay/.env
+g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g TIMEOUT_SECONDS 30 | grep -q . && ! g TIMEOUT_SECONDS '5($|[^0-9])' | grep -q .
 ```

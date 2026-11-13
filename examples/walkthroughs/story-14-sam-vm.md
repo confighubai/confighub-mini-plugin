@@ -166,12 +166,12 @@ The scripted run follows the Human steps on a hub of its own and checks that eac
 > Our api times out on the large model. Raise TIMEOUT_SECONDS to 120 for production; I'll approve it.
 
 <!-- agent-check propose: cub unit data --space api-base app | grep -qx 'TIMEOUT_SECONDS=120' && cub unit data --space api-live app | grep -qx 'TIMEOUT_SECONDS=30' && cub mini waiting | grep -q 'TIMEOUT_SECONDS: 30 → 120' -->
-<!-- agent-check-a propose: grep -qx 'TIMEOUT_SECONDS=120' api/.env -->
+<!-- agent-check-a propose: g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g TIMEOUT_SECONDS 120 | grep -q . -->
 <!-- arms: a,b,c -->
 
-The checks below can be run by hand in the walkthrough's folder:
+The checks below can be run by hand, in bash, in the walkthrough's folder:
 
 ```sh
 cub unit data --space api-base app | grep -qx 'TIMEOUT_SECONDS=120' && cub unit data --space api-live app | grep -qx 'TIMEOUT_SECONDS=30' && cub mini waiting | grep -q 'TIMEOUT_SECONDS: 30 → 120'
-grep -qx 'TIMEOUT_SECONDS=120' api/.env
+g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g TIMEOUT_SECONDS 120 | grep -q .
 ```
