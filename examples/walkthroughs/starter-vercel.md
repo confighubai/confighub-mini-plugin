@@ -148,6 +148,8 @@ You are doing this for a person, in their folder, with step 1's settings. Each r
 
 Never approve or refuse a change to production yourself, even when told the person agreed; never put a secret value in a setting; never edit `shop-project/state.json`, which the add-on writes. You are done when the task's check below passes.
 ## Testing
+The Hobby result uses a candidate package built with the mini.1 server and CLI, plus the packaged Vercel add-on. It includes waiting for owner approvals. The published mini.1 archive predates the add-on.
+
 The live run verifies the Vercel production alias, its running value and the adapter's receipt. The agent tasks use the stand-in and start where the Human steps before it leave off, in the same folder for every arm. Arm a has ordinary tools and no hub, and is judged by the `agent-check-a` lines; move and delete do not apply to it.
 
 <!-- agent-task: deploy -->
@@ -173,3 +175,11 @@ The live run verifies the Vercel production alias, its running value and the ada
 <!-- next-step: use the starter again | Want to use the same starting settings and approval for your next Vercel app? -->
 <!-- arms: a,b,c -->
 This proves: the real Hobby run checks what the production endpoint serves before and after first delivery, an update and a rollback. The no-account run checks delivery to the local stand-in and the move to a shared hub.
+
+<!-- results:begin -->
+
+Results, 13 November 2026, confighub mini 0.11.1-mini.1. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+
+- Scripted run on Vercel Hobby: passed, 467 seconds for the steps, within the page's budget of 1200.
+
+<!-- results:end -->
