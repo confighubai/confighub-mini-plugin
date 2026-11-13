@@ -2,10 +2,7 @@
 
 This page is for someone who was given an app, a Helm chart or a platform by someone else, a vendor, a platform team or a colleague, and wants to change it to suit them without losing those changes at the next version. The way in is for that software to come with a hub inside it, so that each change you make is kept with its reason and the next version arrives with your changes kept. This page says plainly what of that exists today, and what does not.
 
-## Words used on this page
-
-- **A hub** is one running ConfigHub: a server that keeps configuration with every change, who made it and why. **confighub mini** is ConfigHub made small enough to run on one machine, as two processes, with no Docker and no account. It is small enough, 48 to 73 MB, to travel inside an app's download.
-- **The base** is the configuration as its author ships it. **Your copy** is made from the base, and keeps what you change as your own when the base changes.
+The words on this page, such as *hub*, *base* and *change order*, are explained in [the glossary](../README.md#words). confighub mini, a hub on one machine, is small enough to travel inside an app's download ([its size](../install-mini.md#the-current-release)).
 
 ## What exists today
 
@@ -36,7 +33,7 @@ George made a start page for his team. You run your own copy. The example carrie
    ./startpage
    ```
 
-   The page opens in your browser. The first time takes about ten seconds.
+   The page opens in your browser.
 
 3. Change it, with a reason each time:
 
@@ -76,9 +73,11 @@ George made a start page for his team. You run your own copy. The example carrie
    ./startpage why
    ```
 
-The full walk-through, about two minutes, is step 3 of [a first run](../try-confighub-mini.md#step-3-change-an-app-and-keep-your-changes-through-its-next-version), and the example's `README.md`.
+The walkthrough [run my app, and keep my changes](../../examples/walkthroughs/story-02-keep-your-changes.md) shows every command and what it prints, and the example's `README.md` tells the whole story.
 
 ## A platform given to customers
+
+Three walkthroughs show it with every command: [take a platform's next version and keep your change](../../examples/walkthroughs/story-07-next-version.md), [find the fault in a customer's platform](../../examples/walkthroughs/story-01-find-the-fault.md) and [what each customer runs, and why](../../examples/walkthroughs/story-06-what-runs-and-why.md). For an AI assistant given to several teams, see [an agent's own configuration](../../examples/walkthroughs/story-08-agent-config.md).
 
 The package's `START-HERE.txt` lists `examples/gpu-platform`: a platform team gives customers NVIDIA's GPU Operator. A customer keeps the driver version they pinned, with the reason "A driver change drains every GPU node. We change it only in a maintenance window.", and takes the operator's next version, shown first what it would take and keep. It needs no GPU, no cluster and no Docker, and Helm only to render the chart. Its README, sections 1 to 4, takes about three minutes.
 

@@ -12,11 +12,11 @@ For someone whose app is a Kustomize repository that Argo CD deploys from Git, w
 ### What you need
 An unpacked confighub mini package ([install confighub mini](../../docs/install-mini.md)), Docker, `kind`, `kubectl`, Git and Python 3. confighub mini is ConfigHub made small enough to run on your computer: a hub, which keeps configuration with every change, who made it and why. For step 8, a sign-in to your organization's ConfigHub, such as hosted ConfigHub.
 ### Steps
-1. Start a hub of your own; it becomes `cub`'s current context. `CUB_MINI_STARTERS` switches starters on: a starter is a short file that gives one kind of app its usual settings, each with a reason. Then make a kind cluster with Argo CD, wired to the hub; it takes about two minutes. The `shim` folder lets the cluster reach the hub on OrbStack, and changes nothing elsewhere.
+1. Start a hub of your own; it becomes `cub`'s current context. `CUB_MINI_STARTERS=on` switches starters on: a starter is a short file that gives one kind of app its usual settings, each with a reason, and the first `cub mini adopt` brings the package's starters into the hub, where they wait for your approval. Then make a kind cluster with Argo CD, wired to the hub; it takes about two minutes. The `shim` folder lets the cluster reach the hub on OrbStack, and changes nothing elsewhere.
    <!-- run: setup -->
    ```sh
    export MINI=/absolute/path/to/unpacked-confighub-mini
-   export PATH="$MINI/bin:$PATH" CUB_MINI_STARTERS="$MINI/starters"
+   export PATH="$MINI/bin:$PATH" CUB_MINI_STARTERS=on
    "$MINI/bin/confighub-mini-app" mini install-plugin "$HOME/.confighub"
    cub mini install --name orders --use; export LOCAL_HUB=$(cub context get -o jq=.name)
    PATH="$MINI/examples/live-state/shim:$PATH" cub cluster up orders-argocd --controller argo --no-ports > cluster-up.log; export KUBECONFIG="$HOME/.confighub/clusters/orders-argocd.kubeconfig"
@@ -66,12 +66,14 @@ An unpacked confighub mini package ([install confighub mini](../../docs/install-
 4. Deploy it from the hub. `cub mini adopt` connects the repository with the Argo CD starter. The hub keeps three copies: `orders-base`, shared by the other two; `orders-staging`; and `orders-live`, for production. The starter adds three Argo CD annotations, each with its reason. You approve production, and `cub mini deploy-from-hub` points the same Application at the hub, so that only what you approve reaches the cluster, with no pod restarted.
    <!-- run: deploy -->
    ```sh
-   cub mini adopt orders --kube-context kind-orders-argocd --source orders > adopt.log; head -1 adopt.log
+   cub mini adopt orders --kube-context kind-orders-argocd --source orders > adopt.log; grep -m1 '^Starter: kustomize' adopt.log
+   cub variant approve starters --change-order starters/package-starters-v1 --note "Read them"
    cub mini approve orders-live/connect --yes --note "Server-side apply suits the orders service"
    cub mini deploy-from-hub orders --variant live --repo orders --kube-context kind-orders-argocd --change-order orders-live/connect
    ```
    ```text
    Starter: kustomize-argocd (version 1, kustomize-argocd.yaml): A Kustomize repository that an Argo CD Application deploys from Git.
+   Recorded pass Approval attestation ID in starters, covering 5 revision(s)
      It deploys 2 objects; the hub's copy holds the same, and its pod templates match what runs.
    ```
 5. Update it. Change the base in your repository, commit as usual, and propose it with its reason. Staging takes it at once; production waits under a change order, the hub's request to change production.
@@ -139,7 +141,7 @@ Your team's shared hub holds the orders service's base, staging and production m
 ## Agent
 You are doing this for a person, in their folder, with step 1's settings. Each request is one task; run the Human step of the same name.
 
-- **deploy**, "Set up the orders repository so that every change to production waits for my approval, with a reason kept for each value, and have Argo CD deploy production from there": run step 4's `adopt`, then give the person the `approve` and `deploy-from-hub` commands to run themselves.
+- **deploy**, "Set up the orders repository so that every change to production waits for my approval, with a reason kept for each value, and have Argo CD deploy production from there": run step 4's `adopt` alone. Starters are brought into the hub only under the person's own approval, which an agent session cannot do, so until then adopt uses the package's files. Then give the person `cub mini adopt orders --kube-context kind-orders-argocd --source orders` to run again in their own terminal (it brings the starters in), then `cub variant approve starters --change-order starters/package-starters-v1 --note "Read them"`, and the `approve` and `deploy-from-hub` commands, to run themselves.
 - **update**, "Allow 250 orders a minute; I'll approve production": edit and commit as in step 5, run its `upload` with their reason, and give them the `cub mini approve` command it printed.
 - **undo**, "Undo the order limit change": revert and upload as in step 7, and give them the `cub mini approve` command.
 - **move**, "Move orders to our team's shared hub": run step 8 with their context. Then check that production there waits for approval, as the later step shows, and say so plainly if it does not.
@@ -151,7 +153,7 @@ Each task starts where the Human steps before it leave off, in the same folder f
 
 <!-- agent-task: deploy -->
 > Set up the orders repository so that every change to production waits for my approval, with a reason kept for each value, and have Argo CD deploy production from there. The cluster's context is `kind-orders-argocd`.
-<!-- agent-person deploy: cub mini approve orders-live/connect --yes && cub mini deploy-from-hub orders --variant live --repo orders --kube-context kind-orders-argocd --change-order orders-live/connect -->
+<!-- agent-person deploy: cub mini adopt orders --kube-context kind-orders-argocd --source orders > /dev/null && cub variant approve starters --change-order starters/package-starters-v1 --note "Read them" && cub mini approve orders-live/connect --yes && cub mini deploy-from-hub orders --variant live --repo orders --kube-context kind-orders-argocd --change-order orders-live/connect -->
 <!-- agent-check deploy: cub changeworkflow get --space workflows orders-live-approval >/dev/null && kubectl -n argocd get application orders -o jsonpath='{.spec.source.repoURL}' | grep -q '^oci://' && cub unit data app --space orders-base | grep -q 'sync-options: ServerSideApply=true' -->
 <!-- agent-task: update -->
 > Allow 250 orders a minute; I'll approve production myself.
@@ -168,7 +170,7 @@ Each task starts where the Human steps before it leave off, in the same folder f
 <!-- agent-check move: cub --context shared unit data app --space "$TEAM_APP-live" | grep -q 'replicas: 2' && cub --context shared component get "$TEAM_APP" -o jq=.Component.RequireChangeWorkflow | grep -qx true -->
 <!-- agent-task: delete -->
 > Delete the orders app, from the cluster and from this computer's hub.
-<!-- agent-check delete: test -d orders/base && ! cub component get orders >/dev/null 2>&1 && ! kind get clusters | grep -qx orders-argocd -->
+<!-- agent-check delete: test -d orders/base && ! cub component get orders >/dev/null 2>&1 && ! kubectl --context kind-orders-argocd -n argocd get application orders >/dev/null 2>&1 -->
 <!-- agent-cleanup: pkill -f 'git-serve.py .* 28411'; kind delete cluster --name orders-argocd -->
 <!-- next-step: keep the starter on for the next app | Your next Argo CD app can start with the same usual settings, each with its reason, and production there will wait for your yes before anything changes; want the starter kept on for it? -->
 <!-- arms: a,b,c -->
@@ -176,10 +178,10 @@ This proves: the exact approved revision was delivered and is running, under a r
 
 <!-- results:begin -->
 
-Results, 13 November 2026, confighub mini 0.11.1-mini.0. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+Results, 13 November 2026, confighub mini 0.11.1-mini.2. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Scripted run: passed, 250 seconds for the steps, within the page's budget of 450.
-- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
+- Scripted run: passed, 259 seconds for the steps, within the page's budget of 450.
+- Agent runs (on confighub mini 0.11.1-mini.0): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|

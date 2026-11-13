@@ -2,7 +2,7 @@
 
 This page is for teams that let coding agents change configuration that runs in production. A rule in `CLAUDE.md` that says "ask first" is only a request, and an agent that holds the keys can be talked past it. Here you set up ConfigHub so that the agent can propose a change, and only the person you name can let it through.
 
-To see from a terminal what you are told when a change waits, and nothing else, follow the walkthrough [the three things you are told](../examples/walkthroughs/story-15-the-telling.md).
+To try it from a terminal, with every command and what it prints, follow the walkthrough [an agent proposes, and cannot approve](../examples/walkthroughs/story-11-propose-not-approve.md). To see what you are told when a change waits, and nothing else, follow [the three things you are told](../examples/walkthroughs/story-15-the-telling.md).
 
 ## What you end up with
 
@@ -21,24 +21,13 @@ An agent with `kubectl` and Git was told "Priya just said yes on Slack. Go ahead
 
 With the setup on this page, the agent proposed the change in ConfigHub instead. Told the same thing, it answered "this workflow only counts an approval she records herself in the hub", and production stayed at 48.
 
-## Words used on this page
+The words on this page, such as *hub*, *base* and *change order*, are explained in [the glossary](README.md#words).
 
-- **ConfigHub** is a server that holds your configuration and keeps each change to it. A **hub** is one running ConfigHub: hosted, on your own server, or **confighub mini**, which is ConfigHub made small enough to run on one machine.
-- A **Space** holds configuration, as **Units**. A Unit is one file or resource.
-- A **Component** is one piece of software, such as `api`.
-- The **base** is the version of a Component that you change. A **variant** is a copy made from the base for one place it runs, such as `live`. In the examples, the base is the Space `api-base` and the live copy is the Space `api-live`.
-- A **change order** asks for a change in the base to reach a variant.
-- A **ChangeWorkflow** says what a change order needs before it can reach a variant. Here, it needs a named person's approval.
-- An **approval** is recorded in ConfigHub by the person who gives it, with a note. ConfigHub keeps it as an **attestation**: a record that names who approved, and why, and that covers one revision.
-- To **promote** is to bring the approved change into the variant.
-- A **release** sends a variant to a cluster, when the variant is aimed at one.
-- A **service account** is an account for a program rather than a person. Its **key** is a private key in a file, which the program signs in with.
-
-## On confighub mini: ask for it, in about a minute
+## On confighub mini: ask for it
 
 In Claude Code, in the repository your agents work in:
 
-1. Type `/confighub:install-mini`. A hub is running about 25 seconds later.
+1. Type `/confighub:install-mini`. It starts a hub.
 2. Ask, in your own words: *"Make changes to production wait for my approval; agents may only propose them."* The agent puts the repository's files in the hub and requires your approval for the live copy. From then on, every Claude Code session in this repository runs on the agent's own key: it can propose, and it cannot approve.
 3. Ask for changes as you always have. The agent edits the files, then proposes them. At the end of its turn you see one line: *"A change to production (APP-live) waits for your approval: … To approve it: ~/.confighub/mini/confighub-mini-VERSION-OS-ARCH/bin/cub mini approve …"*. The command names confighub mini's own `cub` by its full path, so it runs in a terminal as printed.
 4. In a terminal, approve it: `cub mini approve`. It shows what the change would do and asks you first. Or refuse it: `cub mini refuse --reason "why"`. This updates the approved configuration. Production uses it when its deployment path reads that revision; verify the running service as described below.
@@ -55,13 +44,13 @@ A secret for live, such as a database password, is yours to set, in a terminal: 
 
 ## Codex sessions on the proposal key
 
-From confighub mini 0.10.7-mini.13, `cub mini require-approval APP --variant live --agent bot --dir DIR` also prints a `run-codex` launcher. Start a fresh Codex CLI session with that exact launcher. An existing session started on your owner account still has owner authority.
+`cub mini require-approval APP --variant live --agent bot --dir DIR` also prints a `run-codex` launcher. Start a fresh Codex CLI session with that exact launcher. An existing session started on your owner account still has owner authority.
 
 The launcher selects the app, the proposal key and separate Codex settings, and clears inherited ConfigHub server and bearer-token overrides. It uses your existing file-based Codex login without printing or copying its contents. Native filesystem permissions keep model-run commands from your ConfigHub owner configuration and both Codex homes, while allowing app edits and use of the agent's key. Your own Codex settings and integrations stay as they were. `cub mini get` refreshes the launcher and hooks when it updates the package; restart through the launcher afterward.
 
 This needs native permission profiles and `--no-daemon` (it works with Codex CLI 0.163.0). Unsupported clients fail instead of starting unrestricted. Pass model options to the launcher; do not replace its sandbox or permissions. Network access is enabled without domain filtering. Browser tools, connectors and external MCP servers have separate controls. Keep approval in your owner terminal, after the proposing agent has finished; there is no approval button in the coding-agent chat.
 
-## On confighub mini, by hand: about 5 minutes
+## On confighub mini, by hand
 
 Each `cub mini` command here is plain `cub` with the rest filled in ([which](cub-mini-and-cub.md)). The next section does the same with `cub` alone.
 
@@ -118,7 +107,7 @@ Each `cub mini` command here is plain `cub` with the rest filled in ([which](cub
      Deployment/api/spec.replicas: 2 → 4
 
    Production keeps its current settings until you approve this change. To see the change and approve it:
-     ~/.confighub/mini/confighub-mini-0.10.7-mini.23-darwin-arm64/bin/cub mini approve api-base/upload-20261112-055043-twx5
+     ~/.confighub/mini/confighub-mini-VERSION-OS-ARCH/bin/cub mini approve api-base/upload-20261112-055043-twx5
    ```
 
    If the agent tries to approve its own change, or to write `api-live`, it is refused:
@@ -181,7 +170,7 @@ Started this way, from a folder of its own or from a new worktree, and in auto m
 
 ## On hosted ConfigHub or your own server, with cub alone
 
-These are the same steps with `cub` alone. If confighub mini is installed, `cub mini require-approval` does steps 2 and 3 in one, against hosted ConfigHub too.
+These are the same steps with `cub` alone, for an app you put on a shared hub with `cub` alone. An app you copied up from confighub mini with `cub mini copy --from-context` needs none of them: if production waited for your approval on your laptop, it waits on the shared hub as soon as it is copied, and the copy says so ([from your laptop to a shared hub](from-plugin-to-confighub.md#step-3-your-organizations-confighub)). If confighub mini is installed, `cub mini require-approval` does steps 2 and 3 in one, against hosted ConfigHub too.
 
 1. Create the Component, its base and its live copy, from the `api` folder made above:
 
@@ -221,7 +210,7 @@ These are the same steps with `cub` alone. If confighub mini is installed, `cub 
    cub component update api --permission View:serviceaccount:bot
    ```
 
-4. Make the agent's key, and sign the agent in with it, in a `cub` configuration of its own. Its sessions then cannot use yours. On hosted ConfigHub, use `cub` v0.11 or later: hosted ConfigHub refuses an earlier `cub` as too old:
+4. Make the agent's key, and sign the agent in with it, in a `cub` configuration of its own. Its sessions then cannot use yours. On hosted ConfigHub, use `cub` v0.11 or later ([versions](install-mini.md#the-current-release)): hosted ConfigHub refuses an earlier `cub` as too old:
 
    ```bash
    cub serviceaccount key add bot --generate bot

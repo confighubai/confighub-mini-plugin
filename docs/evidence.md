@@ -6,7 +6,7 @@ This page is for anyone deciding whether the ConfigHub plugin changes what their
 
 An earlier agent scaled an api to 4 pods on the cluster for a sale. A later agent was asked to deploy. Its manifest still said 2, so the deploy quietly put the api back to 2 pods before the sale, and nobody was told.
 
-Without the plugin, agents did this about three times in four: in 144 of 190 runs. With the plugin, it never happened silently: in none of 190 runs ([the records](runs/README.md)). The plugin stops the agent once, before such a deploy runs, and tells it what the deploy would undo and why the earlier agent made the change.
+Without the plugin, agents did this about three times in four: in 144 of 190 runs. With the plugin, it never happened silently: in none of 190 runs ([the records](testing.md#run-records)). The plugin stops the agent once, before such a deploy runs, and tells it what the deploy would undo and why the earlier agent made the change.
 
 ## Staging changes without a production review
 

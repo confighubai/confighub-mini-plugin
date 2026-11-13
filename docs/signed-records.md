@@ -4,7 +4,7 @@ This page is for a team that relies on the plugin's record of what its agents ch
 
 The plugin signs each **entry** of the record as it writes it: each thing it notes, such as a value changed or a command run. Each signature is linked to the one before, and has a line in the folder's list of signatures, `signatures.jsonl`, beside the folder's **sessions** (one session is one Claude Code conversation; a **turn** is one request in it and the agent's work on it). If an entry is changed, added or taken out after it was signed, or a session is removed or cut back, a check names it.
 
-Nothing is asked of you or the agent. Signing one entry takes about 0.2 milliseconds. `CUB_MINI_SIGN=0` turns it off.
+Nothing is asked of you or the agent. `CUB_MINI_SIGN=0` turns it off.
 
 ## Checking the record
 

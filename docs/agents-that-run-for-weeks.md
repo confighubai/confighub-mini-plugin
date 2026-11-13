@@ -2,7 +2,7 @@
 
 This page is for teams that let AI agents change infrastructure configuration unattended, for days or weeks, several at once. Over that time, a team needs to know which agent made each change, who agreed to it, and how to stop an agent at once. This page says what ConfigHub and the ConfigHub plugin already do about each problem, what may still be needed, and what is left to other tools.
 
-To try stopping an agent, finding its change and putting it back, follow the walkthrough [an agent did something wrong](../examples/walkthroughs/story-19-recovery.md).
+To try stopping an agent, finding its change and putting it back, follow the walkthrough [an agent did something wrong](../examples/walkthroughs/story-19-recovery.md). To give each party a key of its own, made by its holder, follow [a key each](../examples/walkthroughs/story-10-a-key-each.md).
 
 The problems:
 - An agent acts with a person's sign-in, so nobody can tell who did what.
@@ -11,13 +11,7 @@ The problems:
 - Taking its access away leaves its open sessions running.
 - The traces say what ran, not why a value is what it is.
 
-## Words used on this page
-
-- **ConfigHub** is a server that holds your configuration and keeps each change to it. A **hub** is one running ConfigHub: hosted, on your own server, or **confighub mini**, which is ConfigHub made small enough to run on one machine.
-- The **ConfigHub plugin** runs in the agent's Claude Code or Codex sessions. It keeps a **record** of each value the agent changes, with the request and the reason.
-- A **Space** holds configuration in a hub. The **base** is the version of an app's configuration that you change. The **copy that runs** is made from the base for one place it runs, such as production.
-- A **change order** is how an agent asks for a change in the base to reach the copy that runs. An **approval** is a person's yes to that change, recorded in the hub.
-- A **service account** is an account for a program rather than a person. Its **key** is a private key in a file, which the program signs in with.
+The words on this page, such as *hub*, *base* and *change order*, are explained in [the glossary](README.md#words).
 
 ## What works now
 

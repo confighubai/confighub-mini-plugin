@@ -2,6 +2,8 @@
 
 This page is for someone who uses the ConfigHub plugin in a Git repository and wants to know what it does with Git and GitHub, whether they need confighub mini, and how to add a hub later.
 
+The walkthrough [the plugin](../examples/walkthroughs/tool-plugin.md) ends with `/confighub:to-hub`, copying the record into a hub.
+
 **What goes wrong without it.** Git keeps the latest value of each setting and the commit message, not why an agent set it. A teammate's agent, or a CI job's, starts from the files and undoes a change it was never told about. A pull request shows changed lines, not which values change and why.
 
 **What you get.** The record of what agents changed, and why, kept with your commits. A comment on each pull request that lists every changed value. And a hub when you want approvals, whether it is your organization's ConfigHub or a hub of your own.
@@ -14,7 +16,7 @@ To keep the record with your commits, set `CUB_MINI_RECORD_IN_REPO=1`. Each comm
 
 ## Where the app started
 
-From plugin 0.79.3, before the first recorded request in a project, the plugin keeps the repository and full Git revision present then, and whether uncommitted files existed. If Git or its history is unavailable, it records that no revision was available. `bin/confighub mini changes` shows **Starting point**, marked **first observed**. It is not proof of the app's creation date or the commit it was originally forked from.
+Before the first recorded request in a project, the plugin keeps the repository and full Git revision present then, and whether uncommitted files existed. If Git or its history is unavailable, it records that no revision was available. `bin/confighub mini changes` shows **Starting point**, marked **first observed**. It is not proof of the app's creation date or the commit it was originally forked from.
 
 The metadata is signed separately and checked by `bin/confighub mini changes --verify`. Repository URLs lose passwords, query strings and fragments. No private request or file contents go into it. It stays when old sessions expire; `bin/confighub mini changes --forget` removes it. With `CUB_MINI_RECORD_IN_REPO=1`, the signed record in Git carries it to a colleague's checkout. From plugin 0.79.8, after a successful standalone `git clone` or `gh repo create --template … --clone`, supported shell hooks also record the inspected checkout's remote and HEAD as a separate **Selected source**. A nested checkout keeps this observation when opened directly. A requested template name is recorded without guessing its revision. Compound shell commands, expressions, failed commands and checkouts outside the project are not inferred.
 

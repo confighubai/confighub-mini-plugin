@@ -1,6 +1,8 @@
 # GitOps over OCI: Flux and Argo CD deploying from ConfigHub
 
-This page is for a platform team that runs Flux or Argo CD, and whose agents now propose changes to what those tools deploy. It shows how to make the cluster deploy only changes a named person has approved, with the reason for each value kept. It takes about 15 minutes on your laptop. To move an app that Argo CD or Flux already deploys from your Git, and hand it back, see [an app that Argo CD or Flux deploys](journeys/gitops-app.md).
+This page is for a platform team that runs Flux or Argo CD, and whose agents now propose changes to what those tools deploy. It shows how to make the cluster deploy only changes a named person has approved, with the reason for each value kept. To move an app that Argo CD or Flux already deploys from your Git, and hand it back, see [an app that Argo CD or Flux deploys](journeys/gitops-app.md).
+
+The walkthroughs [a Kustomize app that Argo CD deploys](../examples/walkthroughs/starter-kustomize-argocd.md) and [a Kustomize app that Flux deploys](../examples/walkthroughs/starter-kustomize-flux.md) do this on a kind cluster with a starter, with every command and what it prints.
 
 ## What "deploying from the hub over OCI" means
 
@@ -11,7 +13,7 @@ With this setup, your cluster's Flux or Argo CD pulls the approved configuration
 1. An agent proposes a change in ConfigHub. The change waits.
 2. A person you name approves it.
 3. ConfigHub publishes the approved configuration as a *release*.
-4. Flux or Argo CD pulls the release from ConfigHub and applies it. The change is running about 10 seconds later.
+4. Flux or Argo CD pulls the release from ConfigHub and applies it.
 
 A change someone makes by hand on the cluster is put back. Going back to an earlier value is an approved change like any other. For every release, ConfigHub shows what the cluster reported about it.
 
@@ -30,15 +32,7 @@ You do not have to move delivery off Git to get anything on this page. Each step
 
 Steps 1 to 3 have run; the rest of this page is step 3. Step 4's write-back to Git is not built. Nothing on this page is a migration: a GitOps team meets the hub as the source for one app, beside its Git, and goes back by committing files.
 
-## Words used here
-
-- **Flux** and **Argo CD** are GitOps controllers. They run in a cluster and keep it matching configuration they pull from a source, usually a Git repository. *Self-heal* means the controller puts back a change made on the cluster by hand.
-- **OCI** is the standard format and protocol that container registries use. Flux and Argo CD can pull configuration from an OCI registry as they pull images. Each hub has an OCI registry of its own.
-- **[ConfigHub](https://docs.confighub.com)** keeps your configuration with the reason each value is set. A *hub* is one running ConfigHub server. *confighub mini* runs a hub on your machine. `cub` is ConfigHub's command-line tool.
-- A **Space** holds configuration, as **Units**: one Unit per file or resource. A **Component** is one piece of software, here `api`. Its **base**, here `api-base`, is the version you change. A **variant**, here `live`, is a copy made from the base for one place it runs. Its Space is `api-live`.
-- A **change order** asks for a change to reach a variant. A **ChangeWorkflow** says what it needs first, here a person's approval.
-- A **release** is a numbered, published version of a variant that a cluster pulls. A **target** is the cluster a variant is aimed at.
-- **k8sbot** is ConfigHub's small bot in the cluster. It asks Flux or Argo CD to deploy as soon as a release is published, and reports each release's sync and health back to ConfigHub. `cub`'s messages, and some names `cub` creates, still use its old name, argobot.
+The words on this page, such as *hub*, *base* and *change order*, are explained in [the glossary](README.md#words).
 
 ## What you need
 
@@ -170,7 +164,7 @@ spec:
    cub mini approve api-live --note "Checked: four is right for the sale"
    ```
 
-   It shows the change and asks first. ConfigHub releases the change, and k8sbot asks Flux to deploy it. About 10 seconds later, the cluster runs 4 replicas.
+   It shows the change and asks first. ConfigHub releases the change, and k8sbot asks Flux to deploy it. Shortly after, the cluster runs 4 replicas.
 
 ## Step 4: Self-heal
 
@@ -188,7 +182,7 @@ spec:
 
    Flux applies the approved release again, and the cluster is back at 4 replicas.
 
-Without the `flux reconcile`, Flux does the same at its next interval, which is 10 minutes here. Argo CD, with self-heal on as `cub cluster up` sets it, put the approved value back by itself within a second or two.
+Without the `flux reconcile`, Flux does the same at its next interval, which is 10 minutes here. Argo CD, with self-heal on as `cub cluster up` sets it, put the approved value back by itself.
 
 ## Step 5: Go back
 
@@ -212,7 +206,7 @@ Going back is a change like any other, so it waits for an approval too.
    cub mini approve api-base/back-to-2 --note "Back to two"
    ```
 
-   About 10 seconds later, the cluster runs 2 replicas again.
+   Shortly after, the cluster runs 2 replicas again.
 
 `cub variant demote` restores the earlier revision in the hub, but it is not the way back here. Where approval is required, ConfigHub releases only what an approved change order covers. So the way back is a change order, as above.
 

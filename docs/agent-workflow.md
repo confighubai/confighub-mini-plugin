@@ -5,6 +5,8 @@ words. Recording does not need a hub or account. In Codex, run the existing
 [setup command](codex.md) again after updating so fresh sessions get the app workflow
 as well as the recording hooks.
 
+The walkthrough [Theo's first app](../examples/walkthroughs/story-23-theo-first-app.md) shows the plugin keeping the reason for each setting an agent writes, from the first prompt, with no hub; [a new app that fits the team's pattern](../examples/walkthroughs/story-18-dev-intent.md) shows an app asked for with ConfigHub.
+
 ## Start with the app
 
 “Build a small API” is an ordinary coding request. The agent builds it using your current
@@ -87,7 +89,7 @@ stays off. The command in it is the package's own `cub`, with your version and p
 machine where `cub` is not yet on your `PATH`:
 
 ```
-ConfigHub: one setting only you can turn on. With it on, when an agent works in a folder that holds an app's settings files, a hub (a ConfigHub server on this machine) starts by itself and keeps those settings. It is off. To turn it on, run this in your own terminal: ~/.confighub/mini/confighub-mini-0.10.7-mini.23-darwin-arm64/bin/cub mini install --arrival yes. To keep it off and stop this line, run it with --arrival no instead.
+ConfigHub: one setting only you can turn on. With it on, when an agent works in a folder that holds an app's settings files, a hub (a ConfigHub server on this machine) starts by itself and keeps those settings. It is off. To turn it on, run this in your own terminal: ~/.confighub/mini/confighub-mini-VERSION-OS-ARCH/bin/cub mini install --arrival yes. To keep it off and stop this line, run it with --arrival no instead.
 ```
 
 **After a yes.** When an agent works in a Git project folder that holds one of those

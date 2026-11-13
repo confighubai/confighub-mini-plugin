@@ -1,91 +1,24 @@
-# Try confighub mini: a first run, about 15 minutes
+# A first run of confighub mini
 
-This walkthrough is for someone trying confighub mini for the first time, on their own machine. You install it, run a short story in which you change an app and keep your changes through its next version, and then tell us how it went.
+This page is for someone trying confighub mini for the first time, on their own machine. confighub mini is a hub, ConfigHub made small enough to run on one machine, with no Docker, no cluster and no account. You install it, try one short story, put your agents' record into the hub if you have one, and tell us how it went.
 
-[ConfigHub](https://docs.confighub.com) keeps your configuration with the reason each value is set. A *hub* is one running ConfigHub server with its database. *confighub mini* is ConfigHub made small enough to run a hub on one machine.
+The words on this page are explained in [the glossary](README.md#words).
 
-## What you need
+## Install it
 
-- A Mac or a Linux machine, ARM or Intel.
-- `curl`, `xz` and `python3`.
+Type `/confighub:install-mini` in Claude Code, or follow [the install steps](install-mini.md) up to and including `cub space list`. With `/confighub:install-mini`, the hub is already running, and it printed the full path of its `cub`; to type `cub` yourself, put that folder first on your path: `export PATH="$HOME/.confighub/mini/confighub-mini-VERSION-OS-ARCH/bin:$PATH"`.
 
-You need no Docker, no cluster and no account.
+## Try one story
 
-## Step 1: Install confighub mini and start a hub
+Each walkthrough shows every command and what it prints, and removes what it made at the end:
 
-**If you typed `/confighub:install-mini` in Claude Code,** confighub mini is already running. It printed the full path of its `cub`. In the terminal you use for the steps below, put that `cub`'s folder first on your path: `export PATH="$HOME/.confighub/mini/confighub-mini-VERSION-PLATFORM/bin:$PATH"`. The package folder those steps start from is `~/.confighub/mini/confighub-mini-VERSION-PLATFORM`, for example `~/.confighub/mini/confighub-mini-0.11.1-mini.1-darwin-arm64`.
+- [Run my app, and keep my changes when George updates it](../examples/walkthroughs/story-02-keep-your-changes.md): you change a start page someone else made, with a reason each time, and keep your changes through their next version. It is the package's `examples/startpage`.
+- [The `cub mini` commands](../examples/walkthroughs/tool-cub-mini.md): the dozen commands a newcomer needs, on one small app.
+- [Your first hour](../examples/walkthroughs/story-13-first-hour.md): production behind your approval, and an agent's own approval refused.
 
-**Otherwise,** follow [the install steps](install-mini.md) up to and including `cub space list`.
+The package's `START-HERE.txt` lists more stories, and its `./verify` checks, on your machine, the size and speed claimed for confighub mini.
 
-Note how long the install took. We ask for it at the end.
-
-## Step 2: Check the claims made for it
-
-From the package folder, run:
-
-```bash
-./verify
-```
-
-It checks, on your machine, the size and speed claimed for confighub mini. It works in a folder of its own, and removes what it made when it is done. It takes about a minute.
-
-Note the last lines it prints. We ask for them at the end.
-
-## Step 3: Change an app, and keep your changes through its next version
-
-In this story, George made a start page for his team. You run your own copy of it and change it. Then George publishes a new version, and you keep your changes when you take it.
-
-1. From the package folder, go to the example:
-
-   ```bash
-   cd examples/startpage
-   ```
-
-2. Open your page:
-
-   ```bash
-   ./startpage
-   ```
-
-   Your start page opens in the browser.
-
-3. Change the theme, and give your reason:
-
-   ```bash
-   ./startpage set theme dark "Easier on my eyes"
-   ```
-
-4. Remove a link, and give your reason:
-
-   ```bash
-   ./startpage remove links.wiki "We do not use the wiki"
-   ```
-
-5. Play George, publishing his next version:
-
-   ```bash
-   cp georges-next-version/startpage.yaml published/
-   ```
-
-6. Take George's new version:
-
-   ```bash
-   ./startpage update
-   ```
-
-   You see what you would take from George's version, and what of yours you keep. It asks before it takes anything.
-
-7. See what you changed:
-
-   ```bash
-   ./startpage why
-   ```
-
-   You see each change you made, with the reason you gave.
-
-`examples/startpage/README.md` tells the whole story.
-
-## Step 4: Put your agents' record into the hub
+## Put your agents' record into the hub
 
 If you have used the ConfigHub plugin in a repository, its record of what agents changed can go into the hub. Each recorded change becomes a revision, with the request or reason behind it.
 
@@ -113,11 +46,7 @@ If you have used the ConfigHub plugin in a repository, its record of what agents
 
    Each file becomes a Component. Its base is the file as it was before the first recorded change, and each recorded change is a revision of its local copy. Running it again writes only what was recorded since.
 
-## Step 5: An agent proposes, and you approve
-
-In Claude Code, in a repository with configuration in it, ask: *"Make changes to production wait for my approval; agents may only propose them."* Then ask an agent for a change to production, as you would. Its turn ends with one line saying a change is waiting for you; approve it in a terminal with `cub mini approve`, which shows the change and asks first. About a minute. [The approval steps](approvals.md) do the same by hand, and work on hosted ConfigHub too.
-
-## Step 6: Remove it
+## Remove it
 
 This removes the hub and its data:
 
@@ -128,6 +57,6 @@ cub mini uninstall --delete-data
 ## What to send back
 
 - Your machine: the output of `uname -sm`, and the package you downloaded.
-- How long `cub mini install` took, and the last lines `./verify` printed.
+- The last lines `./verify` printed, if you ran it.
 - Where you got stuck, had to guess, or read something twice.
 - Anything that surprised you, good or bad.

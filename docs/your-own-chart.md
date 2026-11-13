@@ -1,17 +1,14 @@
-# Your own Helm chart, step by step: about 10 minutes
+# Your own Helm chart, step by step
 
-This walkthrough is for a platform engineer who runs a vendor's Helm chart with values of their own, such as a pinned driver, a scrape path, or a replica count for a busy week. It shows how to keep those values, each with its reason, through the chart's next version. You see what the next version would change before you take it, and you end with plain files you can apply to a cluster or commit to Git.
+This page is for a platform engineer who runs a vendor's Helm chart with values of their own, such as a pinned driver, a scrape path, or a replica count for a busy week. It shows how to keep those values, each with its reason, through the chart's next version. You see what the next version would change before you take it, and you end with plain files you can apply to a cluster or commit to Git.
+
+The walkthrough [take a platform's next version](../examples/walkthroughs/story-07-next-version.md) does the same with NVIDIA's GPU Operator, with every command and what it prints.
 
 ## The problem this solves
 
 A chart's next version can change or drop a setting your values depend on. For example, cert-manager 1.21.2 dropped the setting for the path its ServiceMonitor scrapes. You find out at upgrade time. Helm either refuses the old key, or quietly renders the chart without it. And the reason each of your values was set is usually in someone's head, not written down.
 
-## Words used here
-
-- [ConfigHub](https://docs.confighub.com) keeps your configuration with the reason each value is set. A *hub* is one running ConfigHub server. *confighub mini* runs a hub on your machine. `cub` is ConfigHub's command-line tool.
-- A *Component* is one piece of software, here `podinfo`.
-- A Component's *base* is the configuration as the chart renders it. A *variant* is a copy made from the base for one place it runs, here `live`. The variant keeps your own changes when the base changes.
-- A *Space* holds configuration, as *Units*: one Unit per Kubernetes resource.
+The words on this page, such as *hub*, *base* and *change order*, are explained in [the glossary](README.md#words).
 
 ## What you need
 

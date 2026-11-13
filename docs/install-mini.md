@@ -2,7 +2,18 @@
 
 confighub mini is ConfigHub made small enough to run on one machine: a hub on your laptop, free, with no account, no Docker and no cluster. It keeps your app's settings with the reason for each value, and can make changes to production wait for your approval.
 
-This page shows how to install it: in one step from Claude Code, on its own without the plugin, and in a container or CI job.
+This page shows how to install it: in one step from Claude Code, on its own without the plugin, and in a container or CI job. It is also the one page that says which versions are current; other pages link here rather than name a version.
+
+## The current release
+
+| What | Version |
+|---|---|
+| confighub mini | 0.11.1-mini.1 |
+| The ConfigHub server inside it | v0.11.1, the same version hosted ConfigHub runs |
+| `cub`, ConfigHub's command-line tool, inside it | v0.11.1 |
+| The download | 49 to 74 MB, depending on the platform |
+
+The ConfigHub plugin's own version is on the [releases page](https://github.com/confighubai/confighub-mini-plugin/releases). `/confighub:install-mini` always gets the newest confighub mini.
 
 ## What you are installing
 
@@ -12,7 +23,7 @@ A *hub* is one running ConfigHub server, with the database that holds your confi
 
 You work with a hub through `cub`, ConfigHub's command-line tool. The package includes `cub`.
 
-There is a package for macOS and one for Linux, each for ARM and for Intel, on this repository's [releases page](https://github.com/confighubai/confighub-mini-plugin/releases). Each package is about 48 to 73 MB.
+There is a package for macOS and one for Linux, each for ARM and for Intel, on this repository's [releases page](https://github.com/confighubai/confighub-mini-plugin/releases). The sizes are in [the current release](#the-current-release).
 
 ## Install in one step, from Claude Code
 
@@ -22,7 +33,7 @@ With [the ConfigHub plugin](../README.md) installed, type this in a Claude Code 
 /confighub:install-mini
 ```
 
-It does the following, in about 25 seconds on a Mac:
+It does the following:
 
 1. It finds the newest release.
 2. It downloads the package for your machine.
@@ -34,7 +45,7 @@ It asks nothing in Claude Code. It prints one line about a setting that is yours
 
 If you run it again, it starts the hub if the hub is stopped, and moves it onto a newer release if there is one ([how](#move-to-a-newer-confighub-mini)).
 
-When it is done, it prints the full path of the package's `cub`, which runs in a terminal of your own with nothing added to your `PATH`, and what to do next: put a repository's record into the hub with `cub mini copy --from-record` ([how](try-confighub-mini.md#step-4-put-your-agents-record-into-the-hub)), or follow [a first run](try-confighub-mini.md).
+When it is done, it prints the full path of the package's `cub`, which runs in a terminal of your own with nothing added to your `PATH`, and what to do next: put a repository's record into the hub with `cub mini copy --from-record` ([how](try-confighub-mini.md#put-your-agents-record-into-the-hub)), or follow [a first run](try-confighub-mini.md).
 
 In a terminal, or in Codex, run `bin/confighub mini get` from the plugin. It does the same, and in a terminal, the first time on a machine, it asks that setting as a question before it starts the hub. Enter means no. The plugin on its own carries no server, so any `cub mini` command run as `bin/confighub mini COMMAND`, such as `bin/confighub mini install` or `bin/confighub mini need`, says it needs confighub mini when none is downloaded, and names `confighub mini get`.
 
@@ -96,7 +107,7 @@ On Linux you need `curl` and `xz`. On Debian or Ubuntu, install them with `apt-g
    cub mini install
    ```
 
-   The first time on a machine, it asks the one setup question first; Enter means no. This starts the ConfigHub server and its PostgreSQL, in about 10 seconds. It also signs `cub` in to the new hub, as a new *context*. A context is a named server and sign-in that `cub` can talk to.
+   The first time on a machine, it asks the one setup question first; Enter means no. This starts the ConfigHub server and its PostgreSQL. It also signs `cub` in to the new hub, as a new *context*. A context is a named server and sign-in that `cub` can talk to.
 
    - If you had no `cub` context before, the hub's context becomes the current one.
    - If you already use `cub`, your current context is kept. `cub mini install` prints the line that reaches the hub, such as `cub --context star-paw space list`. To make the hub's context the current one instead, run `cub mini install --use`.
@@ -109,7 +120,7 @@ On Linux you need `curl` and `xz`. On Debian or Ubuntu, install them with `apt-g
 
    This lists the hub's Spaces. A *Space* is where ConfigHub keeps a set of configuration. If you kept your earlier context, use the line `cub mini install` printed instead.
 
-The package's `START-HERE.txt` lists ten stories you can run on the hub. For a guided first run, see [Try confighub mini](try-confighub-mini.md).
+The package's `START-HERE.txt` lists ten stories you can run on the hub. For a guided first run, see [Try confighub mini](try-confighub-mini.md); to learn the commands, the walkthrough [the `cub mini` commands](../examples/walkthroughs/tool-cub-mini.md).
 
 ## Move to a newer confighub mini
 
@@ -183,7 +194,7 @@ Things to know:
 
 Each package has a `provenance.json` file. It names the ConfigHub release the package was built from, and the PostgreSQL build inside it, with that build's SHA-256.
 
-The package includes `cub` v0.10.7, and every `cub mini` command runs that one, whichever `cub` comes first on your `PATH`. If you type plain `cub` commands with a `cub` of your own, v0.9.0 or later works with a hub from this package. To sign in with a key to hosted ConfigHub, which runs v0.10.7, use v0.10.7: v0.9.0 is refused there with "Not Found".
+The package includes its own `cub` ([which version](#the-current-release)), and every `cub mini` command runs that one, whichever `cub` comes first on your `PATH`. If you type plain `cub` commands with a `cub` of your own, use the same version. The commands on these pages use the flag names of ConfigHub v0.11, such as `--require-change-workflow`, which an older `cub` does not know, and hosted ConfigHub refuses a `cub` older than v0.11 as too old.
 
 The features of a hub are ConfigHub's own, not a separate version of them. That includes approvals, and ChangeWorkflows, which say what a change needs before it goes ahead, such as a person's approval. The steps for approvals are in [approvals.md](approvals.md).
 

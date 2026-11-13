@@ -2,11 +2,7 @@
 
 This page is for anyone who has installed the ConfigHub plugin, or is deciding whether to, and wants to know what it does in detail. The plugin keeps a record of each configuration value an agent changes, and of why. This page covers what the next agent is told and when, when the plugin stops a command, what is recorded, the settings, and what it costs. To install it, see [the README](../README.md).
 
-A few words used on this page:
-
-- A **session** is one Claude Code or Codex conversation, from start to `/exit`.
-- A **turn** is one request you make in a session and the agent's work on it.
-- The **record** is the plugin's list of what agents changed, with the request that caused each change and the reason given.
+The words on this page, such as *session*, *turn* and *record*, are explained in [the glossary](README.md#words). The walkthrough [the plugin](../examples/walkthroughs/tool-plugin.md) shows the plugin at work, with every command and what it prints.
 
 ## Client capabilities
 
@@ -186,7 +182,7 @@ You set each setting in Claude Code's settings, under `env`.
 | `CUB_MINI_STOP_BEFORE_UNDO=0` | Turns off the stop before a deploy that would undo another agent's change on the cluster. The agent is then told only after the command has run. | When you do not want commands held back. |
 | `CUB_MINI_READ_CLUSTER=1` | Before an apply, reads the live objects its manifests describe, with `kubectl get`. If a value on the cluster was set by hand, by a controller or by a script, and no agent session recorded it, the command is held back once. | When values on the cluster are also changed outside agent sessions. It is off by default because it reads the cluster before each apply. |
 | `CUB_MINI_DECISIONS=0` | Turns off keeping what the agent said about each value it changed ([above](#what-it-records-and-what-it-does-not)). | When you do not want the agent's own words in the record. |
-| `CUB_MINI_SIGN=0` | Turns off signing the record. Signing is on by default: each entry is signed as it is written, at a cost of about 0.2 milliseconds ([signed records](signed-records.md)). | When you do not need to check that the record was not changed. |
+| `CUB_MINI_SIGN=0` | Turns off signing the record. Signing is on by default: each entry is signed as it is written ([signed records](signed-records.md)). | When you do not need to check that the record was not changed. |
 | `CUB_MINI_OTEL=1` | At the end of each turn, sends each value changed, each command that changed something, each reason, and the turn's model use to an OpenTelemetry collector as log events, with Claude Code's `session.id`. Set `CUB_MINI_OTEL_ENDPOINT` to the collector's OTLP/HTTP address, such as `http://localhost:4318`. The request itself is sent only with `OTEL_LOG_USER_PROMPTS=1`. | When you want these events in an OpenTelemetry collector. |
 | `CUB_MINI_USAGE=0` | Turns off keeping each turn's model use. It is on by default ([model use](#model-use)). | When you do not want model use in the record. |
 | `CUB_MINI_COUNT=0` | Turns off counting, on this machine, how often you use each part of the plugin. The count is never sent anywhere. | When you do not want even a local count. |
@@ -213,7 +209,7 @@ Each kind of tip is shown at most once a week for a project, and a line about on
   The record added to a pull request has the same line.
 - `bin/confighub mini changes --usage`, run from the plugin's folder, lists each session kept for the repository, latest first, with its model use and its first request, and the total.
 - With `CUB_MINI_OTEL=1`, each turn's use is sent as a `confighub.model_use` event, with the counts as attributes.
-- **In a hub, from plugin 0.82.0.** When a change is kept in a hub, the turn's model use goes with it, beside the revision the turn made. Then, in a terminal:
+- **In a hub.** When a change is kept in a hub, the turn's model use goes with it, beside the revision the turn made. Then, in a terminal:
 
   ```
   cub mini receipts APP-COPY UNIT --revision N     one change: a Cost line beside who made it, why, and who approved it
@@ -225,7 +221,7 @@ Each kind of tip is shown at most once a week for a project, and a line about on
 
 **How it counts.** Claude Code writes a line for each part of an answer. Each call is counted once. The record's numbers for a session match the ones Claude Code itself reports.
 
-**Subagents.** From plugin 0.82.0 a subagent's calls are counted with the turn that started it, and shown apart as "its subagents"; one still running when its turn ends is counted up to then. **Not counted yet:** Codex sessions. The plugin counts tokens, not money, since prices differ by model and by contract.
+**Subagents.** A subagent's calls are counted with the turn that started it, and shown apart as "its subagents"; one still running when its turn ends is counted up to then. **Not counted yet:** Codex sessions. The plugin counts tokens, not money, since prices differ by model and by contract.
 
 `CUB_MINI_USAGE=0` turns it off.
 
@@ -253,14 +249,11 @@ What the plugin does not do, or has not been shown to do, is in [what we do not 
 
 The plugin is one program for each of macOS and Linux, on Intel and on ARM, about 9 MB each. A launcher runs the one for your machine. There is no server, no database and no account. It works in Claude Code and Codex on macOS, and in Claude Code on Linux; Codex on Linux hasn't been tried.
 
-On a Mac, it adds:
-
-- about 15 ms to each tool call;
-- about 30 ms after a shell command.
+It runs as hooks around each tool call, so it adds a little time to each one.
 
 Many sessions can run at once in separate worktrees: no change is lost, and none is put down to the wrong session.
 
-The history the next agent is told when it reads a file is a few hundred tokens. It is about 300 tokens with 10 earlier sessions, and about 600 with 200, because the plugin keeps only each value's latest changes.
+The history the next agent is told when it reads a file stays short, because the plugin keeps only each value's latest changes.
 
 ## Moving from the old name
 
