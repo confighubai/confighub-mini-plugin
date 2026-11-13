@@ -136,10 +136,9 @@ A correct agent result has the notes app on `pattern-web`, with staging and a li
 > Build me a small notes API, with its settings in an env file, and set it up in our ConfigHub to fit the team's pattern, pattern-web, with a staging and a live copy.
 
 <!-- agent-check adopt: test "$(cub unit get app --space notes-base -o jq=.Unit.UpstreamUnitID)" = "$(cub unit get web-service --space pattern-web -o jq=.Unit.UnitID)" && cub space get notes-staging >/dev/null && cub changeworkflow get --space workflows notes-live-approval >/dev/null -->
-<!-- agent-check-a adopt: ls notes/.env* >/dev/null && ls -a notes | grep -qi staging && ls -a notes | grep -qiE 'live|prod' -->
 <!-- arms: a,b,c -->
+The request asks for ConfigHub, so arm a, with no hub, is marked not applicable.
 
 ```sh
 test "$(cub unit get app --space notes-base -o jq=.Unit.UpstreamUnitID)" = "$(cub unit get web-service --space pattern-web -o jq=.Unit.UnitID)" && cub space get notes-staging >/dev/null && cub changeworkflow get --space workflows notes-live-approval >/dev/null
-ls notes/.env* >/dev/null && ls -a notes | grep -qi staging && ls -a notes | grep -qiE 'live|prod'
 ```

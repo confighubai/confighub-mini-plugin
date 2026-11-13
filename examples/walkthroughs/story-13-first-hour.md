@@ -128,10 +128,9 @@ A correct agent result has `api` in the hub with production behind approval. The
 > Attach ConfigHub to this app: keep my staging and production values as they are, and make sure an agent cannot change production without my say.
 
 <!-- agent-check attach: cub space get api-live >/dev/null && cub changeworkflow get --space workflows api-live-approval >/dev/null -->
-<!-- agent-check-a attach: ls -a | grep -qi staging && ls -a | grep -qiE 'live|prod' -->
 <!-- arms: a,b,c -->
+The request asks for ConfigHub, so arm a, with no hub, is marked not applicable.
 
 ```sh
 cub space get api-live >/dev/null && cub changeworkflow get --space workflows api-live-approval >/dev/null
-ls -a | grep -qi staging && ls -a | grep -qiE 'live|prod'
 ```
