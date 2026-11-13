@@ -13,14 +13,6 @@ For someone whose app runs on Vercel and who wants each change to production's s
 ### What you need
 An unpacked confighub mini package ([install confighub mini](../../docs/install-mini.md)) and Python 3. confighub mini is ConfigHub made small enough to run on your computer: a hub, which keeps settings with every change, who made it and why. For step 8, a sign-in to your organization's ConfigHub, such as hosted ConfigHub.
 
-### Real Hobby project
-Use a personal, noncommercial test app in your Hobby scope and [sign in with the Vercel CLI](https://vercel.com/docs/cli/login). Set `WALKTHROUGH_VERCEL_SCOPE` to your Hobby scope. You need Vercel CLI, jq, and a package containing the live add-on. Run the setup in step 1, then download [the test script](../vercel-hobby.sh) and run it in place of steps 2–10. It checks first delivery, a cache change, and an approved rollback on a disposable project. Keep the Vercel sign-in with the owner who delivers changes.
-
-<!-- run: live-delivery vercel-live -->
-```sh
-bash "${WALKTHROUGH_VERCEL_SCRIPT:-/absolute/path/to/vercel-hobby.sh}"
-```
-
 ### Steps
 1. Start a hub of your own; it becomes `cub`'s current context. `MINI` is the unpacked package. `CUB_MINI_STARTERS` switches starters on: a starter is a short file that gives one kind of app its usual settings, each with a reason.
    <!-- run: setup -->
@@ -31,6 +23,14 @@ bash "${WALKTHROUGH_VERCEL_SCRIPT:-/absolute/path/to/vercel-hobby.sh}"
    cub mini install --name shop --use
    export LOCAL_HUB=$(cub context get -o jq=.name)
    ```
+
+**Real Hobby project.** Use a personal, noncommercial test app in your Hobby scope and [sign in with the Vercel CLI](https://vercel.com/docs/cli/login). Set `WALKTHROUGH_VERCEL_SCOPE` to your Hobby scope. You need Vercel CLI, jq, and a package containing the live add-on. Run the setup in step 1, then download [the test script](../vercel-hobby.sh) and run it in place of steps 2–10. It checks first delivery, a cache change, and an approved rollback on a disposable project. Keep the Vercel sign-in with the owner who delivers changes.
+
+<!-- run: live-delivery vercel-live -->
+```sh
+bash "${WALKTHROUGH_VERCEL_SCRIPT:-/absolute/path/to/vercel-hobby.sh}"
+```
+
 2. For the no-account path, make the app and its stand-in Vercel project. `shop/.vercel/project.json` links the app to the project, as `vercel link` does. In `shop-project`, `state.json` holds the project's settings, with production in Frankfurt (`fra1`), and `bin/vercel` answers as the `vercel` command does. The script `deliver` sends production's approved settings to the project and prints them. Last, the Vercel add-on, a small program in the package, reads the project's settings into `shop/.env.staging` and `shop/.env.production`.
    <!-- run: app files vercel-fixture -->
    ```sh
