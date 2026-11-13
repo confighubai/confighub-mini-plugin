@@ -178,9 +178,9 @@ cub --context shared unit data app --space "$TEAM_APP-live"
 
 <!-- results:begin -->
 
-Results, 13 November 2026, a development build of confighub mini after 0.11.1-mini.1. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+Results, 13 November 2026, confighub mini 0.11.1-mini.2. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Scripted run: passed, 57 seconds for the steps, within the page's budget of 200.
+- Scripted run, on confighub mini 0.11.1-mini.2: passed, 81 seconds for the steps, within the page's budget of 200; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
 - Agent runs (on a development build of confighub mini after 0.11.1-mini.1): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page. Arm a ran earlier the same day, on confighub mini 0.11.1-mini.0; arms b and c ran on the development build. The simulated persons of every arm were judged in the same way.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
