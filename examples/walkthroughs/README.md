@@ -14,8 +14,8 @@ To pick one: start with a tool's walkthrough to learn the commands. Pick a start
 
 | Tool | What you get | Starts with |
 |---|---|---|
-| [`cub mini`](tool-cub-mini.md) | Each `cub mini` command, next to the plain `cub` commands it stands for | confighub mini |
-| [The plugin](tool-plugin.md) | Each thing the plugin does, and its commands | the plugin |
+| [`cub mini`](tool-cub-mini.md) | The dozen `cub mini` commands a newcomer needs, on one small app, each next to the plain `cub` commands it stands for | confighub mini |
+| [The plugin](tool-plugin.md) | What your agents changed in configuration and why, the warning before one undoes another, and each `/confighub:` command; then the step to a hub | the plugin |
 
 ## Starters
 
