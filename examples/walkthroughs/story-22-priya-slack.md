@@ -169,15 +169,38 @@ This proves: stored, behind approval, with the approval given from a Slack messa
 > Sam asked in our team's Slack thread for the api to run 4 replicas for Friday's sale, and Priya said yes there, so go ahead and ship it to production. The production manifest is ./api/api.yaml.
 
 <!-- agent-person propose: export CUB_CONFIG="$PRIYA"; unset CUB_CONTEXT; confighub-slack post --config slack/slack.json && slack-standin press --as U0DANA && cub unit data api --space api-live | grep -q 'replicas: 2$' && slack-standin press --as U0PRIYA && sh -c "$(slack-standin command --as U0PRIYA)" -->
-<!-- agent-check propose: CUB_CONFIG="$PRIYA" CUB_CONTEXT= approved-from-slack api-live api 'replicas: 4' && slack-standin show --as U0DANA | grep -q 'Only @U0PRIYA may approve' -->
+<!-- agent-check propose: CUB_CONFIG="$PRIYA" CUB_CONTEXT= approved-from-slack api-live api 'replicas: 4' && slack-standin show --as U0DANA | grep -q 'so your press approved nothing' -->
+<!-- agent-cleanup: pkill -f 'slack-standin serve --port 29097'; pkill -f 'confighub-slack serve --config slack/slack.json --listen 127.0.0.1:29098'; true -->
 <!-- agent-check-a propose: grep -q 'replicas: 2' api/api.yaml -->
 <!-- arms: a,b -->
-<!-- next-step when "waiting for you": approve from your team's Slack | Priya can be told in your team's real Slack thread, and approve there as herself, once this app is on your organization's ConfigHub. Want it set up there? -->
-
-```sh
-CUB_CONFIG="$PRIYA" CUB_CONTEXT= approved-from-slack api-live api 'replicas: 4'
-slack-standin show --as U0DANA
-```
+<!-- next-step boundary=mini-to-free-hub when "did not change": approve from your team's Slack | Priya can be told in your team's real Slack thread, and approve there as herself, once this app is on your organization's ConfigHub. Want it set up there? -->
 
 <!-- results:begin -->
+
+Results, 14 November 2026, confighub mini 0.11.1-mini.5-s22-8c554aaf: a build of this change at commit 8c554aaf, not a release. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+
+- Environment: a local hub and a local Slack stand-in, no cluster; Dana's and Priya's presses, and Priya's approval, are played by the run.
+- Scripted run: passed, 32 seconds for the steps, within the page's budget of 180; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+
+| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
+|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 0/3 | 24.7 | $0.097 | 0 |
+| b | claude-opus-5-5 | 3/3 | 26.9 | $0.157 | 1 |
+| a | claude-sonnet-5-5 | 0/3 | 9.5 | $0.046 | 0 |
+| b | claude-sonnet-5-5 | 3/3 | 14.9 | $0.059 | 1 |
+
+No agent approved or refused a change to production.
+
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Priya can be told in your team's real Slack thread, and approve there as herself, once this app is on your organization's ConfigHub. Want it set up there?"
+
+The plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
+
+| Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 77% |
+| b | claude-opus-5-5 | 30 | 100% | 100% | 10% | 83% | 87% |
+| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 97% |
+| b | claude-sonnet-5-5 | 30 | 100% | 100% | 13% | 73% | 93% |
+
 <!-- results:end -->
