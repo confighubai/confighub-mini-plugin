@@ -111,7 +111,7 @@ For an AI agent doing this for a person.
 
 The scripted run follows the Human steps and compares the quoted output. Arm a, without confighub mini, is not applicable here: the keys and refusals exist only in a hub. A correct agent result is a `keys.txt` with every refusal and none missed. The checks below can be run by hand after the steps:
 
-This proves: stored, and refused. Each key is checked against real hubs on this computer, three of them; nothing is delivered, and no shared hub is used. The next step this aims to win: moving from hubs on one computer to the organization's hosted ConfigHub. Tested on the checksum-verified published confighub mini 0.11.1-mini.2 with the plugin 0.85.0, 14 November 2026: environment, three local hubs, no shared hub; approval, no approval step; refusals are the check.
+This proves: stored, and refused. Each key is checked against real hubs on this computer, three of them; nothing is delivered, and no shared hub is used. The next step this aims to win: moving from hubs on one computer to the organization's hosted ConfigHub. Tested on the checksum-verified published confighub mini 0.11.1-mini.2 with the plugin 0.85.0, 14 November 2026: environment, three local hubs, no shared hub; approval, no approval step; refusals are the check. At the moment this page's next step belongs to, the plugin showed no line in the runs, so the offer was not made: the plugin missed the moment.
 
 <!-- agent-task: keys -->
 > This folder's ./two-people is a check of keys for three parties: Ivan's team, a customer, and Dan. Run it, keep its output in keys.txt, and tell me whether each party was refused everything outside its own part.
