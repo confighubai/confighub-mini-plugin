@@ -190,6 +190,27 @@ The plugin offers it once, after the answer at whose end it showed the moment th
 | b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 0% |
 | c | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 23% |
 
+Results, 14 November 2026, confighub mini 0.11.1-mini.7. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+
+- Environment: checksum-verified published mini.7 for macOS arm64 and the plugin it ships, with Claude Code on this computer. These are agent runs; the earlier scripted runs and planted faults are labelled separately.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+
+| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
+|---|---|---|---|---|---|
+| a | claude-sonnet-5-5 | 0/3 | 8.8 | $0.056 | 0 |
+| b | claude-sonnet-5-5 | 3/3 | 16.5 | $0.074 | 0 |
+
+No agent approved or refused a change to production.
+
+Simulated persons, not people: 5 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Every app's production can take the base's change with one approval each, all listed in one place; want them listed now?" It offers more of the tier the person has, not a step up.
+
+The plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
+
+| Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|---|
+| a | claude-sonnet-5-5 | 15 | 0% | 100% | n/a | n/a | 0% |
+| b | claude-sonnet-5-5 | 15 | 0% | 100% | n/a | n/a | 13% |
+
 <!-- results:end -->
 
 The proposed enterprise offer waits for all ten apps to serve the approved base revision in production. That moment was absent from all 12 kept mini.5 sessions in arms b and c. A persons-only rejudge of one kept session per arm showed the enterprise offer to zero of ten simulated readers. The wording has no conversion result.
