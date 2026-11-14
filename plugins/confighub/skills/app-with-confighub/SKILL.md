@@ -148,8 +148,8 @@ delivery do not come with it.
   `cub context get -o jq=.coordinate.user` names a service account
   (`...@serviceaccount...`) only for an agent's key of its own; any other user is the person's
   own sign-in. What you run yourself, either way: the reads above; `cub mini upload` and
-  `cub mini set` for the base and for copies that take a change at once, whose changes reach
-  production only as a proposal; `cub mini rollback`, which on production proposes too; and the
+  `cub mini set`, which never write production: a change to it, or to the shared settings it
+  follows, waits as a proposal; `cub mini rollback`, which on production proposes too; and the
   app's own delivery step for a revision the person already approved, with the key setup made
   for it. Signed in as the person, also moving or deleting the app when they ask. Only
   approving, `deploy-from-hub` and `back-to-git`, and secrets are always the person's. Do not refuse
