@@ -162,12 +162,28 @@ cub mini receipts notes-staging | grep 'Why:'
 
 <!-- results:begin -->
 
-Results, 14 November 2026, confighub mini 0.11.1-mini.5. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+Results, 14 November 2026, confighub mini 0.11.1-mini.7. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Scripted run: passed, 80 seconds for the steps, within the page's budget of 240; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
-- Environment, published confighub mini 0.11.1-mini.5, verified against its SHA256SUMS, with this page's `examples/sized` added to the package's examples folder, which that release does not ship; Docker (OrbStack) on a Mac, no cluster. No person approved anything; the agents left the approval for Sam.
-- Earlier pilots, on a build of this change and twice on mini.5, ran with a plain-files check that macOS's grep made fail every run. Read again from their transcripts with the check below, arm a passed 4 of 18 runs and arm b 18 of 18. In arm a, the runs that failed changed the shared `app.env` production reads, wrote no file, or kept the measurement only in their answer.
-- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+- Scripted run: passed, 79 seconds for the steps, within the page's budget of 240; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
+- Environment: the published confighub mini 0.11.1-mini.7, verified against its SHA256SUMS, which ships `examples/sized`; for the mini.5 set below, this page's `examples/sized` was added to that package's examples folder. Docker (OrbStack) on a Mac, no cluster. No person approved anything; the agents left the approval for Sam. The mini.7 agent runs are the plugin arm alone, cut short to save cost; the comparison with plain tools is the mini.5 set, whose offer was not shown because the plugin then did not read an upload made by a script.
+- Earlier pilots, on a build of this change and twice on mini.5, ran with a plain-files check that macOS's grep made fail every run. Read again from their transcripts with the check below, arm a passed 4 of 18 runs and arm b 18 of 18.
+- Agent runs (on confighub mini 0.11.1-mini.7, 14 November 2026): a pilot, 2 runs per arm on each of claude-sonnet-5-5. Arms: b is the plugin, confighub mini and this page as reading.
+
+| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
+|---|---|---|---|---|---|
+| b | claude-sonnet-5-5 | 2/2 | 55.7 | $0.097 | 1.0 |
+
+No agent approved or refused a change to production.
+
+Simulated persons, not people: 5 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Once notes runs, what it uses there can come back as a proposed size the same way, with live's numbers as the reason and Sam's approval before it changes; want that for notes?" It offers more of the tier the person has, not a step up.
+
+The plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
+
+| Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|---|
+| b | claude-sonnet-5-5 | 10 | 100% | 100% | 0% | 90% | 80% |
+
+- Agent runs (on confighub mini 0.11.1-mini.5, 14 November 2026): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
