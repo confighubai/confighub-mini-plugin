@@ -5,9 +5,9 @@ starter: unikraft
 needs: [confighub mini package with the Unikraft starter, Unikraft CLI, disposable Cloud service, BuildKit, jq, curl]
 budget_seconds: 600
 -->
-# Preview an incident banner on Unikraft Cloud
+# Roll out and undo an incident banner on Unikraft Cloud
 
-An incident starts and you need a banner change without rebuilding the image. Connect a disposable service and see the endpoint keep serving its current banner while the first delivery awaits approval.
+An incident starts and you need a banner change without rebuilding the image. Connect a disposable service, approve a green incident banner, and restore blue when the incident ends. The same image serves each change. The HTTPS response includes the ConfigHub revision that the service loaded.
 
 ## Human
 
@@ -28,13 +28,24 @@ Use an unpacked mini package containing the Unikraft starter. Use a new test hub
    cub mini adopt app --name banner --live
    cub mini receipts banner --setup
    ```
-3. Set up the scoped reader in the packaged example. Try applying the pending connect order and confirm the add-on refuses it.
-4. Read the HTTPS endpoint again. It should still return blue with revision `baseline`. Keep that response with the add-on's refusal.
-5. Remove the disposable test instance, service and image. Delete the test apps or stop the disposable mini.
+3. Set up the scoped reader in the packaged example. Try applying the pending `banner-live/connect` order. The adapter should refuse it and the endpoint should still return blue at `baseline`. Approve `banner-live/connect` from your account. Apply the live revision and check the endpoint returns blue and that revision.
+4. Propose green with `cub mini set banner UNIKRAFT_BANNER=green --variant live --change-desc "Show the incident banner"`. Use the order printed by that command. Give the reader `View` and `ViewChildren` on `banner-file-proposals` so the adapter can verify the approval. Before approving, try delivery and check the endpoint still serves blue. Approve the order, read the new live head, deliver it and verify green and that revision over HTTPS.
+5. Restore blue with the same `cub mini set` command, this time setting `UNIKRAFT_BANNER=blue` and giving the reason for the rollback. Check that green stays live while the rollback waits. After approving the new order, deliver its exact live revision and verify blue over HTTPS.
+6. To move to a shared hub, export the app with `cub mini copy --to-file banner.tar.gz banner`. Sign in to the shared hub and import with `cub --context shared mini copy --from-file banner.tar.gz --name "$TEAM_APP"`. Use a unique name for this test. Verify that the destination requires a change workflow. Run `cub --context shared mini require-approval "$TEAM_APP" --variant live --file-proposals` to enable file proposals there. Make a separate destination reader with `cub --context shared mini pull-key "$TEAM_APP-reader" "$TEAM_APP" --variant live` and grant it read access to the destination's file proposals Space. Propose green in the destination's live variant with `cub --context shared mini set`. Check that the service still returns blue, then approve in the shared hub, apply the released revision using the destination reader and check green over HTTPS.
+7. Remove the Unikraft instance, service and image. Delete the disposable shared app, its proposal Space, workflows, invocation and reader account. Stop and uninstall the test mini.
+
+Grant the reader access with `cub space update "$PROPOSALS" --permission "View:serviceaccount:$READER_NAME" --permission "ViewChildren:serviceaccount:$READER_NAME"`, where `PROPOSALS` is the app’s file proposals Space and `READER_NAME` is its delivery service account. For the shared hub, add `--context shared` to the command. For each delivery, read the current live head with `cub unit get app --space "$LIVE" -o jq=.Unit.HeadRevisionNum` as the owner and use the separate reader to apply the exact order and revision. Set `LIVE`, `ORDER`, `REV`, `READER_CONFIG` and `READER_CONTEXT` to the app and hub you are delivering from:
+
+```sh
+CUB_CONFIG="$READER_CONFIG" CUB_CONTEXT="$READER_CONTEXT" \
+  "$MINI/starters/addons/unikraft/run" --live --dir app \
+  --space "$LIVE" --order "$ORDER" --revision "$REV" apply
+curl -fsS "$(jq -r .endpoint app/.confighub-unikraft.json)"
+```
 
 ## Agent
 
-Keep the provider sign-in with the person or delivery service. Read the endpoint, check the pending-order refusal, and report the banner, revision and pinned image. Leave the order pending for this test.
+Keep the provider sign-in with the person or delivery service. Give the owner the order and wait for their approval. Before and after delivery, read the endpoint and report the banner, revision and pinned image.
 
 ## Testing
 
@@ -44,27 +55,37 @@ Without a provider account, run the local stand-in test from the unpacked packag
 "$MINI/examples/starter-check/check" "$MINI/starters/unikraft.yaml" --package "$MINI" --check-addon
 ```
 
-It checks import, apply, compare and planted faults. The real-service test checks the approved catalog source, pending-order refusal and HTTPS baseline.
+It checks import, apply, compare and planted faults. The live run checks the approved catalog source, delivery refusal before each approval, and HTTPS readback after each delivery.
 
 <!-- agent-task: deploy -->
 > Connect this test app to the approved Unikraft starter and show the current blue banner.
 <!-- agent-check deploy: cub component get banner -o json | jq -e '.Component.Annotations["confighub-mini.starter-source"] | startswith("starters-approved/unikraft@")' -->
 <!-- agent-task: update -->
-> Use the local stand-in contract to test delivery of a pinned revision. For the real Cloud app, show that the first delivery is still blocked while approval is pending.
+> Propose a green incident banner. Check that blue is still live, then deliver after I approve and show the revision the endpoint serves.
 <!-- agent-task: undo -->
-> On the stand-in, confirm that reapplying the same revision leaves the settings unchanged. Report that undo on the real Cloud service still awaits a live test.
+> Propose restoring blue. Check that green is still live. After I approve, deliver the rollback and verify the new revision.
 <!-- agent-task: move -->
-> Identify the destination's starter version, approval order and reader before attempting any shared-hub delivery. Report this as a walkthrough of the prerequisites.
+> Copy the app to a shared hub. Show that production waits for my approval there, then use the destination reader to deliver the approved revision.
 <!-- agent-task: delete -->
 > Remove this test service and its app after recording the result.
 <!-- next-step boundary=same-tier: try an incident banner | Want to see what the endpoint serves while the next change waits for approval? -->
 <!-- arms: b -->
 
-This proves: the candidate selected the approved hub starter and refused an unapproved order while the real Cloud app kept serving blue. Live delivery of a newly approved revision, its rollback and delivery from a shared hub still require their own runs with the packaged adapter.
-
+This proves: owner approval controls delivery of a specific revision to Unikraft Cloud. The HTTPS response verifies the live setting and revision after update and rollback. The shared-hub test also checks the destination's approval and reader.
 
 <!-- results:begin -->
 
-Candidate result, 14 November 2026. A real disposable Frankfurt Cloud service reported blue at its baseline while the candidate refused the unapproved connect order. Adoption used `starters-approved/unikraft@2` after a scripted catalog review. The instance, service and image were removed. An earlier native owner approval test rolled out green and then restored blue with a different delivery script. The packaged live rollout, rollback, shared-hub delivery and agent pilots were not run.
+Published confighub mini 0.11.1-mini.7 (macOS arm64), 14 November 2026. The downloaded archive matched the published checksum. The stand-in passed 38 of 38 checks, including all eight planted faults.
+
+The live run used a disposable Frankfurt Unikraft Cloud service. The app selected starter version 1 from the hub's approved catalog at revision 2. The real owner approved production through ConfigHub. The delivery adapter refused each pending proposal, and the endpoint continued to serve the previous banner and revision.
+
+| Step | Observed over HTTPS |
+| --- | --- |
+| Before first approval | Blue at the provider baseline |
+| First approved delivery | Blue at local revision 3 |
+| Approved update | Green at local revision 5 |
+| Approved rollback | Blue at local revision 6 |
+
+An initial update attempt used a separate base order. That order released local revision 4 with the same blue value as revision 3. The retry used the order generated by `cub mini set --variant live`, which showed blue → green before the owner approved it. On the shared hub, the copied app required approval. The destination reader refused the pending green order, and the endpoint still served blue at local revision 6. The hosted order is awaiting owner approval. No agent pilots were run.
 
 <!-- results:end -->

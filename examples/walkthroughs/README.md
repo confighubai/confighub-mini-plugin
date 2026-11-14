@@ -28,7 +28,7 @@ A starter gives a new app of one kind its usual settings, each with a reason ([s
 | [kustomize-flux: a Kustomize app that Flux deploys](starter-kustomize-flux.md) | Flux on a local kind cluster takes production from the hub with no pod restarted, and only what you approve | confighub mini |
 | [parameter-store: an app that reads AWS Parameter Store](starter-parameter-store.md) | Production's parameters written only from the revision you approved; the encrypted value never leaves Parameter Store (local stand-in) | confighub mini |
 | [temporal-worker: Activity retries](starter-temporal-worker.md) | Observe the Temporal worker load an approved retry policy and roll it back | confighub mini |
-| [unikraft: an incident banner](starter-unikraft.md) | Verify that a disposable Unikraft Cloud service keeps its current banner while approval is pending | confighub mini |
+| [unikraft: an incident banner](starter-unikraft.md) | Approve, roll back and move delivery of a banner on a disposable Unikraft Cloud service | confighub mini |
 | [vercel: an app on Vercel](starter-vercel.md) | The Vercel project's production settings written only from the revision you approved (Hobby project or local stand-in) | confighub mini |
 | [web: a small web service with a `.env`](starter-web.md) | Deploy, update, undo, move to a shared hub and delete, each with the commands it takes | confighub mini |
 
