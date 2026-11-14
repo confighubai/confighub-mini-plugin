@@ -90,11 +90,11 @@ An unpacked confighub mini package ([how to get one](../../docs/install-mini.md#
    ```
    With plain `cub`: two, `cub function set --change-desc` on the base, and `cub changeorder create` for production.
 
-7. **waiting** and **refuse**: see what waits for you, and say no, with a reason the agent can read.
+7. **waiting** and **refuse**: see what waits for you, and say no, with a reason the agent can read. Two changes wait here, the agent's and the timeout you set in step 4; `refuse` names the one to say no to.
    <!-- run: refuse -->
    ```sh
    cub mini waiting
-   cub mini refuse --reason "Keep info logs until the sale is over"
+   cub mini refuse "$(cub mini waiting | sed -n 's/^A change to production waits for your approval: Quieter logs.* its name is \(.*\)\.$/\1/p')" --reason "Keep info logs until the sale is over"
    ```
    ```text
    A change to production waits for your approval: Quieter logs, to cut the log bill. It was made just now; its name is shop-base/upload-20261113-074522-af8n.
@@ -117,15 +117,15 @@ An unpacked confighub mini package ([how to get one](../../docs/install-mini.md#
    ```
    With plain `cub`: `cub space create` and `cub unit create` to make it, and `cub space list` and `cub unit data` to see what each try holds.
 
-9. **secret set**: keep a secret the app reads when it runs. The value is read from standard input, so it is on no command line, and no agent's key can read it.
+9. **secret set**: keep a secret the app reads when it runs, here on staging. The value is read from standard input, so it is on no command line, and no agent's key can read it. For production, which takes changes only once you approve them, `cub mini secret set` writes the value only when you run it yourself in a terminal of your own, and prints that command when anyone else tries.
    <!-- run: secret -->
    ```sh
-   printf 'sk_test_example\n' | cub mini secret set shop PAYMENT_KEY --variant live --change-desc "The payment provider's key"
+   printf 'sk_test_example\n' | cub mini secret set shop PAYMENT_KEY --variant staging --change-desc "The payment provider's key"
    ```
    ```text
    Cannot read it: helper, the agent key on shop; an agent's key reaches only what it was given, and nothing gives it this. cub mini reach NAME shows what each reaches.
    ```
-   With plain `cub`: `cub space create` and `cub unit create` for `shop-live-secrets`, with permissions that leave every agent's key out.
+   With plain `cub`: `cub space create` and `cub unit create` for `shop-staging-secrets`, with permissions that leave every agent's key out.
 
 10. **receipts**: everything the hub keeps about a copy's latest change: who made it and why, the change order it came by, what the person read, and who approved it.
    <!-- run: receipts -->
@@ -183,7 +183,8 @@ n=0; for s in $(cub space list -o 'jq=.[].Space.Slug'); do case $s in shop-base|
 
 Results, 13 November 2026, confighub mini 0.11.1-mini.2. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Scripted run: passed, 50 seconds for the steps, within the page's budget of 150.
+- Scripted run (on confighub mini 0.11.1-mini.2, 13 November 2026): passed, 50 seconds for the steps, within the page's budget of 150.
+- Scripted run (on confighub mini 0.11.1-mini.7, 14 November 2026): passed, 43 seconds for the steps, within the page's budget of 150; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
 - Agent runs: 20 runs per arm on each of claude-opus-5-5, claude-sonnet-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |

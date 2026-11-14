@@ -141,7 +141,8 @@ find ~/walkthrough/api -name .git -prune -o -print | grep -qiE 'prod|live'
 
 Results, 13 November 2026, confighub mini 0.11.1-mini.2. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Scripted run: passed, 35 seconds for the steps, within the page's budget of 180.
+- Scripted run (on confighub mini 0.11.1-mini.2, 13 November 2026): passed, 35 seconds for the steps, within the page's budget of 180.
+- Scripted run (on confighub mini 0.11.1-mini.7, 14 November 2026): passed, 30 seconds for the steps, within the page's budget of 180; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
 - Agent runs: 20 runs per arm on each of claude-opus-5-5, claude-sonnet-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
