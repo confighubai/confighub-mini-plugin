@@ -34,6 +34,15 @@ Use an unpacked mini package containing the Temporal worker starter, plus Go, Py
 5. Propose restoring the retry limit. The probe should still fail once while rollback waits. After approving and applying the rollback, a new probe should again succeed on attempt three, reporting the new revision. The example stops the test worker, Temporal development service and test hubs.
 6. To use a shared hub, copy the app to a disposable destination and check its approval workflow. Use the destination order, revision and reader to deliver; verify them with another probe. The local example does not run this step. Remove the destination app and workflow when finished.
 
+To rehearse a rollout worker restart during approval, use mini.8 or later:
+
+```sh
+"$MINI/examples/temporal/starter/check-worker" --rollout --package "$MINI" --out "$PWD/temporal-rollout"
+"$MINI/examples/temporal/starter/check-worker" --plain --out "$PWD/temporal-plain"
+```
+
+The first rehearsal uses one shared settings upload and one approval of the resulting order. The second uses Temporal and local files, with its own approval signal. Both start and stop their own local Temporal workers.
+
 ## Agent
 
 Ask which Activity needs different retries and what outcome a probe should see. Show staging, the pending order and the running policy. Give the owner the exact approval command. In a new workflow run, report the number of attempts and the revision the worker actually loaded. Use the disposable example for checks. Tell the person that the rehearsal uses scripted fixture approvals. In a real rollout, only the owner approves production. The rehearsal stops its own Temporal processes and test hubs. Keep the output in `temporal-results` for later checks and leave the Go cache alone.
@@ -73,5 +82,7 @@ Two Claude Sonnet 5.5 pilots with the plugin passed all six deploy, update and r
 
 Two follow-up Sonnet 5.5 pilots used the same mini.7 package and passed all six deploy, update and rollback checks. Move and cleanup were discussion and verification tasks with no scored assertions. Seven of ten simulated readers reported friction. Agents brought up unrelated database processes, and some readers still found the handoff hard to follow. The runner reported no processes left by these pilots. The cleanup prompt now scopes the check to resources created by the rehearsal. That final wording has not been piloted.
 
+
+On the checksum-verified macOS arm64 mini.8 archive, the separate Story 5 restart rehearsal passed all 17 checks. Plain Temporal passed all seven shared runtime checks using a custom approval signal and digest-checked file delivery. Restart to delivery took 2.827 seconds with the starter and 0.983 seconds with plain Temporal in this local run. The scripted owner approved the main rollout once in each arm. Only the starter arm checks the approved catalog and the hub's approval record. The plain arm does not authenticate a separate owner.
 
 <!-- results:end -->
