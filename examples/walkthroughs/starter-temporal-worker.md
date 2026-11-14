@@ -60,6 +60,10 @@ This proves: the structured starter is stored and selected, and a real Temporal 
 
 <!-- results:begin -->
 
+Results, 14 November 2026, confighub mini sealed macOS arm64 candidate (unreleased). Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+
+- Scripted run: passed, 163 seconds for the steps, within the page's budget of 360.
+
 Candidate result, 14 November 2026, macOS arm64. The real local Temporal worker comparison passed 17/17 for the starter and 11/11 for manual mini. Both used scripted fixture approvals. The worker kept revision 3 while the change waited, loaded approved revision 4 and failed after one attempt, then loaded approved rollback revision 5 and succeeded after three attempts. The starter used one per-app connection command in 11.6 seconds; manual mini used two in 16.2 seconds with a new pattern. The starter also needed two catalog setup commands once per fresh hub. The run did not exercise a shared hub or a public package. No agent pilot was run.
 
 <!-- results:end -->
