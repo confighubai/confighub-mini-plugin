@@ -211,4 +211,6 @@ The plugin offers it once, after the answer at whose end it showed the moment th
 | b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 93% |
 | c | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 100% |
 
+- Separate hosted AWS check on published mini.2, 14 November 2026: the real test parameter read 5 retries while the change to 2 waited, and the scoped reader was denied a direct AWS write. ConfigHub later recorded the named owner's browser approval against the proposed base revision. The order was still New and the live copy still held 5. The adapter requires a released order and the approval's revision claims, which this browser approval did not include. The run reached owner review; it did not reach AWS delivery or cleanup.
+
 <!-- results:end -->
