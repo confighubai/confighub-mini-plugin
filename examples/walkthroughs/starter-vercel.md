@@ -174,8 +174,8 @@ For trials use the fixture. **Deploy** with step 3 or `cub mini adopt shop --liv
 <!-- agent-task: delete -->
 > Remove the local shop after the copy.
 <!-- agent-check delete: cub space get pattern-vercel >/dev/null && ! cub component get shop >/dev/null 2>&1 && ! cub space get shop-file-proposals >/dev/null 2>&1 -->
-<!-- next-step boundary=same-tier when "did not change": use the starter again | Want to use the same starting settings and approval for your next Vercel app? -->
-<!-- next-step boundary=mini-to-free-hub when "did not change": copy the shop to the team's hub | Want your team to see this shop's settings too? Copy it, with the reason kept beside each value, to your team's hub, where production there also waits for your yes. -->
+<!-- next-step boundary=same-tier when "did not change": deliver the approved value to your real Vercel project | Production waited for your yes. When you say yes, want that exact value to reach your real Vercel project, and only that value? -->
+<!-- next-step boundary=mini-to-free-hub when "did not change": a backup approver | When you are away, someone else on your team's hub can approve a change to production for this shop. Want to name one? -->
 <!-- arms: a,b,c -->
 This proves: the real Hobby run checks what the production endpoint serves before and after first delivery, an update and a rollback. The no-account run checks delivery to the local stand-in and the move to a shared hub.
 <!-- results:begin -->
@@ -197,18 +197,18 @@ Results, 14 November 2026, confighub mini 0.11.1-mini.5. Figures from this page'
 
 No agent approved or refused a change to production.
 
-Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Want to use the same starting settings and approval for your next Vercel app?" It offers more of the tier the person has, not a step up.
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Production waited for your yes. When you say yes, want that exact value to reach your real Vercel project, and only that value?" It offers more of the tier the person has, not a step up.
 
 The plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|
-| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 100% |
-| b | claude-opus-5-5 | 30 | 100% | 100% | 7% | 87% | 83% |
-| c | claude-opus-5-5 | 30 | 100% | 100% | 0% | 87% | 100% |
-| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 100% |
-| b | claude-sonnet-5-5 | 30 | 100% | 100% | 0% | 83% | 87% |
-| c | claude-sonnet-5-5 | 30 | 100% | 100% | 0% | 90% | 100% |
+| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 93% |
+| b | claude-opus-5-5 | 30 | 100% | 100% | 33% | 60% | 90% |
+| c | claude-opus-5-5 | 30 | 100% | 100% | 30% | 70% | 97% |
+| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 83% |
+| b | claude-sonnet-5-5 | 30 | 100% | 100% | 60% | 40% | 93% |
+| c | claude-sonnet-5-5 | 30 | 100% | 100% | 23% | 77% | 83% |
 
 Earlier records of this page, kept with their own date, package and scope:
 
