@@ -182,15 +182,15 @@ grep -qx 'TIMEOUT_SECONDS=30' api/.env && g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\
 Results, 14 November 2026, confighub mini 0.11.1-mini.5. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run: passed, 47 seconds for the steps, within the page's budget of 240.
-- Environment, published confighub mini 0.11.1-mini.5 (tag mini-v0.11.1-mini.5, darwin-arm64, verified against SHA256SUMS) and the plugin it carries: a local hub on this computer, with no stand-in, cluster or real service; every approval and refusal was made by the scripted steps or, in the agent runs, by the setup before the agent's task, never by a person. Each planted fault (stale-page, slow and broken-check) failed its scripted run.
+- Environment, published confighub mini 0.11.1-mini.5 (tag mini-v0.11.1-mini.5, darwin-arm64, verified against SHA256SUMS) and the plugin it carries: a local hub on this computer, with no stand-in, cluster or real service; every approval and refusal was made by the scripted steps or, in the agent runs, by the setup before the agent's task, never by a person. Each planted fault (stale-page, slow and broken-check) failed its scripted run. Arm a was run again the same day on the same package with a tightened file-level judge that asks for what the story promises; arms b and c are from the first mini.5 pilot.
 - Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
-| a | claude-opus-5-5 | 3/3 | 22.3 | $0.088 | 0 |
+| a | claude-opus-5-5 | 0/3 | 11.4 | $0.064 | 0 |
+| a | claude-sonnet-5-5 | 0/3 | 7.1 | $0.047 | 0 |
 | b | claude-opus-5-5 | 3/3 | 29.2 | $0.128 | 2 |
 | c | claude-opus-5-5 | 3/3 | 48.4 | $0.274 | 1 |
-| a | claude-sonnet-5-5 | 3/3 | 8.5 | $0.035 | 0 |
 | b | claude-sonnet-5-5 | 3/3 | 18.4 | $0.064 | 2 |
 | c | claude-sonnet-5-5 | 0/3 | 27.9 | $0.119 | 0 |
 
@@ -202,10 +202,10 @@ The plugin offers it once, after the answer at whose end it showed the moment th
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|
-| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 17% |
+| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 30% |
+| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 10% |
 | b | claude-opus-5-5 | 30 | 100% | 100% | 0% | 73% | 40% |
 | c | claude-opus-5-5 | 30 | 33% | 100% | 0% | 60% | 77% |
-| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 20% |
 | b | claude-sonnet-5-5 | 30 | 100% | 100% | 0% | 73% | 40% |
 | c | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 93% |
 

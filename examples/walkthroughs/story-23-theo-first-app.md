@@ -89,15 +89,15 @@ grep -rhsE --include='.env*' --include='*.env' --include='*.json' --include='*.y
 
 Results, 14 November 2026, confighub mini 0.11.1-mini.5. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Environment, published confighub mini 0.11.1-mini.5 (tag mini-v0.11.1-mini.5, darwin-arm64, verified against SHA256SUMS) and the plugin it carries: Claude Code with the plugin on this computer, with no hub needed for the record, no stand-in, cluster or real service, and no approvals. The scripted run only makes the folder; its check needs a Claude Code session, so it is judged in the agent runs only.
+- Environment, published confighub mini 0.11.1-mini.5 (tag mini-v0.11.1-mini.5, darwin-arm64, verified against SHA256SUMS) and the plugin it carries: Claude Code with the plugin on this computer, with no hub needed for the record, no stand-in, cluster or real service, and no approvals. The scripted run only makes the folder; its check needs a Claude Code session, so it is judged in the agent runs only. Arm a was run again the same day on the same package with a tightened file-level judge (the reason kept as data, not as a comment); arms b and c are from the first mini.5 pilot.
 - Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
-| a | claude-opus-5-5 | 3/3 | 80.4 | $0.333 | 0 |
+| a | claude-opus-5-5 | 0/3 | 83.7 | $0.355 | 0 |
+| a | claude-sonnet-5-5 | 0/3 | 47.1 | $0.16 | 0 |
 | b | claude-opus-5-5 | 3/3 | 60.3 | $0.286 | 0 |
 | c | claude-opus-5-5 | 1/3 | 81.9 | $0.355 | 0 |
-| a | claude-sonnet-5-5 | 3/3 | 52.3 | $0.183 | 0 |
 | b | claude-sonnet-5-5 | 3/3 | 63.9 | $0.19 | 0 |
 | c | claude-sonnet-5-5 | 2/3 | 39.1 | $0.108 | 0 |
 
@@ -109,10 +109,10 @@ The plugin offers it once, after the answer at whose end it showed the moment th
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|
-| a | claude-opus-5-5 | 30 | 0% | 50% | n/a | n/a | 0% |
+| a | claude-opus-5-5 | 30 | 0% | 80% | n/a | n/a | 0% |
+| a | claude-sonnet-5-5 | 30 | 0% | 90% | n/a | n/a | 20% |
 | b | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 0% |
 | c | claude-opus-5-5 | 30 | 0% | 80% | n/a | n/a | 0% |
-| a | claude-sonnet-5-5 | 30 | 0% | 77% | n/a | n/a | 0% |
 | b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 23% |
 | c | claude-sonnet-5-5 | 30 | 0% | 93% | n/a | n/a | 3% |
 
