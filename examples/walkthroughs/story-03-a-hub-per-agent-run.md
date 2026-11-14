@@ -89,12 +89,12 @@ A Mac, for the sandbox (it uses macOS's `sandbox-exec`), an unpacked confighub m
    …
    ```
 
-7. The agent writes Birch's installation out as plain files for a person to review, with the list of what it changed and why in `result/CHANGES.md`, and the run ends: its hub is removed with its data.
+7. The agent writes Birch's installation out as plain files for a person to review, with the list of what it changed and why in `result/CHANGES.md`, and the run ends: its hub is removed with its data. The removal is run from outside the sandbox, as the team's own cleanup, because inside the sandbox `cub mini uninstall` deletes the files but leaves the hub's server process running.
 
    <!-- run: fix-result -->
    ```sh
    ./sandbox . sandbox-a cub mini copy gpu-operator --variant birch --to-dir result
-   ./sandbox . sandbox-a cub mini uninstall --delete-data
+   CUB_CONFIG="$PWD/sandbox-a" cub mini uninstall --delete-data
    ```
 
    ```text
@@ -134,7 +134,7 @@ Nothing left behind. While it ran, the agent's fix sat in `result/` with its rea
 For an AI agent doing this for a person. Here the agent is the one in the sandbox.
 
 - **The request:** "Our platform and customers are in platform.tar.gz. One customer's operator image breaks our rule that images come only from nvcr.io or registry.k8s.io. Find it and fix it in a hub of your own, and leave the fix as files for me to review. Don't touch the team's hub."
-- **What to run:** every command through `./sandbox . sandbox-a ...`: `cub mini copy --from-file platform.tar.gz gpu-operator` (it starts your hub), `cub function vet --space '*' -- vet-images '{"AllowRegexp":"^(nvcr\\.io|registry\\.k8s\\.io)/"}'` to find it, `cub mini set ... --unit gpu-operator --variant birch --change-desc "<why>"`, `cub mini copy gpu-operator --variant birch --to-dir result`, then `cub mini uninstall --delete-data`. Tell the person where `result/CHANGES.md` is.
+- **What to run:** every command through `./sandbox . sandbox-a ...`: `cub mini copy --from-file platform.tar.gz gpu-operator` (it starts your hub), `cub function vet --space '*' -- vet-images '{"AllowRegexp":"^(nvcr\\.io|registry\\.k8s\\.io)/"}'` to find it, `cub mini set ... --unit gpu-operator --variant birch --change-desc "<why>"`, `cub mini copy gpu-operator --variant birch --to-dir result`, then ask the person to end your hub from outside the sandbox with `CUB_CONFIG="$PWD/sandbox-a" cub mini uninstall --delete-data` (inside the sandbox it leaves the server process running). Tell the person where `result/CHANGES.md` is.
 - **Never:** run a `cub` command outside `./sandbox`, which would reach the team's hub; change a customer you were not asked to fix; leave the sandbox's hub running.
 - **Done when:** `result/CHANGES.md` lists Birch's image with your reason, the sandbox's hub is gone, and the team's hub still has Birch's old image.
 

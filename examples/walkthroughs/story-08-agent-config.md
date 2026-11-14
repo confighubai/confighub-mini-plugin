@@ -88,7 +88,7 @@ An unpacked confighub mini package, 0.11.1-mini.2 or later ([installing confighu
    changes tools.open-change false → true
    support-assistant-research
    you keep model yours: large-2026-09 (offered: large-2026-11)
-   Nothing running has changed. To take it later:
+   Nothing running has changed. To take this:
    ```
 
 8. Both teams take it:

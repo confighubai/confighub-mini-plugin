@@ -88,7 +88,7 @@ An unpacked confighub mini package, 0.11.1-mini.2 or later ([installing confighu
    …
    you keep Driver version yours: "580.105.08" (offered: "580.126.20")
    …
-   Nothing running has changed. To take it later:
+   Nothing running has changed. To take this:
    cub mini promote gpu-operator-customer
    ```
 

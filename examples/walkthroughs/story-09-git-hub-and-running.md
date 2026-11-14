@@ -3,7 +3,7 @@ id: story-09-git-hub-and-running
 starts_with: mini
 story: "9. Dan at ACME: "What is where, and what is running?""
 needs: [confighub mini package, Docker, kind, kubectl, git, python3, Argo CD (installed for you), the cub-scout plugin for cub, internet access]
-budget_seconds: 480
+budget_seconds: 600
 -->
 # What Git says, what the hub holds, and what is running, side by side
 
