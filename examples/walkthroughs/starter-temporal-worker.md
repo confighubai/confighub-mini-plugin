@@ -58,6 +58,8 @@ The comparison uses a real Temporal service and the same worker for two arms. Th
 This proves: the structured starter is stored and selected, and a real Temporal worker runs the exact approved policy and its rollback on a local service. A shared-hub delivery needs its own observation.
 
 
+In the local macOS arm64 mini.908 comparison, the starter passed 19/19 checks and manual mini passed 11/11 using scripted approvals. Both used revisions 3, 4 and 5 and showed the same retry behavior. The starter kept the original runtime environment and rejected a changed policy with the old digest. After catalog review it connected in one command (9.2 s). Manual mini took two (12.3 s) to create and connect a new pattern. Shared-hub delivery and agent pilots still need their own runs.
+
 <!-- results:begin -->
 
 Results, 14 November 2026, confighub mini candidate-782-final. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
