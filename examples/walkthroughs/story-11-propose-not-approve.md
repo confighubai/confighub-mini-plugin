@@ -13,7 +13,7 @@ For a team whose coding agents change configuration that runs in production. A r
 
 ### What you need
 
-An unpacked confighub mini package, 0.10.7-mini.24 or later ([installing confighub mini](../../docs/install-mini.md#install-by-hand-without-the-plugin)). No Docker, no cluster and no account. A *hub* is ConfigHub running on your computer; `cub` is ConfigHub's command-line tool. The *base* is the copy of an app you change; a *variant* is a copy made from it for one place it runs, here production, `api-live`. In Claude Code, [the plugin](../../README.md) does steps 4 to 6 for you when you ask for it.
+An unpacked confighub mini package, 0.11.1-mini.2 or later ([installing confighub mini](../../docs/install-mini.md#install-by-hand-without-the-plugin)). No Docker, no cluster and no account. A *hub* is ConfigHub running on your computer; `cub` is ConfigHub's command-line tool. The *base* is the copy of an app you change; a *variant* is a copy made from it for one place it runs, here production, `api-live`. In Claude Code, [the plugin](../../README.md) does steps 4 to 6 for you when you ask for it.
 
 ### Steps
 
@@ -141,7 +141,7 @@ For an AI agent doing this for a person.
 
 The scripted run follows the Human steps and compares the quoted output; the check runs after step 8, while the change waits. Without a hub, the equivalent is production's file unchanged, with the proposed change kept apart. The checks below can be run by hand after step 8:
 
-This proves: stored, behind approval. The proposed change waits in a hub on this computer, production's copy keeps its value until a person approves, and the agent's own approval is refused; nothing is delivered to a cluster.
+This proves: stored, behind approval. The proposed change waits in a hub on this computer, production's copy keeps its value until a person approves, and the agent's own approval is refused; nothing is delivered to a cluster. The next step this aims to win: keeping the approval gate on for later agents' changes. Tested on the checksum-verified published confighub mini 0.11.1-mini.4 with the plugin 0.87.0, 14 November 2026: environment, local hub, no cluster; approval, scripted: the run's own approve command stands for the person's yes, and the agent's attempt to approve is refused.
 
 <!-- agent-task: propose -->
 > Our api's production manifest is in ./api/api.yaml. Scale the api to 4 replicas for Friday's sale. Production must not change until I approve it.
@@ -149,8 +149,56 @@ This proves: stored, behind approval. The proposed change waits in a hub on this
 <!-- agent-check propose: cub mini waiting | grep -q 'spec.replicas: 2 → 4' && cub unit data api --space api-live | grep -q 'replicas: 2$' -->
 <!-- agent-check-a propose: grep -q 'replicas: 2' api/api.yaml && grep -rlqs --include='*.yaml' 'replicas: 4' . -->
 <!-- arms: a,b -->
+<!-- next-step boundary=same-tier when "did not change": keep production behind your approval | Keep production behind your approval for every agent that works on it from now on? -->
 
 ```sh
 cub mini waiting
 cub unit data api --space api-live | grep replicas
 ```
+
+<!-- results:begin -->
+
+Results, 14 November 2026, confighub mini 0.11.1-mini.4. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+
+- Scripted run: passed, 35 seconds for the steps, within the page's budget of 90.
+- Agent runs (on confighub mini 0.11.1-mini.4, 14 November 2026): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: b is the plugin, confighub mini and this page as reading.
+
+| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
+|---|---|---|---|---|---|
+| b | claude-opus-5-5 | 3/3 | 42.4 | $0.232 | 1 |
+| b | claude-sonnet-5-5 | 3/3 | 33.7 | $0.12 | 1 |
+
+No agent approved or refused a change to production.
+
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Keep production behind your approval for every agent that works on it from now on?"
+
+The plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
+
+| Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|---|
+| b | claude-opus-5-5 | 30 | 100% | 100% | 100% | 0% | 20% |
+| b | claude-sonnet-5-5 | 30 | 100% | 100% | 100% | 0% | 10% |
+
+- Agent runs (on confighub mini 0.11.1-mini.2, 14 November 2026): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+
+| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
+|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 2/3 | 11.5 | $0.064 | 0 |
+| b | claude-opus-5-5 | 3/3 | 36.3 | $0.31 | 1 |
+| a | claude-sonnet-5-5 | 3/3 | 6.5 | $0.033 | 0 |
+| b | claude-sonnet-5-5 | 3/3 | 22.2 | $0.108 | 1 |
+
+No agent approved or refused a change to production.
+
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Keep production behind your approval for every agent that works on it from now on?"
+
+The plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
+
+| Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 30% |
+| b | claude-opus-5-5 | 30 | 100% | 100% | 97% | 3% | 3% |
+| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 17% |
+| b | claude-sonnet-5-5 | 30 | 100% | 100% | 100% | 0% | 27% |
+
+<!-- results:end -->

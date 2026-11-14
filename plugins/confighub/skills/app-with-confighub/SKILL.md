@@ -99,7 +99,12 @@ The person reads your last message, not your commands. Write it in this order:
    "after you approve, restart the service the way you do now".
 
 Leave out Space names, change-order names, Unit names and file paths the person did not ask
-about. A table of copies or a list of what each Space holds is for when they ask.
+about. A table of copies or a list of what each Space holds is for when they ask. Say what a
+person would: "production", "staging", "the shared settings", "a change that waits for your
+approval"; not "change order", "Component", "Unit", "Space" or "Variant". When more than one
+change waits for the same copy, give the approve lines in the order `cub mini waiting` names, the
+oldest first. When you copy an app to a shared hub, say that its history of changes and its
+delivery do not come with it.
 
 ## Keep the boundaries clear
 
@@ -135,6 +140,20 @@ about. A table of copies or a list of what each Space holds is for when they ask
 - Read with your own key. Listing Spaces, what waits, an app's status, a Unit's data and the
   cluster's objects are reads you run yourself; hand the person only what approves or moves
   production.
+- For an app a starter connected, read the keys it set with `cub mini receipts APP --setup`
+  before you set or propose a value, and use those names: asked for fewer retries on the
+  Parameter Store starter, that is `SSM_MAX_RETRIES`, not a `MAX_RETRIES` of your own. Never make
+  up a key's name; if no key the starter or the app's files set fits, say so and ask.
+- Check what your session is before you decide a step is not yours:
+  `cub context get -o jq=.coordinate.user` names a service account
+  (`...@serviceaccount...`) only for an agent's key of its own; any other user is the person's
+  own sign-in. What you run yourself, either way: the reads above; `cub mini upload` and
+  `cub mini set`, which never write production: a change to it, or to the shared settings it
+  follows, waits as a proposal; `cub mini rollback`, which on production proposes too; and the
+  app's own delivery step for a revision the person already approved, with the key setup made
+  for it. Signed in as the person, also moving or deleting the app when they ask. Only
+  approving, `deploy-from-hub` and `back-to-git`, and secrets are always the person's. Do not refuse
+  a step because a key might be restricted: run it, and the hub refuses what the key may not do.
 - Keep credentials out of chat, command arguments, exports and records. Secret setup is an
   owner-terminal step. A reader cannot propose or approve; a proposer cannot approve.
 - Distinguish settings stored, service running and approved revision deployed. Verify each

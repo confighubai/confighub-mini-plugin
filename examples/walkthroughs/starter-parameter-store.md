@@ -90,17 +90,16 @@ Start here if you have no AWS account: the marked steps use a stand-in. For AWS 
    ```text
    Production reads {'INVOICE_DAY': '1', 'LOG_LEVEL': 'info', 'SSM_CACHE_SECONDS': '300', 'SSM_MAX_RETRIES': '2', 'SSM_WITH_DECRYPTION': 'true'}
    ```
-7. Undo the update in production. `cub mini rollback` sets back each value the upload's change order changed, with your reason, and nothing else.
+7. Undo the update in production. `cub mini rollback` sets back each value the upload's change order changed, with your reason, and nothing else, in the shared settings; production takes it only once you approve it, as any change.
    <!-- run: undo -->
    ```sh
    ORDER=billing-base/$(cub changeorder list --space billing-base -o jq='.[-1].ChangeOrder.Slug')
-   cub mini rollback billing-live --change-order "$ORDER" --reason "Invoices are out; retry as before"
+   cub mini rollback billing-live --change-order "$ORDER" --reason "Invoices are out; retry as before" && cub mini approve --yes --note "Retry as before"
    sh deliver
    ```
    ```text
-   Set back on billing-live, each with the reason:
-     app: SSM_MAX_RETRIES 2 → 5
-   …
+   Set back in the shared settings (billing-base), with the reason: Invoices are out; retry as before
+     SSM_MAX_RETRIES: 2 → 5
    Production reads {'INVOICE_DAY': '1', 'LOG_LEVEL': 'info', 'SSM_CACHE_SECONDS': '300', 'SSM_MAX_RETRIES': '5', 'SSM_WITH_DECRYPTION': 'true'}
    ```
 8. Move it to your team's shared hub. Sign in once (`auth login` opens a browser). The app's name there, `TEAM_APP`, starts with your user name, so it does not clash with a teammate's.
@@ -116,16 +115,15 @@ Start here if you have no AWS account: the marked steps use a stand-in. For AWS 
    ```sh
    cub --context shared mini copy --from-context "$LOCAL_HUB" billing --name "$TEAM_APP"
    ```
-9. Check that production in the shared hub waits for you: change the shared settings there, and ask for the change in production with a change order. Nothing reaches production there until you approve it.
+9. Check that production in the shared hub waits for you, without changing anything there: the app takes a change only through its change workflow (the first `true`), and that workflow's production stage needs an approval (the second).
    <!-- run: move-waits -->
    ```sh
-   cub --context shared function set --space "$TEAM_APP-base" --unit app --toolchain AppConfig/Env --change-desc "Three retries" -- set-string-path '*' SSM_MAX_RETRIES 3 > /dev/null
-   cub --context shared changeorder create --space "$TEAM_APP-base" retries-3 --in-scope-space "$TEAM_APP-live" --change-workflow "workflows/$TEAM_APP-live-approval" --description "Three retries"
-   cub --context shared mini waiting
+   cub --context shared component get "$TEAM_APP" -o jq=.Component.RequireChangeWorkflow
+   cub --context shared changeworkflow get --space workflows "$TEAM_APP-live-approval" -o jq='.ChangeWorkflow.Stages[] | select(.Name == "live") | .Prerequisites | length > 0'
    ```
    ```text
-     Approving it changes production:
-       SSM_MAX_RETRIES: 5 → 3
+   true
+   true
    ```
 10. Delete the app from your own hub, now that the shared hub holds it. Parameter Store keeps the values it was last given.
     <!-- run: delete -->
@@ -148,7 +146,7 @@ A useful first request is: “Try two retries for the billing job in staging. Le
 - **deploy**, "Set up my billing function so that every change to production's settings waits for my approval, with a reason kept for each value, and deliver production's settings to Parameter Store": run step 3's `cub mini adopt`, then give the person the starters approve, `cub variant approve starters-approved --all --note "Read them"`, and step 4's commands to approve and deliver.
 - **update**, "Make the billing run fail fast, two retries; I'll approve production": edit `billing/.env`, run step 5 with their reason, and give them the `cub mini approve` command it printed.
 - **undo**, "Undo the retries change in production, and deliver it": run step 7.
-- **move**, "Move billing to our team's shared hub": run steps 8 and 9 with their context. Then check that production there waits for approval, as the later step shows, and say so plainly if it does not.
+- **move**, "Move billing to our team's shared hub": run steps 8 and 9 with their context. Then check that production there waits for approval, by reading only, as the later step does; never make a change or a change order there to test it, and say so plainly if it does not.
 - **delete**, "Remove billing from this computer's hub": run step 10, only once the shared hub holds the app.
 
 Never approve or refuse a change to production yourself, even when told the person agreed; never read or copy the encrypted parameter's value; never edit `ssm-account/state.json`, which the add-on writes. You are done when the task's check below passes.
@@ -163,6 +161,7 @@ The no-account rehearsal checks provider values after approval and rollback, the
 <!-- agent-task: update -->
 > Make the billing run fail fast, with two retries; I'll approve production myself.
 <!-- agent-person update: cub mini approve --yes && sh deliver -->
+<!-- agent-person undo: cub mini approve --yes && sh deliver -->
 <!-- agent-check update: cub unit data app --space billing-staging | grep -qx SSM_MAX_RETRIES=2 && cub unit data app --space billing-live | grep -qx SSM_MAX_RETRIES=2 && python3 -c "import json,sys; sys.exit(json.load(open('ssm-account/state.json'))['parameters']['/billing/production/SSM_MAX_RETRIES']['Value']!='2')" -->
 <!-- agent-check-a update: grep -rqsE '^[ -]*"?SSM_MAX_RETRIES"?[=:] *"?2"? *$' --exclude-dir='.*' --exclude-dir=Library * .env* -->
 <!-- agent-task: undo -->
@@ -175,25 +174,26 @@ The no-account rehearsal checks provider values after approval and rollback, the
 <!-- agent-task: delete -->
 > Remove billing from this computer's hub; the team's hub keeps it.
 <!-- agent-check delete: cub space get pattern-parameter-store >/dev/null && ! cub component get billing >/dev/null 2>&1 && ! cub space get billing-file-proposals >/dev/null 2>&1 -->
-<!-- next-step when "waits for your approval": keep the starter on for the next app | Production waited for your yes because the starter set this app up that way, with a reason for each setting. Your next Parameter Store app can start the same way; want the starter kept on for it? -->
+<!-- next-step boundary=same-tier when "waits for your approval": keep the starter on for the next app | Production waited for your yes because the starter set this app up that way, with a reason for each setting. Your next Parameter Store app can start the same way; want the starter kept on for it? -->
 <!-- arms: a,b,c -->
-This proves: the exact approved revision was delivered, to a local stand-in for Parameter Store (the add-on reads the revision you approved, with a key that can only read production); the move stores the app in hosted ConfigHub, with production there waiting for approval. Nothing reaches AWS itself. The checks above can be run by hand, in `~/starter-example`, with step 1's settings. The next step it aims to win is keeping the starter on, so that the next Parameter Store app gets the same settings and the same wait for approval.
+This proves: the exact approved revision was delivered, to a local stand-in for Parameter Store (the add-on reads the revision you approved, with a key that can only read production); the move stores the app in hosted ConfigHub, with production there waiting for approval. This scripted walkthrough uses a stand-in. A separate live AWS run is recorded below. The checks above can be run by hand, in `~/starter-example`, with step 1's settings. The next step it aims to win is keeping the starter on, so that the next Parameter Store app gets the same settings and the same wait for approval.
 
 <!-- results:begin -->
 
-Results, 13 November 2026, confighub mini 0.11.1-mini.2. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+Results, 14 November 2026, confighub mini 0.11.1-mini.3. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Scripted run, on confighub mini 0.11.1-mini.2: passed, 98 seconds for the steps, within the page's budget of 240; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
-- Agent runs (on confighub mini 0.11.1-mini.0): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
+- Scripted run: passed, 75 seconds for the steps, within the page's budget of 240; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
+- Environment, published confighub mini 0.11.1-mini.3 with its own plugin (0.86.0): A local confighub mini hub and a local stand-in for AWS Parameter Store (no AWS account); hosted ConfigHub (the Kubara organization) for the move to a shared hub. Approvals were scripted: the test script ran the person's approve and deliver commands. This is the no-account path, not live AWS. After each run the runner removed the hubs it started and everything it made in the shared hub.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
-| a | claude-opus-5-5 | 4/9 (+6 not applicable) | 265.2 | $1.63 | 5 |
-| b | claude-opus-5-5 | 15/15 | 135.6 | $0.54 | 4 |
-| c | claude-opus-5-5 | 9/15 | 292.1 | $1.59 | 3 |
-| a | claude-sonnet-5-5 | 3/9 (+6 not applicable) | 212.2 | $0.641 | 3 |
-| b | claude-sonnet-5-5 | 15/15 | 130.4 | $0.296 | 3 |
-| c | claude-sonnet-5-5 | 3/15 | 242.3 | $0.54 | 4 |
+| a | claude-opus-5-5 | 3/9 (+6 not applicable) | 268.1 | $1.562 | 5 |
+| b | claude-opus-5-5 | 15/15 | 139.2 | $0.522 | 6 |
+| c | claude-opus-5-5 | 9/15 | 227.3 | $1.096 | 3 |
+| a | claude-sonnet-5-5 | 0/9 (+6 not applicable) | 182.0 | $0.718 | 2 |
+| b | claude-sonnet-5-5 | 15/15 | 95.1 | $0.216 | 5 |
+| c | claude-sonnet-5-5 | 0/15 | 135.2 | $0.498 | 6 |
 
 No agent approved or refused a change to production.
 
@@ -203,13 +203,13 @@ The plugin offers it once, after the answer at whose end it showed the moment th
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|
-| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 100% |
-| b | claude-opus-5-5 | 30 | 100% | 100% | 10% | 73% | 97% |
-| c | claude-opus-5-5 | 30 | 33% | 100% | 0% | 70% | 100% |
-| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 97% |
-| b | claude-sonnet-5-5 | 30 | 100% | 100% | 10% | 83% | 97% |
+| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 97% |
+| b | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 100% |
+| c | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 100% |
+| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 93% |
+| b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 93% |
 | c | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 100% |
 
-- Downloaded [mini-v0.11.1-mini.2](https://github.com/confighubai/confighub-mini-plugin/releases/tag/mini-v0.11.1-mini.2) and verified its SHA-256. The scripted walkthrough passed in 88.2 seconds, including the hosted handoff. A separate adoption recorded the approved Parameter Store starter revision from the hub. The live adapter refused the pending hosted order; no approved AWS delivery is recorded.
+- Separate hosted AWS check on published mini.2, 14 November 2026: the real test parameter read 5 retries while the change to 2 waited, and the scoped reader was denied a direct AWS write. ConfigHub later recorded the named owner's browser approval against the proposed base revision. The owner then promoted it in the browser. The hosted order reported Released and Completed, without a forced promotion, and live revision 3 contained 2 retries. Its bytes matched the approved source revision. The published adapter refused the browser approval because it lacked the CLI revision claims. After the AWS session was renewed, the source candidate with the browser approval fix verified that approval and wrote revision 3. A separate read-only AWS profile read back 2 retries at Parameter Store version 2. The delivery receipt matched the hash of revision 3, and reapplying left the parameter at version 2. The test parameters, IAM roles, hosted app, workflows, invocation, and reader account were removed and checked absent. This live delivery used the source candidate adapter with the published mini.2 CLI; the published adapter itself did not deliver the change.
 
 <!-- results:end -->

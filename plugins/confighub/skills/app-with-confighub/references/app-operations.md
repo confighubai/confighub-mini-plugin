@@ -27,6 +27,10 @@ sections 1 to 3 for such an app. Do not give the person `cub mini install`,
 cub mini adopt APP-FOLDER --kube-context CONTEXT --source NAME --agent APP-agent --attach CLUSTER
 ```
 
+The program in each line you hand the person is `cub`, or `~/.confighub/mini/cub` when
+the commands print that; copy a printed line as it is. Never write a package's `cub` by its
+full path in a line for the person.
+
 `NAME` is the Argo CD Application or Flux Kustomization that deploys the app, and `CLUSTER`
 is the name the cluster gets in the hub. What this one line does for the person:
 
@@ -49,6 +53,14 @@ only the plugin is installed, give the adopt line with the plugin's program in p
 `cub` (see section 1); it installs confighub mini first, and its last line names the
 person's `cub` in full.
 
+The way back to Git is one line, which the approval prints and `cub mini status APP` prints
+again: `cub mini back-to-git APP --variant live --repo CHECKOUT --kube-context CONTEXT --push`.
+Record it, or hand it over, exactly as printed: with the app's name and with `--push`, which
+pushes the commit it makes. Without `--push`, run by anyone but a person at a terminal, it
+stops at once and changes nothing. Do not write `kubectl patch` lines for Argo CD or Flux in
+its place: `back-to-git` also writes what changed in the hub into Git, and checks that the
+same pods keep running.
+
 Changing an app a starter connected: the app's files are the person's repository. Make the change
 in the repository's base, so staging takes it too, and commit it. Then `cub mini upload APP-FOLDER
 --component APP --change-desc WHY` proposes it: staging takes it at once and production waits.
@@ -57,7 +69,11 @@ and hand over the approval again. Do not set a value in production directly, or 
 production overlay, for a change the person wants everywhere.
 
 Deleting an app a starter connected: first remove what runs on the cluster, then the app from the
-hub. For Argo CD, delete the Application with its finalizer, so Argo CD removes what it deployed.
+hub. Never delete a cluster to remove one app: not with `cub cluster down`, `kind delete cluster`
+or anything else, since other apps and the person's own work run there. If deleting the
+Application or Kustomization fails, stop there and say so; do not go on to the hub, or around
+it. Agents' shells are often zsh, which does not split a command kept in a variable, such as
+`K="kubectl --context X"; $K delete ...`, so write `kubectl --context CONTEXT` in each command. For Argo CD, delete the Application with its finalizer, so Argo CD removes what it deployed.
 For Flux, deleting a Kustomization removes what it applied only when its `spec.prune` is true, and
 the Kustomization the hub's cutover made does not prune. Find it, and the Git one it suspended, with
 `kubectl get kustomizations -A`: after the cutover the hub's is named `APP-live`, in Flux's own
@@ -107,9 +123,10 @@ already asked for ConfigHub, or accepted this setup. Then run:
 ```
 
 Claude Code sets `CLAUDE_PLUGIN_ROOT` for the plugin's hooks and commands only, so it is empty in a
-shell you run yourself. There, find the program by its path, in the same command, since each shell
-call starts fresh, and use that path in place of the variable. In Claude Code:
-`PLUGIN_PROGRAM=$(ls -d "$HOME"/.claude/plugins/cache/*/confighub/*/bin/confighub | tail -1)`.
+shell you run yourself. There, the plugin gives each session its program by its full path, as
+`CONFIGHUB_PLUGIN_PROGRAM`: run `"$CONFIGHUB_PLUGIN_PROGRAM" mini get`. Do not search
+`~/.claude` for it. In a line for the person, write out the path it holds
+(`echo "$CONFIGHUB_PLUGIN_PROGRAM"` shows it), since their terminal does not have it.
 
 For Codex hook-only setup, use `${CODEX_HOME:-$HOME/.codex}/confighub/bin/confighub mini get`
 instead. A restricted agent with an existing app must use its configured hub, not install another.
@@ -218,6 +235,9 @@ To change a copy later:
 
 ```
 cub mini set APP KEY=VALUE --variant staging --change-desc "WHY"      # staging, at once
+cub mini set APP KEY=VALUE --variant base --change-desc "WHY"         # shared; production waits
+cub mini set APP KEY=VALUE --variant live --change-desc "WHY"         # production's own; it waits
+cub mini promote APP-live                                             # production behind the shared settings: proposed
 cub mini upload APP-FOLDER --component APP --change-desc "WHY"        # the files as edited; staging now, live waits
 cub mini waiting                                                      # what waits, and the approve command
 ```
@@ -225,6 +245,12 @@ cub mini waiting                                                      # what wai
 The person approves in a terminal with `cub mini approve APP-base/ORDER`, which `cub mini
 waiting` prints. Never run `cub mini approve` yourself, and never ask for the right to write
 `APP-live`.
+
+To undo a change production already took: `cub mini rollback APP-live --change-order
+APP-base/ORDER --reason "WHY"`. Production does not change: the values go back in the base,
+and a change order waits for the person, whose approval brings them to production. Undo is
+that rollback and the person's approve; give them the approve line it prints, and do not say
+production is back until they have run it.
 
 A secret (a password, a key, a token) is kept by the person, in a terminal, with
 `cub mini secret set APP KEY --variant live --change-desc "WHY"`, which puts it where your

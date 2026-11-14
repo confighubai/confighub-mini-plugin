@@ -138,7 +138,7 @@ A correct agent result has the notes app on `pattern-web`, with staging and a li
 <!-- agent-check adopt: test "$(cub unit get app --space notes-base -o jq=.Unit.UpstreamUnitID)" = "$(cub unit get web-service --space pattern-web -o jq=.Unit.UnitID)" && cub space get notes-staging >/dev/null && cub changeworkflow get --space workflows notes-live-approval >/dev/null -->
 <!-- agent-check-a adopt: find ~/walkthrough/notes -name .git -prune -o -print | grep -qi staging && find ~/walkthrough/notes -name .git -prune -o -print | grep -qiE 'live|prod' -->
 <!-- arms: a,b,c -->
-<!-- next-step when "did not change": next app from this one | Your next app can start from this one, with its rules, staging and production already in place; want the next one made from notes? -->
+<!-- next-step boundary=same-tier when "did not change": next app from this one | Your next app can start from this one, with its rules, staging and production already in place; want the next one made from notes? -->
 
 ```sh
 test "$(cub unit get app --space notes-base -o jq=.Unit.UpstreamUnitID)" = "$(cub unit get web-service --space pattern-web -o jq=.Unit.UnitID)" && cub space get notes-staging >/dev/null && cub changeworkflow get --space workflows notes-live-approval >/dev/null
@@ -147,29 +147,34 @@ find ~/walkthrough/notes -name .git -prune -o -print | grep -qi staging && find 
 
 <!-- results:begin -->
 
-Results, 13 November 2026, confighub mini 0.11.1-mini.1. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+Results, 14 November 2026, confighub mini 0.11.1-mini.5. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run: passed, 35 seconds for the steps, within the page's budget of 240.
-- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+- Environment, published confighub mini 0.11.1-mini.5 (tag mini-v0.11.1-mini.5, darwin-arm64, verified against SHA256SUMS) and the plugin it carries: a local hub on this computer, with no stand-in, cluster or real service; every approval and refusal was made by the scripted steps or, in the agent runs, by the setup before the agent's task, never by a person. Each planted fault (stale-page, slow and broken-check) failed its scripted run.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
-| a | claude-opus-5-5 | 1/3 | 26.4 | $0.322 | 0 |
-| b | claude-opus-5-5 | 3/3 | 78.6 | $0.48 | 0 |
-| a | claude-sonnet-5-5 | 1/3 | 17.0 | $0.077 | 0 |
-| b | claude-sonnet-5-5 | 3/3 | 43.2 | $0.213 | 1 |
+| a | claude-opus-5-5 | 1/3 | 22.3 | $0.182 | 0 |
+| b | claude-opus-5-5 | 3/3 | 64.2 | $0.348 | 1 |
+| c | claude-opus-5-5 | 0/3 | 51.8 | $0.389 | 0 |
+| a | claude-sonnet-5-5 | 0/3 | 10.2 | $0.039 | 0 |
+| b | claude-sonnet-5-5 | 3/3 | 27.7 | $0.138 | 1 |
+| c | claude-sonnet-5-5 | 1/3 | 51.4 | $0.194 | 0 |
 
 No agent approved or refused a change to production.
 
-Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Your next app can start from this one, with its rules, staging and production already in place; want the next one made from notes?"
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Your next app can start from this one, with its rules, staging and production already in place; want the next one made from notes?" It offers more of the tier the person has, not a step up.
 
 The plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|
-| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 97% |
-| b | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 90% |
-| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 97% |
-| b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 90% |
+| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 93% |
+| b | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 73% |
+| c | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 90% |
+| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 87% |
+| b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 73% |
+| c | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 80% |
 
 <!-- results:end -->

@@ -171,7 +171,7 @@ Each job below takes one or two `cub mini` commands, or several plain `cub` ones
 <!-- agent-check try: n=0; for s in $(cub space list -o 'jq=.[].Space.Slug'); do case $s in shop-base|shop-staging|shop-live) continue;; esac; for u in $(cub unit list --space "$s" -o 'jq=.[].Unit.Slug' 2>/dev/null); do cub unit data --space "$s" "$u" 2>/dev/null | grep -qx CACHE_TTL=600 && n=1; done; done; test $n = 1 && ! cub unit data --space shop-staging app | grep -q CACHE_TTL && ! cub unit data --space shop-live app | grep -q CACHE_TTL -->
 <!-- arms: a,b,c -->
 <!-- arm-a: plain-cub -->
-<!-- next-step when "did not change": put production behind approval | Today an agent's change to your app's production takes effect the moment it is made. cub mini require-approval makes it wait instead: an agent asked to log at warn in production made the change, production kept logging at info, and nothing moved until its owner said yes. -->
+<!-- next-step boundary=same-tier when "did not change": put production behind approval | Today an agent's change to your app's production takes effect the moment it is made. cub mini require-approval makes it wait instead: an agent asked to log at warn in production made the change, production kept logging at info, and nothing moved until its owner said yes. -->
 This proves: the settings were stored in the hub, a confighub mini hub on this computer; no service or cluster runs them, so nothing here shows delivery. The step it aims to win: production behind approval, then a shared hub. A right result: the value is where the job asked, production is unchanged, and a change for production waits rather than being approved. The checks below can be run by hand, with the tour's `CUB_CONFIG`, each after its job:
 ```sh
 cub unit data --space shop-staging app | grep -qx TIMEOUT=30s && cub unit data --space shop-staging app | grep -qx LOG_LEVEL=debug && ! cub unit data --space shop-live app | grep -q '^TIMEOUT='
@@ -181,19 +181,17 @@ n=0; for s in $(cub space list -o 'jq=.[].Space.Slug'); do case $s in shop-base|
 
 <!-- results:begin -->
 
-Results, 13 November 2026, a development build of confighub mini after 0.11.1-mini.1. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+Results, 13 November 2026, confighub mini 0.11.1-mini.2. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Scripted run: passed, 41 seconds for the steps, within the page's budget of 150.
-- Agent runs (on a development build of confighub mini after 0.11.1-mini.1): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page. Arms a and c ran earlier the same day, on confighub mini 0.11.1-mini.1, and arm b on the development build; the simulated persons of every arm were judged again in the same way.
+- Scripted run: passed, 50 seconds for the steps, within the page's budget of 150.
+- Agent runs: 20 runs per arm on each of claude-opus-5-5, claude-sonnet-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
-| a | claude-sonnet-5-5 | 6/9 | 63.4 | $0.282 | 0 |
-| b | claude-sonnet-5-5 | 9/9 | 20.7 | $0.089 | 0 |
-| c | claude-sonnet-5-5 | 7/9 | 26.0 | $0.133 | 0 |
-| a | claude-opus-5-5 | 7/9 | 75.6 | $0.548 | 1 |
-| b | claude-opus-5-5 | 9/9 | 23.5 | $0.159 | 0 |
-| c | claude-opus-5-5 | 8/9 | 51.3 | $0.346 | 1 |
+| a | claude-opus-5-5 | 33/60 | 226.9 | $1.43 | 3.5 |
+| b | claude-opus-5-5 | 53/60 | 75.2 | $0.538 | 3 |
+| a | claude-sonnet-5-5 | 40/60 | 172.2 | $0.769 | 1 |
+| b | claude-sonnet-5-5 | 59/60 | 49.0 | $0.295 | 1 |
 
 No agent approved or refused a change to production.
 
@@ -203,11 +201,9 @@ The plugin offers it once, after the answer at whose end it showed the moment th
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|
-| a | claude-sonnet-5-5 | 90 | 0% | 100% | n/a | n/a | 66% |
-| b | claude-sonnet-5-5 | 90 | 33% | 100% | 80% | 20% | 14% |
-| c | claude-sonnet-5-5 | 90 | 0% | 100% | n/a | n/a | 24% |
-| a | claude-opus-5-5 | 90 | 0% | 100% | n/a | n/a | 69% |
-| b | claude-opus-5-5 | 90 | 33% | 100% | 87% | 13% | 14% |
-| c | claude-opus-5-5 | 90 | 0% | 100% | n/a | n/a | 43% |
+| a | claude-opus-5-5 | 600 | 0% | 100% | n/a | n/a | 61% |
+| b | claude-opus-5-5 | 600 | 33% | 100% | 96% | 4% | 31% |
+| a | claude-sonnet-5-5 | 600 | 0% | 100% | n/a | n/a | 60% |
+| b | claude-sonnet-5-5 | 600 | 32% | 100% | 88% | 12% | 25% |
 
 <!-- results:end -->

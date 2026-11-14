@@ -5,9 +5,9 @@ starter: unikraft
 needs: [confighub mini package with the Unikraft starter, Unikraft CLI, disposable Cloud service, BuildKit, jq, curl]
 budget_seconds: 600
 -->
-# Roll out an incident banner on Unikraft Cloud
+# Preview an incident banner on Unikraft Cloud
 
-An incident starts and you need a banner change without rebuilding the image. An owner approves the change before the delivery add-on rolls the service. The same public endpoint reports which setting and ConfigHub revision the service is using.
+An incident starts and you need a banner change without rebuilding the image. Connect a disposable service and see the endpoint keep serving its current banner while the first delivery awaits approval.
 
 ## Human
 
@@ -21,38 +21,36 @@ Use an unpacked mini package containing the Unikraft starter. Use a new test hub
    ```sh
    export MINI=/absolute/path/to/unpacked-confighub-mini
    export CUB_MINI_STARTERS=on
-   "$MINI/starters/addons/unikraft/run" --dir app import
-   cub mini adopt app --name banner-catalog
+   "$MINI/starters/addons/unikraft/run" --live --dir app import
+   cub mini adopt app --name banner-catalog --live
    cub unit data unikraft --space starters-base
    cub variant approve starters-approved --all --note "Review packaged starter definitions"
-   cub mini adopt app --name banner
+   cub mini adopt app --name banner --live
    cub mini receipts banner --setup
    ```
-3. Give the delivery process a separate reader configuration as shown in the example. Try applying the pending connect order. The add-on should refuse it and HTTPS should still report blue. Approve the connect order from your own account. Apply its exact revision and compare the receipt with the endpoint.
-4. Propose green with the incident reason, keep reading blue while the order waits, then approve and apply the change. The same endpoint should serve green at the revision in the receipt using the same image digest. Restore blue in the file and propose the rollback. Repeat the approval and check blue arrives at a new revision.
-5. To move the app, copy its settings to a disposable destination app. Verify the destination approval rule with a pending order and an unchanged service. Use a destination release and reader before claiming shared-hub delivery.
-6. Delete the test instance, service and image. Delete the disposable destination app and workflow, and stop the local mini.
+3. Set up the scoped reader in the packaged example and try applying the pending connect order. Check that the add-on refused the order and that the HTTPS endpoint still returns blue with revision `baseline`.
+4. Remove the disposable test instance, service and image. Delete the test apps or stop the disposable mini.
 
 ## Agent
 
-Keep the provider sign-in with the person or delivery service. Offer the exact order for the owner to review. Observe the endpoint before and after delivery and report the setting, revision and image digest. Do not approve production or borrow the owner's provider credentials. A contributor without a Unikraft account can run the pending-order Go test from the mini source repository.
+Keep the provider sign-in with the person or delivery service. Read the endpoint, check the pending-order refusal, and report the banner, revision and pinned image. Leave the order pending for this test.
 
 ## Testing
 
-The no-account Go test uses a pending order and checks that the add-on never calls the provider. The live check separately verifies the real endpoint and the pinned image. Verify the current approved starter source and the live revision for each result.
+Without a provider account, run the local stand-in test from the unpacked package:
+
+```sh
+"$MINI/examples/starter-check/check" "$MINI/starters/unikraft.yaml" --package "$MINI" --check-addon
+```
+
+It checks import, apply, compare and planted faults. The real-service test checks the approved catalog source, pending-order refusal and HTTPS baseline.
 
 <!-- agent-task: deploy -->
 > Connect this test app to the approved Unikraft starter and show the current blue banner.
 <!-- agent-check deploy: cub component get banner -o json | jq -e '.Component.Annotations["confighub-mini.starter-source"] | startswith("starters-approved/unikraft@")' -->
-<!-- agent-task: update -->
-> Propose green and show that the HTTPS endpoint stays blue before approval.
-<!-- agent-task: undo -->
-> Propose restoring the original banner and verify the released rollback after I approve it.
-<!-- agent-task: move -->
-> Show how to move this app and check approval at the destination.
 <!-- agent-task: delete -->
 > Remove this test service and its app after recording the result.
-<!-- next-step: try an incident banner | Want to see what the endpoint serves while the next change waits for approval? -->
+<!-- next-step boundary=same-tier: try an incident banner | Want to see what the endpoint serves while the next change waits for approval? -->
 <!-- arms: b -->
 
 This proves: the candidate selected the approved hub starter and refused an unapproved order while the real Cloud app kept serving blue. Live delivery of a newly approved revision, its rollback and delivery from a shared hub still require their own runs with the packaged adapter.

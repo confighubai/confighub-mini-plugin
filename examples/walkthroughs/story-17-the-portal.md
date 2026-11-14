@@ -149,7 +149,7 @@ A correct agent result leaves no copy breaking a rule, with worker's staging pri
 <!-- agent-check rules: cub unit data --space worker-staging app | grep -qx 'PUBLIC=false' && test "$(cub unit list --space '*' --where 'LEN(ApplyGates) > 0' -o jq='.[].Unit.Slug' | wc -l | tr -d ' ')" = 0 && cub trigger get --space pattern-web not-public >/dev/null -->
 <!-- agent-check-a rules: g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g PORT 3100 | grep -q . && ! g PUBLIC true | grep -q . -->
 <!-- arms: a,b,c -->
-<!-- next-step when "did not change": a rule of your own | Any rule you choose, such as no debug logging in production, can be checked on every service the same way; want your first one added? -->
+<!-- next-step boundary=same-tier when "did not change": a rule of your own | Any rule you choose, such as no debug logging in production, can be checked on every service the same way; want your first one added? -->
 
 ```sh
 cub unit data --space worker-staging app | grep -qx 'PUBLIC=false' && test "$(cub unit list --space '*' --where 'LEN(ApplyGates) > 0' -o jq='.[].Unit.Slug' | wc -l | tr -d ' ')" = 0 && cub trigger get --space pattern-web not-public >/dev/null
@@ -158,29 +158,34 @@ g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Lib
 
 <!-- results:begin -->
 
-Results, 13 November 2026, confighub mini 0.11.1-mini.1. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+Results, 14 November 2026, confighub mini 0.11.1-mini.5. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Scripted run: passed, 50 seconds for the steps, within the page's budget of 240.
-- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+- Scripted run: passed, 54 seconds for the steps, within the page's budget of 240.
+- Environment, published confighub mini 0.11.1-mini.5 (tag mini-v0.11.1-mini.5, darwin-arm64, verified against SHA256SUMS) and the plugin it carries: a local hub on this computer, with no stand-in, cluster or real service; every approval and refusal was made by the scripted steps or, in the agent runs, by the setup before the agent's task, never by a person. Each planted fault (stale-page, slow and broken-check) failed its scripted run.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
-| a | claude-opus-5-5 | 0/3 | 19.9 | $0.179 | 0 |
-| b | claude-opus-5-5 | 3/3 | 19.6 | $0.165 | 0 |
-| a | claude-sonnet-5-5 | 0/3 | 16.4 | $0.067 | 0 |
-| b | claude-sonnet-5-5 | 3/3 | 21.2 | $0.085 | 0 |
+| a | claude-opus-5-5 | 0/3 | 17.2 | $0.112 | 0 |
+| b | claude-opus-5-5 | 3/3 | 18.9 | $0.148 | 0 |
+| c | claude-opus-5-5 | 3/3 | 51.3 | $0.338 | 0 |
+| a | claude-sonnet-5-5 | 0/3 | 16.2 | $0.084 | 0 |
+| b | claude-sonnet-5-5 | 3/3 | 14.8 | $0.074 | 0 |
+| c | claude-sonnet-5-5 | 3/3 | 40.8 | $0.208 | 0 |
 
 No agent approved or refused a change to production.
 
-Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Any rule you choose, such as no debug logging in production, can be checked on every service the same way; want your first one added?"
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Any rule you choose, such as no debug logging in production, can be checked on every service the same way; want your first one added?" It offers more of the tier the person has, not a step up.
 
 The plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|
 | a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 83% |
-| b | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 20% |
-| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 93% |
-| b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 17% |
+| b | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 3% |
+| c | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 13% |
+| a | claude-sonnet-5-5 | 30 | 0% | 97% | n/a | n/a | 97% |
+| b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 0% |
+| c | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 3% |
 
 <!-- results:end -->

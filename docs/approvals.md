@@ -30,7 +30,7 @@ In Claude Code, in the repository your agents work in:
 1. Type `/confighub:install-mini`. It starts a hub.
 2. Ask, in your own words: *"Make changes to production wait for my approval; agents may only propose them."* The agent puts the repository's files in the hub and requires your approval for the live copy. From then on, every Claude Code session in this repository runs on the agent's own key: it can propose, and it cannot approve.
 3. Ask for changes as you always have. The agent edits the files, then proposes them. At the end of its turn you see one line: *"A change to production (APP-live) waits for your approval: … To approve it: ~/.confighub/mini/confighub-mini-VERSION-OS-ARCH/bin/cub mini approve …"*. The command names confighub mini's own `cub` by its full path, so it runs in a terminal as printed.
-4. In a terminal, approve it: `cub mini approve`. It shows what the change would do and asks you first. Or refuse it: `cub mini refuse --reason "why"`. This updates the approved configuration. Production uses it when its deployment path reads that revision; verify the running service as described below.
+4. In a terminal, approve it: `cub mini approve`. It shows what the change would do and asks you first. Asking stops an agent's ordinary shell, but it is not what keeps the agent out: an agent on your own sign-in could pass `--yes` or fake a terminal. What does is the key of its own from step 2, whose approval the hub refuses. Or refuse it: `cub mini refuse --reason "why"`. This updates the approved configuration. Production uses it when its deployment path reads that revision; verify the running service as described below.
 
 You learn no command until the moment you need it. The steps below are the same, by hand.
 
@@ -40,7 +40,7 @@ To see a change before anyone proposes it, ask for it *"in a copy first, without
 
 A service the app needs works the same way. `cub mini need APP postgres` gives staging the settings of the provider registered for it at once, and proposes live's with a change order that `cub mini waiting` lists and `cub mini approve` puts in. A provider registered again with new values is proposed to live again; live keeps what you approved until then. You register the providers with `cub mini provide`: the agent's key can propose with `need`, and cannot register a provider or approve ([a service the app needs](from-plugin-to-confighub.md#a-service-the-app-needs)).
 
-A secret for live, such as a database password, is yours to set, in a terminal: `cub mini secret set APP KEY --variant live --change-desc "WHY"`, with the value read from standard input. It is kept where an agent's key has no right to read it, the app's settings name it as `KEY_FILE=/run/secrets/APP/KEY`, and `cub mini secret files` writes it where the app runs ([a secret for live](from-plugin-to-confighub.md#a-secret-for-live-that-no-agent-can-read)). An agent asked to rotate it gives you that command, and never the value.
+A secret for live, such as a database password, is yours to set, in a terminal: `cub mini secret set APP KEY --variant live --change-desc "WHY"`, with the value read from standard input. It is kept where an agent's key has no right to read it, the app's settings name it as `KEY_FILE=/run/secrets/APP/KEY`, and `cub mini secret files` writes it where the app runs ([a secret for live](from-plugin-to-confighub.md#a-secret-for-live-that-no-agent-can-read)). An agent asked to rotate it gives you that command, and never the value. That the command needs a terminal stops an agent's ordinary shell, and is no guarantee, since an agent on your own sign-in can fake one; what holds is the agent's key, which may not read or write the secret.
 
 ## Codex sessions on the proposal key
 
@@ -295,13 +295,14 @@ The request was made with the asking agent's own key, and it covers the one valu
 
 ## What you are told, and nothing else
 
-With the gate on and the agent on a key of its own, the plugin tells you three things, each one line that Claude Code shows you at the end of the agent's turn and does not give the agent:
+With the gate on and the agent on a key of its own, the plugin tells you four things, each one line that Claude Code shows you at the end of the agent's turn and does not give the agent:
 
 - **A change is waiting for you.** The agent's turn ended with a change order not yet approved: the value from what to what, the copy it is headed for, the agent's reason, and the command that approves it. Once per change order. `cub mini waiting` lists what waits, for later.
 - **An agent is proposing again what was refused.** You refused a change order (`cub mini refuse BASE/ORDER --reason WHY`), or the hub refused the agent a write; a later change order for the same path is told once, naming the path, the refusal it repeats, and the agent. You decide. `cub mini waiting` and `cub mini approve` also mark a value you refused before, with the order it was in and your reason, so that you do not approve it by accident inside a later change.
+- **What the hub kept for you**. The agent's turn ended with the hub having kept something you asked for: a value kept with its reason, so a later version will not overwrite it; a new version taken with your own values kept; the copies written out as files with their reasons; or a copy made into another hub. One line says what and where, such as "ConfigHub plugin: gpu-operator-customer took the new version and kept version 580.105.08, with its reason." It comes whether the agent ran `cub` or an app that runs it, and the first time in a week for each kind in a folder.
 - **Something elsewhere needs a hub it can reach.** One sentence from `cub mini pull-key`, `pull` or `copy` when the hub listens on this machine only and a VM or another machine needs it.
 
-Nothing is said of a change within the agent's rights, a change you approved, a pull, or an agent the gate stopped that did not try again. `CUB_MINI_TELL=0` turns the lines off.
+Nothing else is said of a change within the agent's rights. Nothing is said of a change you approved, a pull, or an agent the gate stopped that did not try again. `CUB_MINI_TELL=0` turns the lines off.
 
 ## When a cluster deploys from Git: a check on each pull request
 

@@ -149,7 +149,7 @@ For an AI agent asked to help after the stop is lifted.
 
 ## Testing
 
-This proves: the settings were stored in the hub and put back there, and the agent's key was refused by the hub after `cub mini halt`. What was really used: confighub mini on this computer and a stop file of the walkthrough's own; no Claude Code session or service runs in the scripted run, and nothing is delivered. This story has no offer moment in its agent task: the plugin shows the person no line at the end of the turn, so the next step below is not offered and conversion is not measured; the simulated persons still say whether they noticed the result and whether anything was in the way.
+This proves: the settings were stored in the hub and put back there, and the agent's key was refused by the hub after `cub mini halt`. What was really used: confighub mini on this computer (no stand-in, no cluster, no real service) and a stop file of the walkthrough's own, with every decision made by the scripted steps, not a person; no Claude Code session or service runs in the scripted run, and nothing is delivered. This story has no offer moment in its agent task: the plugin shows the person no line at the end of the turn, so the next step below is not offered and conversion is not measured; the simulated persons still say whether they noticed the result and whether anything was in the way.
 
 The scripted run follows the Human steps on a hub of its own, with a stop file of its own, and checks that each quoted line is still printed. A correct agent result, starting after the stop is lifted, puts staging's timeout back to 30 with production unchanged, and leaves no change to production waiting.
 
@@ -159,7 +159,7 @@ The scripted run follows the Human steps on a hub of its own, with a stop file o
 <!-- agent-check undo: cub unit data --space pay-staging app | grep -qx 'TIMEOUT_SECONDS=30' && cub unit data --space pay-live app | grep -qx 'TIMEOUT_SECONDS=30' && ! cub mini waiting | grep -q 'TIMEOUT_SECONDS: 30 → 5' -->
 <!-- agent-check-a undo: g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g TIMEOUT_SECONDS 30 | grep -q . && ! g TIMEOUT_SECONDS '5($|[^0-9])' | grep -q . -->
 <!-- arms: a,b,c -->
-<!-- next-step when "did not change": stop on an alert | Your monitor can stop every agent the moment an alert fires, and name the last change to look at first; want the alert add-on set up? -->
+<!-- next-step boundary=same-tier when "did not change": stop on an alert | Your monitor can stop every agent the moment an alert fires, and name the last change to look at first; want the alert add-on set up? -->
 
 The checks below can be run by hand, in bash, in the walkthrough's folder:
 
@@ -170,17 +170,17 @@ g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Lib
 
 <!-- results:begin -->
 
-Results, 13 November 2026, a build of confighub mini from main at c564cd36. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+Results, 14 November 2026, confighub mini 0.11.1-mini.2. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Scripted run: passed, 45 seconds for the steps, within the page's budget of 180.
+- Scripted run: passed, 41 seconds for the steps, within the page's budget of 180.
 - Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
-| a | claude-opus-5-5 | 0/3 | 25.5 | $0.182 | 0 |
-| b | claude-opus-5-5 | 3/3 | 29.7 | $0.191 | 1 |
-| a | claude-sonnet-5-5 | 0/3 | 16.9 | $0.06 | 0 |
-| b | claude-sonnet-5-5 | 3/3 | 24.7 | $0.081 | 1 |
+| a | claude-opus-5-5 | 0/3 | 30.0 | $0.15 | 0 |
+| b | claude-opus-5-5 | 3/3 | 31.7 | $0.207 | 1 |
+| a | claude-sonnet-5-5 | 0/3 | 15.8 | $0.098 | 0 |
+| b | claude-sonnet-5-5 | 3/3 | 16.1 | $0.084 | 1 |
 
 No agent approved or refused a change to production.
 
@@ -190,9 +190,9 @@ The plugin offers it once, after the answer at whose end it showed the moment th
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|
-| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 30% |
-| b | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 7% |
-| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 10% |
-| b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 0% |
+| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 23% |
+| b | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 13% |
+| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 23% |
+| b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 10% |
 
 <!-- results:end -->

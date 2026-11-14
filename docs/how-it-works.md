@@ -22,6 +22,8 @@ The Codex rows hold for Codex 0.163.0 on macOS, with a local MCP server. They ha
 
 The next agent receives history for supported operations; it is not guaranteed to preserve the value. A server-side production gate additionally requires a deployment path that consumes the approved configuration and an agent without bypass credentials ([approvals](approvals.md)).
 
+Some checks in `cub mini` look for a person at a terminal: `cub mini approve` asks before it approves, and a production secret is set only from a terminal. And `cub mini set` and `rollback` never write production; they propose. These stop an agent's ordinary shell, and none is a guarantee: an agent working on your own sign-in can pass `--yes`, fake a terminal, or write with plain `cub`. What holds is the agent working on a key of its own, which the hub refuses for production.
+
 ## What the agent is told, and when
 
 The local record runs quietly. The plugin supplies earlier reasons when earlier sessions changed the file the agent is looking at. A selected app workflow, an explicit project preference and ConfigHub activity reminders can also give the agent context ([ordinary app requests](agent-workflow.md)). Then, once in the session, it adds the history of that file beside what the agent read. From the [five-minute try](try-the-plugin.md#try-it-in-five-minutes):
@@ -58,6 +60,8 @@ ConfigHub plugin: this edit reaches production too. LOG_LEVEL is now debug in .e
 ```
 
 The person's line is not shown when the agent's own answer already named that file, and comes at most once a week for a file. A `git checkout`, `stash`, `pull` or `reset` the agent runs is recorded as git's doing, never as an agent undoing an earlier change.
+
+**When the hub kept something for you** (with confighub mini or another hub). When an agent's turn ends with the hub having kept a value with its reason, taken a new version while keeping your values, written the copies out as files, or copied the work to another hub, the end of the turn says what, in one line: "ConfigHub plugin: kept theme dark and footer Support desk, floor 3 in startpage-mine, each with its reason, so a later version will not overwrite them." It comes the first time in a week for each kind in a folder, and never instead of a change waiting for your approval. `CUB_MINI_TELL=0` turns it off.
 
 `/confighub:changes` and `/confighub:why` are for you. The agent cannot run them.
 
