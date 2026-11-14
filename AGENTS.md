@@ -55,7 +55,7 @@ In Claude Code, the plugin adds `/confighub:changes`, `/confighub:why NAME`, `/c
 
 ## Starters
 
-A starter is one short YAML file that gives every new app of one kind a team's default settings, each with a reason. A person's own values always win, and it writes only once, when the app is connected. Starters are off unless `CUB_MINI_STARTERS` names a folder of starter files. The idea comes from Spring Boot's starters. See [starters](docs/starters.md).
+A starter gives apps of one kind the team's defaults, each with a reason. Use `CUB_MINI_STARTERS=on` to start with the packaged starters, or name a folder of your own. Once the owner approves a starter in the hub, the hub supplies it to new apps. An existing app can take an approved upgrade and keep its own values. The idea comes from Spring Boot's starters. See [starters](docs/starters.md).
 
 ## Which page answers which question
 
