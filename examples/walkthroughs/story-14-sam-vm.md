@@ -158,7 +158,7 @@ For an AI agent doing this for a person.
 
 ## Testing
 
-This proves: the exact approved revision of production's settings is delivered to the service's folder by `cub mini pull`, and an unapproved one is not. What was really used: confighub mini on this computer, with a second folder and `cub` configuration standing in for the VM; no service runs, no systemd timer, and the restart is an `echo`. The step it aims to win: running `cub mini pull` on the real VM, on a timer. Its moment is the plugin's line at the end of a turn that production did not change and waits for a yes; in the runs below the plugin showed no line at the end of the agent's turn, so the offer was not made and conversion was not measured.
+This proves: the exact approved revision of production's settings is delivered to the service's folder by `cub mini pull`, and an unapproved one is not. What was really used: confighub mini on this computer, with a second folder and `cub` configuration standing in for the VM; no service runs, no systemd timer, and the restart is an `echo`. The step it aims to win: running `cub mini pull` on the real VM, on a timer. Its moment is the plugin's line at the end of a turn that production did not change and waits for a yes; in the runs below the plugin showed no line at the end of the agent's turn, so the offer was not made and conversion was not measured. In plain files, arm a passes only if the file the service reads still says 30 and the 120 waits somewhere else for the person: production unchanged until they approve.
 
 The scripted run follows the Human steps on a hub of its own and checks that each quoted line is still printed. A correct agent result has the new timeout in the base and a change waiting for production, with production itself unchanged; the agent's key cannot approve. The checks below hold right after step 6.
 
@@ -166,7 +166,7 @@ The scripted run follows the Human steps on a hub of its own and checks that eac
 > Our api times out on the large model. Raise TIMEOUT_SECONDS to 120 for production; I'll approve it.
 
 <!-- agent-check propose: cub unit data --space api-base app | grep -qx 'TIMEOUT_SECONDS=120' && cub unit data --space api-live app | grep -qx 'TIMEOUT_SECONDS=30' && cub mini waiting | grep -q 'TIMEOUT_SECONDS: 30 → 120' -->
-<!-- agent-check-a propose: g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g TIMEOUT_SECONDS 120 | grep -q . -->
+<!-- agent-check-a propose: grep -qx 'TIMEOUT_SECONDS=30' api/.env && g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g TIMEOUT_SECONDS 120 | grep -vqx 'api/.env' -->
 <!-- arms: a,b,c -->
 <!-- next-step boundary=same-tier when "did not change": pull on a timer | Your VM can take only approved settings every 30 seconds, and your agents never need an SSH key to it; want the one command that starts the timer there? -->
 
@@ -174,7 +174,7 @@ The checks below can be run by hand, in bash, in the walkthrough's folder:
 
 ```sh
 cub unit data --space api-base app | grep -qx 'TIMEOUT_SECONDS=120' && cub unit data --space api-live app | grep -qx 'TIMEOUT_SECONDS=30' && cub mini waiting | grep -q 'TIMEOUT_SECONDS: 30 → 120'
-g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g TIMEOUT_SECONDS 120 | grep -q .
+grep -qx 'TIMEOUT_SECONDS=30' api/.env && g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g TIMEOUT_SECONDS 120 | grep -vqx 'api/.env'
 ```
 
 <!-- results:begin -->

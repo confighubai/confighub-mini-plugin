@@ -140,7 +140,7 @@ For an AI agent working for the platform team.
 
 ## Testing
 
-This proves: the settings were stored in the hub, the base's change reached each app's copy and each app's own values were kept. What was really used: confighub mini on this computer, with three apps for the story's ten; nothing is delivered and the story's hosted ConfigHub is not used. The step it aims to win: approving the bump for production, app by app. Its moment is the plugin's line at the end of a turn that production did not change and waits for a yes; in the runs below the plugin showed no line at the end of the agent's turn, so the offer was not made and conversion was not measured.
+This proves: the settings were stored in the hub, the base's change reached each app's copy and each app's own values were kept. What was really used: confighub mini on this computer, with three apps for the story's ten; nothing is delivered and the story's hosted ConfigHub is not used. The step it aims to win: approving the bump for production, app by app. Its moment is the plugin's line at the end of a turn that production did not change and waits for a yes; in the runs below the plugin showed no line at the end of the agent's turn, so the offer was not made and conversion was not measured. In plain files, arm a passes only if every app's own settings, the files each app reads, take the base's change, with billing's own log level kept; changing company.env alone reaches no app.
 
 A correct agent result has the bump in the base and in every app's base, with billing's own `LOG_LEVEL=debug` kept. The checks below hold right after step 6. The checks below can be run by hand, in bash, in the walkthrough's folder:
 
@@ -148,13 +148,13 @@ A correct agent result has the bump in the base and in every app's base, with bi
 > Make warn the default log level for every service on the company base, and give them all HEALTH_PATH=/healthz. Don't touch what any service set for itself.
 
 <!-- agent-check bump: cub unit data --space company-base app | grep -qx 'LOG_LEVEL=warn' && ! for a in billing search ledger; do cub unit data --space $a-base app | grep -qx 'HEALTH_PATH=/healthz' || echo missing; done | grep -q missing && cub unit data --space billing-base app | grep -qx 'LOG_LEVEL=debug' && cub unit data --space search-base app | grep -qx 'LOG_LEVEL=warn' -->
-<!-- agent-check-a bump: g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g LOG_LEVEL warn | grep -q company && g HEALTH_PATH /healthz | grep -q . && g LOG_LEVEL debug | grep -q billing -->
+<!-- agent-check-a bump: grep -qx 'LOG_LEVEL=warn' company.env && ! for a in search ledger; do grep -qx 'LOG_LEVEL=warn' apps/$a/.env && grep -qx 'HEALTH_PATH=/healthz' apps/$a/.env || echo miss; done | grep -q miss && grep -qx 'HEALTH_PATH=/healthz' apps/billing/.env && grep -qx 'LOG_LEVEL=debug' apps/billing/.env -->
 <!-- arms: a,b,c -->
 <!-- next-step boundary=same-tier when "did not change": production for every app | Every app's production can take the base's change with one approval each, all listed in one place; want them listed now? -->
 
 ```sh
 cub unit data --space company-base app | grep -qx 'LOG_LEVEL=warn' && ! for a in billing search ledger; do cub unit data --space $a-base app | grep -qx 'HEALTH_PATH=/healthz' || echo missing; done | grep -q missing && cub unit data --space billing-base app | grep -qx 'LOG_LEVEL=debug' && cub unit data --space search-base app | grep -qx 'LOG_LEVEL=warn'
-g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g LOG_LEVEL warn | grep -q company && g HEALTH_PATH /healthz | grep -q . && g LOG_LEVEL debug | grep -q billing
+grep -qx 'LOG_LEVEL=warn' company.env && ! for a in search ledger; do grep -qx 'LOG_LEVEL=warn' apps/$a/.env && grep -qx 'HEALTH_PATH=/healthz' apps/$a/.env || echo miss; done | grep -q miss && grep -qx 'HEALTH_PATH=/healthz' apps/billing/.env && grep -qx 'LOG_LEVEL=debug' apps/billing/.env
 ```
 
 <!-- results:begin -->

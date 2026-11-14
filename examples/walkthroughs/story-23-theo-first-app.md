@@ -68,7 +68,7 @@ For an AI agent asked to build the app.
 
 ## Testing
 
-This proves: what the plugin kept about each value an agent wrote, read from its record with `cub mini changes`. What was really used: Claude Code with the plugin from the confighub mini package; no hub and nothing delivered. This story has no offer moment in its agent task: the plugin shows the person no line at the end of the turn, so the next step below is not offered and conversion is not measured; the simulated persons still say whether they noticed the result and whether anything was in the way.
+This proves: what the plugin kept about each value an agent wrote, read from its record with `cub mini changes`. What was really used: Claude Code with the plugin from the confighub mini package; no hub and nothing delivered. This story has no offer moment in its agent task: the plugin shows the person no line at the end of the turn, so the next step below is not offered and conversion is not measured; the simulated persons still say whether they noticed the result and whether anything was in the way. In plain files, arm a passes only if the reason is kept as data in a settings file, a key with the reason as its value, not as a comment beside the limit.
 
 The scripted run makes only the folder; the rest needs a Claude Code session, so the checks are judged in the agent runs. A correct result in arm b has the starting repository and the limit's request in the record; in arm a, a visible file has the limit next to its reason. The checks below can be run by hand, in bash, in the app's folder:
 
@@ -76,13 +76,13 @@ The scripted run makes only the folder; the rest needs a Claude Code session, so
 > Build me a booking page for my yoga studio, with a limit of 20 bookings a day: the room fits 20 mats.
 
 <!-- agent-check build: /absolute/path/to/unpacked-confighub-mini/bin/confighub-mini-app mini changes --dir . 2>/dev/null | tr '\n' ' ' | grep -q 'example/yoga-bookings.*20 bookings a day' -->
-<!-- agent-check-a build: grep -rlsE '(^|[^0-9])20([^0-9]|$)' --exclude-dir='.*' --exclude-dir=Library --exclude-dir=node_modules * .env* | xargs grep -lsiE 'mats?|room' | grep -q . -->
+<!-- agent-check-a build: grep -rhsE --include='.env*' --include='*.env' --include='*.json' --include='*.yaml' --include='*.yml' --include='*.toml' --exclude-dir='.*' --exclude-dir=node_modules '^[^#;/]*[:=][^#]*(mats?|room)' * .env* | grep -q . -->
 <!-- arms: a,b,c -->
 <!-- next-step boundary=same-tier when "did not change": keep the plugin on | Your next app can keep the reason for each setting from its first file, so nobody has to guess later why a value is what it is; want the plugin kept on for it? -->
 
 ```sh
 cub mini changes --dir . | tr '\n' ' ' | grep -q 'example/yoga-bookings.*20 bookings a day'
-grep -rlsE '(^|[^0-9])20([^0-9]|$)' --exclude-dir='.*' --exclude-dir=Library --exclude-dir=node_modules * .env* | xargs grep -lsiE 'mats?|room' | grep -q .
+grep -rhsE --include='.env*' --include='*.env' --include='*.json' --include='*.yaml' --include='*.yml' --include='*.toml' --exclude-dir='.*' --exclude-dir=node_modules '^[^#;/]*[:=][^#]*(mats?|room)' * .env* | grep -q .
 ```
 
 <!-- results:begin -->

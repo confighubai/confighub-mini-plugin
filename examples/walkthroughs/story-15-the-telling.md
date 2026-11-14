@@ -115,7 +115,7 @@ For an AI agent working on the api, on its own key: run `cub` as `cub --context 
 
 ## Testing
 
-This proves: the settings and the refusal were stored in the hub, and the messages were printed where a person reads them. What was really used: confighub mini on this computer; no Claude Code session runs in the scripted steps, so the end-of-turn line for a repeated proposal is not checked here, and nothing is delivered. The step it aims to win: the person reading what waits for them, refusals included, with `cub mini waiting`. Its moment is the plugin's line at the end of a turn that production did not change and waits for a yes; in the runs below the plugin showed no line at the end of the agent's turn, so the offer was not made and conversion was not measured.
+This proves: the settings and the refusal were stored in the hub, and the messages were printed where a person reads them. What was really used: confighub mini on this computer; no Claude Code session runs in the scripted steps, so the end-of-turn line for a repeated proposal is not checked here, and nothing is delivered. The step it aims to win: the person reading what waits for them, refusals included, with `cub mini waiting`. Its moment is the plugin's line at the end of a turn that production did not change and waits for a yes; in the runs below the plugin showed no line at the end of the agent's turn, so the offer was not made and conversion was not measured. In plain files, arm a passes only if the service's file still says 30, the 180 waits elsewhere, and the earlier refusal's reason is told with it; the refusal is kept only in the hub, so plain files cannot give it.
 
 A correct agent result, starting after Sam refused 120, leaves production at 30 with a proposal for 180 waiting for Sam. The checks below hold right after step 6. The checks below can be run by hand, in bash, in the walkthrough's folder:
 
@@ -123,13 +123,13 @@ A correct agent result, starting after Sam refused 120, leaves production at 30 
 > The large model still times out. Raise TIMEOUT_SECONDS to 180 for production.
 
 <!-- agent-check again: cub unit data --space api-live app | grep -qx 'TIMEOUT_SECONDS=30' && cub mini waiting | grep -q 'TIMEOUT_SECONDS: .* → 180' -->
-<!-- agent-check-a again: g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g TIMEOUT_SECONDS 180 | grep -q . -->
+<!-- agent-check-a again: grep -qx 'TIMEOUT_SECONDS=30' api/.env && g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g TIMEOUT_SECONDS 180 | grep -vqx 'api/.env' && grep -rlsiE 'hides the slow model|fix the model first' --exclude-dir='.*' --exclude-dir=Library * .env* | grep -q . -->
 <!-- arms: a,b,c -->
 <!-- next-step boundary=same-tier when "did not change": see what waits | This change waits for your yes, and you refused the last one like it, with a reason. Want the one command that lists what waits for you? -->
 
 ```sh
 cub unit data --space api-live app | grep -qx 'TIMEOUT_SECONDS=30' && cub mini waiting | grep -q 'TIMEOUT_SECONDS: .* → 180'
-g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g TIMEOUT_SECONDS 180 | grep -q .
+grep -qx 'TIMEOUT_SECONDS=30' api/.env && g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g TIMEOUT_SECONDS 180 | grep -vqx 'api/.env' && grep -rlsiE 'hides the slow model|fix the model first' --exclude-dir='.*' --exclude-dir=Library * .env* | grep -q .
 ```
 
 <!-- results:begin -->
