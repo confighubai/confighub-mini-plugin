@@ -80,7 +80,7 @@ Two things are different. Spring Boot applies its auto-configuration every time 
 
 `cub mini adopt` uses starters only when you switch them on, with the environment variable `CUB_MINI_STARTERS=on`, or when your hub already keeps starters in a Space named `starters`. Otherwise it connects an app as [an app you already have](journeys/existing-app.md) shows.
 
-The package has six starters: `web`, for a small web service with a `.env`, `app.env` or compose file; `vercel`, for an app on Vercel; `parameter-store`, for an app that reads AWS Parameter Store; `daytona`, for an experiment run in a disposable Daytona sandbox and brought back for review; and `kustomize-argocd` and `kustomize-flux`, for a Kustomize repository that Argo CD or Flux deploys. The `vercel` and `parameter-store` starters can deliver to a real Vercel project or AWS account you sign in to, or, with no account, to a stand-in: a small program in the package that answers as Vercel or AWS would and keeps the settings in a local file. The `daytona` starter can be rehearsed on your computer with no Daytona account. Each one's walkthrough says which path it shows.
+The package has six starters: `web`, for a small web service with a `.env`, `app.env` or compose file; `vercel`, for an app on Vercel; `parameter-store`, for an app that reads AWS Parameter Store; `daytona`, for an experiment run in a disposable Daytona sandbox and brought back for review; and `kustomize-argocd` and `kustomize-flux`, for a Kustomize repository that Argo CD or Flux deploys. The `parameter-store` starter can deliver to a real AWS account you sign in to, or, with no account, to a stand-in: a small program in the package that answers as AWS would and keeps the settings in a local file. The `vercel` starter delivers to its stand-in for now. The `daytona` starter can be rehearsed on your computer with no Daytona account. Each one's walkthrough says which path it shows.
 
 In a terminal, with `MINI` the folder of the unpacked package, such as `~/.confighub/mini/confighub-mini-VERSION-OS-ARCH`:
 
@@ -333,7 +333,7 @@ It starts a hub of its own and removes it at the end. "The contract" in its outp
 - Starters are an experiment. They are off by default, and the format may change in a later release.
 - A starter looks for files, file name patterns, keys in a file, a provider's link, or an Argo CD or Flux source. A new kind of thing to look for, or a way of delivering other than an add-on, Argo CD or Flux, needs a change in confighub mini.
 - A starter reads an app's settings only from the files `cub mini adopt` reads: `.env` and its staging and production files, `app.env`, a compose file's environment, `.env.example`, and Terraform var files.
-- The Vercel and Parameter Store add-ons deliver to a real account only with your own sign-in, taken from your environment; the walkthroughs show the stand-in path, which needs no account.
+- The Parameter Store add-on delivers to a real AWS account only with your own sign-in, taken from your environment. The Vercel add-on in this release delivers only to its stand-in. The walkthroughs show the stand-in path, which needs no account.
 
 ## Undo it
 
