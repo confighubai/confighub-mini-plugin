@@ -178,4 +178,24 @@ The plugin offers it once, after the answer at whose end it showed the moment th
 | a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 70% |
 | b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 7% |
 
+Results, 14 November 2026, confighub mini 0.11.1-mini.7. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+
+| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
+|---|---|---|---|---|---|
+| a | claude-sonnet-5-5 | 0/3 | 10.5 | $0.06 | 0 |
+| b | claude-sonnet-5-5 | 3/3 | 15.7 | $0.075 | 0 |
+
+No agent approved or refused a change to production.
+
+Simulated persons, not people: 5 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Your next change can be tried in a copy of staging of its own, then kept or dropped, with staging and production untouched; want a try copy for it?" It offers more of the tier the person has, not a step up.
+
+The plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
+
+| Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|---|
+| a | claude-sonnet-5-5 | 15 | 0% | 100% | n/a | n/a | 60% |
+| b | claude-sonnet-5-5 | 15 | 0% | 100% | n/a | n/a | 0% |
+
 <!-- results:end -->
