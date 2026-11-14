@@ -146,6 +146,12 @@ The plugin offers it once, after the answer at whose end it showed the moment th
 | b | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 67% |
 | b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 87% |
 
+Rerun on the published confighub mini 0.11.1-mini.7 with plugin 0.90.0, 14 November 2026, no Daytona account, scripted approvals; the plugin now reads an upload's waiting and kept lines through the page's `propose` script, so the offer is shown:
+
+- Scripted run: passed, 72 seconds for the steps, within the page's budget of 240; each of the three planted faults was caught.
+- Pilot, arm b, 3 runs on claude-sonnet-5-5 (15/15 checks, 7 to 26 seconds a task) and 2 complete runs on claude-opus-5-5 (10/10 checks); a third opus run was stopped to save cost and is not counted.
+- Simulated persons, not people, 10 per run, claude-haiku-5-5: the offer was shown to every person (100% offered) and noticed by all. Want it now: 0 of 50. Later: 24 of 50. No: 26 of 50. In the way: 80 to 90% of persons in each run.
+
 Earlier records of this page, kept with their own date, package and scope:
 
 - Earlier pilot on mini.5, 14 November 2026, before the page asked the person to run the move to the shared hub: arm b, 3 runs per model, 13/15 checks on claude-opus-5-5 and 10/15 on claude-sonnet-5-5. The agents rightly declined to sign in to the team's hub with a proposer key, so move and delete failed in 4 of 6 runs; in one sonnet run the proposer key had not been made, so no 240 experiment existed.
