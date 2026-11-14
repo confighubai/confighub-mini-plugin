@@ -103,17 +103,15 @@ confighub mini, unpacked as [installing confighub mini](../../docs/install-mini.
    …
    LOG_LEVEL=warn
    ```
-9. Check that production there waits for you: change the shared settings, and ask for the change in production with a change order. Production still reads `LOG_LEVEL=warn` until you approve it.
+9. Check that production in the shared hub waits for you, without changing anything there: the app takes a change only through its change workflow (the first `true`), and that workflow's production stage needs an approval (the second).
    <!-- run: move-waits -->
    ```sh
-   cub --context shared function set --space "$TEAM_APP-base" --unit app --toolchain AppConfig/Env --change-desc "Info logs for a day" -- set-string-path '*' LOG_LEVEL info > /dev/null
-   cub --context shared changeorder create --space "$TEAM_APP-base" info-day --in-scope-space "$TEAM_APP-live" --change-workflow "workflows/$TEAM_APP-live-approval" --description "Info logs for a day"
-   cub --context shared unit data app --space "$TEAM_APP-live"
+   cub --context shared component get "$TEAM_APP" -o jq=.Component.RequireChangeWorkflow
+   cub --context shared changeworkflow get --space workflows "$TEAM_APP-live-approval" -o jq='.ChangeWorkflow.Stages[] | select(.Name == "live") | .Prerequisites | length > 0'
    ```
    ```text
-   Successfully created changeorder info-day (ID)
-   …
-   LOG_LEVEL=warn
+   true
+   true
    ```
 10. Delete the app from your own hub, now that the shared hub holds it. There is no single command for this yet: delete its Spaces, its Component, then its approval rules. Your files stay.
     <!-- run: delete -->
@@ -135,7 +133,7 @@ For an AI agent doing these jobs for a person: run the Human steps' commands, ad
 - **Deploy:** `cub mini adopt FOLDER`. End your message with one sentence on what the person has now, in their words (for example, that production cannot change without them), and the one approve command adopt printed, such as `~/.confighub/mini/cub mini approve menu-live`. Copy it exactly as printed.
 - **Update:** change the app's file, then `cub mini upload FOLDER --change-desc "WHY"`. End the same way, with the approve command `upload` printed (for example `~/.confighub/mini/cub mini approve menu-base/upload-20261113-163415-0kyg`), copied exactly.
 - **Undo:** put the file back as it was and upload it again, with the reason. End the same way.
-- **Move:** run step 8 with the shared hub's context, then read live back, and step 9 to see that production waits. If it does not, say so plainly.
+- **Move:** run step 8 with the shared hub's context, then read live back, and step 9, which only reads, to see that production waits; never make a change there to test it. If it does not, say so plainly.
 - **Delete:** step 10, only once the shared hub holds the app. Never delete the person's files.
 
 Approving production is the person's, so give them the one command and nothing beside it. Never put a password or token in a setting. You are done when `cub unit data app --space APP-live` shows what the person asked for, or, for a change that waits, when `cub mini waiting` shows it.

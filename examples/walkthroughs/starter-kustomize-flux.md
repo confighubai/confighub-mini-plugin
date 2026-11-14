@@ -116,16 +116,15 @@ An unpacked confighub mini package ([install confighub mini](../../docs/install-
    ```sh
    cub --context shared mini copy --from-context "$LOCAL_HUB" orders --name "$TEAM_APP"
    ```
-   Then check that production in the shared hub waits for you: change the base there, and ask for the change in production with a change order.
+   Then check that production in the shared hub waits for you, without changing anything there: the app takes a change only through its change workflow (the first `true`), and that workflow's production stage needs an approval (the second).
    <!-- run: move-waits -->
    ```sh
-   cub --context shared function set --space "$TEAM_APP-base" --unit app --change-desc "300 orders a minute" -- set-string-path v1/ConfigMap data.ORDER_LIMIT 300 > /dev/null
-   cub --context shared changeorder create --space "$TEAM_APP-base" limit-300 --in-scope-space "$TEAM_APP-live" --change-workflow "workflows/$TEAM_APP-live-approval" --description "300 orders a minute"
-   cub --context shared mini waiting
+   cub --context shared component get "$TEAM_APP" -o jq=.Component.RequireChangeWorkflow
+   cub --context shared changeworkflow get --space workflows "$TEAM_APP-live-approval" -o jq='.ChangeWorkflow.Stages[] | select(.Name == "live") | .Prerequisites | length > 0'
    ```
    ```text
-     Approving it changes production:
-       ConfigMap/orders-config/data.ORDER_LIMIT: 100 → 300
+   true
+   true
    ```
 9. Delete the app: from the cluster, with Flux's records of it, and from your own hub. The cluster stays: other apps can run there. If deleting a Kustomization fails, stop there.
    <!-- run: delete -->
@@ -144,7 +143,7 @@ You are doing this for a person, in their folder, with step 1's settings. Each r
 - **deploy**, "Set up the orders repository so that every change to production waits for my approval, with a reason kept for each value, and have Flux deploy production from there": run step 4's `adopt` alone. Then give the person the starters approve, `cub variant approve starters-approved --all --note "Read them"`, and the `approve` and `deploy-from-hub` commands, to run themselves.
 - **update**, "Allow 250 orders a minute; I'll approve production": edit and commit as in step 5, run its `upload` with their reason, and give them the `cub mini approve` command it printed.
 - **undo**, "Undo the order limit change": revert and upload as in step 7, and give them the `cub mini approve` command.
-- **move**, "Move orders to our team's shared hub": run step 8 with their context. Then check that production there waits for approval, as the later step shows, and say so plainly if it does not.
+- **move**, "Move orders to our team's shared hub": run step 8 with their context. Then check that production there waits for approval, by reading only, as the later step does; never make a change or a change order there to test it, and say so plainly if it does not.
 - **delete**, "Delete the orders app": run step 9 only. Never delete the cluster to remove one app; if deleting a Kustomization fails, stop and say so.
 
 Never approve or refuse a change to production, run `deploy-from-hub`, or edit the cluster with `kubectl` yourself; never push to the repository's remote; never put a secret in a manifest. You are done when the task's check below passes.
