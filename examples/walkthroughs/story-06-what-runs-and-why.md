@@ -142,7 +142,7 @@ For an AI agent doing this for a person.
 
 The scripted run follows the Human steps on a hub of its own and compares the quoted output. A correct agent result is an `answer.md` with the three findings, and, where there is a hub, Birch's image left as it was. The checks below can be run by hand after the steps and an answer:
 
-This proves: stored. The answers are read from what a hub on this computer holds; no customer's cluster is read, and nothing is delivered. The next step this aims to win: recording a reason where the list shows none. Tested on the checksum-verified published confighub mini 0.11.1-mini.4 with the plugin 0.87.0, 14 November 2026: environment, local hub, no cluster; approval, no approval step. The plugin says one line at this moment, such as "ConfigHub plugin: inventory/CHANGES.md lists what each copy changed, with the reason where one was given; nothing in the hub changed." The next-step line names words from that line.
+This proves: stored. The answers are read from what a hub on this computer holds; no customer's cluster is read, and nothing is delivered. The next step this aims to win: finding whom to ask for the missing reasons. Tested on the checksum-verified published confighub mini 0.11.1-mini.4 with the plugin 0.87.0, 14 November 2026: environment, local hub, no cluster; approval, no approval step. The plugin says one line at this moment, such as "ConfigHub plugin: inventory/CHANGES.md lists what each copy changed, with the reason where one was given; nothing in the hub changed." The next-step line names words from that line.
 
 <!-- agent-task: inventory -->
 > Our GPU platform is rendered in this folder (given/), and ./customers loads our three customers' copies, Birch, Cedar and Elm, into a hub. Which customers differ from the platform we gave them, how, do we know why, and does any break our rule that images come only from nvcr.io or registry.k8s.io? Do not change anything. Write the answer to answer.md.
@@ -151,7 +151,7 @@ This proves: stored. The answers are read from what a hub on this computer holds
 <!-- agent-check-a inventory: f=$(find . -name answer.md | head -1) && grep -qi 'birch' "$f" && grep -q 'registry.dev.example' "$f" && grep -q '580.95.05' "$f" && grep -qi '1Gi' "$f" -->
 <!-- agent-tools: ./customers -->
 <!-- arms: a,b -->
-<!-- next-step boundary=same-tier when "lists what each copy changed": record the missing reasons | Ask Birch and Elm why they changed what they did, and record it beside the change? -->
+<!-- next-step boundary=same-tier when "lists what each copy changed": who to ask | Want the changes that have no reason listed on their own, so you know whom to ask? -->
 
 ```sh
 cat answer.md
