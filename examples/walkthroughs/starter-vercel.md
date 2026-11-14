@@ -149,8 +149,7 @@ bash "${WALKTHROUGH_VERCEL_SCRIPT:?set to the path to examples/vercel-hobby.sh}"
     ```
 ### Undo it
 In the shared hub: `cub --context shared component delete --recursive --detach "$TEAM_APP"` and `cub --context shared changeworkflow delete --space workflows "$TEAM_APP-live-approval"`. Here: `cub mini uninstall --name shop --delete-data` and `rm -rf ~/starter-example`.
-### What you have now
-The alias serves the approved cache.
+### What you have now: the alias serves the approved cache
 ## Agent
 For trials use the fixture. **Deploy** with step 3 or `cub mini adopt shop --live`, then give the owner the connect order. **Update** with step 5, show staging and live, and hand off the update order. **Undo** by proposing the rollback in step 7. Hand the owner the order and wait for approval before delivery. Check the endpoint after approved delivery. **Move** with steps 8 and 9 and read the destination's approval rule. **Delete** with step 10 and confirm only the disposable Hobby project is gone. Keep provider credentials with delivery. Never approve production or edit the fixture's state.
 ## Testing
@@ -175,14 +174,45 @@ For trials use the fixture. **Deploy** with step 3 or `cub mini adopt shop --liv
 <!-- agent-task: delete -->
 > Remove the local shop after the copy.
 <!-- agent-check delete: cub space get pattern-vercel >/dev/null && ! cub component get shop >/dev/null 2>&1 && ! cub space get shop-file-proposals >/dev/null 2>&1 -->
-<!-- next-step boundary=same-tier: use the starter again | Want to use the same starting settings and approval for your next Vercel app? -->
+<!-- next-step boundary=same-tier when "did not change": deliver the approved value to your real Vercel project | Production waited for your yes. When you say yes, want that exact value to reach your real Vercel project, and only that value? -->
+<!-- next-step boundary=mini-to-free-hub when "did not change": a backup approver | When you are away, someone else on your team's hub can approve a change to production for this shop. Want to name one? -->
 <!-- arms: a,b,c -->
 This proves: the real Hobby run checks what the production endpoint serves before and after first delivery, an update and a rollback. The no-account run checks delivery to the local stand-in and the move to a shared hub.
 <!-- results:begin -->
 
-Results, 14 November 2026, confighub mini 0.11.1-mini.2. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+Results, 14 November 2026, confighub mini 0.11.1-mini.5. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Scripted run: passed, 95 seconds for the steps, within the page's budget of 200.
+- Scripted run: passed, 64 seconds for the steps, within the page's budget of 200; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
+- Environment, Published confighub mini 0.11.1-mini.5 with its own plugin (0.88.0), on this computer, with no Vercel account: a local stand-in for the Vercel project, and hosted ConfigHub (the Kubara organization) for the shared hub. Approvals were scripted: the test script ran the person's approve and deliver commands. This is the no-account path, not a real Vercel deployment. After each run the runner removed the hubs it started and everything it made in the shared hub.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
+
+| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
+|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 3/9 (+6 not applicable) | 254.2 | $1.377 | 4 |
+| b | claude-opus-5-5 | 15/15 | 180.6 | $0.577 | 4 |
+| c | claude-opus-5-5 | 14/15 | 208.6 | $0.982 | 3 |
+| a | claude-sonnet-5-5 | 0/9 (+6 not applicable) | 86.4 | $0.429 | 7 |
+| b | claude-sonnet-5-5 | 15/15 | 96.3 | $0.245 | 3 |
+| c | claude-sonnet-5-5 | 13/15 | 121.2 | $0.381 | 3 |
+
+No agent approved or refused a change to production.
+
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Production waited for your yes. When you say yes, want that exact value to reach your real Vercel project, and only that value?" It offers more of the tier the person has, not a step up.
+
+The plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
+
+| Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 93% |
+| b | claude-opus-5-5 | 30 | 100% | 100% | 33% | 60% | 90% |
+| c | claude-opus-5-5 | 30 | 100% | 100% | 30% | 70% | 97% |
+| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 83% |
+| b | claude-sonnet-5-5 | 30 | 100% | 100% | 60% | 40% | 93% |
+| c | claude-sonnet-5-5 | 30 | 100% | 100% | 23% | 77% | 83% |
+
+Earlier records of this page, kept with their own date, package and scope:
+
+- Scripted run on confighub mini 0.11.1-mini.2, 14 November 2026: passed, 95 seconds for the steps, within the page's budget of 200.
 - Scripted run on Vercel Hobby (local build with the mini.1 server and CLI): passed, 467 seconds for the steps, within the page's budget of 1200.
 
 - In the Hobby test, the running endpoint held its prior value while each order waited. After three separate owner approvals it served 60, then 30, then 60 from revisions 3, 4 and 5. The production alias matched the deployment in each receipt. The test project was deleted and the lookup returned project not found. The published mini.2 run used the stand-in and verified the copy to a shared hub separately.
