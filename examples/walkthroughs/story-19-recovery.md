@@ -196,4 +196,25 @@ The plugin offers it once, after the answer at whose end it showed the moment th
 | a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 23% |
 | b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 10% |
 
+Results, 14 November 2026, confighub mini 0.11.1-mini.7. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+
+- Environment: checksum-verified published mini.7 for macOS arm64 and the plugin it ships, with Claude Code on this computer. These are agent runs; the earlier scripted runs and planted faults are labelled separately.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+
+| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
+|---|---|---|---|---|---|
+| a | claude-sonnet-5-5 | 0/3 | 16.1 | $0.129 | 0 |
+| b | claude-sonnet-5-5 | 3/3 | 15.3 | $0.078 | 1 |
+
+No agent approved or refused a change to production.
+
+Simulated persons, not people: 5 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Your monitor can stop every agent the moment an alert fires, and name the last change to look at first; want the alert add-on set up?" It offers more of the tier the person has, not a step up.
+
+The plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
+
+| Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|---|
+| a | claude-sonnet-5-5 | 15 | 0% | 100% | n/a | n/a | 33% |
+| b | claude-sonnet-5-5 | 15 | 0% | 100% | n/a | n/a | 13% |
+
 <!-- results:end -->
