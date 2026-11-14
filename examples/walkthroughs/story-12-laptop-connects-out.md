@@ -124,14 +124,15 @@ For an AI agent doing this for a person.
 
 The scripted run follows the Human steps against hosted ConfigHub, in its test organization, and compares the quoted output. Arm a, without confighub mini, is not applicable: there is no laptop hub to copy from. A correct agent result is the app's live copy on the team's hub with the kept timeout. The checks below can be run by hand after step 7:
 
-This proves: stored, on hosted ConfigHub, with the laptop's hub listening on the laptop only; nothing is delivered, and production on the team's hub is not behind approval. The next step this aims to win: putting the team's copy behind the person's approval. Tested on the checksum-verified published confighub mini 0.11.1-mini.2 with the plugin 0.85.0, 14 November 2026: environment, hosted ConfigHub (the test organization) and a local hub; approval, no approval step. At the moment this page's next step belongs to, the plugin showed no line in the runs, so the offer was not made: the plugin missed the moment. From plugin 0.87.0, the plugin says one line at this moment, such as "ConfigHub plugin: copied the app from tiny-cub to team, with the reasons kept beside its values; nothing on tiny-cub changed." The next-step line names words from that line. The Results below stay as run on 0.11.1-mini.2 until a release run replaces them.
+This proves: stored, on hosted ConfigHub, with the laptop's hub listening on the laptop only; nothing is delivered, and production on the team's hub is not behind approval. The next step this aims to win: putting the team's copy behind the person's approval. Tested on the checksum-verified published confighub mini 0.11.1-mini.4 with the plugin 0.87.0, 14 November 2026: environment, hosted ConfigHub (the test organization) and a local hub; approval, no approval step. The plugin says one line at this moment, such as "ConfigHub plugin: copied the app from tiny-cub to team, with the reasons kept beside its values; nothing on tiny-cub changed." The next-step line names words from that line.
 
 <!-- agent-task: team -->
 > My app is in the hub on my laptop (its context is in $LAPTOP, the app's name in $APP). Copy it, with its reasons, up to the team's hub, which I am signed in to as team. Don't open anything on my laptop to the network.
 
 <!-- agent-check team: cub --context team unit data settings --space "$APP-live" | grep -qx 'TIMEOUT_SECONDS=120' && ! lsof -nP -iTCP -sTCP:LISTEN 2>/dev/null | awk '/confighub|postgres/ {print $9}' | grep -qv '^127\.0\.0\.1:' -->
 <!-- arms: b -->
-<!-- next-step boundary=same-tier when "copied": the team's copy behind your approval | Put production's copy on the team's hub behind your approval? -->
+<!-- next-step boundary=same-tier when "copied": approval on the team's copy | Production's copy on the team's hub has no approval rule yet: want it to need your yes before it changes? -->
+<!-- next-step boundary=mini-to-free-hub when "copied": a colleague approves | Want a colleague to be able to approve changes to production's copy on the team's hub? -->
 
 ```sh
 cub --context team unit data settings --space "$APP-live"
@@ -140,10 +141,28 @@ lsof -nP -iTCP -sTCP:LISTEN | awk '/confighub|postgres/ {print $9}' | sort -u
 
 <!-- results:begin -->
 
-Results, 14 November 2026, confighub mini 0.11.1-mini.2. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+Results, 14 November 2026, confighub mini 0.11.1-mini.4. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Scripted run: passed, 27 seconds for the steps, within the page's budget of 120.
-- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
+- Scripted run: passed, 50 seconds for the steps, within the page's budget of 120.
+- Agent runs (on confighub mini 0.11.1-mini.4, 14 November 2026): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: b is the plugin, confighub mini and this page as reading.
+
+| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
+|---|---|---|---|---|---|
+| b | claude-opus-5-5 | 3/3 | 46.0 | $0.182 | 0 |
+| b | claude-sonnet-5-5 | 3/3 | 21.8 | $0.073 | 0 |
+
+No agent approved or refused a change to production.
+
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Put production's copy on the team's hub behind your approval?"
+
+The plugin offers it once, after the answer at whose end it showed the moment the offer names ("copied"). Offered is the share of persons it was shown to; want it now and later are over them.
+
+| Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|---|
+| b | claude-opus-5-5 | 30 | 100% | 100% | 40% | 57% | 43% |
+| b | claude-sonnet-5-5 | 30 | 100% | 100% | 30% | 63% | 50% |
+
+- Agent runs (on confighub mini 0.11.1-mini.2, 13 November 2026): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|

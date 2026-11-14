@@ -89,12 +89,12 @@ A Mac, for the sandbox (it uses macOS's `sandbox-exec`), an unpacked confighub m
    …
    ```
 
-7. The agent writes Birch's installation out as plain files for a person to review, with the list of what it changed and why in `result/CHANGES.md`, and the run ends: its hub is removed with its data.
+7. The agent writes Birch's installation out as plain files for a person to review, with the list of what it changed and why in `result/CHANGES.md`, and the run ends: its hub is removed with its data. The removal is run from outside the sandbox, as the team's own cleanup, because inside the sandbox `cub mini uninstall` deletes the files but leaves the hub's server process running.
 
    <!-- run: fix-result -->
    ```sh
    ./sandbox . sandbox-a cub mini copy gpu-operator --variant birch --to-dir result
-   ./sandbox . sandbox-a cub mini uninstall --delete-data
+   CUB_CONFIG="$PWD/sandbox-a" cub mini uninstall --delete-data
    ```
 
    ```text
@@ -134,23 +134,24 @@ Nothing left behind. While it ran, the agent's fix sat in `result/` with its rea
 For an AI agent doing this for a person. Here the agent is the one in the sandbox.
 
 - **The request:** "Our platform and customers are in platform.tar.gz. One customer's operator image breaks our rule that images come only from nvcr.io or registry.k8s.io. Find it and fix it in a hub of your own, and leave the fix as files for me to review. Don't touch the team's hub."
-- **What to run:** every command through `./sandbox . sandbox-a ...`: `cub mini copy --from-file platform.tar.gz gpu-operator` (it starts your hub), `cub function vet --space '*' -- vet-images '{"AllowRegexp":"^(nvcr\\.io|registry\\.k8s\\.io)/"}'` to find it, `cub mini set ... --unit gpu-operator --variant birch --change-desc "<why>"`, `cub mini copy gpu-operator --variant birch --to-dir result`, then `cub mini uninstall --delete-data`. Tell the person where `result/CHANGES.md` is.
-- **Never:** run a `cub` command outside `./sandbox`, which would reach the team's hub; change a customer you were not asked to fix; leave the sandbox's hub running.
-- **Done when:** `result/CHANGES.md` lists Birch's image with your reason, the sandbox's hub is gone, and the team's hub still has Birch's old image.
+- **What to run:** every command through `./sandbox . sandbox-a ...`: `cub mini copy --from-file platform.tar.gz gpu-operator` (it starts your hub), `cub function vet --space '*' -- vet-images '{"AllowRegexp":"^(nvcr\\.io|registry\\.k8s\\.io)/"}'` to find it, `cub mini set ... --unit gpu-operator --variant birch --change-desc "<why>"`, `cub mini copy gpu-operator --variant birch --to-dir result`, then ask the person to end your hub from outside the sandbox with `CUB_CONFIG="$PWD/sandbox-a" cub mini uninstall --delete-data` (inside the sandbox it leaves the server process running). Tell the person where `result/CHANGES.md` is.
+- **Never:** run a `cub` command outside `./sandbox`, which would reach the team's hub; change a customer you were not asked to fix; try to stop the hub's server by signalling it (the sandbox does not allow it).
+- **Done when:** `result/CHANGES.md` lists Birch's image with your reason, your hub is removed with `cub mini uninstall --delete-data` from inside the sandbox, you have told the person the command that ends its server from outside, and the team's hub still has Birch's old image.
 
 ## Testing
 
 The scripted run follows the Human steps and compares the quoted output. Arm a, without confighub mini, is not applicable: the team's customers exist only in a hub, and the point is a hub of the run's own. A correct agent result is the fix in `result/CHANGES.md`, no hub left in the sandbox, and the team's hub unchanged. The checks below can be run by hand, from the example's folder, after the steps:
 
-This proves: stored, in a hub of the run's own that was then deleted, with the fix written out as files for review; nothing is delivered. It uses macOS's `sandbox-exec` as the sandbox. The next step this aims to win: giving the next agent run a hub of its own the same way. Tested on the checksum-verified published confighub mini 0.11.1-mini.2 with the plugin 0.85.0, 14 November 2026: environment, local hub inside macOS sandbox-exec; approval, no approval step. At the moment this page's next step belongs to, the plugin showed no line in the runs, so the offer was not made: the plugin missed the moment. From plugin 0.87.0, the plugin says one line at this moment, such as "ConfigHub plugin: kept image nvcr.io/nvidia/gpu-operator:v25.10.1 in gpu-operator-birch, with its reason, so a later version will not overwrite it. Files with the reasons are in result/." The next-step line names words from that line. The Results below stay as run on 0.11.1-mini.2 until a release run replaces them.
+This proves: stored, in a hub of the run's own that was then deleted, with the fix written out as files for review; nothing is delivered. It uses macOS's `sandbox-exec` as the sandbox. The next step this aims to win: comparing the fix with what Git has before taking it. Tested on the checksum-verified published confighub mini 0.11.1-mini.4 with the plugin 0.87.0, 14 November 2026: environment, local hub inside macOS sandbox-exec; approval, no approval step. The plugin says one line at this moment, such as "ConfigHub plugin: kept image nvcr.io/nvidia/gpu-operator:v25.10.1 in gpu-operator-birch, with its reason, so a later version will not overwrite it. Files with the reasons are in result/." The next-step line names words from that line.
 
 <!-- agent-task: fix -->
-> The team's GPU platform and its three customers are in ./platform.tar.gz. One customer's operator image breaks our rule that images come only from nvcr.io or registry.k8s.io. Find it and fix it in a hub of your own, running every command through ./sandbox with the sandbox configuration ./sandbox-a (./sandbox . sandbox-a COMMAND), and leave the fix as files in ./result for me to review. Don't touch the team's hub, and don't leave your hub running.
+> The team's GPU platform and its three customers are in ./platform.tar.gz. One customer's operator image breaks our rule that images come only from nvcr.io or registry.k8s.io. Find it and fix it in a hub of your own, running every command through ./sandbox with the sandbox configuration ./sandbox-a (./sandbox . sandbox-a COMMAND), and leave the fix as files in ./result for me to review. Don't touch the team's hub. When you are done, remove your hub from inside the sandbox as far as it lets you, and tell me the exact command I should run outside it to make sure nothing of it is left running.
 
 <!-- agent-check fix: r=$(find . -path '*result/CHANGES.md' | head -1) && grep 'gpu-operator-birch' "$r" | grep -q 'nvcr.io/nvidia/gpu-operator:v25.10.1' && ! ls -d "$(dirname "$(dirname "$r")")"/sandbox-a/servers/*/ >/dev/null 2>&1 && cub function get --space gpu-operator-birch --unit gpu-operator --show values get-string-path apps/v1/Deployment 'spec.template.spec.containers.?name=gpu-operator.image' | grep -q 'registry.dev.example' -->
 <!-- agent-tools: ./sandbox -->
 <!-- arms: b -->
-<!-- next-step boundary=same-tier when "with its reason": a hub of its own for the next agent run | Give the next agent run a hub of its own the same way? -->
+<!-- next-step boundary=same-tier when "with its reason": compare with your Git | Want the fix compared, value by value, with what your Git has now, so you see exactly what taking it would change? -->
+<!-- next-step boundary=mini-to-free-hub when "with its reason": a colleague reviews the fix | Want a colleague to review Birch's fix from their own computer, and take it into the team's hub if they agree? -->
 
 ```sh
 grep birch result/CHANGES.md
@@ -161,10 +162,28 @@ cub function get --space gpu-operator-birch --unit gpu-operator --show values \
 
 <!-- results:begin -->
 
-Results, 14 November 2026, confighub mini 0.11.1-mini.2. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+Results, 14 November 2026, confighub mini 0.11.1-mini.4. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Scripted run: passed, 80 seconds for the steps, within the page's budget of 300.
-- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
+- Scripted run: passed, 86 seconds for the steps, within the page's budget of 300.
+- Agent runs (on confighub mini 0.11.1-mini.4, 14 November 2026): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: b is the plugin, confighub mini and this page as reading.
+
+| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
+|---|---|---|---|---|---|
+| b | claude-opus-5-5 | 3/3 | 103.2 | $0.278 | 1 |
+| b | claude-sonnet-5-5 | 3/3 | 66.1 | $0.126 | 0 |
+
+No agent approved or refused a change to production.
+
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Give the next agent run a hub of its own the same way?" It offers more of the tier the person has, not a step up.
+
+The plugin offers it once, after the answer at whose end it showed the moment the offer names ("with its reason"). Offered is the share of persons it was shown to; want it now and later are over them.
+
+| Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|---|
+| b | claude-opus-5-5 | 30 | 100% | 100% | 17% | 63% | 67% |
+| b | claude-sonnet-5-5 | 30 | 100% | 100% | 37% | 40% | 23% |
+
+- Agent runs (on confighub mini 0.11.1-mini.2, 13 November 2026): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|

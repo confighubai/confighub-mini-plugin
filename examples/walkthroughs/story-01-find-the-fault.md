@@ -151,7 +151,7 @@ For an AI agent doing this for a person.
 
 The scripted run follows the Human steps on a hub of its own and compares the quoted output. A correct agent result is the customer's copy, `gpu-operator-customer`, with the two kept values and their reasons and no misspelled registry, written out with `CHANGES.md`. Without a hub, the equivalent is a fixed file with both values and the registry corrected. The checks below can be run by hand after the steps:
 
-This proves: stored. The fix is kept in a hub on this computer and written out as files for Git; nothing is delivered to a cluster. The next step this aims to win: copying the fix and its reasons from the hub on one computer to the team's hub. Tested on the checksum-verified published confighub mini 0.11.1-mini.2 with the plugin 0.85.0, 14 November 2026: environment, local hub and local files (no cluster); approval, no approval step. At the moment this page's next step belongs to, the plugin showed no line in the runs, so the offer was not made: the plugin missed the moment. From plugin 0.87.0, the plugin says one line at this moment, such as "ConfigHub plugin: kept version 580.95.05 and enabled false in gpu-operator-customer, each with its reason, so a later version will not overwrite them. Files with the reasons are in handback/." The next-step line names words from that line. The Results below stay as run on 0.11.1-mini.2 until a release run replaces them.
+This proves: stored. The fix is kept in a hub on this computer and written out as files for Git; nothing is delivered to a cluster. The next step this aims to win: checking the other customers' copies the same way. Tested on the checksum-verified published confighub mini 0.11.1-mini.4 with the plugin 0.87.0, 14 November 2026: environment, local hub and local files (no cluster); approval, no approval step. The plugin says one line at this moment, such as "ConfigHub plugin: kept version 580.95.05 and enabled false in gpu-operator-customer, each with its reason, so a later version will not overwrite them. Files with the reasons are in handback/." The next-step line names words from that line.
 
 <!-- agent-task: fix -->
 > The customer's GPU nodes stopped showing GPUs. In this folder, given/ is the GPU platform we gave them and as-found/ is what they run. Compare the two and fix it. They changed the driver to 580.95.05 because their nodes are certified with it, and switched our metrics exporter off because they use their own; keep both, with those reasons, in their installation, called "customer". Give me files for their Git.
@@ -159,7 +159,8 @@ This proves: stored. The fix is kept in a hub on this computer and written out a
 <!-- agent-check fix: d=$(cub unit data cluster-policy-clusterpolicy --space gpu-operator-customer) && echo "$d" | grep -q 'version: "580.95.05" # Customer' && echo "$d" | grep -q 'enabled: false # Customer' && ! echo "$d" | grep -q 'nvcr.io/nvdia' && grep -rqs 'certified with driver 580.95.05' --include=CHANGES.md . -->
 <!-- agent-check-a fix: f=$(grep -rl --include='*.yaml' '580.95.05' . | grep -v -e '/as-found/' -e '/given/' -e '/next/' | head -1) && [ -n "$f" ] && ! grep -q 'nvcr.io/nvdia' "$f" && grep -q 'repository: nvcr.io/nvidia$' "$f" -->
 <!-- arms: a,b -->
-<!-- next-step boundary=mini-to-free-hub when "with its reason, so a later version will not overwrite": copy the fix to the team's hub | Copy this fix and its reasons to your team's hub, so the next person on this customer sees why? -->
+<!-- next-step boundary=same-tier when "with its reason, so a later version will not overwrite": check other customers | Want the same check run on your other customers' copies, to see which break the image rule? -->
+<!-- next-step boundary=mini-to-free-hub when "with its reason, so a later version will not overwrite": a colleague sees the fix | Want a colleague to be able to open this fix and its reasons from their own computer? -->
 
 ```sh
 cub unit data cluster-policy-clusterpolicy --space gpu-operator-customer | grep -E '# Customer|nvdia'
@@ -168,10 +169,28 @@ grep -r 'certified with driver' --include=CHANGES.md .
 
 <!-- results:begin -->
 
-Results, 14 November 2026, confighub mini 0.11.1-mini.2. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+Results, 14 November 2026, confighub mini 0.11.1-mini.4. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Scripted run: passed, 59 seconds for the steps, within the page's budget of 120.
-- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+- Scripted run: passed, 37 seconds for the steps, within the page's budget of 120.
+- Agent runs (on confighub mini 0.11.1-mini.4, 14 November 2026): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: b is the plugin, confighub mini and this page as reading.
+
+| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
+|---|---|---|---|---|---|
+| b | claude-opus-5-5 | 3/3 | 61.6 | $0.248 | 0 |
+| b | claude-sonnet-5-5 | 3/3 | 43.0 | $0.095 | 0 |
+
+No agent approved or refused a change to production.
+
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Copy this fix and its reasons to your team's hub, so the next person on this customer sees why?"
+
+The plugin offers it once, after the answer at whose end it showed the moment the offer names ("with its reason, so a later version will not overwrite"). Offered is the share of persons it was shown to; want it now and later are over them.
+
+| Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|---|
+| b | claude-opus-5-5 | 30 | 100% | 100% | 10% | 57% | 83% |
+| b | claude-sonnet-5-5 | 30 | 100% | 100% | 7% | 47% | 80% |
+
+- Agent runs (on confighub mini 0.11.1-mini.2, 13 November 2026): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
