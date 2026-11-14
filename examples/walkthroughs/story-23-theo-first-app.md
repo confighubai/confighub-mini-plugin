@@ -87,28 +87,33 @@ grep -rlsE '(^|[^0-9])20([^0-9]|$)' --exclude-dir='.*' --exclude-dir=Library --e
 
 <!-- results:begin -->
 
-Results, 13 November 2026, confighub mini 0.11.1-mini.1. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+Results, 14 November 2026, confighub mini 0.11.1-mini.5. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+- Environment, published confighub mini 0.11.1-mini.5 (tag mini-v0.11.1-mini.5, darwin-arm64, verified against SHA256SUMS) and the plugin it carries: Claude Code with the plugin on this computer, with no hub needed for the record, no stand-in, cluster or real service, and no approvals. The scripted run only makes the folder; its check needs a Claude Code session, so it is judged in the agent runs only.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
-| a | claude-opus-5-5 | 3/3 | 121.7 | $0.813 | 0 |
-| b | claude-opus-5-5 | 3/3 | 65.2 | $0.347 | 0 |
-| a | claude-sonnet-5-5 | 3/3 | 48.2 | $0.168 | 0 |
-| b | claude-sonnet-5-5 | 3/3 | 46.6 | $0.186 | 0 |
+| a | claude-opus-5-5 | 3/3 | 80.4 | $0.333 | 0 |
+| b | claude-opus-5-5 | 3/3 | 60.3 | $0.286 | 0 |
+| c | claude-opus-5-5 | 1/3 | 81.9 | $0.355 | 0 |
+| a | claude-sonnet-5-5 | 3/3 | 52.3 | $0.183 | 0 |
+| b | claude-sonnet-5-5 | 3/3 | 63.9 | $0.19 | 0 |
+| c | claude-sonnet-5-5 | 2/3 | 39.1 | $0.108 | 0 |
 
 No agent approved or refused a change to production.
 
-Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Your next app can keep the reason for each setting from its first file, so nobody has to guess later why a value is what it is; want the plugin kept on for it?"
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Your next app can keep the reason for each setting from its first file, so nobody has to guess later why a value is what it is; want the plugin kept on for it?" It offers more of the tier the person has, not a step up.
 
 The plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|
-| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 70% |
-| b | claude-opus-5-5 | 30 | 0% | 87% | n/a | n/a | 3% |
-| a | claude-sonnet-5-5 | 30 | 0% | 83% | n/a | n/a | 27% |
-| b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 53% |
+| a | claude-opus-5-5 | 30 | 0% | 50% | n/a | n/a | 0% |
+| b | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 0% |
+| c | claude-opus-5-5 | 30 | 0% | 80% | n/a | n/a | 0% |
+| a | claude-sonnet-5-5 | 30 | 0% | 77% | n/a | n/a | 0% |
+| b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 23% |
+| c | claude-sonnet-5-5 | 30 | 0% | 93% | n/a | n/a | 3% |
 
 <!-- results:end -->

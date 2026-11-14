@@ -49,7 +49,7 @@ A starter gives a new app of one kind its usual settings, each with a reason ([s
 | [13. Sam's first hour: from the page to a gate](story-13-first-hour.md) | The plugin and a hub on your laptop, with no account: production behind your approval, and an agent's own approval refused | both |
 | [14. Sam's VM: a service that takes its settings from the hub](story-14-sam-vm.md) | A service's folder written only from approved settings; the agent holds a hub key and nothing that reaches the service | confighub mini |
 | [15. The telling: the three things you are told](story-15-the-telling.md) | A change waiting for you, an agent proposing again what you refused, and a hub something elsewhere cannot reach: and nothing else | both |
-| [16. Sam's app platform on one hub](story-16-app-platform.md) | An agent proposes a release, you approve it, the runtime takes it, and you roll it back in one command | confighub mini |
+| [16. Sam's app platform on one hub](story-16-app-platform.md) | An agent proposes a release, you approve it, the runtime takes it, and you roll it back with one command and your approval | confighub mini |
 | [17. The portal is the agent](story-17-the-portal.md) | What runs and why, what breaks a rule, what a key may change, and a new service from a tested one, each one question to the hub | both |
 | [18. Ana asks for an app, and it fits the pattern](story-18-dev-intent.md) | A new app on the team's pattern, with rules that keep a value over the limit from reaching the service, and a second app made from the first | confighub mini |
 | [19. Sam's bad afternoon: stop it, find it, undo it](story-19-recovery.md) | One command stops every agent session and takes an agent's key away; then find its change and put it back | both |

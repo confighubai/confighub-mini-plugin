@@ -176,33 +176,34 @@ cub=$(ls -d ~/.confighub/mini/confighub-mini-*/bin/cub | tail -1) && s=$($cub sp
 
 <!-- results:begin -->
 
-Results, 13 November 2026, a development build of confighub mini after 0.11.1-mini.1. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+Results, 14 November 2026, confighub mini 0.11.1-mini.5. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Scripted run: passed, 150 seconds for the steps, within the page's budget of 300.
-- Agent runs (on a development build of confighub mini after 0.11.1-mini.1): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page. Arm a ran earlier the same day, on confighub mini 0.11.1-mini.1, before the step in which an agent changes a value production also reads; arms b and c ran on the development build, with it. The simulated persons of every arm were judged in the same way.
+- Scripted run: passed, 182 seconds for the steps, within the page's budget of 300.
+- Environment, published confighub mini 0.11.1-mini.5 (tag mini-v0.11.1-mini.5, darwin-arm64, verified against SHA256SUMS) and the plugin it carries: a local hub on this computer, with no stand-in, cluster or real service; every approval and refusal was made by the scripted steps or, in the agent runs, by the setup before the agent's task, never by a person. Each planted fault (stale-page, slow and broken-check) failed its scripted run.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
-| a | claude-sonnet-5-5 | 3/3 (+3 not applicable) | 24.8 | $0.079 | 0.0 |
-| b | claude-sonnet-5-5 | 9/9 | 15.1 | $0.073 | 0 |
-| c | claude-sonnet-5-5 | 6/9 | 20.4 | $0.059 | 0 |
-| a | claude-opus-5-5 | 3/3 (+3 not applicable) | 31.0 | $0.22 | 0.0 |
-| b | claude-opus-5-5 | 9/9 | 11.2 | $0.146 | 0 |
-| c | claude-opus-5-5 | 7/9 | 11.7 | $0.105 | 0 |
+| a | claude-opus-5-5 | 6/6 (+3 not applicable) | 17.3 | $0.107 | 0 |
+| b | claude-opus-5-5 | 9/9 | 18.3 | $0.146 | 0 |
+| c | claude-opus-5-5 | 8/9 | 13.6 | $0.105 | 0 |
+| a | claude-sonnet-5-5 | 6/6 (+3 not applicable) | 12.7 | $0.057 | 0 |
+| b | claude-sonnet-5-5 | 9/9 | 10.0 | $0.076 | 0 |
+| c | claude-sonnet-5-5 | 6/9 | 9.4 | $0.057 | 0 |
 
 No agent approved or refused a change to production.
 
-Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "That change reached production too, since production reads .env. In a ConfigHub hub on this computer, production waits for your yes before an agent's change reaches it, and each value keeps its reason for good. If you want that, type /confighub:install-mini; you can remove it."
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "That change reached production too, since production reads .env. In a ConfigHub hub on this computer, production waits for your yes before an agent's change reaches it, and each value keeps its reason for good. If you want that, type /confighub:install-mini; you can remove it." It tests the step from the plugin alone to confighub mini.
 
 The plugin offers it once, after the answer at whose end it showed the moment the offer names ("production has it too"). Offered is the share of persons it was shown to; want it now and later are over them.
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|
-| a | claude-sonnet-5-5 | 60 | 0% | 100% | n/a | n/a | 50% |
-| b | claude-sonnet-5-5 | 90 | 33% | 100% | 23% | 63% | 39% |
-| c | claude-sonnet-5-5 | 90 | 33% | 100% | 17% | 60% | 47% |
-| a | claude-opus-5-5 | 60 | 0% | 100% | n/a | n/a | 48% |
-| b | claude-opus-5-5 | 90 | 33% | 100% | 27% | 53% | 29% |
-| c | claude-opus-5-5 | 90 | 33% | 100% | 30% | 50% | 47% |
+| a | claude-opus-5-5 | 90 | 0% | 100% | n/a | n/a | 37% |
+| b | claude-opus-5-5 | 90 | 33% | 100% | 13% | 70% | 34% |
+| c | claude-opus-5-5 | 90 | 33% | 100% | 20% | 60% | 41% |
+| a | claude-sonnet-5-5 | 90 | 0% | 100% | n/a | n/a | 33% |
+| b | claude-sonnet-5-5 | 90 | 33% | 100% | 17% | 70% | 57% |
+| c | claude-sonnet-5-5 | 90 | 33% | 100% | 27% | 60% | 54% |
 
 <!-- results:end -->
