@@ -151,8 +151,6 @@ bash "${WALKTHROUGH_VERCEL_SCRIPT:?set to this repository's examples/vercel-hobb
     Successfully deleted component shop (ID)
     ```
 In the shared hub: `cub --context shared component delete --recursive --detach "$TEAM_APP"` and `cub --context shared changeworkflow delete --space workflows "$TEAM_APP-live-approval"`. Here: `cub mini uninstall --name shop --delete-data` and `rm -rf ~/starter-example`.
-The Hobby run leaves a delivery receipt after each approved deployment and deletes the test project. With the stand-in, your team's shared hub holds the shop's base, staging and production settings, each value with who set it and why, and production there changes only when a person approves. The stand-in project runs the settings you last approved.
-<!-- agent-cleanup: if [ -n "${WALKTHROUGH_VERCEL_SCOPE:-}" ] && [ -n "${WALKTHROUGH_VERCEL_CONFIG:-}" ]; then name="${WALKTHROUGH_PREFIX}shop"; vercel --global-config "$WALKTHROUGH_VERCEL_CONFIG" project delete "$name" --confirm-name "$name" --scope "$WALKTHROUGH_VERCEL_SCOPE" >/dev/null 2>&1; fi -->
 ## Agent
 Use the app folder and the Human steps. Give the owner the exact approval command. Observe staging and the live value separately. Use the fixture for agent trials. After the copy, verify the shared approval workflow. Never approve production, put a secret into a setting, or write to the fixture's state file.
 ## Testing
