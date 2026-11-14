@@ -51,7 +51,7 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
    cub space update starters-approved --permission View:$BOB --permission ViewChildren:$BOB --permission Use:$BOB --permission UseChildren:$BOB --quiet
    ```
    ```text
-   Starter: your hub keeps no starters, so the package's 6 (daytona, kustomize-argocd, kustomize-flux, parameter-store, vercel, web) are now in it, as version 1, waiting for your approval: the Component starters, whose approved Variant is the Space starters-approved. Until you approve them, adopt uses the package's files. Read them with cub unit list --space starters-approved, and approve them, which is for the person to do, not an agent, with:
+   Starter: your hub keeps no starters, so the package's 8 (daytona, kustomize-argocd, kustomize-flux, parameter-store, temporal-worker, unikraft, vercel, web) are now in it, as version 1, waiting for your approval: the Component starters, whose approved Variant is the Space starters-approved. Until you approve them, adopt uses the package's files. Read them with cub unit list --space starters-approved, and approve them, which is for the person to do, not an agent, with:
    …
      Sets REPLICAS=2, as a setting: Two instances, so that one can restart without the service going down.
    …
@@ -67,9 +67,9 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
    cub --context bob mini set shop DB_POOL_SIZE=20 --variant base --change-desc "This shop's database takes twenty connections." | tail -1
    ```
    ```text
-   Saved in shop-base, with the reason: Debug logs carry request bodies; warn keeps what an incident needs. A later version of what shop-base is made from will not overwrite this value.
-   Saved in shop-base, with the reason: Three instances, so one can fail during a deploy and two still serve. A later version of what shop-base is made from will not overwrite this value.
-   Saved in shop-base, with the reason: This shop's database takes twenty connections. A later version of what shop-base is made from will not overwrite this value.
+   Production keeps its own LOG_LEVEL=error, so this change does not reach it.
+     ~/.confighub-walkthrough/mini/cub mini approve shop-base/upload-20261114-170614-g250
+     ~/.confighub-walkthrough/mini/cub mini approve shop-base/upload-20261114-170618-3c3c
    ```
 
 5. Bob's first two fixes suit every web service; the pool size is shop's alone. The starter is data, so each default is one change in `starters-base`, with his reason, the first raising the version to 2. He asks for them in `starters-approved` with a change order; his own approval is refused, and Alice reads it and approves:
@@ -120,7 +120,7 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
 8. Alice approves shop's production. It has Bob's fixes and still her own log level:
    <!-- run: approve -->
    ```sh
-   cub mini approve shop-live --note "Read Bob's fixes" --yes >/dev/null
+   cub mini approve "$(cub mini waiting | grep -o -m1 'shop-base/fleet-[0-9]*')" --note "Read Bob's fixes" --yes >/dev/null
    cub unit data --space shop-live app
    ```
    ```text
@@ -170,7 +170,8 @@ g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Lib
 
 Results, 14 November 2026, confighub mini 0.11.1-mini.2. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Scripted run: passed, 63 seconds for the steps, within the page's budget of 300.
+- Scripted run (on confighub mini 0.11.1-mini.2, 14 November 2026): passed, 63 seconds for the steps, within the page's budget of 300.
+- Scripted run (on confighub mini 0.11.1-mini.7, 14 November 2026): passed, 56 seconds for the steps, within the page's budget of 300; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
 - Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |

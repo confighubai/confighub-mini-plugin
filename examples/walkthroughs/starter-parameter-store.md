@@ -182,7 +182,8 @@ This proves: the exact approved revision was delivered, to a local stand-in for 
 
 Results, 14 November 2026, confighub mini 0.11.1-mini.3. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Scripted run: passed, 75 seconds for the steps, within the page's budget of 240; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
+- Scripted run (on confighub mini 0.11.1-mini.3, 14 November 2026): passed, 75 seconds for the steps, within the page's budget of 240; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
+- Scripted run (on confighub mini 0.11.1-mini.7, 14 November 2026): passed, 62 seconds for the steps, within the page's budget of 240; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
 - Environment, published confighub mini 0.11.1-mini.3 with its own plugin (0.86.0): A local confighub mini hub and a local stand-in for AWS Parameter Store (no AWS account); hosted ConfigHub (the Kubara organization) for the move to a shared hub. Approvals were scripted: the test script ran the person's approve and deliver commands. This is the no-account path, not live AWS. After each run the runner removed the hubs it started and everything it made in the shared hub.
 - Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
 

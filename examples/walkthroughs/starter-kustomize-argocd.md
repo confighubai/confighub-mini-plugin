@@ -74,7 +74,7 @@ An unpacked confighub mini package ([install confighub mini](../../docs/install-
    ```
    ```text
    Starter: kustomize-argocd (version 1, kustomize-argocd.yaml): A Kustomize repository that an Argo CD Application deploys from Git.
-   Recorded pass Approval attestation ID in starters-approved, covering 6 revision(s)
+   Recorded pass Approval attestation ID in starters-approved, covering 8 revision(s)
      It deploys 2 objects; the hub's copy holds the same, and its pod templates match what runs.
    ```
 5. Update it. Change the base in your repository, commit as usual, and propose it with its reason. Staging takes it at once; production waits under a change order, the hub's request to change production.
@@ -179,7 +179,8 @@ This proves: the exact approved revision was delivered and is running, under a r
 
 Results, 14 November 2026, confighub mini 0.11.1-mini.3. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Scripted run: passed, 184 seconds for the steps, within the page's budget of 550; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
+- Scripted run (on confighub mini 0.11.1-mini.3, 14 November 2026): passed, 184 seconds for the steps, within the page's budget of 550; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
+- Scripted run (on confighub mini 0.11.1-mini.7, 14 November 2026): passed, 179 seconds for the steps, within the page's budget of 550; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
 - Environment, published confighub mini 0.11.1-mini.3 with its own plugin (0.86.0): A local confighub mini hub and a real Argo CD on a local kind cluster; hosted ConfigHub (the Kubara organization) for the move to a shared hub. Approvals were scripted: the test script ran the person's approve and deploy-from-hub commands. After each run the runner removed the hubs it started and everything it made in the shared hub.
 - Agent runs (on confighub mini 0.11.1-mini.3, 14 November 2026): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
 
