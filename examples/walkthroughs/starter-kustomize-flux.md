@@ -116,26 +116,24 @@ An unpacked confighub mini package ([install confighub mini](../../docs/install-
    ```sh
    cub --context shared mini copy --from-context "$LOCAL_HUB" orders --name "$TEAM_APP"
    ```
-   Then check that production in the shared hub waits for you: change the base there, and ask for the change in production with a change order.
+   Then check that production in the shared hub waits for you, without changing anything there: the app takes a change only through its change workflow (the first `true`), and that workflow's production stage needs an approval (the second).
    <!-- run: move-waits -->
    ```sh
-   cub --context shared function set --space "$TEAM_APP-base" --unit app --change-desc "300 orders a minute" -- set-string-path v1/ConfigMap data.ORDER_LIMIT 300 > /dev/null
-   cub --context shared changeorder create --space "$TEAM_APP-base" limit-300 --in-scope-space "$TEAM_APP-live" --change-workflow "workflows/$TEAM_APP-live-approval" --description "300 orders a minute"
-   cub --context shared mini waiting
+   cub --context shared component get "$TEAM_APP" -o jq=.Component.RequireChangeWorkflow
+   cub --context shared changeworkflow get --space workflows "$TEAM_APP-live-approval" -o jq='.ChangeWorkflow.Stages[] | select(.Name == "live") | .Prerequisites | length > 0'
    ```
    ```text
-     Approving it changes production:
-       ConfigMap/orders-config/data.ORDER_LIMIT: 100 → 300
+   true
+   true
    ```
-9. Delete the app: from the cluster, with Flux's records of it, and from your own hub. Then remove the cluster and stop the Git server.
+9. Delete the app: from the cluster, with Flux's records of it, and from your own hub. The cluster stays: other apps can run there. If deleting a Kustomization fails, stop there.
    <!-- run: delete -->
    ```sh
-   kubectl -n flux-system delete kustomization orders orders-live > /dev/null; kubectl delete namespace orders
+   kubectl --context kind-orders-flux -n flux-system delete kustomization orders orders-live > /dev/null && kubectl --context kind-orders-flux delete namespace orders
    cub component delete --recursive --detach orders
-   cub cluster down orders-flux > /dev/null; pkill -f "git-serve.py $PWD/git"
    ```
 ### Undo it
-In the shared hub: `cub --context shared component delete --recursive --detach "$TEAM_APP"` and `cub --context shared changeworkflow delete --space workflows "$TEAM_APP-live-approval"`. Here: `cub mini uninstall --name orders --delete-data` and `rm -rf ~/starter-example`.
+In the shared hub: `cub --context shared component delete --recursive --detach "$TEAM_APP"` and `cub --context shared changeworkflow delete --space workflows "$TEAM_APP-live-approval"`. Here: `cub mini uninstall --name orders --delete-data` and `rm -rf ~/starter-example`. When you are done with the walkthrough, and only then, remove its own cluster and Git server: `cub cluster down orders-flux` and `pkill -f "git-serve.py $PWD/git"`.
 ### What you have now
 Your team's shared hub holds the orders service's base, staging and production manifests, each value with who set it and why, and production there changes only when a person approves. Your repository is as you left it, with your own commits. The [GitOps over OCI guide](../../docs/gitops-over-oci.md) explains the delivery in full; see also [approvals on a shared hub](../../docs/approvals.md#on-hosted-confighub-or-your-own-server-with-cub-alone).
 
@@ -145,8 +143,8 @@ You are doing this for a person, in their folder, with step 1's settings. Each r
 - **deploy**, "Set up the orders repository so that every change to production waits for my approval, with a reason kept for each value, and have Flux deploy production from there": run step 4's `adopt` alone. Then give the person the starters approve, `cub variant approve starters-approved --all --note "Read them"`, and the `approve` and `deploy-from-hub` commands, to run themselves.
 - **update**, "Allow 250 orders a minute; I'll approve production": edit and commit as in step 5, run its `upload` with their reason, and give them the `cub mini approve` command it printed.
 - **undo**, "Undo the order limit change": revert and upload as in step 7, and give them the `cub mini approve` command.
-- **move**, "Move orders to our team's shared hub": run step 8 with their context. Then check that production there waits for approval, as the later step shows, and say so plainly if it does not.
-- **delete**, "Delete the orders app": run step 9, except stopping the Git server, which you leave to the person.
+- **move**, "Move orders to our team's shared hub": run step 8 with their context. Then check that production there waits for approval, by reading only, as the later step does; never make a change or a change order there to test it, and say so plainly if it does not.
+- **delete**, "Delete the orders app": run step 9 only. Never delete the cluster to remove one app; if deleting a Kustomization fails, stop and say so.
 
 Never approve or refuse a change to production, run `deploy-from-hub`, or edit the cluster with `kubectl` yourself; never push to the repository's remote; never put a secret in a manifest. You are done when the task's check below passes.
 ## Testing
@@ -171,7 +169,7 @@ Each task starts where the Human steps before it leave off, in the same folder f
 <!-- agent-check move: cub --context shared unit data app --space "$TEAM_APP-live" | grep -q 'replicas: 2' && cub --context shared component get "$TEAM_APP" -o jq=.Component.RequireChangeWorkflow | grep -qx true -->
 <!-- agent-task: delete -->
 > Delete the orders app, from the cluster and from this computer's hub.
-<!-- agent-check delete: test -d orders/base && ! cub component get orders >/dev/null 2>&1 && ! kubectl --context kind-orders-flux -n flux-system get kustomization orders >/dev/null 2>&1 && ! kubectl --context kind-orders-flux -n flux-system get kustomization orders-live >/dev/null 2>&1 -->
+<!-- agent-check delete: test -d orders/base && ! cub component get orders >/dev/null 2>&1 && ! kubectl --context kind-orders-flux -n flux-system get kustomization orders >/dev/null 2>&1 && ! kubectl --context kind-orders-flux -n flux-system get kustomization orders-live >/dev/null 2>&1 && kubectl --context kind-orders-flux get namespace kube-system >/dev/null -->
 <!-- agent-cleanup: pkill -f 'git-serve.py .* 28412'; kind delete cluster --name orders-flux -->
 <!-- next-step when "waits for your approval": keep the starter on for the next app | Production waited for your yes because the starter set this app up that way, with a reason for each setting. Your next Flux app can start the same way; want the starter kept on for it? -->
 <!-- arms: a,b,c -->
@@ -179,17 +177,20 @@ This proves: the exact approved revision was delivered and is running, under a r
 
 <!-- results:begin -->
 
-Results, 13 November 2026, confighub mini 0.11.1-mini.2. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+Results, 14 November 2026, confighub mini 0.11.1-mini.3. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Scripted run, on confighub mini 0.11.1-mini.2: passed, 308 seconds for the steps, within the page's budget of 600; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
-- Agent runs (on confighub mini 0.11.1-mini.0): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+- Scripted run: passed, 206 seconds for the steps, within the page's budget of 600; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
+- Environment, published confighub mini 0.11.1-mini.3 with its own plugin (0.86.0): A local confighub mini hub and a real Flux on a local kind cluster; hosted ConfigHub (the Kubara organization) for the move to a shared hub. Approvals were scripted: the test script ran the person's approve and deploy-from-hub commands. After each run the runner removed the hubs it started and everything it made in the shared hub.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
-| a | claude-opus-5-5 | 5/6 (+9 not applicable) | 633.8 | $1.918 | 0 |
-| b | claude-opus-5-5 | 15/15 | 144.4 | $0.538 | 6 |
-| a | claude-sonnet-5-5 | 5/6 (+9 not applicable) | 168.8 | $0.408 | 0 |
-| b | claude-sonnet-5-5 | 15/15 | 130.7 | $0.286 | 4 |
+| a | claude-opus-5-5 | 5/6 (+9 not applicable) | 205.5 | $0.792 | 0 |
+| b | claude-opus-5-5 | 15/15 | 153.2 | $0.544 | 8 |
+| c | claude-opus-5-5 | 13/15 | 284.2 | $0.878 | 3 |
+| a | claude-sonnet-5-5 | 6/6 (+9 not applicable) | 69.6 | $0.201 | 0 |
+| b | claude-sonnet-5-5 | 15/15 | 122.0 | $0.252 | 7 |
+| c | claude-sonnet-5-5 | 15/15 | 151.9 | $0.407 | 2 |
 
 No agent approved or refused a change to production.
 
@@ -199,27 +200,11 @@ The plugin offers it once, after the answer at whose end it showed the moment th
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|
-| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 80% |
-| b | claude-opus-5-5 | 30 | 100% | 100% | 13% | 67% | 90% |
-| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 97% |
-| b | claude-sonnet-5-5 | 30 | 67% | 100% | 10% | 65% | 100% |
-
-- Agent runs (on confighub mini 0.11.1-mini.14): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: c is the plugin and confighub mini, without this page.
-
-| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
-|---|---|---|---|---|---|
-| c | claude-opus-5-5 | 15/15 | 227.1 | $0.994 | 3 |
-| c | claude-sonnet-5-5 | 15/15 | 176.1 | $0.445 | 3 |
-
-No agent approved or refused a change to production.
-
-Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Production waited for your yes because the starter set this app up that way, with a reason for each setting. Your next Flux app can start the same way; want the starter kept on for it?"
-
-The plugin offers it once, after the answer at whose end it showed the moment the offer names ("waits for your approval"). Offered is the share of persons it was shown to; want it now and later are over them.
-
-| Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
-|---|---|---|---|---|---|---|---|
-| c | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 87% |
-| c | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 100% |
+| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 97% |
+| b | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 97% |
+| c | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 97% |
+| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 100% |
+| b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 100% |
+| c | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 73% |
 
 <!-- results:end -->

@@ -27,6 +27,10 @@ sections 1 to 3 for such an app. Do not give the person `cub mini install`,
 cub mini adopt APP-FOLDER --kube-context CONTEXT --source NAME --agent APP-agent --attach CLUSTER
 ```
 
+The program in each line you hand the person is `cub`, or `~/.confighub/mini/cub` when
+the commands print that; copy a printed line as it is. Never write a package's `cub` by its
+full path in a line for the person.
+
 `NAME` is the Argo CD Application or Flux Kustomization that deploys the app, and `CLUSTER`
 is the name the cluster gets in the hub. What this one line does for the person:
 
@@ -48,6 +52,14 @@ the person these two lines and no other. If `cub` is not on the person's PATH ye
 only the plugin is installed, give the adopt line with the plugin's program in place of
 `cub` (see section 1); it installs confighub mini first, and its last line names the
 person's `cub` in full.
+
+The way back to Git is one line, which the approval prints and `cub mini status APP` prints
+again: `cub mini back-to-git APP --variant live --repo CHECKOUT --kube-context CONTEXT --push`.
+Record it, or hand it over, exactly as printed: with the app's name and with `--push`, which
+pushes the commit it makes. Without `--push`, run by anyone but a person at a terminal, it
+stops at once and changes nothing. Do not write `kubectl patch` lines for Argo CD or Flux in
+its place: `back-to-git` also writes what changed in the hub into Git, and checks that the
+same pods keep running.
 
 Changing an app a starter connected: the app's files are the person's repository. Make the change
 in the repository's base, so staging takes it too, and commit it. Then `cub mini upload APP-FOLDER
@@ -107,9 +119,10 @@ already asked for ConfigHub, or accepted this setup. Then run:
 ```
 
 Claude Code sets `CLAUDE_PLUGIN_ROOT` for the plugin's hooks and commands only, so it is empty in a
-shell you run yourself. There, find the program by its path, in the same command, since each shell
-call starts fresh, and use that path in place of the variable. In Claude Code:
-`PLUGIN_PROGRAM=$(ls -d "$HOME"/.claude/plugins/cache/*/confighub/*/bin/confighub | tail -1)`.
+shell you run yourself. There, the plugin gives each session its program by its full path, as
+`CONFIGHUB_PLUGIN_PROGRAM`: run `"$CONFIGHUB_PLUGIN_PROGRAM" mini get`. Do not search
+`~/.claude` for it. In a line for the person, write out the path it holds
+(`echo "$CONFIGHUB_PLUGIN_PROGRAM"` shows it), since their terminal does not have it.
 
 For Codex hook-only setup, use `${CODEX_HOME:-$HOME/.codex}/confighub/bin/confighub mini get`
 instead. A restricted agent with an existing app must use its configured hub, not install another.
