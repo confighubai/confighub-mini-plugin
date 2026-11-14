@@ -188,4 +188,25 @@ The plugin offers it once, after the answer at whose end it showed the moment th
 | b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 0% |
 | c | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 3% |
 
+Results, 14 November 2026, confighub mini 0.11.1-mini.7. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+
+- Environment, published confighub mini 0.11.1-mini.5 (tag mini-v0.11.1-mini.5, darwin-arm64, verified against SHA256SUMS) and the plugin it carries: a local hub on this computer, with no stand-in, cluster or real service; every approval and refusal was made by the scripted steps or, in the agent runs, by the setup before the agent's task, never by a person. Each planted fault (stale-page, slow and broken-check) failed its scripted run.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+
+| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
+|---|---|---|---|---|---|
+| a | claude-sonnet-5-5 | 0/3 | 13.0 | $0.07 | 0 |
+| b | claude-sonnet-5-5 | 3/3 | 15.6 | $0.076 | 0 |
+
+No agent approved or refused a change to production.
+
+Simulated persons, not people: 5 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Any rule you choose, such as no debug logging in production, can be checked on every service the same way; want your first one added?" It offers more of the tier the person has, not a step up.
+
+The plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
+
+| Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|---|
+| a | claude-sonnet-5-5 | 15 | 0% | 93% | n/a | n/a | 93% |
+| b | claude-sonnet-5-5 | 15 | 0% | 100% | n/a | n/a | 13% |
+
 <!-- results:end -->
