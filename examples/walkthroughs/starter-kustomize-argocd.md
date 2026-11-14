@@ -172,6 +172,7 @@ Each task starts where the Human steps before it leave off, in the same folder f
 <!-- agent-check delete: test -d orders/base && ! cub component get orders >/dev/null 2>&1 && ! kubectl --context kind-orders-argocd -n argocd get application orders >/dev/null 2>&1 && kubectl --context kind-orders-argocd get namespace kube-system >/dev/null -->
 <!-- agent-cleanup: pkill -f 'git-serve.py .* 28411'; kind delete cluster --name orders-argocd -->
 <!-- next-step boundary=same-tier when "waits for your approval": keep the starter on for the next app | Production waited for your yes because the starter set this app up that way, with a reason for each setting. Your next Argo CD app can start the same way; want the starter kept on for it? -->
+<!-- next-step boundary=free-hub-to-paid-hub when "Argo CD deploys production from the shared hub": have ConfigHub operate the production hub | Argo CD now takes production settings from your shared hub. Want ConfigHub to keep that hub running and patched, with someone to contact if it stops? -->
 <!-- arms: a,b,c -->
 This proves: the exact approved revision was delivered and is running, under a real Argo CD on a local kind cluster; the hub publishes each approved revision as a release, Argo CD pulls it, and the cluster's ConfigMap shows the value. The move stores the app in hosted ConfigHub, with production there waiting for approval. The checks above can be run by hand, in `~/starter-example`, with step 1's settings. The next step it aims to win is keeping the starter on, so that the next Argo CD app gets the same settings and the same wait for approval.
 
@@ -231,3 +232,4 @@ The plugin offers it once, after the answer at whose end it showed the moment th
 | c | claude-sonnet-5-5 | 200 | 0% | 100% | n/a | n/a | 94% |
 
 <!-- results:end -->
+The proposed paid-hub offer waits for evidence that Argo CD delivers production from the shared hub. That moment was absent from all 80 kept mini.2 sessions in arms b and c. A persons-only rejudge of one kept session per arm showed the paid offer to zero of ten simulated readers. The copy and approval check do not establish a production cutover. The wording has no conversion result.
