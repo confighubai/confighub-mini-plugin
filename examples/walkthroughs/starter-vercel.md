@@ -199,7 +199,7 @@ No agent approved or refused a change to production.
 
 Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Production waited for your yes. When you say yes, want that exact value to reach your real Vercel project, and only that value?" It offers more of the tier the person has, not a step up.
 
-The real-project offer stays at the "did not change" moment. The backup-approver offer waits for a second reviewer to be needed for production on the shared hub. The saved mini.5 pilot below tested the old backup-approver wording at "did not change"; it did not test this wording or the second-reviewer moment, so uptake there is unmeasured until a rejudge.
+The real-project offer stays at the "did not change" moment. The backup-approver offer waits for a second reviewer to be needed for production on the shared hub. The saved mini.5 pilot below tested the old backup-approver wording at "did not change"; it did not test this wording or the second-reviewer moment, In a rejudge on two of those saved sessions, four of ten simulated readers wanted to try real Vercel delivery now. None saw the new backup-approver offer because no second reviewer was needed.
 
 The plugin offers each step once after the matching line. Offered is the share of persons shown that step; want it now and later are over them.
 

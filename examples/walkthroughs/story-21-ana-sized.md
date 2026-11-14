@@ -153,7 +153,7 @@ The scripted run follows the Human steps on a hub of its own and checks that eac
 <!-- arms: a,b -->
 <!-- next-step boundary=same-tier when "live CPU and memory readings are available": sizes from live | Now that Notes runs on a cluster, want to propose its next size from the CPU and memory it actually used, with those readings kept as the reason? -->
 
-The saved mini.7 run below used Docker, not a cluster, so it did not have live cluster readings. Uptake when those readings are available is unmeasured. The earlier 0/10 now, 9/10 later result applies only to the former offer at "did not change". The repeated production-wait notice in those reasons is a separate plugin behavior; this page edit does not change it.
+The saved mini.7 run below used Docker, not a cluster, so it did not have live cluster readings. A rejudge on the saved session showed the offer to zero of five simulated readers. Uptake when live readings are available remains unmeasured. The earlier 0/10 now, 9/10 later result applies only to the former offer at "did not change". The repeated production-wait notice in those reasons is a separate plugin behavior; this page edit does not change it.
 
 The checks below can be run by hand, in bash, in `~/walkthrough`:
 
