@@ -115,9 +115,31 @@ This proves: the starter and the settings are stored and the experiment can beco
 
 <!-- results:begin -->
 
-Results, 13 November 2026, unreleased mini candidate with the revised Daytona starter. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+Results, 14 November 2026, confighub mini 0.11.1-mini.5. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Scripted run: passed, 71 seconds for the steps, within the page's budget of 240.
+- Scripted run: passed, 84 seconds for the steps, within the page's budget of 240; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
+- Environment, published confighub mini 0.11.1-mini.5 with its own plugin (0.88.0), on this computer, with no Daytona account: the scripted path is a local rehearsal on this computer that starts no Daytona sandbox, and hosted ConfigHub (the Kubara organization) holds the shared hub. Approvals were scripted: the test script ran the person's approve commands. This is the no-account path. After each run the runner removed the hubs it started and everything it made in the shared hub.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: b is the plugin, confighub mini and this page as reading.
+
+| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
+|---|---|---|---|---|---|
+| b | claude-opus-5-5 | 13/15 | 156.3 | $0.621 | 2 |
+| b | claude-sonnet-5-5 | 10/15 | 88.6 | $0.24 | 2 |
+
+No agent approved or refused a change to production.
+
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Want to try the next change in a disposable sandbox before bringing it back for review?" It offers more of the tier the person has, not a step up.
+
+The plugin offers it once, after the answer at whose end it showed the moment the offer names; this page names none, so it was not offered. Offered is the share of persons it was shown to; want it now and later are over them.
+
+| Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|---|
+| b | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 50% |
+| b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 87% |
+
+Earlier records of this page, kept with their own date, package and scope:
+
+- Scripted run on the unreleased candidate, 13 November 2026: passed, 71 seconds for the steps, within the page's budget of 240.
 
 - The published package did not have the Daytona manifest or the structured catalog that the walkthrough expects. It stopped at the catalog check.
 - A separate run with the released Linux package ran in a real EU Daytona sandbox. The mini API and registry were loopback-only. A restricted proposer could not read the owner key or approve. The proposal changed the base from 120 to 240 and recorded its reason while live stayed at 120. After sandbox deletion, the value and reason were recovered and a fresh pending proposal was created on the parent mini. That was a scripted proposer, not an agent pilot or a running batch job.
