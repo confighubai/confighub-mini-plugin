@@ -123,7 +123,7 @@ For an AI agent doing this for a person.
 
 The scripted run follows the Human steps and compares the quoted output. Arm a, without confighub mini, is not applicable: the takeover and the three columns need the hub. A correct agent result is ACME's cluster as in step 5, before the cleanup. The checks below can be run by hand after step 5:
 
-This proves: a service is running. The real Argo CD on a local kind cluster runs ACME's app from Git, with each kept value and the declared image, after the hub took it over and handed it back. The next step this aims to win: using the takeover for a second app. Tested on the checksum-verified published confighub mini 0.11.1-mini.2 with the plugin 0.85.0, 14 November 2026: environment, the real Argo CD on a local kind cluster, with a local Git server; approval, no approval step. At the moment this page's next step belongs to, the plugin showed no line in the runs, so the offer was not made: the plugin missed the moment. From plugin 0.87.0, the plugin says one line at the end of a turn in which the hub kept a value with its reason. In this story the hub's work happens inside `./run`, which writes its own report, so the plugin says nothing unless the agent runs `cub` itself. The next-step line names words from that line. The Results below stay as run on 0.11.1-mini.2 until a release run replaces them.
+This proves: a service is running. The real Argo CD on a local kind cluster runs ACME's app from Git, with each kept value and the declared image, after the hub took it over and handed it back. The next step this aims to win: using the takeover for a second app. Tested on the checksum-verified published confighub mini 0.11.1-mini.4 with the plugin 0.87.0, 14 November 2026: environment, the real Argo CD on a local kind cluster, with a local Git server; approval, no approval step. The plugin stays quiet at this page's moment by design, so no offer is made and conversion is not measured. The plugin says one line at the end of a turn in which the hub kept a value with its reason. In this story the hub's work happens inside `./run`, which writes its own report, so the plugin says nothing unless the agent runs `cub` itself. The next-step line names words from that line.
 
 <!-- agent-task: dan -->
 > ACME's app runs from their Git under Argo CD, and support changed things on the cluster with no record. This folder's ./run plays it on a local kind cluster, wsa-live-state (LIVESTATE_CLUSTER is set). Show me what Git says, what the hub holds and what is running, sort each difference into deliberate, drift or Git out of date, and give ACME back their Git with the hub stopped. Leave the cluster running for me to look at.
@@ -142,10 +142,10 @@ kubectl --kubeconfig "$k" -n argocd get applications.argoproj.io web-from-git -o
 
 <!-- results:begin -->
 
-Results, 14 November 2026, confighub mini 0.11.1-mini.2. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+Results, 14 November 2026, confighub mini 0.11.1-mini.4. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Scripted run: passed, 293 seconds for the steps, within the page's budget of 480.
-- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: b is the plugin, confighub mini and this page as reading.
+- Scripted run: passed, 344 seconds for the steps, within the page's budget of 600.
+- Agent runs (on confighub mini 0.11.1-mini.2, 14 November 2026): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: b is the plugin, confighub mini and this page as reading.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|

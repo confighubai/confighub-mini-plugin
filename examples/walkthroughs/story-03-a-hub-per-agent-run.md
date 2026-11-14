@@ -142,7 +142,7 @@ For an AI agent doing this for a person. Here the agent is the one in the sandbo
 
 The scripted run follows the Human steps and compares the quoted output. Arm a, without confighub mini, is not applicable: the team's customers exist only in a hub, and the point is a hub of the run's own. A correct agent result is the fix in `result/CHANGES.md`, no hub left in the sandbox, and the team's hub unchanged. The checks below can be run by hand, from the example's folder, after the steps:
 
-This proves: stored, in a hub of the run's own that was then deleted, with the fix written out as files for review; nothing is delivered. It uses macOS's `sandbox-exec` as the sandbox. The next step this aims to win: giving the next agent run a hub of its own the same way. Tested on the checksum-verified published confighub mini 0.11.1-mini.2 with the plugin 0.85.0, 14 November 2026: environment, local hub inside macOS sandbox-exec; approval, no approval step. At the moment this page's next step belongs to, the plugin showed no line in the runs, so the offer was not made: the plugin missed the moment. From plugin 0.87.0, the plugin says one line at this moment, such as "ConfigHub plugin: kept image nvcr.io/nvidia/gpu-operator:v25.10.1 in gpu-operator-birch, with its reason, so a later version will not overwrite it. Files with the reasons are in result/." The next-step line names words from that line. The Results below stay as run on 0.11.1-mini.2 until a release run replaces them.
+This proves: stored, in a hub of the run's own that was then deleted, with the fix written out as files for review; nothing is delivered. It uses macOS's `sandbox-exec` as the sandbox. The next step this aims to win: giving the next agent run a hub of its own the same way. Tested on the checksum-verified published confighub mini 0.11.1-mini.4 with the plugin 0.87.0, 14 November 2026: environment, local hub inside macOS sandbox-exec; approval, no approval step. The plugin says one line at this moment, such as "ConfigHub plugin: kept image nvcr.io/nvidia/gpu-operator:v25.10.1 in gpu-operator-birch, with its reason, so a later version will not overwrite it. Files with the reasons are in result/." The next-step line names words from that line.
 
 <!-- agent-task: fix -->
 > The team's GPU platform and its three customers are in ./platform.tar.gz. One customer's operator image breaks our rule that images come only from nvcr.io or registry.k8s.io. Find it and fix it in a hub of your own, running every command through ./sandbox with the sandbox configuration ./sandbox-a (./sandbox . sandbox-a COMMAND), and leave the fix as files in ./result for me to review. Don't touch the team's hub, and don't leave your hub running.
@@ -161,10 +161,28 @@ cub function get --space gpu-operator-birch --unit gpu-operator --show values \
 
 <!-- results:begin -->
 
-Results, 14 November 2026, confighub mini 0.11.1-mini.2. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+Results, 14 November 2026, confighub mini 0.11.1-mini.4. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Scripted run: passed, 80 seconds for the steps, within the page's budget of 300.
-- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
+- Scripted run: passed, 86 seconds for the steps, within the page's budget of 300.
+- Agent runs (on confighub mini 0.11.1-mini.4, 14 November 2026): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: b is the plugin, confighub mini and this page as reading.
+
+| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
+|---|---|---|---|---|---|
+| b | claude-opus-5-5 | 3/3 | 103.2 | $0.278 | 1 |
+| b | claude-sonnet-5-5 | 3/3 | 66.1 | $0.126 | 0 |
+
+No agent approved or refused a change to production.
+
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Give the next agent run a hub of its own the same way?" It offers more of the tier the person has, not a step up.
+
+The plugin offers it once, after the answer at whose end it showed the moment the offer names ("with its reason"). Offered is the share of persons it was shown to; want it now and later are over them.
+
+| Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|---|
+| b | claude-opus-5-5 | 30 | 100% | 100% | 17% | 63% | 67% |
+| b | claude-sonnet-5-5 | 30 | 100% | 100% | 37% | 40% | 23% |
+
+- Agent runs (on confighub mini 0.11.1-mini.2, 13 November 2026): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
