@@ -195,4 +195,6 @@ Results, 14 November 2026, confighub mini 0.11.1-mini.2. Figures from this page'
 
 - A fresh live run with the same published mini.4 package completed first delivery. After owner approval, the Hobby production alias matched the receipt for revision 3 and the endpoint returned a 60-second cache. Staging then took the 30-second change. The adapter refused the pending update, and the endpoint continued serving 60 seconds. The run timed out at the second owner approval. The update and rollback were not delivered. The disposable project and test hub were removed, and a provider lookup confirmed the project was gone.
 
+- A later run on the same published mini.4 package verified the live update. Vercel served 60 seconds from approved revision 3 and stayed there while the update waited. After owner approval, its production alias matched the deployment receipt for revision 4 and the endpoint served 30 seconds. Both receipt hashes matched their ConfigHub revisions. The adapter refused the pending rollback and the endpoint stayed at 30 seconds. The rollback still required a separate owner approval.
+
 <!-- results:end -->
