@@ -3,11 +3,12 @@ id: starter-kustomize-argocd
 starts_with: mini
 starter: kustomize-argocd
 needs: [cub mini package, Docker, kind, kubectl, Python 3, Git, a hosted ConfigHub organization for step 8]
-budget_seconds: 450
+budget_seconds: 550
 -->
 # A Kustomize app that Argo CD deploys, with production behind your approval
 
-For someone whose app is a Kustomize repository that Argo CD deploys from Git, who wants each change to production to wait for their yes, with a reason kept for every value. You connect the app with the Argo CD starter, move its delivery to the hub with no pod restarted, change it, undo the change, move it to your team's shared hub, and delete it. Everything runs on your computer, in a kind cluster with a real Argo CD.
+Argo CD already deploys your Kustomize app from Git. Move delivery to ConfigHub’s OCI gateway without replacing the running pods, then verify which approved revision Argo CD actually syncs. Try it in a local kind cluster with the real controller before using it on your own app.
+
 ## Human
 ### What you need
 An unpacked confighub mini package ([install confighub mini](../../docs/install-mini.md)), Docker, `kind`, `kubectl`, Git and Python 3. confighub mini is ConfigHub made small enough to run on your computer: a hub, which keeps configuration with every change, who made it and why. For step 8, a sign-in to your organization's ConfigHub, such as hosted ConfigHub.
@@ -67,13 +68,13 @@ An unpacked confighub mini package ([install confighub mini](../../docs/install-
    <!-- run: deploy -->
    ```sh
    cub mini adopt orders --kube-context kind-orders-argocd --source orders > adopt.log; grep -m1 '^Starter: kustomize' adopt.log
-   cub variant approve starters --change-order starters/package-starters-v1 --note "Read them"
+   cub variant approve starters-approved --all --note "Read them"
    cub mini approve orders-live/connect --yes --note "Server-side apply suits the orders service"
    cub mini deploy-from-hub orders --variant live --repo orders --kube-context kind-orders-argocd --change-order orders-live/connect
    ```
    ```text
    Starter: kustomize-argocd (version 1, kustomize-argocd.yaml): A Kustomize repository that an Argo CD Application deploys from Git.
-   Recorded pass Approval attestation ID in starters, covering 5 revision(s)
+   Recorded pass Approval attestation ID in starters-approved, covering 6 revision(s)
      It deploys 2 objects; the hub's copy holds the same, and its pod templates match what runs.
    ```
 5. Update it. Change the base in your repository, commit as usual, and propose it with its reason. Staging takes it at once; production waits under a change order, the hub's request to change production.
@@ -141,7 +142,7 @@ Your team's shared hub holds the orders service's base, staging and production m
 ## Agent
 You are doing this for a person, in their folder, with step 1's settings. Each request is one task; run the Human step of the same name.
 
-- **deploy**, "Set up the orders repository so that every change to production waits for my approval, with a reason kept for each value, and have Argo CD deploy production from there": run step 4's `adopt` alone. Starters are brought into the hub only under the person's own approval, which an agent session cannot do, so until then adopt uses the package's files. Then give the person `cub mini adopt orders --kube-context kind-orders-argocd --source orders` to run again in their own terminal (it brings the starters in), then `cub variant approve starters --change-order starters/package-starters-v1 --note "Read them"`, and the `approve` and `deploy-from-hub` commands, to run themselves.
+- **deploy**, "Set up the orders repository so that every change to production waits for my approval, with a reason kept for each value, and have Argo CD deploy production from there": run step 4's `adopt` alone. Then give the person the starters approve, `cub variant approve starters-approved --all --note "Read them"`, and the `approve` and `deploy-from-hub` commands, to run themselves.
 - **update**, "Allow 250 orders a minute; I'll approve production": edit and commit as in step 5, run its `upload` with their reason, and give them the `cub mini approve` command it printed.
 - **undo**, "Undo the order limit change": revert and upload as in step 7, and give them the `cub mini approve` command.
 - **move**, "Move orders to our team's shared hub": run step 8 with their context. Then check that production there waits for approval, as the later step shows, and say so plainly if it does not.
@@ -153,7 +154,7 @@ Each task starts where the Human steps before it leave off, in the same folder f
 
 <!-- agent-task: deploy -->
 > Set up the orders repository so that every change to production waits for my approval, with a reason kept for each value, and have Argo CD deploy production from there. The cluster's context is `kind-orders-argocd`.
-<!-- agent-person deploy: cub mini adopt orders --kube-context kind-orders-argocd --source orders > /dev/null && cub variant approve starters --change-order starters/package-starters-v1 --note "Read them" && cub mini approve orders-live/connect --yes && cub mini deploy-from-hub orders --variant live --repo orders --kube-context kind-orders-argocd --change-order orders-live/connect -->
+<!-- agent-person deploy: cub variant approve starters-approved --all --note "Read them" && cub mini approve orders-live/connect --yes && cub mini deploy-from-hub orders --variant live --repo orders --kube-context kind-orders-argocd --change-order orders-live/connect -->
 <!-- agent-check deploy: cub changeworkflow get --space workflows orders-live-approval >/dev/null && kubectl -n argocd get application orders -o jsonpath='{.spec.source.repoURL}' | grep -q '^oci://' && cub unit data app --space orders-base | grep -q 'sync-options: ServerSideApply=true' -->
 <!-- agent-task: update -->
 > Allow 250 orders a minute; I'll approve production myself.
@@ -172,7 +173,7 @@ Each task starts where the Human steps before it leave off, in the same folder f
 > Delete the orders app, from the cluster and from this computer's hub.
 <!-- agent-check delete: test -d orders/base && ! cub component get orders >/dev/null 2>&1 && ! kubectl --context kind-orders-argocd -n argocd get application orders >/dev/null 2>&1 -->
 <!-- agent-cleanup: pkill -f 'git-serve.py .* 28411'; kind delete cluster --name orders-argocd -->
-<!-- next-step: keep the starter on for the next app | Your next Argo CD app can start with the same usual settings, each with its reason, and production there will wait for your yes before anything changes; want the starter kept on for it? -->
+<!-- next-step when "waits for your approval": keep the starter on for the next app | Production waited for your yes because the starter set this app up that way, with a reason for each setting. Your next Argo CD app can start the same way; want the starter kept on for it? -->
 <!-- arms: a,b,c -->
 This proves: the exact approved revision was delivered and is running, under a real Argo CD on a local kind cluster; the hub publishes each approved revision as a release, Argo CD pulls it, and the cluster's ConfigMap shows the value. The move stores the app in hosted ConfigHub, with production there waiting for approval. The checks above can be run by hand, in `~/starter-example`, with step 1's settings. The next step it aims to win is keeping the starter on, so that the next Argo CD app gets the same settings and the same wait for approval.
 
@@ -180,29 +181,45 @@ This proves: the exact approved revision was delivered and is running, under a r
 
 Results, 13 November 2026, confighub mini 0.11.1-mini.2. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Scripted run: passed, 259 seconds for the steps, within the page's budget of 450.
-- Agent runs (on confighub mini 0.11.1-mini.0): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
+- Scripted run, on confighub mini 0.11.1-mini.2: passed, 261 seconds for the steps, within the page's budget of 550; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
+- Agent runs (on confighub mini 0.11.1-mini.0): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
 | a | claude-opus-5-5 | 4/6 (+9 not applicable) | 178.3 | $0.49 | 0 |
 | b | claude-opus-5-5 | 15/15 | 140.8 | $0.586 | 6 |
-| c | claude-opus-5-5 | 0/15 | 116.8 | $0.627 | 3 |
 | a | claude-sonnet-5-5 | 5/6 (+9 not applicable) | 80.8 | $0.288 | 0 |
 | b | claude-sonnet-5-5 | 15/15 | 126.0 | $0.3 | 5 |
-| c | claude-sonnet-5-5 | 0/15 | 131.8 | $0.371 | 3 |
 
 No agent approved or refused a change to production.
 
-Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Your next Argo CD app can start with the same usual settings, each with its reason, and production there will wait for your yes before anything changes; want the starter kept on for it?"
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Production waited for your yes because the starter set this app up that way, with a reason for each setting. Your next Argo CD app can start the same way; want the starter kept on for it?"
 
-| Arm | Model | Persons | Noticed | Want the next step now | Later | In the way |
-|---|---|---|---|---|---|---|
-| a | claude-opus-5-5 | 30 | 100% | 0% | 3% | 100% |
-| b | claude-opus-5-5 | 30 | 100% | 27% | 57% | 90% |
-| c | claude-opus-5-5 | 30 | 100% | 23% | 60% | 97% |
-| a | claude-sonnet-5-5 | 30 | 100% | 0% | 3% | 100% |
-| b | claude-sonnet-5-5 | 30 | 100% | 37% | 50% | 100% |
-| c | claude-sonnet-5-5 | 30 | 100% | 17% | 57% | 100% |
+The plugin offers it once, after the answer at whose end it showed the moment the offer names ("waits for your approval"). Offered is the share of persons it was shown to; want it now and later are over them.
+
+| Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 100% |
+| b | claude-opus-5-5 | 30 | 67% | 100% | 10% | 65% | 83% |
+| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 100% |
+| b | claude-sonnet-5-5 | 30 | 100% | 100% | 30% | 53% | 90% |
+
+- Agent runs (on confighub mini 0.11.1-mini.14): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: c is the plugin and confighub mini, without this page.
+
+| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
+|---|---|---|---|---|---|
+| c | claude-opus-5-5 | 15/15 | 211.0 | $0.966 | 3 |
+| c | claude-sonnet-5-5 | 13/15 | 216.5 | $0.426 | 3 |
+
+No agent approved or refused a change to production.
+
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Production waited for your yes because the starter set this app up that way, with a reason for each setting. Your next Argo CD app can start the same way; want the starter kept on for it?"
+
+The plugin offers it once, after the answer at whose end it showed the moment the offer names ("waits for your approval"). Offered is the share of persons it was shown to; want it now and later are over them.
+
+| Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|---|
+| c | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 67% |
+| c | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 100% |
 
 <!-- results:end -->

@@ -143,7 +143,7 @@ For an AI agent doing this for a person.
 
 ## Testing
 
-This proves: the exact approved revision, naming the release by digest, is delivered to the runtime's folder by `cub mini pull`, and the rollback revision after it. What was really used: confighub mini on this computer, with a local folder standing in for the runtime; no image is built or run, and the deploy is an `echo`. The step it aims to win: making production wait for a passing check of staging.
+This proves: the exact approved revision, naming the release by digest, is delivered to the runtime's folder by `cub mini pull`, and the rollback revision after it. What was really used: confighub mini on this computer, with a local folder standing in for the runtime; no image is built or run, and the deploy is an `echo`. The step it aims to win: making production wait for a passing check of staging. Its moment is the plugin's line at the end of a turn that production did not change and waits for a yes; in the runs below the plugin showed no line at the end of the agent's turn, so the offer was not made and conversion was not measured.
 
 The scripted run follows the Human steps on a hub of its own and checks that each quoted line is still printed. A correct agent result has release 1.1.0 in staging, a change order that asks for it in production, and production still on 1.0.0. The checks below hold right after step 5.
 
@@ -153,7 +153,7 @@ The scripted run follows the Human steps on a hub of its own and checks that eac
 <!-- agent-check propose: cub unit data --space shop-staging app | grep -q 'RELEASE=shop-1.1.0@sha256:6d51e2f3' && cub changeorder list --space shop-base -o jq='.[].ChangeOrder.Slug' | grep -qvx adopt && cub unit data --space shop-live app | grep -q 'RELEASE=shop-1.0.0@' -->
 <!-- agent-check-a propose: grep -rlsE 'shop-1[.]1[.]0@sha256:6d51e2f3' --exclude-dir='.*' --exclude-dir=Library * .env* | grep -q . -->
 <!-- arms: a,b,c -->
-<!-- next-step: live waits for staging's check | Production can wait until staging answers the new release's health check, so a broken release never reaches users; want live to wait for that check? -->
+<!-- next-step when "did not change": live waits for staging's check | Production can wait until staging answers the new release's health check, so a broken release never reaches users; want live to wait for that check? -->
 
 The checks below can be run by hand, in bash, in the walkthrough's folder:
 
@@ -161,3 +161,32 @@ The checks below can be run by hand, in bash, in the walkthrough's folder:
 cub unit data --space shop-staging app | grep -q 'RELEASE=shop-1.1.0@sha256:6d51e2f3' && cub changeorder list --space shop-base -o jq='.[].ChangeOrder.Slug' | grep -qvx adopt && cub unit data --space shop-live app | grep -q 'RELEASE=shop-1.0.0@'
 grep -rlsE 'shop-1[.]1[.]0@sha256:6d51e2f3' --exclude-dir='.*' --exclude-dir=Library * .env* | grep -q .
 ```
+
+<!-- results:begin -->
+
+Results, 13 November 2026, confighub mini 0.11.1-mini.1. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+
+- Scripted run: passed, 34 seconds for the steps, within the page's budget of 240.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+
+| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
+|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 0/3 | 16.7 | $0.126 | 0 |
+| b | claude-opus-5-5 | 3/3 | 23.2 | $0.184 | 3 |
+| a | claude-sonnet-5-5 | 0/3 | 12.6 | $0.068 | 0 |
+| b | claude-sonnet-5-5 | 3/3 | 24.5 | $0.107 | 2 |
+
+No agent approved or refused a change to production.
+
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Production can wait until staging answers the new release's health check, so a broken release never reaches users; want live to wait for that check?"
+
+The plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
+
+| Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 97% |
+| b | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 17% |
+| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 100% |
+| b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 3% |
+
+<!-- results:end -->

@@ -58,8 +58,8 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
    A change to production waits for your approval: Raise the timeout to 120 s so the large model's requests do not time out. It was made just now; its name is api-base/upload-20261113-081043-yeny.
      It proposes for production, from the app's files:
        TIMEOUT_SECONDS: 30 → 120
-     To approve it, which puts it in production: cub mini approve api-base/upload-20261113-081043-yeny
-     To refuse it: cub mini refuse api-base/upload-20261113-081043-yeny --reason WHY
+     To approve it, which puts it in production: ~/.confighub-walkthrough/mini/cub mini approve api-base/upload-20261113-081043-yeny
+     To refuse it: ~/.confighub-walkthrough/mini/cub mini refuse api-base/upload-20261113-081043-yeny --reason WHY
    ```
 
 5. Sam refuses it, with a reason. Then nothing is waiting, and he is told so in one line:
@@ -115,7 +115,7 @@ For an AI agent working on the api, on its own key: run `cub` as `cub --context 
 
 ## Testing
 
-This proves: the settings and the refusal were stored in the hub, and the messages were printed where a person reads them. What was really used: confighub mini on this computer; no Claude Code session runs in the scripted steps, so the end-of-turn line for a repeated proposal is not checked here, and nothing is delivered. The step it aims to win: moving the app to a hub that other machines can reach.
+This proves: the settings and the refusal were stored in the hub, and the messages were printed where a person reads them. What was really used: confighub mini on this computer; no Claude Code session runs in the scripted steps, so the end-of-turn line for a repeated proposal is not checked here, and nothing is delivered. The step it aims to win: the person reading what waits for them, refusals included, with `cub mini waiting`. Its moment is the plugin's line at the end of a turn that production did not change and waits for a yes; in the runs below the plugin showed no line at the end of the agent's turn, so the offer was not made and conversion was not measured.
 
 A correct agent result, starting after Sam refused 120, leaves production at 30 with a proposal for 180 waiting for Sam. The checks below hold right after step 6. The checks below can be run by hand, in bash, in the walkthrough's folder:
 
@@ -125,9 +125,38 @@ A correct agent result, starting after Sam refused 120, leaves production at 30 
 <!-- agent-check again: cub unit data --space api-live app | grep -qx 'TIMEOUT_SECONDS=30' && cub mini waiting | grep -q 'TIMEOUT_SECONDS: .* → 180' -->
 <!-- agent-check-a again: g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g TIMEOUT_SECONDS 180 | grep -q . -->
 <!-- arms: a,b,c -->
-<!-- next-step: hub others can reach | A VM or a teammate can take these settings, with the same approvals, from a hub they can reach; want the command that copies this app there? -->
+<!-- next-step when "did not change": see what waits | This change waits for your yes, and you refused the last one like it, with a reason. Want the one command that lists what waits for you? -->
 
 ```sh
 cub unit data --space api-live app | grep -qx 'TIMEOUT_SECONDS=30' && cub mini waiting | grep -q 'TIMEOUT_SECONDS: .* → 180'
 g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g TIMEOUT_SECONDS 180 | grep -q .
 ```
+
+<!-- results:begin -->
+
+Results, 13 November 2026, confighub mini 0.11.1-mini.1. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+
+- Scripted run: passed, 40 seconds for the steps, within the page's budget of 180.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+
+| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
+|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 3/3 | 11.5 | $0.107 | 0 |
+| b | claude-opus-5-5 | 3/3 | 24.2 | $0.157 | 1 |
+| a | claude-sonnet-5-5 | 3/3 | 17.1 | $0.062 | 0 |
+| b | claude-sonnet-5-5 | 3/3 | 28.4 | $0.096 | 1 |
+
+No agent approved or refused a change to production.
+
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "This change waits for your yes, and you refused the last one like it, with a reason. Want the one command that lists what waits for you?"
+
+The plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
+
+| Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 20% |
+| b | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 73% |
+| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 30% |
+| b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 70% |
+
+<!-- results:end -->

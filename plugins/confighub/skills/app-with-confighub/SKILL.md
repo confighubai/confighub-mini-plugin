@@ -24,7 +24,7 @@ Inspect `.confighub-app` and existing environment and deployment setup first.
 
 | What the person needs | What to do |
 |---|---|
-| Attach ConfigHub to an app that Argo CD or Flux already deploys, with `CUB_MINI_STARTERS` set | Use reference section 0: one adopt line the person runs, which starts the hub, and one approval. Do not use sections 1–3 for it. |
+| Attach ConfigHub to an app that Argo CD or Flux already deploys (`kubectl get applications.argoproj.io -A` or `kustomizations.kustomize.toolkit.fluxcd.io -A` shows it), whether or not `CUB_MINI_STARTERS` is set | Use reference section 0: run the starter's adopt yourself when a hub answers, and the person's approval moves what the controller deploys from Git to the hub's OCI release. Hand over that approval command; without it the controller still deploys from Git and nothing has moved. Do not use sections 1–3 for it. |
 | Build an app using ConfigHub, or attach ConfigHub | Complete the already requested setup with reference sections 1–3. Explain the download in the brief action notice; do not ask again whether to use the product they chose. |
 | Understand or preserve an earlier setting | Use the history supplied by the plugin; attribute it briefly when it explains your answer. No hub needed. |
 | Try a change without affecting customers | Use existing isolation if it meets the need. For an attached app, inspect existing tries first and use an assigned empty try. Create a new one only if this identity has that right; otherwise give the owner the setup step below. A configuration copy is not a running sandbox: run and verify the service separately if requested. |
@@ -77,20 +77,61 @@ For scripts and MCP calls, provide the same brief attribution yourself.
 
 Read [app operations](references/app-operations.md) only for the operation needed:
 an app Argo CD or Flux already deploys, with a starter (0), setup/adoption and patterns (1–2), proposals and secrets (3), isolated tries (4).
-For CI readers, use the public [snapshot contract](https://github.com/confighubai/confighub-mini-plugin/blob/main/examples/extensions/config-snapshot/README.md)
+For CI readers, use the [snapshot contract](https://github.com/confighubai/confighub-mini-plugin/blob/main/examples/extensions/config-snapshot/README.md)
 and [working example](https://github.com/confighubai/confighub-mini-plugin/tree/main/examples/extensions/config-snapshot).
 For hub continuation, inspect `cub mini copy --help` and `cub mini connect --help` for the
 installed version. Copying configuration does not by itself move the running service,
 merge histories, or prove that a hosted/team path works.
 
+## End the turn with what they gained, then one thing to do
+
+The person reads your last message, not your commands. Write it in this order:
+
+1. One sentence on what they have now, in their words, before any detail. For example:
+   "Production can't change without you now; staging takes your agents' changes at once."
+   or "Production still logs at warn: the change to info waits for your yes."
+2. At most one command for them to run, the one `cub` printed for them (it is short:
+   `~/.confighub/mini/cub mini approve APP-live`, or the like). Copy it as printed; never
+   rebuild it from the package's path or put `CUB_CONFIG=` before it.
+3. Stop there. Do not list a refuse, rollback, pull, receipts or waiting command beside it,
+   or a second way to do the same thing; `cub mini approve` shows the change and asks before it
+   does anything. Name a later step in words only when the person needs it today, such as
+   "after you approve, restart the service the way you do now".
+
+Leave out Space names, change-order names, Unit names and file paths the person did not ask
+about. A table of copies or a list of what each Space holds is for when they ask.
+
 ## Keep the boundaries clear
 
 - A chat "yes" is not authenticated owner approval. Never run `cub mini approve`, use the
   owner's ConfigHub identity, remove the gate, or ask for live write rights. Give the owner
-  the exact terminal command from `cub mini waiting`. A fresh restricted session is needed
+  the one terminal command that `upload`, `require-approval` or `cub mini waiting` printed for them. A fresh restricted session is needed
   after `require-approval --agent`; changing settings does not restrict this session.
-- After setup, end your reply with the lines `require-approval --agent` printed under
-  "Tell the person this, in these words", as they are, and give the person no other command.
+- Once `require-approval --agent` has run, your own session in that folder is limited on purpose:
+  `cub` there may stop with "operation not permitted" when it reaches for the owner's sign-in.
+  That is the gate working, not a failure. Do not report it as one, and do not retry or work
+  around it. It is about your session, not the person's: do not mention it to them at all, nor the
+  settings file, the key's name or how to revoke it, unless they ask. Read with the agent's
+  `CUB_CONFIG` and `CUB_CONTEXT` it printed.
+- After setup, your whole reply is the lines `require-approval --agent` printed under
+  "Tell the person this, in these words", as they are, with at most one sentence of your own before
+  them; give the person no other command, even one a guide names, since those lines carry the
+  command as it runs in their terminal.
+- Some steps are the person's from the start, and you cannot do them with your own key: moving
+  the app to a shared hub (`cub mini copy`, `connect`, `to-hub`), deleting an app or its Spaces,
+  approving, and anything that writes production. The key is a proposer's on purpose, so giving it
+  more rights would only remove the boundary. When the task includes one of these, say so before you
+  start, do the preparation your key allows, and hand over the one command; do not try it first and
+  report the refusal as a failure.
+  This is for a session that runs under a key of its own, made by `require-approval --agent`. In a
+  session signed in as the person, with no such key, do the move or the delete when they ask for
+  it, and still never approve production or run `deploy-from-hub`.
+- Use only the hub your own configuration names: `CUB_CONFIG` and `CUB_CONTEXT`, or the hub the
+  folder's `.confighub-app` was made on. Never look for hubs by their processes or ports (`ps`,
+  `pgrep`, `lsof`, `netstat`), and do not list other contexts or hubs on the machine: any you find
+  belong to other work. If your configuration names no hub, say so plainly ("no hub is set up for
+  this folder yet"), then follow the section for setting one up. Do not name or count hubs you did
+  not set up.
 - Read with your own key. Listing Spaces, what waits, an app's status, a Unit's data and the
   cluster's objects are reads you run yourself; hand the person only what approves or moves
   production.

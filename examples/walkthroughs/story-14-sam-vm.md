@@ -158,7 +158,7 @@ For an AI agent doing this for a person.
 
 ## Testing
 
-This proves: the exact approved revision of production's settings is delivered to the service's folder by `cub mini pull`, and an unapproved one is not. What was really used: confighub mini on this computer, with a second folder and `cub` configuration standing in for the VM; no service runs, no systemd timer, and the restart is an `echo`. The step it aims to win: running `cub mini pull` on the real VM, on a timer.
+This proves: the exact approved revision of production's settings is delivered to the service's folder by `cub mini pull`, and an unapproved one is not. What was really used: confighub mini on this computer, with a second folder and `cub` configuration standing in for the VM; no service runs, no systemd timer, and the restart is an `echo`. The step it aims to win: running `cub mini pull` on the real VM, on a timer. Its moment is the plugin's line at the end of a turn that production did not change and waits for a yes; in the runs below the plugin showed no line at the end of the agent's turn, so the offer was not made and conversion was not measured.
 
 The scripted run follows the Human steps on a hub of its own and checks that each quoted line is still printed. A correct agent result has the new timeout in the base and a change waiting for production, with production itself unchanged; the agent's key cannot approve. The checks below hold right after step 6.
 
@@ -168,7 +168,7 @@ The scripted run follows the Human steps on a hub of its own and checks that eac
 <!-- agent-check propose: cub unit data --space api-base app | grep -qx 'TIMEOUT_SECONDS=120' && cub unit data --space api-live app | grep -qx 'TIMEOUT_SECONDS=30' && cub mini waiting | grep -q 'TIMEOUT_SECONDS: 30 → 120' -->
 <!-- agent-check-a propose: g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g TIMEOUT_SECONDS 120 | grep -q . -->
 <!-- arms: a,b,c -->
-<!-- next-step: pull on a timer | Your VM can take only approved settings every 30 seconds, and your agents never need an SSH key to it; want the one command that starts the timer there? -->
+<!-- next-step when "did not change": pull on a timer | Your VM can take only approved settings every 30 seconds, and your agents never need an SSH key to it; want the one command that starts the timer there? -->
 
 The checks below can be run by hand, in bash, in the walkthrough's folder:
 
@@ -176,3 +176,32 @@ The checks below can be run by hand, in bash, in the walkthrough's folder:
 cub unit data --space api-base app | grep -qx 'TIMEOUT_SECONDS=120' && cub unit data --space api-live app | grep -qx 'TIMEOUT_SECONDS=30' && cub mini waiting | grep -q 'TIMEOUT_SECONDS: 30 → 120'
 g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g TIMEOUT_SECONDS 120 | grep -q .
 ```
+
+<!-- results:begin -->
+
+Results, 13 November 2026, confighub mini 0.11.1-mini.1. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+
+- Scripted run: passed, 34 seconds for the steps, within the page's budget of 240.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+
+| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
+|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 3/3 | 12.8 | $0.105 | 0 |
+| b | claude-opus-5-5 | 3/3 | 21.6 | $0.165 | 1 |
+| a | claude-sonnet-5-5 | 3/3 | 13.7 | $0.063 | 0 |
+| b | claude-sonnet-5-5 | 3/3 | 21.3 | $0.093 | 1 |
+
+No agent approved or refused a change to production.
+
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Your VM can take only approved settings every 30 seconds, and your agents never need an SSH key to it; want the one command that starts the timer there?"
+
+The plugin offers it once, after the answer at whose end it showed the moment the offer names ("approval and deployment are separate"). Offered is the share of persons it was shown to; want it now and later are over them.
+
+| Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 7% |
+| b | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 7% |
+| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 13% |
+| b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 7% |
+
+<!-- results:end -->

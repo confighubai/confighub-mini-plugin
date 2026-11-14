@@ -107,21 +107,20 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
    …
    ```
 
-10. Undo it. Taking the change order back from the shared settings gives it up, with the reason, so production never takes it. Staging took the value as its own, so it is set back separately:
+10. Undo it. One command takes the upload back from the shared settings and from staging, and gives up its change order with the reason, so production never takes it:
    <!-- run: undo -->
    ```sh
    printf 'TIMEOUT_SECONDS=30\nREFUND_LIMIT=50\n' > pay/.env
    ORDER=$(cub changeorder list --space pay-base -o jq='.[] | select(.ChangeOrder.Description | startswith("Fail fast")) | .ChangeOrder.Slug')
-   cub mini rollback pay-base --change-order pay-base/$ORDER --reason "5 s fails real payments"
-   cub mini set pay TIMEOUT_SECONDS=30 --variant staging --change-desc "Put back: 5 s fails real payments" >/dev/null
+   cub mini rollback pay --upload pay-base/$ORDER --reason "5 s fails real payments"
    for copy in base staging live; do cub unit data --space pay-$copy app | grep TIMEOUT; done
    cub mini waiting
    ```
    ```text
-   Set back on pay-base, each with the reason:
-     app: TIMEOUT_SECONDS 5 → 30
-   Change order pay-base/upload-20261113-074923-yhn1 given up: 5 s fails real payments
-   …
+   Set back, each with the reason:
+     app: TIMEOUT_SECONDS 5 → 30 in pay-base
+     app: TIMEOUT_SECONDS 5 → 30 in pay-staging
+   Change order pay-base/upload-20261113-151158-f3gr given up: 5 s fails real payments
    TIMEOUT_SECONDS=30
    TIMEOUT_SECONDS=30
    TIMEOUT_SECONDS=30
@@ -144,13 +143,13 @@ For an AI agent asked to help after the stop is lifted.
 
 - The request: "Something went wrong in an earlier agent session here: payments time out in staging. Find what it did and undo what you can. Tell me plainly anything you cannot undo."
 - Read before you change anything: `cub mini waiting`, `cub mini receipts pay-staging`, and, with the plugin, `/confighub:changes`. Say what you found, with the reason the earlier agent gave.
-- Put back what is a setting: the file to its earlier value, and the hub with `cub mini rollback pay-base --change-order pay-base/NAME --reason WHY` and `cub mini set pay TIMEOUT_SECONDS=30 --variant staging --change-desc WHY`, if your key allows them; otherwise give the person those commands.
+- Put back what is a setting: the file to its earlier value, and the hub with `cub mini rollback pay --upload pay-base/NAME --reason WHY`, if your key allows it; otherwise give the person those commands.
 - Never: approve anything for production, remove the stop file yourself, repeat a call to an outside service, or say a call to an outside service was undone.
 - Done when staging's `TIMEOUT_SECONDS` is 30 again, production's is unchanged, and you have told the person what you could not undo.
 
 ## Testing
 
-This proves: the settings were stored in the hub and put back there, and the agent's key was refused by the hub after `cub mini halt`. What was really used: confighub mini on this computer and a stop file of the walkthrough's own; no Claude Code session or service runs in the scripted run, and nothing is delivered. The step it aims to win: setting up the stop that a monitor fires.
+This proves: the settings were stored in the hub and put back there, and the agent's key was refused by the hub after `cub mini halt`. What was really used: confighub mini on this computer and a stop file of the walkthrough's own; no Claude Code session or service runs in the scripted run, and nothing is delivered. This story has no offer moment in its agent task: the plugin shows the person no line at the end of the turn, so the next step below is not offered and conversion is not measured; the simulated persons still say whether they noticed the result and whether anything was in the way.
 
 The scripted run follows the Human steps on a hub of its own, with a stop file of its own, and checks that each quoted line is still printed. A correct agent result, starting after the stop is lifted, puts staging's timeout back to 30 with production unchanged, and leaves no change to production waiting.
 
@@ -160,7 +159,7 @@ The scripted run follows the Human steps on a hub of its own, with a stop file o
 <!-- agent-check undo: cub unit data --space pay-staging app | grep -qx 'TIMEOUT_SECONDS=30' && cub unit data --space pay-live app | grep -qx 'TIMEOUT_SECONDS=30' && ! cub mini waiting | grep -q 'TIMEOUT_SECONDS: 30 → 5' -->
 <!-- agent-check-a undo: g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g TIMEOUT_SECONDS 30 | grep -q . && ! g TIMEOUT_SECONDS '5($|[^0-9])' | grep -q . -->
 <!-- arms: a,b,c -->
-<!-- next-step: stop on an alert | Your monitor can stop every agent the moment an alert fires, and name the last change to look at first; want the alert add-on set up? -->
+<!-- next-step when "did not change": stop on an alert | Your monitor can stop every agent the moment an alert fires, and name the last change to look at first; want the alert add-on set up? -->
 
 The checks below can be run by hand, in bash, in the walkthrough's folder:
 
@@ -168,3 +167,32 @@ The checks below can be run by hand, in bash, in the walkthrough's folder:
 cub unit data --space pay-staging app | grep -qx 'TIMEOUT_SECONDS=30' && cub unit data --space pay-live app | grep -qx 'TIMEOUT_SECONDS=30' && ! cub mini waiting | grep -q 'TIMEOUT_SECONDS: 30 → 5'
 g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g TIMEOUT_SECONDS 30 | grep -q . && ! g TIMEOUT_SECONDS '5($|[^0-9])' | grep -q .
 ```
+
+<!-- results:begin -->
+
+Results, 13 November 2026, a build of confighub mini from main at c564cd36. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+
+- Scripted run: passed, 45 seconds for the steps, within the page's budget of 180.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+
+| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
+|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 0/3 | 25.5 | $0.182 | 0 |
+| b | claude-opus-5-5 | 3/3 | 29.7 | $0.191 | 1 |
+| a | claude-sonnet-5-5 | 0/3 | 16.9 | $0.06 | 0 |
+| b | claude-sonnet-5-5 | 3/3 | 24.7 | $0.081 | 1 |
+
+No agent approved or refused a change to production.
+
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Your monitor can stop every agent the moment an alert fires, and name the last change to look at first; want the alert add-on set up?"
+
+The plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
+
+| Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 30% |
+| b | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 7% |
+| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 10% |
+| b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 0% |
+
+<!-- results:end -->

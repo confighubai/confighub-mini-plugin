@@ -92,7 +92,19 @@ Claude Code, signed in, and Git. Each slash command below, such as `/confighub:c
    > log      each MCP call is in the record
    ```
 
-8. `/confighub:install-mini`: the step to a hub. confighub mini is ConfigHub, the server that keeps configuration with every change and can make production wait for your approval, made small enough for one computer. This downloads it (about 70 MB), checks it, and starts a hub, in about 30 seconds.
+8. An agent changes a value that production reads too. The repository gets a settings file for each environment beside `.env`, which both read, and `.env` gets a timeout. Then ask for a longer timeout for staging's slow tests. At the end of the turn the plugin says that the change reaches production as well, and which file would have changed staging only.
+   <!-- run: environments -->
+   ```sh
+   printf 'TIMEOUT=30\n' >> .env
+   printf 'LOG_LEVEL=info\n' > .env.production && printf 'LOG_LEVEL=debug\n' > .env.staging
+   git add .env.production .env.staging && git commit -qm "Settings for each environment"
+   ```
+   <!-- run: shared -->
+   ```sh
+   claude -p "Staging's slow tests time out: raise TIMEOUT to 60 in .env. Make the change now; don't commit." --permission-mode acceptEdits
+   ```
+
+9. `/confighub:install-mini`: the step to a hub. confighub mini is ConfigHub, the server that keeps configuration with every change and can make production wait for your approval, made small enough for one computer. This downloads it (49 to 74 MB, by platform), checks it, and starts a hub.
    <!-- run: install-mini -->
    ```sh
    claude -p "/confighub:install-mini"
@@ -103,7 +115,7 @@ Claude Code, signed in, and Git. Each slash command below, such as `/confighub:c
    …
    ```
 
-9. `/confighub:to-hub`: copy what the agents changed, with each request, into the hub. It first says what it would write; `--yes` writes it.
+10. `/confighub:to-hub`: copy what the agents changed, with each request, into the hub. It first says what it would write; `--yes` writes it.
    <!-- run: to-hub -->
    ```sh
    claude -p "/confighub:to-hub"
@@ -112,8 +124,8 @@ Claude Code, signed in, and Git. Each slash command below, such as `/confighub:c
    ```text
      would make try-confighub-env-base, the file as it was before the first recorded change, and try-confighub-env-local
    …
-     3 changes written to try-confighub-env-local, each with its reason or request
    ```
+   With `--yes` it says how many changes it wrote, each with its reason or request.
 
 ### Undo it
 Remove the hub and its data, then the plugin:
@@ -139,17 +151,21 @@ For an AI agent working where the plugin is installed.
 - **You are done** when the answer names the request behind the value, or, for the hub, when `cub mini to-hub` says how many changes it wrote.
 
 ## Testing
-Arm a is an agent with no plugin and no hub, in the same repository after the same first session: Git shows that `CACHE` changed but not why, so arm a is judged only on what it can do, an answer in `WHY.md` with nothing else changed. Arm b has the plugin, and this page as reading; arm c the plugin without the page. The hub job needs a hub, so it is not judged in arm a.
+Arm a is an agent with no plugin and no hub, in the same repository after the same first session: Git shows that `CACHE` changed but not why, so arm a is judged only on what it can do, an answer in `WHY.md` with nothing else changed, and the timeout raised. Arm b has the plugin, and this page as reading; arm c the plugin without the page. The hub job needs a hub, so it is not judged in arm a.
 
 <!-- agent-task: why after=why -->
 > Why is the cache on in .env? Write the answer, with who asked for it and why, in WHY.md. Change nothing else.
+<!-- agent-task: shared after=shared -->
+> Staging's slow tests time out: raise TIMEOUT to 60 in .env. Don't commit.
 <!-- agent-task: to-hub after=to-hub -->
 > Put what the agents changed in this repository, with the requests behind each change, into the ConfigHub hub on this machine.
 <!-- agent-check why: grep -qi sale WHY.md && grep -qx CACHE=on .env -->
+<!-- agent-check shared: grep -qx TIMEOUT=60 .env || grep -qx TIMEOUT=60 .env.staging -->
+<!-- agent-check-a shared: grep -qx TIMEOUT=60 .env || grep -qx TIMEOUT=60 .env.staging -->
 <!-- agent-check-a why: test -s WHY.md && grep -qx CACHE=on .env && grep -qx LOG_LEVEL=warn .env -->
 <!-- agent-check to-hub: cub=$(ls -d ~/.confighub/mini/confighub-mini-*/bin/cub | tail -1) && s=$($cub space list -o 'jq=.[].Space.Slug' | grep -- '-local$' | head -1) && test -n "$s" && $cub unit list --space "$s" -o 'jq=.[].Unit.Slug' | while read u; do $cub revision list "$u" --space "$s" -o 'jq=.[].Revision.Description'; done | grep -q "sale" -->
 <!-- arms: a,b,c -->
-<!-- next-step: connect a hub | The plugin keeps this record on your computer until it has gone 30 days unused. In a ConfigHub hub on this computer it is kept for good, next to each value, and production can wait for your yes before an agent's change reaches it. If you want that, type /confighub:install-mini; it takes about 30 seconds and you can remove it. -->
+<!-- next-step when "production has it too": connect a hub | That change reached production too, since production reads .env. In a ConfigHub hub on this computer, production waits for your yes before an agent's change reaches it, and each value keeps its reason for good. If you want that, type /confighub:install-mini; you can remove it. -->
 The step this aims to win: connecting a hub with `/confighub:install-mini`.
 
 This proves: the record of changes and requests kept on this computer by the real plugin in real Claude Code sessions, and, in the last step, the changes stored in a confighub mini hub on this computer. Nothing is delivered to a service or cluster. A right result: `WHY.md` names next week's sale as the reason, and the hub holds each change with its request. The checks below can be run by hand, in `try-confighub`:
@@ -160,30 +176,33 @@ cub=$(ls -d ~/.confighub/mini/confighub-mini-*/bin/cub | tail -1) && s=$($cub sp
 
 <!-- results:begin -->
 
-Results, 13 November 2026, confighub mini 0.11.1-mini.1. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+Results, 13 November 2026, a development build of confighub mini after 0.11.1-mini.1. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
+- Scripted run: passed, 150 seconds for the steps, within the page's budget of 300.
+- Agent runs (on a development build of confighub mini after 0.11.1-mini.1): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page. Arm a ran earlier the same day, on confighub mini 0.11.1-mini.1, before the step in which an agent changes a value production also reads; arms b and c ran on the development build, with it. The simulated persons of every arm were judged in the same way.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
 | a | claude-sonnet-5-5 | 3/3 (+3 not applicable) | 24.8 | $0.079 | 0.0 |
-| b | claude-sonnet-5-5 | 6/6 | 17.2 | $0.086 | 0.0 |
-| c | claude-sonnet-5-5 | 3/6 | 31.8 | $0.118 | 0.5 |
+| b | claude-sonnet-5-5 | 9/9 | 15.1 | $0.073 | 0 |
+| c | claude-sonnet-5-5 | 6/9 | 20.4 | $0.059 | 0 |
 | a | claude-opus-5-5 | 3/3 (+3 not applicable) | 31.0 | $0.22 | 0.0 |
-| b | claude-opus-5-5 | 6/6 | 17.9 | $0.157 | 0.0 |
-| c | claude-opus-5-5 | 6/6 | 24.8 | $0.182 | 0.0 |
+| b | claude-opus-5-5 | 9/9 | 11.2 | $0.146 | 0 |
+| c | claude-opus-5-5 | 7/9 | 11.7 | $0.105 | 0 |
 
 No agent approved or refused a change to production.
 
-Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "The plugin keeps this record on your computer until it has gone 30 days unused. In a ConfigHub hub on this computer it is kept for good, next to each value, and production can wait for your yes before an agent's change reaches it. If you want that, type /confighub:install-mini; it takes about 30 seconds and you can remove it."
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "That change reached production too, since production reads .env. In a ConfigHub hub on this computer, production waits for your yes before an agent's change reaches it, and each value keeps its reason for good. If you want that, type /confighub:install-mini; you can remove it."
 
-| Arm | Model | Persons | Noticed | Want the next step now | Later | In the way |
-|---|---|---|---|---|---|---|
-| a | claude-sonnet-5-5 | 60 | 100% | 7% | 30% | 52% |
-| b | claude-sonnet-5-5 | 60 | 100% | 3% | 67% | 78% |
-| c | claude-sonnet-5-5 | 60 | 100% | 2% | 55% | 97% |
-| a | claude-opus-5-5 | 60 | 100% | 20% | 30% | 52% |
-| b | claude-opus-5-5 | 60 | 100% | 7% | 70% | 87% |
-| c | claude-opus-5-5 | 60 | 100% | 3% | 67% | 83% |
+The plugin offers it once, after the answer at whose end it showed the moment the offer names ("production has it too"). Offered is the share of persons it was shown to; want it now and later are over them.
+
+| Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|---|
+| a | claude-sonnet-5-5 | 60 | 0% | 100% | n/a | n/a | 50% |
+| b | claude-sonnet-5-5 | 90 | 33% | 100% | 23% | 63% | 39% |
+| c | claude-sonnet-5-5 | 90 | 33% | 100% | 17% | 60% | 47% |
+| a | claude-opus-5-5 | 60 | 0% | 100% | n/a | n/a | 48% |
+| b | claude-opus-5-5 | 90 | 33% | 100% | 27% | 53% | 29% |
+| c | claude-opus-5-5 | 90 | 33% | 100% | 30% | 50% | 47% |
 
 <!-- results:end -->

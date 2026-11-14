@@ -3,15 +3,16 @@ id: starter-parameter-store
 starts_with: mini
 starter: parameter-store
 needs: [cub mini package, Python 3, a hosted ConfigHub organization for step 8]
-budget_seconds: 200
+budget_seconds: 240
 -->
 # An app that reads AWS Parameter Store, with production behind your approval
 
-For someone whose app reads its settings from AWS Systems Manager Parameter Store, one path for staging and one for production, and who wants each change to production to wait for their yes, with a reason kept for every value. You connect the app with the Parameter Store starter, deliver it, change it, undo the change, move it to your team's shared hub, and delete it. This uses a local stand-in for Parameter Store, so no AWS account is needed.
+Your billing job retries a failed request five times. For invoice week, you want to try two retries in staging without changing production. This walkthrough shows what the job reads before approval, after approval, and after you restore five retries. It also shows how to hand the settings to a team without handing over your AWS credentials.
 
 ## Human
-### What you need
 An unpacked confighub mini package ([install confighub mini](../../docs/install-mini.md)) and Python 3. confighub mini is ConfigHub made small enough to run on your computer: a hub, which keeps settings with every change, who made it and why. For step 8, a sign-in to your organization's ConfigHub, such as hosted ConfigHub.
+
+Start here if you have no AWS account: the marked steps use a stand-in. For AWS itself, follow the [live path](../parameter-store-live.md); it requires a package that includes the live adapter.
 
 ### Steps
 1. Start a hub of your own; it becomes `cub`'s current context. `MINI` is the unpacked package. `CUB_MINI_STARTERS=on` switches starters on: a starter is a short file that gives one kind of app its usual settings, each with a reason, and the first `cub mini adopt` brings the package's starters into the hub, where they wait for your approval.
@@ -23,7 +24,7 @@ An unpacked confighub mini package ([install confighub mini](../../docs/install-
    cub mini install --name billing --use
    export LOCAL_HUB=$(cub context get -o jq=.name)
    ```
-2. Make the app and its stand-in AWS account. `billing/.env` holds the app's shared settings. In `ssm-account`, `state.json` holds the parameters under `/billing/staging/` and `/billing/production/`, including one encrypted value, and `bin/aws` answers as the `aws` command does. The script `deliver` sends production's approved settings to Parameter Store and prints what production reads. Last, the Parameter Store add-on, a small program in the package, reads the parameters into `billing/.env.staging` and `billing/.env.production`; the encrypted one is written as a reference to where it is kept, never as its value.
+2. Make the app and its stand-in AWS account. The job reads the settings that the stand-in returns. `billing/.env` holds the app's shared settings. In `ssm-account`, `state.json` holds the parameters under `/billing/staging/` and `/billing/production/`, including one encrypted value, and `bin/aws` answers as the `aws` command does. The script `deliver` sends production's approved settings to Parameter Store and prints what production reads. Last, the Parameter Store add-on, a small program in the package, reads the parameters into `billing/.env.staging` and `billing/.env.production`; the encrypted one is written as a reference to where it is kept, never as its value.
    <!-- run: app files -->
    ```sh
    export MINI=/absolute/path/to/unpacked-confighub-mini
@@ -49,14 +50,13 @@ An unpacked confighub mini package ([install confighub mini](../../docs/install-
    <!-- run: deploy -->
    ```sh
    cub mini adopt billing --provider-root ssm-account
-   cub variant approve starters --change-order starters/package-starters-v1 --note "Read them"
+   cub variant approve starters-approved --all --note "Read them"
    ```
    ```text
    Starter: parameter-store (version 1, parameter-store.yaml): An app that reads its settings from Parameter Store, one path for staging and one for production.
    …
      Sets SSM_MAX_RETRIES=5, as a setting: A throttled read is tried again five times, with backoff, before the app reports it.
    …
-   Recorded pass Approval attestation ID in starters, covering 5 revision(s)
    ```
 4. Approve production and deliver it. Then sign a separate `cub` configuration in with the reader key the starter made, which can read production and nothing else, and deliver with it.
    <!-- run: deploy-approve -->
@@ -79,9 +79,11 @@ An unpacked confighub mini package ([install confighub mini](../../docs/install-
    Changed the shared settings (billing-base), with the reason: The billing run must fail fast and be started again before invoices go out
      SSM_MAX_RETRIES: 5 → 2
    ```
-6. Approve the update and deliver it. `cub mini waiting` lists what waits; with one change waiting, `cub mini approve` needs no name.
+6. Check what production still reads before approval, then approve the update and deliver it. `cub mini waiting` lists what waits; with one change waiting, `cub mini approve` needs no name.
    <!-- run: update-ship -->
    ```sh
+   cub unit data app --space billing-staging | grep -Fx SSM_MAX_RETRIES=2; cub unit data app --space billing-live | grep -Fx SSM_MAX_RETRIES=5
+   python3 -c 'import json; assert json.load(open("ssm-account/state.json"))["parameters"]["/billing/production/SSM_MAX_RETRIES"]["Value"] == "5"'
    cub mini approve --yes --note "Invoice week"
    sh deliver
    ```
@@ -141,9 +143,9 @@ In the shared hub: `cub --context shared component delete --recursive --detach "
 ### What you have now
 Your team's shared hub holds billing's base, staging and production settings, each value with who set it and why, and production there changes only when a person approves. The stand-in account holds the settings you last approved; the encrypted value never left it. The [starters guide](../../docs/starters.md) explains how a starter connects an app; see also [approvals on a shared hub](../../docs/approvals.md#on-hosted-confighub-or-your-own-server-with-cub-alone).
 ## Agent
-You are doing this for a person, in their folder, with step 1's settings. Each request is one task; run the Human step of the same name.
+A useful first request is: “Try two retries for the billing job in staging. Leave production alone and tell me what I need to approve.” Work in the app’s folder with the proposer context. Report what staging has, what production still reads, and the exact owner approval command.
 
-- **deploy**, "Set up my billing function so that every change to production's settings waits for my approval, with a reason kept for each value, and deliver production's settings to Parameter Store": run step 3's `cub mini adopt`, then tell the person that starters are brought into the hub only under their own approval, which an agent session cannot do (until then adopt uses the package's files), and give them `cub mini adopt billing --provider-root ssm-account` to run again in their own terminal (it brings the starters in), then `cub variant approve starters --change-order starters/package-starters-v1 --note "Read them"` and then step 4's commands to approve and deliver.
+- **deploy**, "Set up my billing function so that every change to production's settings waits for my approval, with a reason kept for each value, and deliver production's settings to Parameter Store": run step 3's `cub mini adopt`, then give the person the starters approve, `cub variant approve starters-approved --all --note "Read them"`, and step 4's commands to approve and deliver.
 - **update**, "Make the billing run fail fast, two retries; I'll approve production": edit `billing/.env`, run step 5 with their reason, and give them the `cub mini approve` command it printed.
 - **undo**, "Undo the retries change in production, and deliver it": run step 7.
 - **move**, "Move billing to our team's shared hub": run steps 8 and 9 with their context. Then check that production there waits for approval, as the later step shows, and say so plainly if it does not.
@@ -151,11 +153,11 @@ You are doing this for a person, in their folder, with step 1's settings. Each r
 
 Never approve or refuse a change to production yourself, even when told the person agreed; never read or copy the encrypted parameter's value; never edit `ssm-account/state.json`, which the add-on writes. You are done when the task's check below passes.
 ## Testing
-Each task starts where the Human steps before it leave off, in the same folder for every arm. Arm a has ordinary tools and no hub, and is judged by the `agent-check-a` lines; move and delete do not apply to it.
+The no-account rehearsal checks provider values after approval and rollback, then checks the shared hub separately. A real AWS run checks IAM and runtime readback. Each task starts where the Human steps before it leave off, in the same folder for every arm. Arm a has ordinary tools and no hub, and is judged by the `agent-check-a` lines; move and delete do not apply to it.
 
 <!-- agent-task: deploy -->
 > Set up my billing function so that every change to production's settings waits for my approval, with a reason kept for each value, and deliver production's settings to Parameter Store. The app is in `billing`; `ssm-account` is a local stand-in for its AWS account.
-<!-- agent-person deploy: cub mini adopt billing --provider-root ssm-account > /dev/null && cub variant approve starters --change-order starters/package-starters-v1 --note "Read them" && cub mini approve billing-live/connect --yes && CUB_CONFIG="$PWD/reader" cub auth login --new-context --private-key="$HOME/.confighub/keys/billing-delivery.jwk" --server "$(cub context get -o jq=.coordinate.serverURL)" > /dev/null && sh deliver -->
+<!-- agent-person deploy: cub variant approve starters-approved --all --note "Read them" && cub mini approve billing-live/connect --yes && CUB_CONFIG="$PWD/reader" cub auth login --new-context --private-key="$HOME/.confighub/keys/billing-delivery.jwk" --server "$(cub context get -o jq=.coordinate.serverURL)" > /dev/null && sh deliver -->
 <!-- agent-check deploy: cub changeworkflow get --space workflows billing-live-approval >/dev/null && cub unit data app --space billing-live | grep -qx SSM_MAX_RETRIES=5 && ! cub unit data app --space billing-live | grep -q unused-stand-in-value -->
 <!-- agent-check-a deploy: python3 -c "import json,sys; p=json.load(open('ssm-account/state.json'))['parameters']; sys.exit(not ('/billing/production/SSM_MAX_RETRIES' in p and p['/billing/production/API_TOKEN']['Type']=='SecureString'))" -->
 <!-- agent-task: update -->
@@ -173,7 +175,7 @@ Each task starts where the Human steps before it leave off, in the same folder f
 <!-- agent-task: delete -->
 > Remove billing from this computer's hub; the team's hub keeps it.
 <!-- agent-check delete: cub space get pattern-parameter-store >/dev/null && ! cub component get billing >/dev/null 2>&1 && ! cub space get billing-file-proposals >/dev/null 2>&1 -->
-<!-- next-step: keep the starter on for the next app | Your next Parameter Store app can start with the same usual settings, each with its reason, and production there will wait for your yes before anything changes; want the starter kept on for it? -->
+<!-- next-step when "waits for your approval": keep the starter on for the next app | Production waited for your yes because the starter set this app up that way, with a reason for each setting. Your next Parameter Store app can start the same way; want the starter kept on for it? -->
 <!-- arms: a,b,c -->
 This proves: the exact approved revision was delivered, to a local stand-in for Parameter Store (the add-on reads the revision you approved, with a key that can only read production); the move stores the app in hosted ConfigHub, with production there waiting for approval. Nothing reaches AWS itself. The checks above can be run by hand, in `~/starter-example`, with step 1's settings. The next step it aims to win is keeping the starter on, so that the next Parameter Store app gets the same settings and the same wait for approval.
 
@@ -181,7 +183,7 @@ This proves: the exact approved revision was delivered, to a local stand-in for 
 
 Results, 13 November 2026, confighub mini 0.11.1-mini.2. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Scripted run: passed, 112 seconds for the steps, within the page's budget of 200.
+- Scripted run, on confighub mini 0.11.1-mini.2: passed, 98 seconds for the steps, within the page's budget of 240; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
 - Agent runs (on confighub mini 0.11.1-mini.0): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
@@ -195,15 +197,19 @@ Results, 13 November 2026, confighub mini 0.11.1-mini.2. Figures from this page'
 
 No agent approved or refused a change to production.
 
-Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Your next Parameter Store app can start with the same usual settings, each with its reason, and production there will wait for your yes before anything changes; want the starter kept on for it?"
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Production waited for your yes because the starter set this app up that way, with a reason for each setting. Your next Parameter Store app can start the same way; want the starter kept on for it?"
 
-| Arm | Model | Persons | Noticed | Want the next step now | Later | In the way |
-|---|---|---|---|---|---|---|
-| a | claude-opus-5-5 | 30 | 100% | 0% | 10% | 100% |
-| b | claude-opus-5-5 | 30 | 100% | 17% | 67% | 100% |
-| c | claude-opus-5-5 | 30 | 100% | 20% | 70% | 100% |
-| a | claude-sonnet-5-5 | 30 | 100% | 0% | 17% | 97% |
-| b | claude-sonnet-5-5 | 30 | 100% | 20% | 70% | 93% |
-| c | claude-sonnet-5-5 | 30 | 100% | 27% | 60% | 100% |
+The plugin offers it once, after the answer at whose end it showed the moment the offer names ("waits for your approval"). Offered is the share of persons it was shown to; want it now and later are over them.
+
+| Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 100% |
+| b | claude-opus-5-5 | 30 | 100% | 100% | 10% | 73% | 97% |
+| c | claude-opus-5-5 | 30 | 33% | 100% | 0% | 70% | 100% |
+| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 97% |
+| b | claude-sonnet-5-5 | 30 | 100% | 100% | 10% | 83% | 97% |
+| c | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 100% |
+
+- Downloaded [mini-v0.11.1-mini.2](https://github.com/confighubai/confighub-mini-plugin/releases/tag/mini-v0.11.1-mini.2) and verified its SHA-256. The scripted walkthrough passed in 88.2 seconds, including the hosted handoff. A separate adoption recorded the approved Parameter Store starter revision from the hub. The live adapter refused the pending hosted order; no approved AWS delivery is recorded.
 
 <!-- results:end -->

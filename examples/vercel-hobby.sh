@@ -2,6 +2,12 @@
 set -euo pipefail
 umask 077
 export CUB_CONFIG="${CUB_CONFIG:-$HOME/.confighub}"
+: "${MINI:?set MINI to the unpacked ConfigHub mini package}"
+: "${WALKTHROUGH_VERCEL_SCOPE:?set this to your personal Hobby scope or disposable team project scope}"
+if ! cub mini adopt --help 2>&1 | grep -- '--vercel-live' >/dev/null; then
+  echo "Use a mini package that lists --vercel-live in cub mini adopt --help." >&2
+  exit 2
+fi
 PROJECT="${WALKTHROUGH_PREFIX:-ch-vercel-$(date +%s)-}shop"
 export PROJECT
 mkdir "$HOME/vercel-proof"
@@ -11,6 +17,10 @@ printf '%s\n' 'module.exports = (_, res) => { res.setHeader("Cache-Control", "no
 printf 'EDGE_REGION=fra1\n' > shop/.env.production
 v() { if [ -n "${WALKTHROUGH_VERCEL_CONFIG:-}" ]; then vercel --global-config "$WALKTHROUGH_VERCEL_CONFIG" "$@"; else vercel "$@"; fi; }
 v link --cwd shop --scope "$WALKTHROUGH_VERCEL_SCOPE" --project "$PROJECT" --yes
+cleanup() {
+  v project delete "$PROJECT" --confirm-name "$PROJECT" --scope "$WALKTHROUGH_VERCEL_SCOPE"
+}
+trap 'cleanup || printf "Remove the disposable Vercel project %s to finish cleanup.\n" "$PROJECT" >&2' EXIT
 v deploy --cwd shop --scope "$WALKTHROUGH_VERCEL_SCOPE" --prod --yes --json > baseline.json
 URL=$(jq -er '.deployment.productionUrl // .deployment.url' baseline.json)
 case "$URL" in https://*) ;; *) URL="https://$URL";; esac
@@ -59,8 +69,15 @@ propose() {
   CUB_CONFIG="$CUB_CONFIG-agent-shop-proposer" CUB_CONTEXT=shop-proposer cub mini upload shop --component shop --change-desc "$2"
   ORDER="shop-base/$(cub changeorder list --space shop-base -o json | jq -er --arg why "$2" '[.[].ChangeOrder | select(.Description | startswith($why))] | if length==1 then .[0].Slug else error("expected one proposal") end')"
 }
+refuses() {
+  if deliver "$1" "$2" > refused.log 2>&1; then
+    echo "Vercel delivery accepted an unapproved order" >&2
+    return 1
+  fi
+  grep -E 'delivery refused: .*approval|delivery refused: .*completed release' refused.log
+}
 ORDER=shop-live/connect; REV=$(head_rev)
-if deliver "$ORDER" "$REV"; then exit 1; fi
+refuses "$ORDER" "$REV"
 serves baseline
 echo "Vercel serves the baseline while connect awaits approval"
 approve "$ORDER"
@@ -68,13 +85,14 @@ ship "$ORDER" "$REV" 60
 propose 30 'Prices must show within thirty seconds during the sale'
 cub unit data app --space shop-staging | grep -qx EDGE_CACHE_SECONDS=30
 cub unit data app --space shop-live | grep -qx EDGE_CACHE_SECONDS=60
-if deliver "$ORDER" "$((REV+1))"; then exit 1; fi
+refuses "$ORDER" "$((REV+1))"
 serves 60
 echo "Vercel still serves 60 while the update awaits approval"
 approve "$ORDER"; REV=$(head_rev); ship "$ORDER" "$REV" 30
 propose 60 'Restore the cache after the sale'
-if deliver "$ORDER" "$((REV+1))"; then exit 1; fi
+refuses "$ORDER" "$((REV+1))"
 serves 30
 echo "Vercel still serves 30 while rollback awaits approval"
 approve "$ORDER"; REV=$(head_rev); ship "$ORDER" "$REV" 60
-v project delete "$PROJECT" --confirm-name "$PROJECT" --scope "$WALKTHROUGH_VERCEL_SCOPE"
+cleanup
+trap - EXIT

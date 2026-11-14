@@ -115,13 +115,12 @@ For an AI agent asked to set this up in the person's project.
 
 - The request: "Make sure an agent cannot change this app's production settings without my say. Staging can change freely."
 - If no hub answers, install one with `/confighub:install-mini`. Run `cub mini adopt . --name api --dry-run`, then without `--dry-run`, then `cub mini require-approval api --variant live --agent bot`.
-- `require-approval` puts this folder's sessions, yours included, on the agent's key: after it, your `cub` cannot read the person's sign-in and fails with "operation not permitted". That is the protection working, not a fault; read the setup it printed instead of checking again.
-- End by giving the person the short command to run in their own terminal: `cub mini approve api-base/adopt`. Never run it yourself, and never approve a later change to production.
+- End with one sentence on what the person now has, then the single command `require-approval` printed for them to run in their own terminal, such as `~/.confighub/mini/cub mini approve api-live`. Never run it yourself, and never approve a later change to production.
 - Done when `require-approval` has said that `api-live` waits for the person's approval and that the agent has a key of its own.
 
 ## Testing
 
-This proves: the settings were stored in the hub, and production's copy changed only by a person's approval while the agent's approval was refused. What was really used: confighub mini on this computer; the plugin's record (steps 1 and 9) needs a Claude Code session and is not part of the scripted run; nothing is delivered. The step it aims to win: putting the person's own agents on a key of their own.
+This proves: the settings were stored in the hub, and production's copy changed only by a person's approval while the agent's approval was refused. What was really used: confighub mini on this computer; the plugin's record (steps 1 and 9) needs a Claude Code session and is not part of the scripted run; nothing is delivered. This story has no offer moment in its agent task: the plugin shows the person no line at the end of the turn, so the next step below is not offered and conversion is not measured; the simulated persons still say whether they noticed the result and whether anything was in the way.
 
 A correct agent result has `api` in the hub with production behind approval. The checks below can be run by hand, in bash, in the app's folder:
 
@@ -131,9 +130,38 @@ A correct agent result has `api` in the hub with production behind approval. The
 <!-- agent-check attach: cub space get api-live >/dev/null && cub changeworkflow get --space workflows api-live-approval >/dev/null -->
 <!-- agent-check-a attach: find ~/walkthrough/api -name .git -prune -o -print | grep -qiE 'prod|live' -->
 <!-- arms: a,b,c -->
-<!-- next-step: agent key | Your next agent session here can run on a key of its own that can propose a change to production and never approve one; want that key set up for this folder? -->
+<!-- next-step when "did not change": see what waits | From now on a change to this app's production waits for your yes, whoever makes it. Want the one command that shows what is waiting for you, with each agent's reason? -->
 
 ```sh
 cub space get api-live >/dev/null && cub changeworkflow get --space workflows api-live-approval >/dev/null
 find ~/walkthrough/api -name .git -prune -o -print | grep -qiE 'prod|live'
 ```
+
+<!-- results:begin -->
+
+Results, 13 November 2026, a build of confighub mini from main at f699fc25. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+
+- Scripted run: passed, 74 seconds for the steps, within the page's budget of 180.
+- Agent runs (on confighub mini 0.11.1-mini.1): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+
+| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
+|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 0/3 | 18.9 | $0.106 | 0 |
+| b | claude-opus-5-5 | 3/3 | 45.6 | $0.295 | 0 |
+| a | claude-sonnet-5-5 | 0/3 | 15.2 | $0.051 | 0 |
+| b | claude-sonnet-5-5 | 3/3 | 33.0 | $0.105 | 1 |
+
+No agent approved or refused a change to production.
+
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "From now on a change to this app's production waits for your yes, whoever makes it. Want the one command that shows what is waiting for you, with each agent's reason?"
+
+The plugin offers it once, after the answer at whose end it showed the moment the offer names ("approval boundary"). Offered is the share of persons it was shown to; want it now and later are over them.
+
+| Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 90% |
+| b | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 57% |
+| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 90% |
+| b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 67% |
+
+<!-- results:end -->

@@ -1,0 +1,27 @@
+name: Docs
+
+# Every pull request: each link between this repository's pages reaches a file
+# and a heading, and each walkthrough keeps the format its readers and its
+# checks rely on.
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  docs:
+    name: Links and walkthroughs
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Every link and anchor between pages
+        run: python3 -I .github/tools/check-links.py .
+      - name: The walkthrough lint finds each planted fault
+        run: python3 -I .github/tools/lint-walkthroughs.py --self-test examples/walkthroughs
+      - name: Every walkthrough, and the index
+        run: python3 -I .github/tools/lint-walkthroughs.py examples/walkthroughs

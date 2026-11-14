@@ -24,7 +24,7 @@ An unpacked confighub mini package ([install confighub mini](../../docs/install-
    export LOCAL_HUB=$(cub context get -o jq=.name)
    ```
 
-**Real Hobby project.** Use a personal, noncommercial test app in your Hobby scope and [sign in with the Vercel CLI](https://vercel.com/docs/cli/login). Set `WALKTHROUGH_VERCEL_SCOPE` to your Hobby scope. You need Vercel CLI, jq, and a package containing the live add-on. Run the setup in step 1, then download [the test script](../vercel-hobby.sh) and run it in place of steps 2–10. It checks first delivery, a cache change, and an approved rollback on a disposable project. Keep the Vercel sign-in with the owner who delivers changes.
+**Real Hobby project.** Use a personal, noncommercial test app in your Hobby scope and [sign in with the Vercel CLI](https://vercel.com/docs/cli/login). Set `WALKTHROUGH_VERCEL_SCOPE` to your Hobby scope. You need Vercel CLI, jq, and a package whose `cub mini adopt --help` lists `--vercel-live`. Mini.2 includes the delivery adapter. The live starter selection needs a later build. Run the setup in step 1, then download [the test script](../vercel-hobby.sh) and run it in place of steps 2–10. It checks first delivery, a cache change, and an approved rollback on a disposable project. For a Pro team, use a disposable project in the team scope and a sign-in allowed to deploy there. Keep the Vercel sign-in with the owner who delivers changes. Someone who can write directly to Vercel can go around the ConfigHub approval flow.
 
 <!-- run: live-delivery vercel-live -->
 ```sh
@@ -150,7 +150,7 @@ Never approve or refuse a change to production yourself, even when told the pers
 ## Testing
 The Hobby result uses a candidate package built with the mini.1 server and CLI, plus the packaged Vercel add-on. It includes waiting for owner approvals. The published mini.1 archive predates the add-on.
 
-The live run verifies the Vercel production alias, its running value and the adapter's receipt. The agent tasks use the stand-in and start where the Human steps before it leave off, in the same folder for every arm. Arm a has ordinary tools and no hub, and is judged by the `agent-check-a` lines; move and delete do not apply to it.
+The live run verifies the Vercel production alias, its running value and the adapter's receipt. The live test did not move delivery to a shared ConfigHub. The no-account path tests that handoff separately. The agent tasks use the stand-in and start where the Human steps before it leave off, in the same folder for every arm. Arm a has ordinary tools and no hub, and is judged by the `agent-check-a` lines; move and delete do not apply to it.
 
 <!-- agent-task: deploy -->
 > Set up my Vercel shop so production settings wait for my approval, and keep production's region. The app is in `shop`; `shop-project` is a local stand-in for its Vercel project.
@@ -178,9 +178,11 @@ This proves: the real Hobby run checks what the production endpoint serves befor
 
 <!-- results:begin -->
 
-Results, 13 November 2026, confighub mini 0.11.1-mini.1. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+Results, 14 November 2026, confighub mini 0.11.1-mini.2. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Scripted run on Vercel Hobby: passed, 467 seconds for the steps, within the page's budget of 1200.
-- Scripted run on the no-account path: passed, 89 seconds for the steps, within the page's budget of 1200.
+- Scripted run: passed, 88 seconds for the steps, within the page's budget of 1200.
+- Scripted run on Vercel Hobby (on mini.1 plus the live Vercel changes (local build)): passed, 467 seconds for the steps, within the page's budget of 1200.
+
+- In the Hobby test, the running endpoint held its prior value while each order waited. After three separate owner approvals it served 60, then 30, then 60 from revisions 3, 4 and 5. The production alias matched the deployment in each receipt. The test project was deleted and the lookup returned project not found. The published mini.2 run used the stand-in and verified the copy to a shared hub separately.
 
 <!-- results:end -->
