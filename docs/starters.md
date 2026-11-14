@@ -333,7 +333,7 @@ It starts a hub of its own and removes it at the end. "The contract" in its outp
 - Starters are an experiment. They are off by default, and the format may change in a later release.
 - A starter looks for files, file name patterns, keys in a file, a provider's link, or an Argo CD or Flux source. A new kind of thing to look for, or a way of delivering other than an add-on, Argo CD or Flux, needs a change in confighub mini.
 - A starter reads an app's settings only from the files `cub mini adopt` reads: `.env` and its staging and production files, `app.env`, a compose file's environment, `.env.example`, and Terraform var files.
-- The Vercel and Parameter Store add-ons in the package run only against their stand-ins.
+- The Vercel and Parameter Store add-ons deliver to a real account only with your own sign-in, taken from your environment; the walkthroughs show the stand-in path, which needs no account.
 
 ## Undo it
 
