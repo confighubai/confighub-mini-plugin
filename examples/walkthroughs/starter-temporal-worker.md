@@ -16,9 +16,13 @@ Use an unpacked mini package containing the Temporal worker starter, plus Go, Py
 ### Steps
 
 1. From an empty directory, run the package example. It conducts steps 2–6 in disposable hubs, with scripted approvals. Use the commands in the example's `examples/temporal/starter/README.md` when connecting your own app. Approve production from your account.
-   <!-- run: deploy -->
+   <!-- run: setup -->
    ```sh
    export MINI=/absolute/path/to/unpacked-confighub-mini
+   test -x "$MINI/examples/temporal/starter/check-worker"
+   ```
+   <!-- run: deploy -->
+   ```sh
    "$MINI/examples/temporal/starter/check-worker" --package "$MINI" --out "$PWD/temporal-results"
    ```
 2. Switch starters on with `CUB_MINI_STARTERS=on`. Adopt the checkout containing the worker executable and `app.env`. Review the structured catalog in the hub. Verify `cub mini receipts worker --setup` identifies the approved catalog revision. A newer pending starter should be ignored.
