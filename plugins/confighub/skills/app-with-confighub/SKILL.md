@@ -69,7 +69,7 @@ individual setting. For example: "ConfigHub: proposing the memory change for api
 it will wait for your approval."
 Use that same line as the skill-use announcement; a separate technical skill-name update
 is unnecessary. Name the useful action the person asked for.
-The hooks also supply activity metadata and a reminder for recognised direct shell
+The hooks also supply activity metadata and a reminder for recognized direct shell
 commands. Some clients show this metadata; Codex CLI does not consistently display it
 in plain text. Your commentary is the person-facing attribution. Do not repeat it after
 receiving the hook reminder, announce routine reads, or claim completion before the result.
@@ -164,7 +164,7 @@ delivery do not come with it.
   result you promise. `copy`, `set` and approval alone do not prove production changed.
 - The app may run on this machine, another machine, in CI, one or many sandboxes, a shared
   dev cluster or production. Neither this workflow nor an app requires Kubernetes.
-- Follow the person's request: making a try does not authorise keeping, deploying or deleting it;
-  sharing a setup does not authorise sending it or granting access to someone.
+- Follow the person's request: making a try does not authorize keeping, deploying or deleting it;
+  sharing a setup does not authorize sending it or granting access to someone.
 - `try --keep` promotes its differences; `try --drop` deletes the isolated copy. Leave a
   try available for inspection unless the person asks to promote or delete it.

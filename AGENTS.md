@@ -61,7 +61,7 @@ A starter is one short YAML file that gives every new app of one kind a team's d
 
 | The person asks | Read |
 |---|---|
-| Show me how to do X, step by step | [walkthroughs](examples/walkthroughs/README.md): one page for each tool, starter and user story |
+| Show me how to do X, step by step | [walkthroughs](examples/walkthroughs/README.md): one page for each tool and for most starters and user stories |
 | How do I start? | [README](README.md), then [a new app](docs/journeys/new-app.md) or [an app you already have](docs/journeys/existing-app.md) |
 | My app is deployed by Argo CD or Flux | [an app Argo CD or Flux deploys](docs/journeys/gitops-app.md) |
 | How do approvals work? | [approvals](docs/approvals.md) |
