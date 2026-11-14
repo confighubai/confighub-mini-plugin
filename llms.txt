@@ -6,7 +6,7 @@ Pick a page by what the person is doing. Commands and outputs on these pages are
 
 Read [AGENTS.md](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/AGENTS.md) first: what the project is, what an agent may and may not do, the commands, and which page answers which question.
 
-Then read the matching walkthrough in [the walkthroughs index](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/examples/walkthroughs/README.md): one page for each tool, starter and user story, each with an "Agent" section written for an agent doing that job for a person.
+Then read the matching walkthrough in [the walkthroughs index](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/examples/walkthroughs/README.md): one page for each tool and for most starters and user stories, each with an "Agent" section written for an agent doing that job for a person.
 
 An agent in Claude Code with the plugin also has its skill, [app-with-confighub](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/plugins/confighub/skills/app-with-confighub/SKILL.md): the commands to run for an app with ConfigHub, and what it must not do. [The plugin's own README](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/plugins/confighub/README.md) has the slash commands and settings, in short.
 
@@ -41,6 +41,7 @@ An agent in Claude Code with the plugin also has its skill, [app-with-confighub]
 - [18. Ana asks for an app, and it fits the pattern](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/examples/walkthroughs/story-18-dev-intent.md): A new app on the team's pattern, with rules that keep a value over the limit from reaching the service, and a second app made from the first
 - [19. Sam's bad afternoon: stop it, find it, undo it](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/examples/walkthroughs/story-19-recovery.md): One command stops every agent session and takes an agent's key away; then find its change and put it back
 - [20. Noor's staging: more memory, and production left alone](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/examples/walkthroughs/story-20-noors-staging.md): An agent changes staging's own file; production changes only with your approval
+- [21. Ana's service, sized by what it used](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/examples/walkthroughs/story-21-ana-sized.md): A new service measured as it runs, at a stated load, and its CPU and memory proposed from that, with the measurement as the reason; production changes only with your approval
 - [22. Priya approves from Slack, and it counts](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/examples/walkthroughs/story-22-priya-slack.md): Told in the Slack thread where the work was asked for; your Approve there hands you one command that records the approval as yours, and anyone else's press approves nothing (local Slack stand-in)
 - [23. Theo's first app: the setup travels with it from the first prompt](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/examples/walkthroughs/story-23-theo-first-app.md): The reason for each setting an agent writes, kept with it from the first file, and where the app came from
 - [24. Priya's platform team's base: one base, ten apps, one bump](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/examples/walkthroughs/story-24-company-base.md): One change to a shared base reaches every app, and each app keeps the values it set itself
@@ -48,7 +49,7 @@ An agent in Claude Code with the plugin also has its skill, [app-with-confighub]
 
 ## Get started
 
-- [Walkthroughs](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/examples/walkthroughs/README.md): One job from start to finish for each tool, starter and user story, with every command and what it prints
+- [Walkthroughs](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/examples/walkthroughs/README.md): One job from start to finish for each tool, and for most starters and user stories, with every command and what it prints
 - [Try the plugin on its own](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/try-the-plugin.md): See the record at work, with no hub; what it records, and setting it up for your whole team
 - [A new app](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/journeys/new-app.md): One request in Claude Code gives you the app, with staging and production settings in a hub
 - [An app you already have](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/journeys/existing-app.md): Attach `.env` files, Terraform var files, Kustomize or Helm values, with your values kept as they are

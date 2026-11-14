@@ -1,6 +1,6 @@
 # Walkthroughs
 
-A walkthrough shows one job from start to finish, in one short page, with every command and what it prints. There is one for each tool, each starter and each user story.
+A walkthrough shows one job from start to finish, in one short page, with every command and what it prints. There is one for each tool and for most starters and user stories; the tables below list the ones not built yet.
 
 Each walkthrough has three parts:
 
@@ -19,7 +19,7 @@ To pick one: start with a tool's walkthrough to learn the commands. Pick a start
 
 ## Starters
 
-A starter gives a new app of one kind its usual settings, each with a reason ([starters](../../docs/starters.md)). Each starter's walkthrough deploys an app, updates it, undoes the update, moves it to a shared hub, and deletes it.
+A starter gives a new app of one kind its usual settings, each with a reason ([starters](../../docs/starters.md)). Each starter's walkthrough deploys an app, updates it, undoes the update, moves it to a shared hub, and deletes it; for Daytona, the move is your own step. The temporal-worker and unikraft starters have no walkthrough yet.
 
 | Starter | What you get | Starts with |
 |---|---|---|
@@ -56,7 +56,7 @@ A starter gives a new app of one kind its usual settings, each with a reason ([s
 | [18. Ana asks for an app, and it fits the pattern](story-18-dev-intent.md) | A new app on the team's pattern, with rules that keep a value over the limit from reaching the service, and a second app made from the first | confighub mini |
 | [19. Sam's bad afternoon: stop it, find it, undo it](story-19-recovery.md) | One command stops every agent session and takes an agent's key away; then find its change and put it back | both |
 | [20. Noor's staging: more memory, and production left alone](story-20-noors-staging.md) | An agent changes staging's own file; production changes only with your approval | confighub mini |
-| 21. Ana's service, sized by what it used | Not built yet: a sandbox that measures what a new service uses, and sizes it from that | not built yet |
+| [21. Ana's service, sized by what it used](story-21-ana-sized.md) | A new service measured as it runs, at a stated load, and its CPU and memory proposed from that, with the measurement as the reason; production changes only with your approval | confighub mini |
 | [22. Priya approves from Slack, and it counts](story-22-priya-slack.md) | Told in the Slack thread where the work was asked for; your Approve there hands you one command that records the approval as yours, and anyone else's press approves nothing (local Slack stand-in) | both |
 | [23. Theo's first app: the setup travels with it from the first prompt](story-23-theo-first-app.md) | The reason for each setting an agent writes, kept with it from the first file, and where the app came from | the plugin |
 | [24. Priya's platform team's base: one base, ten apps, one bump](story-24-company-base.md) | One change to a shared base reaches every app, and each app keeps the values it set itself | confighub mini |

@@ -179,11 +179,36 @@ This proves: stored, behind approval, with the approval given from a Slack messa
 
 <!-- results:begin -->
 
-Results, 14 November 2026, confighub mini 0.11.1-mini.5-s22-8c554aaf: a build of this change at commit 8c554aaf, not a release. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+Results, 14 November 2026, confighub mini 0.11.1-mini.7. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
+- Scripted run: passed, 29 seconds for the steps, within the page's budget of 180; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
 - Environment: a local hub and a local Slack stand-in, no cluster; Dana's and Priya's presses, and Priya's approval, are played by the run.
-- Scripted run: passed, 32 seconds for the steps, within the page's budget of 180; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
-- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+- Agent runs (on confighub mini 0.11.1-mini.7, 14 November 2026): a pilot, 3 runs per arm on claude-sonnet-5-5; the claude-opus-5-5 runs were stopped part way to save credits and are not counted. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+
+| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
+|---|---|---|---|---|---|
+| a | claude-sonnet-5-5 | 0/3 | 7.6 | $0.043 | 0 |
+| b | claude-sonnet-5-5 | 3/3 | 13.3 | $0.082 | 1 |
+
+No agent approved or refused a change to production.
+
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Priya can be told in your team's real Slack thread, and approve there as herself, once this app is on your organization's ConfigHub. Want it set up there?" It tests the step from confighub mini to a free hosted hub.
+
+The plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
+
+| Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|---|
+| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 97% |
+| b | claude-sonnet-5-5 | 30 | 100% | 100% | 17% | 70% | 83% |
+
+The same persons as Priya, who did not ask the agent for anything: "You are Priya. You lead the platform team and approve every change to production; you did not ask for this one, Sam did, in the team's Slack." Each judged what that role saw in the run, and was offered the step when the run offered it.
+
+| Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|---|
+| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 0% |
+| b | claude-sonnet-5-5 | 30 | 100% | 100% | 3% | 87% | 50% |
+
+- Agent runs (on confighub mini 0.11.1-mini.5-s22-8c554aaf, a build of the change before its release, 14 November 2026): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
@@ -192,7 +217,7 @@ Results, 14 November 2026, confighub mini 0.11.1-mini.5-s22-8c554aaf: a build of
 | a | claude-sonnet-5-5 | 0/3 | 9.5 | $0.046 | 0 |
 | b | claude-sonnet-5-5 | 3/3 | 14.9 | $0.059 | 1 |
 
-No agent approved or refused a change to production. On the published confighub mini 0.11.1-mini.5, which has no Slack add-on, the steps stop at step 6; arm a, which needs only the files, passed 0 of 6 there too.
+No agent approved or refused a change to production.
 
 Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Priya can be told in your team's real Slack thread, and approve there as herself, once this app is on your organization's ConfigHub. Want it set up there?"
 

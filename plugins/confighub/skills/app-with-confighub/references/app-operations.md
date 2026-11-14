@@ -297,7 +297,7 @@ commands above.
 
 ## Do not
 
-- Defer an authorised command that this key can run. Complete those commands now; a restricted key's owner-only setup remains an explicit handoff.
+- Defer an authorized command that this key can run. Complete those commands now; a restricted key's owner-only setup remains an explicit handoff.
 - Ask the person to sign in anywhere. Step 1 signs `cub` in.
 - Print, store or put in the hub a password, key or token.
 - Run `cub mini deploy-from-hub` or `cub mini back-to-git`: they change what a production cluster deploys from, so they are the person's commands, which you name, with their flags, and never run.
