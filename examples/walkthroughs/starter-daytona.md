@@ -118,7 +118,7 @@ The checks read the structured starter, the staging and live Units, and the shar
 <!-- agent-cleanup: cub --context shared component delete --recursive --detach "$TEAM_APP" || true -->
 <!-- agent-cleanup: cub --context shared changeworkflow delete --space workflows "$TEAM_APP-live-approval" || true -->
 <!-- arms: b -->
-<!-- next-step boundary=same-tier when "did not change": reuse the test | Want to try the next change in a disposable sandbox before bringing it back for review? -->
+<!-- next-step boundary=same-tier when "another change is ready to test in a sandbox": reuse the test | The 240-batch proposal is back with its reason. If another queue spike needs a trial, want to reuse this disposable sandbox before review? -->
 
 This proves: the starter and the settings are stored and the experiment can become a new pending proposal. Verify the value and reason on the destination; a copied file by itself is insufficient.
 
@@ -137,9 +137,8 @@ Results, 14 November 2026, confighub mini 0.11.1-mini.5. Figures from this page'
 
 No agent approved or refused a change to production.
 
-Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Want to try the next change in a disposable sandbox before bringing it back for review?" It offers more of the tier the person has, not a step up.
+The mini.7 pilots used a local stand-in and ten simulated readers per run. They tested the earlier reuse offer when production did not change. The revised offer waits until another change needs a sandbox trial. Only aggregate pilot results were kept, so there is no saved session to rejudge at that moment.
 
-The plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|
