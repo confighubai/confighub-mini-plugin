@@ -91,17 +91,18 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
    Restarting: echo deploying the release the settings name
    ```
 
-7. Release 1.1.0 turns out slow under load. Roll production back in one command, with the reason. `ORDER` is the change order's name, the one `cub mini waiting` showed; this line looks it up:
+7. Release 1.1.0 turns out slow under load. Roll production back, with the reason: the rollback sets the release back in the shared settings, and production takes it once you approve, as any release. `ORDER` is the change order's name, the one `cub mini waiting` showed; this line looks it up:
    <!-- run: rollback -->
    ```sh
    ORDER=$(cub changeorder list --space shop-base -o jq='.[] | select(.ChangeOrder.Description | startswith("Release 1.1.0")) | .ChangeOrder.Slug')
    cub mini rollback shop-live --change-order shop-base/$ORDER --reason "1.1.0 answers /health slowly under load; back to 1.0.0"
+   cub mini approve --yes --note "Back to 1.0.0" >/dev/null
    CUB_CONFIG=$RUNTIME_CONFIG cub mini pull shop --variant live --dir ~/walkthrough/service --restart "echo deploying the release the settings name"
    grep RELEASE service/app.env
    ```
    ```text
-   Set back on shop-live, each with the reason:
-     app: RELEASE shop-1.1.0@sha256:6d51e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1 → shop-1.0.0@sha256:83df0c6a1f2e4b5d6c7a8b9e0f1d2c3b4a5968778695a4b3c2d1e0f9a8b7c6d5
+   Set back in the shared settings (shop-base), with the reason: 1.1.0 answers /health slowly under load; back to 1.0.0
+     RELEASE: shop-1.1.0@sha256:6d51e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1 → shop-1.0.0@sha256:83df0c6a1f2e4b5d6c7a8b9e0f1d2c3b4a5968778695a4b3c2d1e0f9a8b7c6d5
    …
    RELEASE=shop-1.0.0@sha256:83df0c6a1f2e4b5d6c7a8b9e0f1d2c3b4a5968778695a4b3c2d1e0f9a8b7c6d5
    ```
