@@ -215,4 +215,25 @@ The plugin offers it once, after the answer at whose end it showed the moment th
 | a | claude-sonnet-5-5 | 15 | 0% | 100% | n/a | n/a | 33% |
 | b | claude-sonnet-5-5 | 15 | 100% | 100% | 27% | 73% | 100% |
 
+Results, 14 November 2026, confighub mini 0.11.1-mini.8. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+
+- Environment: checksum-verified published mini.8 for macOS arm64, with the revised walkthrough and Claude Code. This pilot used only the guided arm. The production copy was checked while both requests were pending. No live service or separate creator account was used.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5. Arms: b is the plugin, confighub mini and this page as reading.
+
+| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
+|---|---|---|---|---|---|
+| b | claude-sonnet-5-5 | 3/3 | 34.9 | $0.114 | 2 |
+
+No agent approved or refused a change to production.
+
+Simulated persons, not people: 5 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Before your next web app goes live, you can check which approved defaults it inherited. Want to see those settings and their reasons?" It offers more of the tier the person has, not a step up.
+
+The plugin offers it once, after the answer at whose end it showed the moment the offer names ("Staging took it now: cart, shop"). Offered is the share of persons it was shown to; want it now and later are over them.
+
+| Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|---|
+| b | claude-sonnet-5-5 | 15 | 0% | 100% | n/a | n/a | 87% |
+
+This follow-up left a median of 2 owner commands, compared with 3 in the earlier mini.7 guided arm. The new checks required one order for the app, one for the starter, and the old production settings while both waited. This compares two pilots on different packages. The next-app offer was not shown; its uptake was not measured.
+
 <!-- results:end -->
