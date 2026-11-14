@@ -25,6 +25,9 @@ Use an unpacked mini package containing the Temporal worker starter, plus Go, Py
    ```sh
    "$MINI/examples/temporal/starter/check-worker" --package "$MINI" --out "$PWD/temporal-results"
    ```
+   ```text
+   PASS the approved rollback reaches a new revision and restores worker behavior
+   ```
 2. Switch starters on with `CUB_MINI_STARTERS=on`. Adopt the checkout containing the worker executable and `app.env`. Review the structured catalog in the hub. Verify `cub mini receipts worker --setup` identifies the approved catalog revision. A newer pending starter should be ignored.
 3. Use the scoped reader to write the approved policy. Start the Temporal worker from the example. Run the probe. The sample Activity fails twice and succeeds on its third attempt.
 4. Propose one attempt with `cub mini set worker ACTIVITY_MAX_ATTEMPTS=1 --variant base --change-desc "Reduce retries during the incident"` and create a live change order. The old revision should still succeed on its third attempt. Then approve the order. Use the add-on with `--live`, the exact order and live revision, and run a new probe. It should now fail after one attempt.
@@ -58,12 +61,14 @@ The comparison uses a real Temporal service and the same worker for two arms. Th
 This proves: the structured starter is stored and selected, and a real Temporal worker runs the exact approved policy and its rollback on a local service. A shared-hub delivery needs its own observation.
 
 
-In the local macOS arm64 mini.908 comparison, the starter passed 19/19 checks and manual mini passed 11/11 using scripted approvals. Both used revisions 3, 4 and 5 and showed the same retry behavior. The starter kept the original runtime environment and rejected a changed policy with the old digest. After catalog review it connected in one command (9.2 s). Manual mini took two (12.3 s) to create and connect a new pattern. Shared-hub delivery and agent pilots still need their own runs.
+In the local macOS arm64 mini.908 comparison, the starter passed 19/19 checks and manual mini passed 11/11 using scripted approvals. Both used revisions 3, 4 and 5 and showed the same retry behavior. The starter kept the original runtime environment and rejected a changed policy with the old digest. After catalog review it connected in one command (9.2 s). Manual mini took two (12.3 s) to create and connect a new pattern. Shared-hub delivery still needs its own run.
 
 <!-- results:begin -->
 
 Results, 14 November 2026, confighub mini 0.11.1-mini.7. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run: passed, 158 seconds for the steps, within the page's budget of 360. The real local Temporal worker passed 19 of 19 checks with the starter and 11 of 11 with manual mini. Both arms used scripted approvals.
+
+Two Claude Sonnet 5.5 pilots with the plugin passed all six deploy, update and rollback checks. The agents ran the disposable comparison, which supplies its own scripted approvals. Move and delete had no assertions. All ten simulated readers noticed the result and reported friction. Several flagged cleanup of local test files and the build cache as unexpected. The plugin showed no next-step offer.
 
 <!-- results:end -->
