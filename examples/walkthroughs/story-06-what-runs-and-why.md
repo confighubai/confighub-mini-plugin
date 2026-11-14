@@ -142,7 +142,7 @@ For an AI agent doing this for a person.
 
 The scripted run follows the Human steps on a hub of its own and compares the quoted output. A correct agent result is an `answer.md` with the three findings, and, where there is a hub, Birch's image left as it was. The checks below can be run by hand after the steps and an answer:
 
-This proves: stored. The answers are read from what a hub on this computer holds; no customer's cluster is read, and nothing is delivered. The next step this aims to win: keeping the hub on so the questions can be asked again. Tested on the checksum-verified published confighub mini 0.11.1-mini.2 with the plugin 0.85.0, 14 November 2026: environment, local hub, no cluster; approval, no approval step. At the moment this page's next step belongs to, the plugin showed no line in the runs, so the offer was not made: the plugin missed the moment.
+This proves: stored. The answers are read from what a hub on this computer holds; no customer's cluster is read, and nothing is delivered. The next step this aims to win: keeping the hub on so the questions can be asked again. Tested on the checksum-verified published confighub mini 0.11.1-mini.2 with the plugin 0.85.0, 14 November 2026: environment, local hub, no cluster; approval, no approval step. At the moment this page's next step belongs to, the plugin showed no line in the runs, so the offer was not made: the plugin missed the moment. From the next release, the plugin says one line at this moment, such as "ConfigHub plugin: inventory/CHANGES.md lists what each copy changed, with the reason where one was given; nothing in the hub changed." The next-step line names words from that line. The Results below stay as run on 0.11.1-mini.2 until a release run replaces them.
 
 <!-- agent-task: inventory -->
 > Our GPU platform is rendered in this folder (given/), and ./customers loads our three customers' copies, Birch, Cedar and Elm, into a hub. Which customers differ from the platform we gave them, how, do we know why, and does any break our rule that images come only from nvcr.io or registry.k8s.io? Do not change anything. Write the answer to answer.md.
@@ -151,7 +151,7 @@ This proves: stored. The answers are read from what a hub on this computer holds
 <!-- agent-check-a inventory: f=$(find . -name answer.md | head -1) && grep -qi 'birch' "$f" && grep -q 'registry.dev.example' "$f" && grep -q '580.95.05' "$f" && grep -qi '1Gi' "$f" -->
 <!-- agent-tools: ./customers -->
 <!-- arms: a,b -->
-<!-- next-step when "what your agents changed": ask again every week | Ask the same three questions again next week, across every customer, and see what changed since? -->
+<!-- next-step when "lists what each copy changed": ask again every week | Ask the same three questions again next week, across every customer, and see what changed since? -->
 
 ```sh
 cat answer.md

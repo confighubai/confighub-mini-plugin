@@ -159,7 +159,7 @@ For an AI agent doing this for a person.
 
 The scripted run follows the Human steps on a hub of its own and compares the quoted output. A correct agent result is the two teams' copies as above, with Research's failed evaluation recorded. Without a hub, the equivalent is two files, one for each team, with those values. The checks below can be run by hand after the steps:
 
-This proves: stored. Each team's definition, its reasons and the evaluation are in a hub on this computer; no assistant runs from them. The next step this aims to win: adding the next team to the same hub. Tested on the checksum-verified published confighub mini 0.11.1-mini.2 with the plugin 0.85.0, 14 November 2026: environment, local hub, no cluster; approval, no approval step.
+This proves: stored. Each team's definition, its reasons and the evaluation are in a hub on this computer; no assistant runs from them. The next step this aims to win: adding the next team to the same hub. Tested on the checksum-verified published confighub mini 0.11.1-mini.2 with the plugin 0.85.0, 14 November 2026: environment, local hub, no cluster; approval, no approval step. From the next release, the plugin says one line at this moment, such as "ConfigHub plugin: support-assistant-support and support-assistant-research took the new version and kept read-tickets true and model large-2026-09, each with its reason." The next-step line names words from that line. The Results below stay as run on 0.11.1-mini.2 until a release run replaces them.
 
 <!-- agent-task: assistant -->
 > Our support assistant's definition is support-assistant.yaml in this folder, and the platform team's next version is in next/. Give Support and Research their own copy, named support and research. Support may read customers' tickets because it answers from them. Research keeps model large-2026-09 because its evaluation of the newer model is not finished. Then take the next version for both, and record that Research's evaluation of large-2026-11 failed: 2 of 50 answers cite papers that do not exist.
@@ -167,7 +167,7 @@ This proves: stored. Each team's definition, its reasons and the evaluation are 
 <!-- agent-check assistant: r=$(cub unit data support-assistant --space support-assistant-research) && s=$(cub unit data support-assistant --space support-assistant-support) && echo "$r" | grep -q '^model: large-2026-09 #' && echo "$r" | grep -q 'open-change: true' && echo "$s" | grep -q '^model: large-2026-11' && echo "$s" | grep -q 'read-tickets: true' && cub attestation list --space support-assistant-research | grep -q 'Evaluation *Fail' -->
 <!-- agent-check-a assistant: r=$(grep -rl --include='*.yaml' '^model: large-2026-09' . | xargs grep -l 'open-change: true' | head -1) && s=$(grep -rl --include='*.yaml' '^model: large-2026-11' . | xargs grep -l 'read-tickets: true' | head -1) && [ -n "$r" ] && [ -n "$s" ] -->
 <!-- arms: a,b -->
-<!-- next-step when "recorded": give a third team the assistant | Give a third team its own copy of the assistant, with the same next version and its own reasons? -->
+<!-- next-step when "with its reason": give a third team the assistant | Give a third team its own copy of the assistant, with the same next version and its own reasons? -->
 
 ```sh
 cub unit data support-assistant --space support-assistant-research | grep -E '^model|open-change'
