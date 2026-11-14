@@ -174,7 +174,7 @@ The fixture tests the copy to a shared hub. The real run independently verifies 
 <!-- agent-task: delete -->
 > Remove the shop from this computer's hub; the team's hub keeps it.
 <!-- agent-check delete: cub space get pattern-vercel >/dev/null && ! cub component get shop >/dev/null 2>&1 && ! cub space get shop-file-proposals >/dev/null 2>&1 -->
-<!-- next-step: use the starter again | Want to use the same starting settings and approval for your next Vercel app? -->
+<!-- next-step boundary=same-tier: use the starter again | Want to use the same starting settings and approval for your next Vercel app? -->
 <!-- arms: a,b,c -->
 This proves: the real Hobby run checks what the production endpoint serves before and after first delivery, an update and a rollback. The no-account run checks delivery to the local stand-in and the move to a shared hub.
 
