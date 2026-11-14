@@ -137,7 +137,7 @@ For an AI agent doing this for a person.
 
 The scripted run follows the Human steps and compares the quoted output. Arm a, without confighub mini, is not applicable: production's copy and its kept value are in the hub. A correct agent result is two ready controllers at 3.7.14 on `wsa-preview`, before the cleanup. The checks below can be run by hand after step 8:
 
-This proves: a service is running. The real Argo CD on a local kind cluster runs the release the hub published, with production's kept value, and argobot reports it healthy. The next step this aims to win: reviewing what production keeps before anyone merges. Tested on the checksum-verified published confighub mini 0.11.1-mini.4 with the plugin 0.87.0, 14 November 2026: environment, the real Argo CD on a local kind cluster; approval, no approval step. The plugin says one line at this moment, such as "ConfigHub plugin: platform-preview took the new version and kept Replicas 2. Files with the reasons are in result/." The next-step line names words from that line.
+This proves: a service is running. The real Argo CD on a local kind cluster runs the release the hub published, with production's kept value, and argobot reports it healthy. The next step this aims to win: production taking the change, waiting for the person's yes. Tested on the checksum-verified published confighub mini 0.11.1-mini.4 with the plugin 0.87.0, 14 November 2026: environment, the real Argo CD on a local kind cluster; approval, no approval step. The plugin says one line at this moment, such as "ConfigHub plugin: platform-preview took the new version and kept Replicas 2. Files with the reasons are in result/." The next-step line names words from that line.
 
 <!-- agent-task: see -->
 > Production, platform-preview in the hub, runs Traefik 3.7.12 on the local kind cluster wsa-preview, with two controllers on purpose. The platform's next version is in ./platform-2. Show me what it would do to production, then take it and let me see it running there. Leave it running for me to look at, and write the result as files for review in ./result.
@@ -146,7 +146,8 @@ This proves: a service is running. The real Argo CD on a local kind cluster runs
 <!-- agent-tools: kubectl -->
 <!-- agent-cleanup: kind delete cluster --name wsa-preview >/dev/null 2>&1; true -->
 <!-- arms: b -->
-<!-- next-step boundary=same-tier when "took the new version and kept": review what production keeps | Want the new version and the two controllers production keeps listed in result/ for review before anyone merges? -->
+<!-- next-step boundary=same-tier when "took the new version and kept": production takes it | Want production to take this change, waiting for your yes before it does? -->
+<!-- next-step boundary=mini-to-free-hub when "took the new version and kept": a colleague approves the preview | Want a colleague to look at this preview from their own computer, and say yes to production taking it? -->
 
 ```sh
 kubectl --kubeconfig "$CUB_CONFIG/clusters/wsa-preview.kubeconfig" -n platform-ingress get deploy traefik \

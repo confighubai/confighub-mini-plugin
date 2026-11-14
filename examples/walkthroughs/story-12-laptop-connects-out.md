@@ -132,6 +132,7 @@ This proves: stored, on hosted ConfigHub, with the laptop's hub listening on the
 <!-- agent-check team: cub --context team unit data settings --space "$APP-live" | grep -qx 'TIMEOUT_SECONDS=120' && ! lsof -nP -iTCP -sTCP:LISTEN 2>/dev/null | awk '/confighub|postgres/ {print $9}' | grep -qv '^127\.0\.0\.1:' -->
 <!-- arms: b -->
 <!-- next-step boundary=same-tier when "copied": approval on the team's copy | Production's copy on the team's hub has no approval rule yet: want it to need your yes before it changes? -->
+<!-- next-step boundary=mini-to-free-hub when "copied": a colleague approves | Want a colleague to be able to approve changes to production's copy on the team's hub? -->
 
 ```sh
 cub --context team unit data settings --space "$APP-live"

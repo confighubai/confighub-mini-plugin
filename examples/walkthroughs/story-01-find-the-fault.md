@@ -159,7 +159,8 @@ This proves: stored. The fix is kept in a hub on this computer and written out a
 <!-- agent-check fix: d=$(cub unit data cluster-policy-clusterpolicy --space gpu-operator-customer) && echo "$d" | grep -q 'version: "580.95.05" # Customer' && echo "$d" | grep -q 'enabled: false # Customer' && ! echo "$d" | grep -q 'nvcr.io/nvdia' && grep -rqs 'certified with driver 580.95.05' --include=CHANGES.md . -->
 <!-- agent-check-a fix: f=$(grep -rl --include='*.yaml' '580.95.05' . | grep -v -e '/as-found/' -e '/given/' -e '/next/' | head -1) && [ -n "$f" ] && ! grep -q 'nvcr.io/nvdia' "$f" && grep -q 'repository: nvcr.io/nvidia$' "$f" -->
 <!-- arms: a,b -->
-<!-- next-step boundary=same-tier when "with its reason, so a later version will not overwrite": the same check on other customers | Want the same check run on your other customers' copies, to see which break the image rule? -->
+<!-- next-step boundary=same-tier when "with its reason, so a later version will not overwrite": check other customers | Want the same check run on your other customers' copies, to see which break the image rule? -->
+<!-- next-step boundary=mini-to-free-hub when "with its reason, so a later version will not overwrite": a colleague sees the fix | Want a colleague to be able to open this fix and its reasons from their own computer? -->
 
 ```sh
 cub unit data cluster-policy-clusterpolicy --space gpu-operator-customer | grep -E '# Customer|nvdia'
