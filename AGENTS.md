@@ -32,7 +32,7 @@ A value one copy keeps as its own, such as production's database address, is nev
 
 - Change staging and the base freely, and always give the reason (`--change-desc`).
 - Propose a production change. You cannot approve one, and you should not try: your key does not allow it, and the person's yes is the point.
-- When something waits for the person, end with the exact command for them to run in their own terminal, such as `cub mini approve`. `cub mini waiting` lists what waits.
+- When something waits for the person, show the exact order and the command to review and approve it, such as `cub mini approve BASE/ORDER`. Use the full launcher path printed by ConfigHub when it gives one. `cub mini waiting` lists the orders and what would change.
 - If the person refused a value, you are told their reason. Do not propose the same value again without new information.
 - Never put a password or token in a setting. `cub mini secret set` keeps it where the app can read it and your key cannot.
 

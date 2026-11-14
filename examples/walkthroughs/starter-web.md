@@ -44,7 +44,7 @@ confighub mini, unpacked as [installing confighub mini](../../docs/install-mini.
    …
      Leaves PORT alone: it is set already, PORT=5000, by you, in .env.
    …
-     Production takes the shared settings only after you approve them. To see them and approve them, in a terminal of your own: ~/.confighub/mini/cub mini approve menu-live
+     Production takes the shared settings only after you approve them. In your terminal, run `cub mini waiting` and review the production change and its exact `BASE/ORDER` ID. Approve only that order with `cub mini approve BASE/ORDER`; it records the approval and promotes only the reviewed change.
    ```
 4. Deploy it, part two: approve production's first settings, and write them where the service reads them. `cub mini pull` writes live's settings as `menu-running/app.env`; start the service from that file as you do now.
    <!-- run: deploy-live -->
@@ -63,7 +63,8 @@ confighub mini, unpacked as [installing confighub mini](../../docs/install-mini.
    ```sh
    printf 'PORT=5000\nLOG_LEVEL=info\nMENU_SOURCE=kitchen.json\n' > menu/.env
    cub mini upload menu --change-desc "Warnings alone hide what customers do"
-   cub mini approve --note "Info logs are fine in production" --yes
+   cub mini waiting  # inspect the exact order ID and diff
+   cub mini approve menu-base/ORDER --yes --note "Info logs are fine in production"  # replace ORDER with the exact ID
    cub mini pull menu --variant live --dir menu-running
    ```
    ```text
@@ -78,7 +79,8 @@ confighub mini, unpacked as [installing confighub mini](../../docs/install-mini.
    ```sh
    ORDER=$(cub changeorder list --space menu-base --where "Slug LIKE 'upload-%'" -o jq='.[-1].ChangeOrder.Slug')
    cub mini rollback menu-live --change-order "menu-base/$ORDER" --reason "Info logs show customer emails"
-   cub mini approve --yes --note "Back to warnings"
+   cub mini waiting  # inspect the exact rollback order ID and diff
+   cub mini approve menu-base/ORDER --yes --note "Back to warnings"  # replace ORDER with the exact ID
    cub mini pull menu --variant live --dir menu-running
    ```
    ```text
@@ -132,9 +134,9 @@ Your `menu` folder, unchanged by ConfigHub; `menu-running/app.env`, production's
 
 ## Agent
 For an AI agent doing these jobs for a person: run the Human steps' commands, adjusted to their app.
-- **Deploy:** `cub mini adopt FOLDER`. End your message with one sentence on what the person has now, in their words (for example, that production cannot change without them), and the one approve command adopt printed, such as `~/.confighub/mini/cub mini approve menu-live`. Copy it exactly as printed.
-- **Update:** change the app's file, then `cub mini upload FOLDER --change-desc "WHY"`. End the same way, with the approve command `upload` printed (for example `~/.confighub/mini/cub mini approve menu-base/upload-20261113-163415-0kyg`), copied exactly.
-- **Undo:** put the file back as it was and upload it again, with the reason. End the same way.
+- **Deploy:** `cub mini adopt FOLDER`. End your message with one sentence on what the person has now, in their words (for example, that production cannot change without them), and the exact `BASE/ORDER` from `cub mini waiting`; tell the person to review that order and use `cub mini approve BASE/ORDER`. Never use the no-order shorthand.
+- **Update:** change the app's file, then `cub mini upload FOLDER --change-desc "WHY"`. End the same way, with the exact `BASE/ORDER` printed for the reviewed upload, then have the person use `cub mini approve BASE/ORDER`.
+- **Undo:** put the file back as it was and upload it again, with the reason. End the same way with the exact order ID and diff-specific approval command.
 - **Move:** run step 8 with the shared hub's context, then read live back, and step 9, which only reads, to see that production waits; never make a change there to test it. If it does not, say so plainly.
 - **Delete:** step 10, only once the shared hub holds the app. Never delete the person's files.
 
@@ -154,9 +156,9 @@ Each task below is given to an agent in the folder that holds `menu`, after the 
 <!-- agent-task: delete -->
 > Remove menu from this computer's hub; the team's hub keeps it. Keep my files.
 
-<!-- agent-person deploy: cub mini approve --yes -->
-<!-- agent-person update: cub mini approve --yes -->
-<!-- agent-person undo: cub mini approve --yes || true -->
+<!-- agent-person deploy: cub mini approve menu-base/adopt --yes --note "First settings for production" -->
+<!-- agent-person update: orders=$(cub mini waiting --commands | sed -nE 's|^[[:space:]]*cub mini approve (menu-base/upload-[A-Za-z0-9-]+)([[:space:]].*)?$|\1|p; s|^[[:space:]]*cub variant approve [^[:space:]]+ --change-order (menu-base/upload-[A-Za-z0-9-]+)([[:space:]].*)?$|\1|p'); count=$(printf '%s\n' "$orders" | awk 'NF {n++} END {print n+0}'); test "$count" -eq 1 && cub mini approve "$orders" --yes --note "Info logs are fine in production" -->
+<!-- agent-person undo: orders=$(cub mini waiting --commands | sed -nE 's|^[[:space:]]*cub mini approve (menu-base/upload-[A-Za-z0-9-]+)([[:space:]].*)?$|\1|p; s|^[[:space:]]*cub variant approve [^[:space:]]+ --change-order (menu-base/upload-[A-Za-z0-9-]+)([[:space:]].*)?$|\1|p'); count=$(printf '%s\n' "$orders" | awk 'NF {n++} END {print n+0}'); test "$count" -eq 1 && cub mini approve "$orders" --yes --note "Back to warnings" -->
 <!-- agent-check deploy: cub unit data app --space menu-live | grep -qx PORT=5000 && cub unit data app --space menu-staging | grep -qx LOG_LEVEL=debug -->
 <!-- agent-check update: cub unit data app --space menu-live | grep -qx LOG_LEVEL=info -->
 <!-- agent-check undo: cub unit data app --space menu-live | grep -qx LOG_LEVEL=warn && test -f menu/.env -->

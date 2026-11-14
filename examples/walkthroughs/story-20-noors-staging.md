@@ -98,12 +98,12 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
 8. Noor wants production left alone until staging has run with the new size for a while. She refuses the change, with a reason the next agent is told:
    <!-- run: refuse -->
    ```sh
-   cub mini refuse image-processor-live --reason "Production keeps 512Mi until staging has run a week at 1Gi"
+   orders=$(cub mini waiting --commands | sed -nE 's|^[[:space:]]*cub mini approve (image-processor-file-proposals/file-[A-Za-z0-9-]+)([[:space:]].*)?$|\1|p; s|^[[:space:]]*cub variant approve [^[:space:]]+ --change-order (image-processor-file-proposals/file-[A-Za-z0-9-]+)([[:space:]].*)?$|\1|p'); count=$(printf '%s\n' "$orders" | awk 'NF {n++} END {print n+0}'); test "$count" -eq 1 && cub mini refuse "$orders" --reason "Production keeps 512Mi until staging has run a week at 1Gi"
    cub unit data --space image-processor-live app | grep MEMORY_LIMIT
    ```
    ```text
    …
-   Production (image-processor-live) does not get it, and the next production change proposed from the app's files starts again from what production holds. If the value is proposed again, cub mini waiting and cub mini approve will show it as a value you refused, with your reason.
+   Production (image-processor-live) does not get it, and the next production change proposed from the app's files starts again from what production holds. If the value is proposed again, `cub mini waiting` shows it as refused, with your reason. Review the exact order and its diff; use `cub mini refuse BASE/ORDER --reason WHY` only for that order, never the no-order shorthand.
    MEMORY_LIMIT=512Mi
    ```
 

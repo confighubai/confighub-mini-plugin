@@ -77,7 +77,7 @@ Claude Code, and an unpacked confighub mini package (from the [releases page](ht
    ```sh
    printf 'PORT=3000\nCACHE=on\n' > .env
    cub --context bot mini upload . --component api --change-desc "Cache on for next week's sale" | sed -n 1,3p
-   cub --context bot mini approve api-live --yes || true
+   orders=$(cub --context bot mini waiting --commands | sed -nE 's|^[[:space:]]*cub mini approve (api-base/upload-[A-Za-z0-9-]+)([[:space:]].*)?$|\1|p; s|^[[:space:]]*cub variant approve [^[:space:]]+ --change-order (api-base/upload-[A-Za-z0-9-]+)([[:space:]].*)?$|\1|p'); count=$(printf '%s\n' "$orders" | awk 'NF {n++} END {print n+0}'); test "$count" -eq 1 && ! cub --context bot mini approve "$orders" --yes
    ```
    ```text
    Changed the shared settings (api-base), with the reason: Cache on for next week's sale
@@ -90,7 +90,7 @@ Claude Code, and an unpacked confighub mini package (from the [releases page](ht
 8. Sam approves it himself, and production has it:
    <!-- run: approve -->
    ```sh
-   cub mini approve api-live --note "The sale needs it" --yes >/dev/null
+   orders=$(cub mini waiting --commands | sed -nE 's|^[[:space:]]*cub mini approve (api-base/upload-[A-Za-z0-9-]+)([[:space:]].*)?$|\1|p; s|^[[:space:]]*cub variant approve [^[:space:]]+ --change-order (api-base/upload-[A-Za-z0-9-]+)([[:space:]].*)?$|\1|p'); count=$(printf '%s\n' "$orders" | awk 'NF {n++} END {print n+0}'); test "$count" -eq 1 && cub mini approve "$orders" --yes --note "The sale needs it" >/dev/null
    cub unit data --space api-live app | grep CACHE
    ```
    ```text
@@ -115,7 +115,7 @@ For an AI agent asked to set this up in the person's project.
 
 - The request: "Make sure an agent cannot change this app's production settings without my say. Staging can change freely."
 - If no hub answers, install one with `/confighub:install-mini`. Run `cub mini adopt . --name api --dry-run`, then without `--dry-run`, then `cub mini require-approval api --variant live --agent bot`.
-- End with one sentence on what the person now has, then the single command `require-approval` printed for them to run in their own terminal, such as `~/.confighub/mini/cub mini approve api-live`. Never run it yourself, and never approve a later change to production.
+- End with one sentence on what the person now has. Tell them to run `cub mini waiting`, review the exact change, and approve it with `cub mini approve BASE/ORDER`, using the order ID shown there. Never approve a later change to production or use the no-order shorthand.
 - Done when `require-approval` has said that `api-live` waits for the person's approval and that the agent has a key of its own.
 
 ## Testing
