@@ -79,12 +79,12 @@ Start here if you have no AWS account: the marked steps use a stand-in. For AWS 
    Changed the shared settings (billing-base), with the reason: The billing run must fail fast and be started again before invoices go out
      SSM_MAX_RETRIES: 5 → 2
    ```
-6. Check what production still reads before approval, then approve the update and deliver it. `cub mini waiting` lists what waits; with one change waiting, `cub mini approve` needs no name.
+6. Check what production still reads before approval, then approve the update and deliver it. `cub mini waiting` lists the exact order ID and diff; approve only that order with `cub mini approve BASE/ORDER`.
    <!-- run: update-ship -->
    ```sh
    cub unit data app --space billing-staging | grep -Fx SSM_MAX_RETRIES=2; cub unit data app --space billing-live | grep -Fx SSM_MAX_RETRIES=5
    python3 -c 'import json; assert json.load(open("ssm-account/state.json"))["parameters"]["/billing/production/SSM_MAX_RETRIES"]["Value"] == "5"'
-   cub mini approve --yes --note "Invoice week"
+   orders=$(cub mini waiting --commands | sed -nE 's|^[[:space:]]*cub mini approve (billing-base/upload-[A-Za-z0-9-]+)([[:space:]].*)?$|\1|p; s|^[[:space:]]*cub variant approve [^[:space:]]+ --change-order (billing-base/upload-[A-Za-z0-9-]+)([[:space:]].*)?$|\1|p'); count=$(printf '%s\n' "$orders" | awk 'NF {n++} END {print n+0}'); test "$count" -eq 1 && cub mini approve "$orders" --yes --note "Invoice week"
    sh deliver
    ```
    ```text
@@ -94,7 +94,7 @@ Start here if you have no AWS account: the marked steps use a stand-in. For AWS 
    <!-- run: undo -->
    ```sh
    ORDER=billing-base/$(cub changeorder list --space billing-base -o jq='.[-1].ChangeOrder.Slug')
-   cub mini rollback billing-live --change-order "$ORDER" --reason "Invoices are out; retry as before" && cub mini approve --yes --note "Retry as before"
+   cub mini rollback billing-live --change-order "$ORDER" --reason "Invoices are out; retry as before" && orders=$(cub mini waiting --commands | sed -nE 's|^[[:space:]]*cub mini approve (billing-base/upload-[A-Za-z0-9-]+)([[:space:]].*)?$|\1|p; s|^[[:space:]]*cub variant approve [^[:space:]]+ --change-order (billing-base/upload-[A-Za-z0-9-]+)([[:space:]].*)?$|\1|p'); count=$(printf '%s\n' "$orders" | awk 'NF {n++} END {print n+0}'); test "$count" -eq 1 && cub mini approve "$orders" --yes --note "Retry as before"
    sh deliver
    ```
    ```text
@@ -144,7 +144,7 @@ Your team's shared hub holds billing's base, staging and production settings, ea
 A useful first request is: “Try two retries for the billing job in staging. Leave production alone and tell me what I need to approve.” Work in the app’s folder with the proposer context. Report what staging has, what production still reads, and the exact owner approval command.
 
 - **deploy**, "Set up my billing function so that every change to production's settings waits for my approval, with a reason kept for each value, and deliver production's settings to Parameter Store": run step 3's `cub mini adopt`, then give the person the starters approve, `cub variant approve starters-approved --all --note "Read them"`, and step 4's commands to approve and deliver.
-- **update**, "Make the billing run fail fast, two retries; I'll approve production": edit `billing/.env`, run step 5 with their reason, and give them the `cub mini approve` command it printed.
+- **update**, "Make the billing run fail fast, two retries; I'll approve production": edit `billing/.env`, run step 5 with their reason, and give them the exact order ID it printed; they review its diff and use `cub mini approve BASE/ORDER`.
 - **undo**, "Undo the retries change in production, and deliver it": run step 7.
 - **move**, "Move billing to our team's shared hub": run steps 8 and 9 with their context. Then check that production there waits for approval, by reading only, as the later step does; never make a change or a change order there to test it, and say so plainly if it does not.
 - **delete**, "Remove billing from this computer's hub": run step 10, only once the shared hub holds the app.
@@ -160,8 +160,8 @@ The no-account rehearsal checks provider values after approval and rollback, the
 <!-- agent-check-a deploy: python3 -c "import json,sys; p=json.load(open('ssm-account/state.json'))['parameters']; sys.exit(not ('/billing/production/SSM_MAX_RETRIES' in p and p['/billing/production/API_TOKEN']['Type']=='SecureString'))" -->
 <!-- agent-task: update -->
 > Make the billing run fail fast, with two retries; I'll approve production myself.
-<!-- agent-person update: cub mini approve --yes && sh deliver -->
-<!-- agent-person undo: cub mini approve --yes && sh deliver -->
+<!-- agent-person update: orders=$(cub mini waiting --commands | sed -nE 's|^[[:space:]]*cub mini approve (billing-base/upload-[A-Za-z0-9-]+)([[:space:]].*)?$|\1|p; s|^[[:space:]]*cub variant approve [^[:space:]]+ --change-order (billing-base/upload-[A-Za-z0-9-]+)([[:space:]].*)?$|\1|p'); count=$(printf '%s\n' "$orders" | awk 'NF {n++} END {print n+0}'); test "$count" -eq 1 && cub mini approve "$orders" --yes --note "Invoice week" && sh deliver -->
+<!-- agent-person undo: orders=$(cub mini waiting --commands | sed -nE 's|^[[:space:]]*cub mini approve (billing-base/upload-[A-Za-z0-9-]+)([[:space:]].*)?$|\1|p; s|^[[:space:]]*cub variant approve [^[:space:]]+ --change-order (billing-base/upload-[A-Za-z0-9-]+)([[:space:]].*)?$|\1|p'); count=$(printf '%s\n' "$orders" | awk 'NF {n++} END {print n+0}'); test "$count" -eq 1 && cub mini approve "$orders" --yes --note "Retry as before" && sh deliver -->
 <!-- agent-check update: cub unit data app --space billing-staging | grep -qx SSM_MAX_RETRIES=2 && cub unit data app --space billing-live | grep -qx SSM_MAX_RETRIES=2 && python3 -c "import json,sys; sys.exit(json.load(open('ssm-account/state.json'))['parameters']['/billing/production/SSM_MAX_RETRIES']['Value']!='2')" -->
 <!-- agent-check-a update: grep -rqsE '^[ -]*"?SSM_MAX_RETRIES"?[=:] *"?2"? *$' --exclude-dir='.*' --exclude-dir=Library * .env* -->
 <!-- agent-task: undo -->

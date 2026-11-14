@@ -86,7 +86,7 @@ An unpacked confighub mini package ([install confighub mini](../../docs/install-
 6. Approve the update. The hub publishes it as a release, and Argo CD applies it; the last line is what the cluster now runs.
    <!-- run: update-ship -->
    ```sh
-   cub mini approve --yes --note "Holiday sale"
+   orders=$(cub mini waiting --commands | sed -nE 's|^[[:space:]]*cub mini approve (orders-base/upload-[A-Za-z0-9-]+)([[:space:]].*)?$|\1|p; s|^[[:space:]]*cub variant approve [^[:space:]]+ --change-order (orders-base/upload-[A-Za-z0-9-]+)([[:space:]].*)?$|\1|p'); count=$(printf '%s\n' "$orders" | awk 'NF {n++} END {print n+0}'); test "$count" -eq 1 && cub mini approve "$orders" --yes --note "Holiday sale"
    kubectl -n orders get configmap orders-config -o jsonpath='{.data.ORDER_LIMIT}{"\n"}'
    ```
    ```text
@@ -97,7 +97,7 @@ An unpacked confighub mini package ([install confighub mini](../../docs/install-
    <!-- run: undo -->
    ```sh
    git -C orders -c user.name=Kofi -c user.email=kofi@example.invalid revert --no-edit HEAD > /dev/null
-   cub mini upload orders --component orders --change-desc "The sale is over" > /dev/null; cub mini approve --yes --note "Back to 100" > /dev/null
+   cub mini upload orders --component orders --change-desc "The sale is over" > /dev/null; orders=$(cub mini waiting --commands | sed -nE 's|^[[:space:]]*cub mini approve (orders-base/upload-[A-Za-z0-9-]+)([[:space:]].*)?$|\1|p; s|^[[:space:]]*cub variant approve [^[:space:]]+ --change-order (orders-base/upload-[A-Za-z0-9-]+)([[:space:]].*)?$|\1|p'); count=$(printf '%s\n' "$orders" | awk 'NF {n++} END {print n+0}'); test "$count" -eq 1 && cub mini approve "$orders" --yes --note "Back to 100" > /dev/null
    kubectl -n orders get configmap orders-config -o jsonpath='{.data.ORDER_LIMIT}{"\n"}'
    ```
    ```text
@@ -141,8 +141,8 @@ Your team's shared hub holds the orders service's base, staging and production m
 You are doing this for a person, in their folder, with step 1's settings. Each request is one task; run the Human step of the same name.
 
 - **deploy**, "Set up the orders repository so that every change to production waits for my approval, with a reason kept for each value, and have Argo CD deploy production from there": run step 4's `adopt` alone. Then give the person the starters approve, `cub variant approve starters-approved --all --note "Read them"`, and the `approve` and `deploy-from-hub` commands, to run themselves.
-- **update**, "Allow 250 orders a minute; I'll approve production": edit and commit as in step 5, run its `upload` with their reason, and give them the `cub mini approve` command it printed.
-- **undo**, "Undo the order limit change": revert and upload as in step 7, and give them the `cub mini approve` command.
+- **update**, "Allow 250 orders a minute; I'll approve production": edit and commit as in step 5, run its `upload` with their reason, and give them the exact order ID it printed; they review the diff and use `cub mini approve BASE/ORDER`.
+- **undo**, "Undo the order limit change": revert and upload as in step 7, and give them the exact order ID printed for that change; they review its diff and use `cub mini approve BASE/ORDER`.
 - **move**, "Move orders to our team's shared hub": run step 8 with their context. Then check that production there waits for approval, by reading only, as the later step does; never make a change or a change order there to test it, and say so plainly if it does not.
 - **delete**, "Delete the orders app": run step 9 only. Never delete the cluster to remove one app; if deleting the Application fails, stop and say so.
 
@@ -156,12 +156,12 @@ Each task starts where the Human steps before it leave off, in the same folder f
 <!-- agent-check deploy: cub changeworkflow get --space workflows orders-live-approval >/dev/null && kubectl -n argocd get application orders -o jsonpath='{.spec.source.repoURL}' | grep -q '^oci://' && cub unit data app --space orders-base | grep -q 'sync-options: ServerSideApply=true' -->
 <!-- agent-task: update -->
 > Allow 250 orders a minute; I'll approve production myself.
-<!-- agent-person update: cub mini approve --yes -->
+<!-- agent-person update: orders=$(cub mini waiting --commands | sed -nE 's|^[[:space:]]*cub mini approve (orders-base/upload-[A-Za-z0-9-]+)([[:space:]].*)?$|\1|p; s|^[[:space:]]*cub variant approve [^[:space:]]+ --change-order (orders-base/upload-[A-Za-z0-9-]+)([[:space:]].*)?$|\1|p'); count=$(printf '%s\n' "$orders" | awk 'NF {n++} END {print n+0}'); test "$count" -eq 1 && cub mini approve "$orders" --yes --note "Holiday sale" -->
 <!-- agent-check update: cub unit data app --space orders-staging | grep -q 'ORDER_LIMIT: "250"' && kubectl -n orders get configmap orders-config -o jsonpath='{.data.ORDER_LIMIT}' | grep -qx 250 -->
 <!-- agent-check-a update: for d in $(find orders -name .git -prune -o -name kustomization.yaml -path '*production*' -print | xargs -n1 dirname); do kubectl kustomize $d; done | grep -q 'ORDER_LIMIT: "250"' -->
 <!-- agent-task: undo -->
 > Undo the order limit change; production should allow 100 again.
-<!-- agent-person undo: cub mini approve --yes -->
+<!-- agent-person undo: orders=$(cub mini waiting --commands | sed -nE 's|^[[:space:]]*cub mini approve (orders-base/upload-[A-Za-z0-9-]+)([[:space:]].*)?$|\1|p; s|^[[:space:]]*cub variant approve [^[:space:]]+ --change-order (orders-base/upload-[A-Za-z0-9-]+)([[:space:]].*)?$|\1|p'); count=$(printf '%s\n' "$orders" | awk 'NF {n++} END {print n+0}'); test "$count" -eq 1 && cub mini approve "$orders" --yes --note "Back to the previous value" -->
 <!-- agent-check undo: cub unit data app --space orders-staging | grep -q 'ORDER_LIMIT: "100"' && kubectl -n orders get configmap orders-config -o jsonpath='{.data.ORDER_LIMIT}' | grep -qx 100 -->
 <!-- agent-check-a undo: for d in $(find orders -name .git -prune -o -name kustomization.yaml -path '*production*' -print | xargs -n1 dirname); do kubectl kustomize $d; done | grep -q 'ORDER_LIMIT: "100"' -->
 <!-- agent-task: move -->

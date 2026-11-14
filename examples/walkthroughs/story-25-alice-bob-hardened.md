@@ -120,7 +120,7 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
 8. Alice approves shop's production. It has Bob's fixes and still her own log level:
    <!-- run: approve -->
    ```sh
-   cub mini approve "$(cub mini waiting | grep -o -m1 'shop-base/fleet-[0-9]*')" --note "Read Bob's fixes" --yes >/dev/null
+   orders=$(cub mini waiting --commands | sed -nE 's|^[[:space:]]*cub mini approve (shop-base/fleet-[A-Za-z0-9-]+)([[:space:]].*)?$|\1|p; s|^[[:space:]]*cub variant approve [^[:space:]]+ --change-order (shop-base/fleet-[A-Za-z0-9-]+)([[:space:]].*)?$|\1|p'); count=$(printf '%s\n' "$orders" | awk 'NF {n++} END {print n+0}'); test "$count" -eq 1 && cub mini approve "$orders" --note "Read Bob's fixes" --yes >/dev/null
    cub unit data --space shop-live app
    ```
    ```text
@@ -146,7 +146,7 @@ For an AI agent working as Bob, on Bob's key: run `cub` as `cub --context bob`.
 - The request: "Harden shop for production. Debug logs carry request bodies, so LOG_LEVEL should be warn; it needs 3 replicas so one can fail during a deploy; its database takes 20 connections (DB_POOL_SIZE). Then make the fixes that suit every web service version 2 of the team's web starter, each with its reason."
 - Set each value on shop's base with its reason: `cub mini set shop KEY=VALUE --variant base --change-desc "WHY"`.
 - Make version 2 of the starter: one `cub function set --space starters-base --unit web --toolchain AppConfig/YAML --change-desc WHY -- set-yq '...'` for each default that suits every app (not shop's own `DB_POOL_SIZE`), the first also setting `.version = 2`; then a change order in `starters-base` with `--in-scope-space starters-approved --change-workflow workflows/starters-approved-approval`.
-- Never approve the starter or production; tell the person the command that does: `cub mini approve starters-base/NAME` for the starter, and `cub mini approve` for production.
+- Never approve the starter or production; tell the person to review `cub mini waiting` and use `cub mini approve BASE/ORDER` for the exact change. Never use the no-order shorthand.
 - Done when `cub unit data --space shop-base app` has the three values and the proposed starter has `version: 2` with `warn` and `"3"`.
 
 ## Testing
