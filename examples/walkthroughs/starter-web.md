@@ -73,17 +73,19 @@ confighub mini, unpacked as [installing confighub mini](../../docs/install-mini.
    …
    Approved menu-base/upload-TIME.
    ```
-6. Undo the update in production. `cub mini rollback` sets back what that change order changed, and nothing else. The change order's name was printed by step 5; here it is read from the hub.
+6. Undo the update in production. `cub mini rollback` sets back what that change order changed, and nothing else, in the shared settings; production takes it only once you approve it, as any change. The change order's name was printed by step 5; here it is read from the hub.
    <!-- run: undo -->
    ```sh
    ORDER=$(cub changeorder list --space menu-base --where "Slug LIKE 'upload-%'" -o jq='.[-1].ChangeOrder.Slug')
    cub mini rollback menu-live --change-order "menu-base/$ORDER" --reason "Info logs show customer emails"
+   cub mini approve --yes --note "Back to warnings"
    cub mini pull menu --variant live --dir menu-running
    ```
    ```text
-   Set back on menu-live, each with the reason:
-     app: LOG_LEVEL info → warn
-   Change order menu-base/upload-TIME given up: Info logs show customer emails
+   Set back in the shared settings (menu-base), with the reason: Info logs show customer emails
+     LOG_LEVEL: info → warn
+   …
+   Approved menu-base/upload-TIME.
    ```
 7. Move it to your team's shared hub. Sign in once (`auth login` opens a browser). The app's name there, `TEAM_APP`, starts with your user name, so it does not clash with a teammate's.
    <!-- run: sign-in sign-in -->
