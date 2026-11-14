@@ -191,4 +191,6 @@ Results, 14 November 2026, confighub mini 0.11.1-mini.2. Figures from this page'
 
 - The checksum-verified macOS arm64 mini.4 package selected `starters-approved/vercel@2` with `--live` and kept the Frankfurt override. Without the flag, the link did not select the Vercel starter. This was a clean hub with a test link, and it was removed afterward. The live Hobby endpoint was not exercised by this run.
 
+- Live Hobby rerun on checksum-verified mini.4 for macOS arm64, 14 November 2026: the disposable project served the baseline. The starter prepared revision 3 with a 60-second cache and kept the Frankfurt region. The adapter refused delivery before the first owner approval, and the production endpoint still served the baseline. The runner timed out waiting for that approval. The Vercel project was deleted and a subsequent lookup returned project not found. The local hub was stopped. The update and rollback on mini.4 did not run.
+
 <!-- results:end -->
