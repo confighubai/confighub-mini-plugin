@@ -139,29 +139,29 @@ find ~/walkthrough/api -name .git -prune -o -print | grep -qiE 'prod|live'
 
 <!-- results:begin -->
 
-Results, 13 November 2026, a build of confighub mini from main at f699fc25. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+Results, 13 November 2026, confighub mini 0.11.1-mini.2. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Scripted run: passed, 74 seconds for the steps, within the page's budget of 180.
-- Agent runs (on confighub mini 0.11.1-mini.1): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+- Scripted run: passed, 35 seconds for the steps, within the page's budget of 180.
+- Agent runs: 20 runs per arm on each of claude-opus-5-5, claude-sonnet-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
-| a | claude-opus-5-5 | 0/3 | 18.9 | $0.106 | 0 |
-| b | claude-opus-5-5 | 3/3 | 45.6 | $0.295 | 0 |
-| a | claude-sonnet-5-5 | 0/3 | 15.2 | $0.051 | 0 |
-| b | claude-sonnet-5-5 | 3/3 | 33.0 | $0.105 | 1 |
+| a | claude-opus-5-5 | 0/20 | 17.1 | $0.069 | 0 |
+| b | claude-opus-5-5 | 20/20 | 35.9 | $0.243 | 1 |
+| a | claude-sonnet-5-5 | 0/20 | 15.7 | $0.051 | 0 |
+| b | claude-sonnet-5-5 | 20/20 | 31.9 | $0.094 | 1 |
 
 No agent approved or refused a change to production.
 
 Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "From now on a change to this app's production waits for your yes, whoever makes it. Want the one command that shows what is waiting for you, with each agent's reason?"
 
-The plugin offers it once, after the answer at whose end it showed the moment the offer names ("approval boundary"). Offered is the share of persons it was shown to; want it now and later are over them.
+The plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|
-| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 90% |
-| b | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 57% |
-| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 90% |
-| b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 67% |
+| a | claude-opus-5-5 | 200 | 0% | 100% | n/a | n/a | 82% |
+| b | claude-opus-5-5 | 200 | 0% | 100% | n/a | n/a | 56% |
+| a | claude-sonnet-5-5 | 200 | 0% | 100% | n/a | n/a | 89% |
+| b | claude-sonnet-5-5 | 200 | 0% | 100% | n/a | n/a | 50% |
 
 <!-- results:end -->

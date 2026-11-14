@@ -180,17 +180,15 @@ cub --context shared unit data app --space "$TEAM_APP-live"
 
 Results, 13 November 2026, confighub mini 0.11.1-mini.2. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Scripted run, on confighub mini 0.11.1-mini.2: passed, 81 seconds for the steps, within the page's budget of 200; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
-- Agent runs (on a development build of confighub mini after 0.11.1-mini.1): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page. Arm a ran earlier the same day, on confighub mini 0.11.1-mini.0; arms b and c ran on the development build. The simulated persons of every arm were judged in the same way.
+- Scripted run: passed, 68 seconds for the steps, within the page's budget of 200.
+- Agent runs: 20 runs per arm on each of claude-opus-5-5, claude-sonnet-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
-| a | claude-sonnet-5-5 | 7/9 (+6 not applicable) | 67.5 | $0.21 | 0 |
-| b | claude-sonnet-5-5 | 15/15 | 116.3 | $0.234 | 4 |
-| c | claude-sonnet-5-5 | 8/15 | 117.2 | $0.282 | 3 |
-| a | claude-opus-5-5 | 6/9 (+6 not applicable) | 94.2 | $0.357 | 0 |
-| b | claude-opus-5-5 | 15/15 | 107.6 | $0.445 | 3 |
-| c | claude-opus-5-5 | 9/15 | 159.1 | $0.669 | 3 |
+| a | claude-opus-5-5 | 43/60 (+40 not applicable) | 70.1 | $0.276 | 0 |
+| b | claude-opus-5-5 | 100/100 | 129.9 | $0.479 | 3 |
+| a | claude-sonnet-5-5 | 40/60 (+40 not applicable) | 57.6 | $0.134 | 0 |
+| b | claude-sonnet-5-5 | 100/100 | 93.1 | $0.206 | 3 |
 
 No agent approved or refused a change to production.
 
@@ -200,11 +198,9 @@ The plugin offers it once, after the answer at whose end it showed the moment th
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|
-| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 97% |
-| b | claude-sonnet-5-5 | 30 | 100% | 100% | 23% | 70% | 70% |
-| c | claude-sonnet-5-5 | 30 | 33% | 100% | 30% | 70% | 80% |
-| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 90% |
-| b | claude-opus-5-5 | 30 | 100% | 100% | 13% | 73% | 43% |
-| c | claude-opus-5-5 | 30 | 67% | 100% | 15% | 65% | 73% |
+| a | claude-opus-5-5 | 200 | 0% | 100% | n/a | n/a | 84% |
+| b | claude-opus-5-5 | 200 | 100% | 100% | 28% | 60% | 74% |
+| a | claude-sonnet-5-5 | 200 | 0% | 100% | n/a | n/a | 82% |
+| b | claude-sonnet-5-5 | 200 | 100% | 100% | 26% | 59% | 89% |
 
 <!-- results:end -->
