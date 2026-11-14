@@ -28,8 +28,9 @@ Use an unpacked mini package containing the Unikraft starter. Use a new test hub
    cub mini adopt app --name banner --live
    cub mini receipts banner --setup
    ```
-3. Set up the scoped reader in the packaged example and try applying the pending connect order. Check that the add-on refused the order and that the HTTPS endpoint still returns blue with revision `baseline`.
-4. Remove the disposable test instance, service and image. Delete the test apps or stop the disposable mini.
+3. Set up the scoped reader in the packaged example. Try applying the pending connect order and confirm the add-on refuses it.
+4. Read the HTTPS endpoint again. It should still return blue with revision `baseline`. Keep that response with the add-on's refusal.
+5. Remove the disposable test instance, service and image. Delete the test apps or stop the disposable mini.
 
 ## Agent
 
@@ -48,6 +49,12 @@ It checks import, apply, compare and planted faults. The real-service test check
 <!-- agent-task: deploy -->
 > Connect this test app to the approved Unikraft starter and show the current blue banner.
 <!-- agent-check deploy: cub component get banner -o json | jq -e '.Component.Annotations["confighub-mini.starter-source"] | startswith("starters-approved/unikraft@")' -->
+<!-- agent-task: update -->
+> Use the local stand-in contract to test delivery of a pinned revision. For the real Cloud app, show that the first delivery is still blocked while approval is pending.
+<!-- agent-task: undo -->
+> On the stand-in, confirm that reapplying the same revision leaves the settings unchanged. Report that undo on the real Cloud service still awaits a live test.
+<!-- agent-task: move -->
+> Identify the destination's starter version, approval order and reader before attempting any shared-hub delivery. Report this as a walkthrough of the prerequisites.
 <!-- agent-task: delete -->
 > Remove this test service and its app after recording the result.
 <!-- next-step boundary=same-tier: try an incident banner | Want to see what the endpoint serves while the next change waits for approval? -->
