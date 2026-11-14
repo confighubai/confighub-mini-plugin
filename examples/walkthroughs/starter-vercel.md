@@ -30,7 +30,7 @@ An unpacked [confighub mini package](../../docs/install-mini.md) and Python 3. S
     --scope "$WALKTHROUGH_VERCEL_SCOPE" --project "$PROJECT" --space shop-live \
     --order "$ORDER" --revision "$REV" --context "$READER" --keys EDGE_CACHE_SECONDS apply
   ```
-- Propose the sale cache change with step 5. Check that the endpoint keeps its old value while the order waits. After owner approval, run the same delivery and check the new setting. To undo, restore the previous cache value in the file and upload it with the reason. Verify the endpoint before approval, then again after delivery of that rollback. Follow steps 8 and 9 to copy the app and verify approval on the shared hub. Remove the test project and the local app when finished.
+- Propose the sale cache change with step 5. Check that the endpoint keeps its old value while the order waits. After owner approval, run the same delivery and check the new setting. To undo on mini.5, use `cub mini rollback shop-live --change-order "$ORDER" --reason "The sale is over"`. Read the rollback order, then approve and deliver it separately. The mini.4 Hobby test used a file upload to propose the rollback. Follow steps 8 and 9 to copy the app and verify approval on the shared hub. Remove the test project and the local app when finished.
 <!-- run: live-delivery vercel-live -->
 ```sh
 bash "${WALKTHROUGH_VERCEL_SCRIPT:?set to the path to examples/vercel-hobby.sh}"
@@ -92,23 +92,23 @@ bash "${WALKTHROUGH_VERCEL_SCRIPT:?set to the path to examples/vercel-hobby.sh}"
 6. Approve the update and deliver it. `cub mini waiting` lists what waits; with one change waiting, `cub mini approve` needs no name.
    <!-- run: update-ship vercel-fixture -->
    ```sh
-   cub mini approve --yes --note "Sale week"
-   sh deliver
+   cub mini approve --yes --note "Sale week" && sh deliver
    ```
    ```text
    Production runs with {'SHOP_CURRENCY': 'EUR', 'EDGE_REGION': 'fra1', 'EDGE_CACHE_SECONDS': '30', 'EDGE_MAX_DURATION': '10', 'LOG_LEVEL': 'warn'}
    ```
-7. Undo the update in production. `cub mini rollback` sets back each value the upload's change order changed, with your reason, and nothing else.
+7. Propose a rollback with `cub mini rollback`. Staging takes the restored value and production keeps its current value. As owner, approve that rollback before delivering it.
    <!-- run: undo vercel-fixture -->
    ```sh
    ORDER=shop-base/$(cub changeorder list --space shop-base -o jq='.[-1].ChangeOrder.Slug')
    cub mini rollback shop-live --change-order "$ORDER" --reason "The sale is over"
-   sh deliver
+   cub unit data app --space shop-staging | grep -qx EDGE_CACHE_SECONDS=60 && cub unit data app --space shop-live | grep -qx EDGE_CACHE_SECONDS=30 || exit 1
+   python3 -c 'import json; assert json.load(open("shop-project/state.json"))["deployments"]["production"]["EDGE_CACHE_SECONDS"] == "30"'
+   cub mini approve --yes --note "Back to a minute" && sh deliver
    ```
    ```text
-   Set back on shop-live, each with the reason:
-     app: EDGE_CACHE_SECONDS 30 → 60
-   …
+   Set back in the shared settings (shop-base), with the reason: The sale is over
+     EDGE_CACHE_SECONDS: 30 → 60
    Production runs with {'SHOP_CURRENCY': 'EUR', 'EDGE_REGION': 'fra1', 'EDGE_CACHE_SECONDS': '60', 'EDGE_MAX_DURATION': '10', 'LOG_LEVEL': 'warn'}
    ```
 8. Move it to your team's shared hub. Sign in once (`auth login` opens a browser). The app's name there, `TEAM_APP`, starts with your user name, so it does not clash with a teammate's.
@@ -116,8 +116,7 @@ bash "${WALKTHROUGH_VERCEL_SCRIPT:?set to the path to examples/vercel-hobby.sh}"
    ```sh
    cub context create shared --server https://hub.confighub.com
    cub --context shared auth login
-   export PREFIX="${WALKTHROUGH_PREFIX:-$USER-}"
-   export TEAM_APP="${PREFIX}shop"
+   export TEAM_APP="${WALKTHROUGH_PREFIX:-$USER-}shop"
    ```
    The copy keeps every value and its reason. Check the destination's approval rule before delivery. The commands after the copy install or verify the destination workflow and bind it to the app on a hub of version 0.11.1 or later. On an older hub, run `cub --context shared mini require-approval "$TEAM_APP" --variant live`.
    <!-- run: move vercel-fixture -->
@@ -153,7 +152,7 @@ In the shared hub: `cub --context shared component delete --recursive --detach "
 ### What you have now
 The alias serves the approved cache.
 ## Agent
-For trials use the fixture. **Deploy** with step 3 or `cub mini adopt shop --live`, then give the owner the connect order. **Update** with step 5, show staging and live, and hand off the update order. **Undo** with step 7 in the fixture; for live, upload the previous value with its reason and hand off the rollback order. Check the endpoint after approved delivery. **Move** with steps 8 and 9 and read the destination's approval rule. **Delete** with step 10 and confirm only the disposable Hobby project is gone. Keep provider credentials with delivery. Never approve production or edit the fixture's state.
+For trials use the fixture. **Deploy** with step 3 or `cub mini adopt shop --live`, then give the owner the connect order. **Update** with step 5, show staging and live, and hand off the update order. **Undo** by proposing the rollback in step 7. Hand the owner the order and wait for approval before delivery. Check the endpoint after approved delivery. **Move** with steps 8 and 9 and read the destination's approval rule. **Delete** with step 10 and confirm only the disposable Hobby project is gone. Keep provider credentials with delivery. Never approve production or edit the fixture's state.
 ## Testing
 <!-- agent-task: deploy -->
 > Set up my Vercel shop so production settings wait for my approval, and keep production's region. The app is in `shop`; `shop-project` is a local stand-in for its Vercel project.
@@ -166,7 +165,8 @@ For trials use the fixture. **Deploy** with step 3 or `cub mini adopt shop --liv
 <!-- agent-check update: cub unit data app --space shop-staging | grep -qx EDGE_CACHE_SECONDS=30 && cub unit data app --space shop-live | grep -qx EDGE_CACHE_SECONDS=30 && grep -q '"EDGE_CACHE_SECONDS": "30"' shop-project/state.json -->
 <!-- agent-check-a update: grep -rqs 'EDGE_CACHE_SECONDS=30' shop -->
 <!-- agent-task: undo -->
-> Undo the cache change in production, and deliver it.
+> Propose restoring the previous cache setting. I’ll approve delivery.
+<!-- agent-person undo: cub mini approve --yes && sh deliver -->
 <!-- agent-check undo: cub unit data app --space shop-live | grep -qx EDGE_CACHE_SECONDS=60 && grep -q '"EDGE_CACHE_SECONDS": "60"' shop-project/state.json -->
 <!-- agent-check-a undo: python3 -c "import json,sys; sys.exit(json.load(open('shop-project/state.json'))['deployments']['production'].get('EDGE_CACHE_SECONDS')!='60')" -->
 <!-- agent-task: move -->
