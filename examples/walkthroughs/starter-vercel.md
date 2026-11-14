@@ -22,7 +22,7 @@ An unpacked confighub mini package ([install confighub mini](../../docs/install-
    cub mini install --name shop --use
    export LOCAL_HUB=$(cub context get -o jq=.name)
    ```
-**Real Hobby project.** For a personal, noncommercial test app, [sign in with the Vercel CLI](https://vercel.com/docs/cli/login), set `WALKTHROUGH_VERCEL_SCOPE` to your Hobby scope and choose a unique disposable project name. A Pro team can use a disposable project in its own scope. Use a package whose adoption help lists `--live`. Keep the Vercel sign-in with the person or delivery service. A user with direct production access in Vercel can still write there.
+**Real Hobby project.** For a personal, noncommercial test app, [sign in with the Vercel CLI](https://vercel.com/docs/cli/login), use `vercel teams ls` to find the Hobby scope and set `WALKTHROUGH_VERCEL_SCOPE` to its slug and choose a unique disposable project name. A Pro team can use a disposable project in its own scope. Use a package whose adoption help lists `--live`. Keep the Vercel sign-in with the person or delivery service. A user with direct production access in Vercel can still write there.
 - Create a test app with an `/api/settings` route that returns its `EDGE_CACHE_SECONDS` value (or `baseline` if absent), and write `EDGE_REGION=fra1` in `shop/.env.production`. Run `vercel link --cwd shop --scope "$WALKTHROUGH_VERCEL_SCOPE" --project "$PROJECT"` and `vercel deploy --cwd shop --scope "$WALKTHROUGH_VERCEL_SCOPE" --prod`. Copy the production URL into `URL`; `curl -fsS "$URL/api/settings"` should report the baseline.
 - Run `cub mini adopt shop --live` and read `cub mini receipts shop --setup`. Before the first delivery, run `cub mini approve shop-live/connect` in the owner's context. Set `READER=$(CUB_CONFIG="$PWD/reader" cub context get -o jq=.name)` after the separate reader sign-in in step 4. Grant `shop-delivery` read access to the base order and its attestations using `cub space update shop-base --permission View:serviceaccount:shop-delivery --permission ViewChildren:serviceaccount:shop-delivery`, then use the reader sign-in in step 4.
 - To deliver each approved order, use its exact name as `ORDER`, read `REV=$(cub unit get app --space shop-live -o jq=.Unit.HeadRevisionNum)` as owner, then run the add-on from the separate reader context. Check the production alias with `vercel inspect "$URL" --scope "$WALKTHROUGH_VERCEL_SCOPE" --json` and match its deployment ID to the receipt. Read it with `curl -fsS "$URL/api/settings"`.
@@ -34,7 +34,7 @@ An unpacked confighub mini package ([install confighub mini](../../docs/install-
 - Propose the sale cache change with step 5. Check that the endpoint keeps its old value while the order waits. After owner approval, run the same delivery and check the new setting. To undo, restore the previous cache value in the file and upload it with the reason. Verify the endpoint before approval, then again after delivery of that rollback. Follow steps 8 and 9 to copy the app and verify approval on the shared hub. Remove the test project and the local app when finished.
 <!-- run: live-delivery vercel-live -->
 ```sh
-bash "${WALKTHROUGH_VERCEL_SCRIPT:?set to this repository's examples/vercel-hobby.sh}"
+bash "${WALKTHROUGH_VERCEL_SCRIPT:?set to the path to examples/vercel-hobby.sh}"
 ```
 2. For the no-account path, make the app and its stand-in Vercel project. `shop/.vercel/project.json` links the app to the project, as `vercel link` does. In `shop-project`, `state.json` holds the project's settings, with production in Frankfurt (`fra1`), and `bin/vercel` answers as the `vercel` command does. The script `deliver` sends production's approved settings to the project and prints them. Last, the Vercel add-on, a small program in the package, reads the project's settings into `shop/.env.staging` and `shop/.env.production`.
    <!-- run: app files vercel-fixture -->
@@ -130,16 +130,15 @@ bash "${WALKTHROUGH_VERCEL_SCRIPT:?set to this repository's examples/vercel-hobb
    COMP=$(cub --context shared component get "$TEAM_APP" -o jq=.Component.ComponentID)
    echo "{\"RequireChangeWorkflow\": true, \"AllowedChangeWorkflowIDs\": [\"$WF\"]}" | cub --context shared api PATCH "component/$COMP" --content-type application/merge-patch+json --data - > /dev/null
    ```
-9. Check that production in the shared hub waits for you: change the shared settings there, and ask for the change in production with a change order. Nothing reaches production there until you approve it.
+9. Check that production in the shared hub waits for you, without changing anything there: the app takes a change only through its change workflow (the first `true`), and that workflow's production stage needs an approval (the second).
    <!-- run: move-waits vercel-fixture -->
    ```sh
-   cub --context shared function set --space "$TEAM_APP-base" --unit app --toolchain AppConfig/Env --change-desc "Cache for forty-five seconds" -- set-string-path '*' EDGE_CACHE_SECONDS 45 > /dev/null
-   cub --context shared changeorder create --space "$TEAM_APP-base" cache-45 --in-scope-space "$TEAM_APP-live" --change-workflow "workflows/$TEAM_APP-live-approval" --description "Cache for forty-five seconds"
-   cub --context shared mini waiting
+   cub --context shared component get "$TEAM_APP" -o jq=.Component.RequireChangeWorkflow
+   cub --context shared changeworkflow get --space workflows "$TEAM_APP-live-approval" -o jq='.ChangeWorkflow.Stages[] | select(.Name == "live") | .Prerequisites | length > 0'
    ```
    ```text
-     Approving it changes production:
-       EDGE_CACHE_SECONDS: 60 → 45
+   true
+   true
    ```
 10. Delete the app from your own hub, now that the shared hub holds it. The Vercel project keeps the settings it was last given.
     <!-- run: delete vercel-fixture -->
