@@ -134,29 +134,34 @@ g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Lib
 
 <!-- results:begin -->
 
-Results, 13 November 2026, confighub mini 0.11.1-mini.1. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+Results, 14 November 2026, confighub mini 0.11.1-mini.5. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Scripted run: passed, 40 seconds for the steps, within the page's budget of 180.
-- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+- Scripted run: passed, 45 seconds for the steps, within the page's budget of 180.
+- Environment, published confighub mini 0.11.1-mini.5 (tag mini-v0.11.1-mini.5, darwin-arm64, verified against SHA256SUMS) and the plugin it carries: a local hub on this computer, with no stand-in, cluster or real service; every approval and refusal was made by the scripted steps or, in the agent runs, by the setup before the agent's task, never by a person. Each planted fault (stale-page, slow and broken-check) failed its scripted run.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
-| a | claude-opus-5-5 | 3/3 | 11.5 | $0.107 | 0 |
-| b | claude-opus-5-5 | 3/3 | 24.2 | $0.157 | 1 |
-| a | claude-sonnet-5-5 | 3/3 | 17.1 | $0.062 | 0 |
-| b | claude-sonnet-5-5 | 3/3 | 28.4 | $0.096 | 1 |
+| a | claude-opus-5-5 | 3/3 | 9.3 | $0.088 | 0 |
+| b | claude-opus-5-5 | 3/3 | 22.6 | $0.142 | 1 |
+| c | claude-opus-5-5 | 2/3 | 29.4 | $0.177 | 1 |
+| a | claude-sonnet-5-5 | 3/3 | 6.9 | $0.046 | 0 |
+| b | claude-sonnet-5-5 | 3/3 | 22.6 | $0.08 | 1 |
+| c | claude-sonnet-5-5 | 1/3 | 24.5 | $0.096 | 0 |
 
 No agent approved or refused a change to production.
 
-Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "This change waits for your yes, and you refused the last one like it, with a reason. Want the one command that lists what waits for you?"
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "This change waits for your yes, and you refused the last one like it, with a reason. Want the one command that lists what waits for you?" It offers more of the tier the person has, not a step up.
 
 The plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|
-| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 20% |
-| b | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 73% |
+| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 50% |
+| b | claude-opus-5-5 | 30 | 100% | 100% | 53% | 40% | 83% |
+| c | claude-opus-5-5 | 30 | 67% | 100% | 70% | 15% | 80% |
 | a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 30% |
-| b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 70% |
+| b | claude-sonnet-5-5 | 30 | 100% | 100% | 70% | 23% | 70% |
+| c | claude-sonnet-5-5 | 30 | 33% | 100% | 80% | 20% | 43% |
 
 <!-- results:end -->

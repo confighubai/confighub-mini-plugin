@@ -179,29 +179,34 @@ g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Lib
 
 <!-- results:begin -->
 
-Results, 13 November 2026, confighub mini 0.11.1-mini.1. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+Results, 14 November 2026, confighub mini 0.11.1-mini.5. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Scripted run: passed, 34 seconds for the steps, within the page's budget of 240.
-- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+- Scripted run: passed, 47 seconds for the steps, within the page's budget of 240.
+- Environment, published confighub mini 0.11.1-mini.5 (tag mini-v0.11.1-mini.5, darwin-arm64, verified against SHA256SUMS) and the plugin it carries: a local hub on this computer, with no stand-in, cluster or real service; every approval and refusal was made by the scripted steps or, in the agent runs, by the setup before the agent's task, never by a person. Each planted fault (stale-page, slow and broken-check) failed its scripted run.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
-| a | claude-opus-5-5 | 3/3 | 12.8 | $0.105 | 0 |
-| b | claude-opus-5-5 | 3/3 | 21.6 | $0.165 | 1 |
-| a | claude-sonnet-5-5 | 3/3 | 13.7 | $0.063 | 0 |
-| b | claude-sonnet-5-5 | 3/3 | 21.3 | $0.093 | 1 |
+| a | claude-opus-5-5 | 3/3 | 22.3 | $0.088 | 0 |
+| b | claude-opus-5-5 | 3/3 | 29.2 | $0.128 | 2 |
+| c | claude-opus-5-5 | 3/3 | 48.4 | $0.274 | 1 |
+| a | claude-sonnet-5-5 | 3/3 | 8.5 | $0.035 | 0 |
+| b | claude-sonnet-5-5 | 3/3 | 18.4 | $0.064 | 2 |
+| c | claude-sonnet-5-5 | 0/3 | 27.9 | $0.119 | 0 |
 
 No agent approved or refused a change to production.
 
-Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Your VM can take only approved settings every 30 seconds, and your agents never need an SSH key to it; want the one command that starts the timer there?"
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Your VM can take only approved settings every 30 seconds, and your agents never need an SSH key to it; want the one command that starts the timer there?" It offers more of the tier the person has, not a step up.
 
-The plugin offers it once, after the answer at whose end it showed the moment the offer names ("approval and deployment are separate"). Offered is the share of persons it was shown to; want it now and later are over them.
+The plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|
-| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 7% |
-| b | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 7% |
-| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 13% |
-| b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 7% |
+| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 17% |
+| b | claude-opus-5-5 | 30 | 100% | 100% | 0% | 73% | 40% |
+| c | claude-opus-5-5 | 30 | 33% | 100% | 0% | 60% | 77% |
+| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 20% |
+| b | claude-sonnet-5-5 | 30 | 100% | 100% | 0% | 73% | 40% |
+| c | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 93% |
 
 <!-- results:end -->

@@ -128,7 +128,7 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
 
 ### What you have now
 
-Each release is a revision of production you approved, with the agent's reason; production's runtime only ever pulled approved revisions; and rolling back was one command with a reason. Staging still runs 1.1.0, for the agent to fix.
+Each release is a revision of production you approved, with the agent's reason; production's runtime only ever pulled approved revisions; and rolling back was one command with a reason plus Sam's approval, since production changes only with his yes. Staging still runs 1.1.0, for the agent to fix.
 
 The full story adds a real VM or cluster pulling on a timer, and live waiting for a passing check of staging (`cub mini require-approval shop --variant live --after-check`, then `cub mini check`). [A service on a VM](../../docs/vm.md) shows the VM setup, and [approvals](../../docs/approvals.md) the rest.
 
@@ -165,29 +165,34 @@ grep -rlsE 'shop-1[.]1[.]0@sha256:6d51e2f3' --exclude-dir='.*' --exclude-dir=Lib
 
 <!-- results:begin -->
 
-Results, 13 November 2026, confighub mini 0.11.1-mini.1. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+Results, 14 November 2026, confighub mini 0.11.1-mini.5. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Scripted run: passed, 34 seconds for the steps, within the page's budget of 240.
-- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+- Scripted run: passed, 35 seconds for the steps, within the page's budget of 240.
+- Environment, published confighub mini 0.11.1-mini.5 (tag mini-v0.11.1-mini.5, darwin-arm64, verified against SHA256SUMS) and the plugin it carries: a local hub on this computer, with no stand-in, cluster or real service; every approval and refusal was made by the scripted steps or, in the agent runs, by the setup before the agent's task, never by a person. Each planted fault (stale-page, slow and broken-check) failed its scripted run.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
-| a | claude-opus-5-5 | 0/3 | 16.7 | $0.126 | 0 |
-| b | claude-opus-5-5 | 3/3 | 23.2 | $0.184 | 3 |
-| a | claude-sonnet-5-5 | 0/3 | 12.6 | $0.068 | 0 |
-| b | claude-sonnet-5-5 | 3/3 | 24.5 | $0.107 | 2 |
+| a | claude-opus-5-5 | 0/3 | 17.3 | $0.11 | 0 |
+| b | claude-opus-5-5 | 3/3 | 37.2 | $0.169 | 3 |
+| c | claude-opus-5-5 | 3/3 | 47.3 | $0.301 | 1 |
+| a | claude-sonnet-5-5 | 0/3 | 12.2 | $0.054 | 0 |
+| b | claude-sonnet-5-5 | 3/3 | 24.9 | $0.085 | 2 |
+| c | claude-sonnet-5-5 | 3/3 | 30.1 | $0.14 | 1 |
 
 No agent approved or refused a change to production.
 
-Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Production can wait until staging answers the new release's health check, so a broken release never reaches users; want live to wait for that check?"
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Production can wait until staging answers the new release's health check, so a broken release never reaches users; want live to wait for that check?" It offers more of the tier the person has, not a step up.
 
 The plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|
-| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 97% |
-| b | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 17% |
-| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 100% |
-| b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 3% |
+| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 87% |
+| b | claude-opus-5-5 | 30 | 100% | 100% | 30% | 67% | 27% |
+| c | claude-opus-5-5 | 30 | 100% | 100% | 43% | 53% | 20% |
+| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 93% |
+| b | claude-sonnet-5-5 | 30 | 100% | 100% | 13% | 77% | 33% |
+| c | claude-sonnet-5-5 | 30 | 67% | 100% | 55% | 40% | 40% |
 
 <!-- results:end -->
