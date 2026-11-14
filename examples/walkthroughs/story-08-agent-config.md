@@ -167,7 +167,7 @@ This proves: stored. Each team's definition, its reasons and the evaluation are 
 <!-- agent-check assistant: r=$(cub unit data support-assistant --space support-assistant-research) && s=$(cub unit data support-assistant --space support-assistant-support) && echo "$r" | grep -q '^model: large-2026-09 #' && echo "$r" | grep -q 'open-change: true' && echo "$s" | grep -q '^model: large-2026-11' && echo "$s" | grep -q 'read-tickets: true' && cub attestation list --space support-assistant-research | grep -q 'Evaluation *Fail' -->
 <!-- agent-check-a assistant: r=$(grep -rl --include='*.yaml' '^model: large-2026-09' . | xargs grep -l 'open-change: true' | head -1) && s=$(grep -rl --include='*.yaml' '^model: large-2026-11' . | xargs grep -l 'read-tickets: true' | head -1) && [ -n "$r" ] && [ -n "$s" ] -->
 <!-- arms: a,b -->
-<!-- next-step when "with its reason": give a third team the assistant | Give a third team its own copy of the assistant the same way? -->
+<!-- next-step boundary=same-tier when "with its reason": give a third team the assistant | Give a third team its own copy of the assistant the same way? -->
 
 ```sh
 cub unit data support-assistant --space support-assistant-research | grep -E '^model|open-change'

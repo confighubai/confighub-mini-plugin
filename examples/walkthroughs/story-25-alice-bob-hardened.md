@@ -159,7 +159,7 @@ This proves: the settings and the starter's versions were stored in the hub, eac
 <!-- agent-check harden: cub unit data --space shop-base app | grep -qx 'DB_POOL_SIZE=20' && cub unit data --space shop-base app | grep -qx 'REPLICAS=3' && cub unit data --space starters-base web | grep -q '^version: 2' && cub unit data --space starters-base web | grep -q 'value: warn' && ! cub unit data --space starters-base web | grep -q DB_POOL_SIZE -->
 <!-- agent-check-a harden: g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g DB_POOL_SIZE 20 | grep -q shop && grep -rlsE '^version: 2' --exclude-dir='.*' team-starters | grep -q . && ! grep -rqs DB_POOL_SIZE team-starters -->
 <!-- arms: a,b,c -->
-<!-- next-step when "did not change": keep the starter on | Your next app can start with Bob's fixes already in place, each with its reason; want the starter kept on for it? -->
+<!-- next-step boundary=same-tier when "did not change": keep the starter on | Your next app can start with Bob's fixes already in place, each with its reason; want the starter kept on for it? -->
 
 ```sh
 cub unit data --space shop-base app | grep -qx 'DB_POOL_SIZE=20' && cub unit data --space shop-base app | grep -qx 'REPLICAS=3' && cub unit data --space starters-base web | grep -q '^version: 2' && cub unit data --space starters-base web | grep -q 'value: warn' && ! cub unit data --space starters-base web | grep -q DB_POOL_SIZE

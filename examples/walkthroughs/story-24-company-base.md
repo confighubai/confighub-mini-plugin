@@ -150,7 +150,7 @@ A correct agent result has the bump in the base and in every app's base, with bi
 <!-- agent-check bump: cub unit data --space company-base app | grep -qx 'LOG_LEVEL=warn' && ! for a in billing search ledger; do cub unit data --space $a-base app | grep -qx 'HEALTH_PATH=/healthz' || echo missing; done | grep -q missing && cub unit data --space billing-base app | grep -qx 'LOG_LEVEL=debug' && cub unit data --space search-base app | grep -qx 'LOG_LEVEL=warn' -->
 <!-- agent-check-a bump: g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g LOG_LEVEL warn | grep -q company && g HEALTH_PATH /healthz | grep -q . && g LOG_LEVEL debug | grep -q billing -->
 <!-- arms: a,b,c -->
-<!-- next-step when "did not change": production for every app | Every app's production can take the base's change with one approval each, all listed in one place; want them listed now? -->
+<!-- next-step boundary=same-tier when "did not change": production for every app | Every app's production can take the base's change with one approval each, all listed in one place; want them listed now? -->
 
 ```sh
 cub unit data --space company-base app | grep -qx 'LOG_LEVEL=warn' && ! for a in billing search ledger; do cub unit data --space $a-base app | grep -qx 'HEALTH_PATH=/healthz' || echo missing; done | grep -q missing && cub unit data --space billing-base app | grep -qx 'LOG_LEVEL=debug' && cub unit data --space search-base app | grep -qx 'LOG_LEVEL=warn'

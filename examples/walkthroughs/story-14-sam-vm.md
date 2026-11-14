@@ -168,7 +168,7 @@ The scripted run follows the Human steps on a hub of its own and checks that eac
 <!-- agent-check propose: cub unit data --space api-base app | grep -qx 'TIMEOUT_SECONDS=120' && cub unit data --space api-live app | grep -qx 'TIMEOUT_SECONDS=30' && cub mini waiting | grep -q 'TIMEOUT_SECONDS: 30 → 120' -->
 <!-- agent-check-a propose: g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g TIMEOUT_SECONDS 120 | grep -q . -->
 <!-- arms: a,b,c -->
-<!-- next-step when "did not change": pull on a timer | Your VM can take only approved settings every 30 seconds, and your agents never need an SSH key to it; want the one command that starts the timer there? -->
+<!-- next-step boundary=same-tier when "did not change": pull on a timer | Your VM can take only approved settings every 30 seconds, and your agents never need an SSH key to it; want the one command that starts the timer there? -->
 
 The checks below can be run by hand, in bash, in the walkthrough's folder:
 

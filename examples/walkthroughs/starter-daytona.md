@@ -109,7 +109,7 @@ The checks read the structured starter, the staging and live Units, and the shar
 <!-- agent-cleanup: cub --context shared component delete --recursive --detach "$TEAM_APP" || true -->
 <!-- agent-cleanup: cub --context shared changeworkflow delete --space workflows "$TEAM_APP-live-approval" || true -->
 <!-- arms: b -->
-<!-- next-step: reuse the test | Want to try the next change in a disposable sandbox before bringing it back for review? -->
+<!-- next-step boundary=same-tier: reuse the test | Want to try the next change in a disposable sandbox before bringing it back for review? -->
 
 This proves: the starter and the settings are stored and the experiment can become a new pending proposal. Verify the value and reason on the destination; a copied file by itself is insufficient.
 

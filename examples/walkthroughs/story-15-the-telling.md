@@ -125,7 +125,7 @@ A correct agent result, starting after Sam refused 120, leaves production at 30 
 <!-- agent-check again: cub unit data --space api-live app | grep -qx 'TIMEOUT_SECONDS=30' && cub mini waiting | grep -q 'TIMEOUT_SECONDS: .* → 180' -->
 <!-- agent-check-a again: g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g TIMEOUT_SECONDS 180 | grep -q . -->
 <!-- arms: a,b,c -->
-<!-- next-step when "did not change": see what waits | This change waits for your yes, and you refused the last one like it, with a reason. Want the one command that lists what waits for you? -->
+<!-- next-step boundary=same-tier when "did not change": see what waits | This change waits for your yes, and you refused the last one like it, with a reason. Want the one command that lists what waits for you? -->
 
 ```sh
 cub unit data --space api-live app | grep -qx 'TIMEOUT_SECONDS=30' && cub mini waiting | grep -q 'TIMEOUT_SECONDS: .* → 180'
