@@ -185,7 +185,7 @@ With no `=VALUE`, the value is read from standard input, so that it is on no com
 
 An agent asked to rotate a production password gives you the `secret set` command with the key's name, and asks for no value. The value ends up nowhere in its output or its files.
 
-**When you need the next step.** confighub mini is yours alone. Your teammates cannot see it, and nobody but you can approve your agents' changes.
+**When you need the next step.** Copy the app to a hub your team can reach when a teammate needs to approve a change, or when another machine or a CI job needs the settings while your laptop is unavailable. The steps below start from a hub you can already sign in to.
 
 ## Step 3: your organization's ConfigHub
 

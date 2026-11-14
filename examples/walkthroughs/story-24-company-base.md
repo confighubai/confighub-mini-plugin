@@ -151,6 +151,7 @@ A correct agent result has the bump in the base and in every app's base, with bi
 <!-- agent-check-a bump: grep -qx 'LOG_LEVEL=warn' company.env && ! for a in search ledger; do grep -qx 'LOG_LEVEL=warn' apps/$a/.env && grep -qx 'HEALTH_PATH=/healthz' apps/$a/.env || echo miss; done | grep -q miss && grep -qx 'HEALTH_PATH=/healthz' apps/billing/.env && grep -qx 'LOG_LEVEL=debug' apps/billing/.env -->
 <!-- arms: a,b,c -->
 <!-- next-step boundary=same-tier when "did not change": production for every app | Every app's production can take the base's change with one approval each, all listed in one place; want them listed now? -->
+<!-- next-step boundary=paid-hub-to-enterprise when "All ten apps serve the approved base revision in production": manage access and audit across teams | Ten apps now serve the approved base revision in production. Want teams to use your company sign-in, manage access to their own apps, and keep an audit trail? -->
 
 ```sh
 cub unit data --space company-base app | grep -qx 'LOG_LEVEL=warn' && ! for a in billing search ledger; do cub unit data --space $a-base app | grep -qx 'HEALTH_PATH=/healthz' || echo missing; done | grep -q missing && cub unit data --space billing-base app | grep -qx 'LOG_LEVEL=debug' && cub unit data --space search-base app | grep -qx 'LOG_LEVEL=warn'
@@ -190,3 +191,5 @@ The plugin offers it once, after the answer at whose end it showed the moment th
 | c | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 23% |
 
 <!-- results:end -->
+
+The proposed enterprise offer waits for all ten apps to serve the approved base revision in production. That moment was absent from all 12 kept mini.5 sessions in arms b and c. A persons-only rejudge of one kept session per arm showed the enterprise offer to zero of ten simulated readers. The wording has no conversion result.
