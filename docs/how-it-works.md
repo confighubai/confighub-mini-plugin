@@ -59,6 +59,8 @@ ConfigHub plugin: this edit reaches production too. LOG_LEVEL is now debug in .e
 
 The person's line is not shown when the agent's own answer already named that file, and comes at most once a week for a file. A `git checkout`, `stash`, `pull` or `reset` the agent runs is recorded as git's doing, never as an agent undoing an earlier change.
 
+**When the hub kept something for you** (from the next release, with confighub mini or another hub). When an agent's turn ends with the hub having kept a value with its reason, taken a new version while keeping your values, written the copies out as files, or copied the work to another hub, the end of the turn says what, in one line: "ConfigHub plugin: kept theme dark and footer Support desk, floor 3 in startpage-mine, each with its reason, so a later version will not overwrite them." It comes the first time in a week for each kind in a folder, and never instead of a change waiting for your approval. `CUB_MINI_TELL=0` turns it off.
+
 `/confighub:changes` and `/confighub:why` are for you. The agent cannot run them.
 
 ## The stop before a deploy that would undo a change

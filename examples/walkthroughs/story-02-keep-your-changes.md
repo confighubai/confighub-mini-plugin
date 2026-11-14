@@ -139,7 +139,7 @@ For an AI agent doing this for a person.
 
 The scripted run follows the Human steps on a hub of its own and compares the quoted output. A correct agent result leaves the person's copy, `startpage-mine`, with the dark theme and the footer kept and George's four columns taken, each change with its reason. The checks below can be run by hand, from the start page's folder, after the steps:
 
-This proves: stored. The colleague's copy and George's update are kept in a hub on this computer, and the app draws its page from it; no service runs. The next step this aims to win: keeping the hub on for the next update. Tested on the checksum-verified published confighub mini 0.11.1-mini.2 with the plugin 0.85.0, 14 November 2026: environment, local hub and local files (no cluster); approval, no approval step. At the moment this page's next step belongs to, the plugin showed no line in the runs, so the offer was not made: the plugin missed the moment. From the next release, the plugin says one line at this moment, such as "ConfigHub plugin: kept theme dark and footer Support desk, floor 3 in startpage-mine, each with its reason, so a later version will not overwrite them." The next-step line names words from that line. The Results below stay as run on 0.11.1-mini.2 until a release run replaces them.
+This proves: stored. The colleague's copy and George's update are kept in a hub on this computer, and the app draws its page from it; no service runs. The next step this aims to win: taking George's next version the same way. Tested on the checksum-verified published confighub mini 0.11.1-mini.2 with the plugin 0.85.0, 14 November 2026: environment, local hub and local files (no cluster); approval, no approval step. At the moment this page's next step belongs to, the plugin showed no line in the runs, so the offer was not made: the plugin missed the moment. From the next release, the plugin says one line at this moment, such as "ConfigHub plugin: kept theme dark and footer Support desk, floor 3 in startpage-mine, each with its reason, so a later version will not overwrite them." The next-step line names words from that line. The Results below stay as run on 0.11.1-mini.2 until a release run replaces them.
 
 <!-- agent-task: keep -->
 > George's start page app is in this folder: run it. Make it dark because it's easier on my eyes, put "Support desk, floor 3" in the footer so people can find us, then take George's newest version (in its georges-next-version folder) without losing my changes.
@@ -148,7 +148,7 @@ This proves: stored. The colleague's copy and George's update are kept in a hub 
 <!-- agent-check-a keep: f=$(grep -rl --include='*.yaml' '^columns: 4' . | head -1) && grep -q '^theme: dark' "$f" && grep -q '^footer: Support desk, floor 3' "$f" -->
 <!-- agent-tools: ./startpage -->
 <!-- arms: a,b -->
-<!-- next-step when "with its reason": keep it for George's next update | George will update the app again. Keep your changes and their reasons in a hub, so the next update keeps them too? -->
+<!-- next-step when "with its reason": take George's next update | When George sends his next version, take it the same way and keep your changes? -->
 
 ```sh
 d=$(find . -name .my-settings.yaml | head -1)

@@ -295,13 +295,14 @@ The request was made with the asking agent's own key, and it covers the one valu
 
 ## What you are told, and nothing else
 
-With the gate on and the agent on a key of its own, the plugin tells you three things, each one line that Claude Code shows you at the end of the agent's turn and does not give the agent:
+With the gate on and the agent on a key of its own, the plugin tells you three things, and from the next release four, each one line that Claude Code shows you at the end of the agent's turn and does not give the agent:
 
 - **A change is waiting for you.** The agent's turn ended with a change order not yet approved: the value from what to what, the copy it is headed for, the agent's reason, and the command that approves it. Once per change order. `cub mini waiting` lists what waits, for later.
 - **An agent is proposing again what was refused.** You refused a change order (`cub mini refuse BASE/ORDER --reason WHY`), or the hub refused the agent a write; a later change order for the same path is told once, naming the path, the refusal it repeats, and the agent. You decide. `cub mini waiting` and `cub mini approve` also mark a value you refused before, with the order it was in and your reason, so that you do not approve it by accident inside a later change.
+- **What the hub kept for you** (from the next release). The agent's turn ended with the hub having kept something you asked for: a value kept with its reason, so a later version will not overwrite it; a new version taken with your own values kept; the copies written out as files with their reasons; or a copy made into another hub. One line says what and where, such as "ConfigHub plugin: gpu-operator-customer took the new version and kept version 580.105.08, with its reason." It comes whether the agent ran `cub` or an app that runs it, and the first time in a week for each kind in a folder.
 - **Something elsewhere needs a hub it can reach.** One sentence from `cub mini pull-key`, `pull` or `copy` when the hub listens on this machine only and a VM or another machine needs it.
 
-Nothing is said of a change within the agent's rights, a change you approved, a pull, or an agent the gate stopped that did not try again. `CUB_MINI_TELL=0` turns the lines off.
+Nothing else is said of a change within the agent's rights. Nothing is said of a change you approved, a pull, or an agent the gate stopped that did not try again. `CUB_MINI_TELL=0` turns the lines off.
 
 ## When a cluster deploys from Git: a check on each pull request
 

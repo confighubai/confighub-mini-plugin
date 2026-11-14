@@ -124,14 +124,14 @@ For an AI agent doing this for a person.
 
 The scripted run follows the Human steps against hosted ConfigHub, in its test organization, and compares the quoted output. Arm a, without confighub mini, is not applicable: there is no laptop hub to copy from. A correct agent result is the app's live copy on the team's hub with the kept timeout. The checks below can be run by hand after step 7:
 
-This proves: stored, on hosted ConfigHub, with the laptop's hub listening on the laptop only; nothing is delivered, and production on the team's hub is not behind approval. The next step this aims to win: keeping the laptop hub as the place agents work, with the team's hub above it. Tested on the checksum-verified published confighub mini 0.11.1-mini.2 with the plugin 0.85.0, 14 November 2026: environment, hosted ConfigHub (the test organization) and a local hub; approval, no approval step. At the moment this page's next step belongs to, the plugin showed no line in the runs, so the offer was not made: the plugin missed the moment. From the next release, the plugin says one line at this moment, such as "ConfigHub plugin: copied the app from tiny-cub to team, with the reasons kept beside its values; nothing on tiny-cub changed." The next-step line names words from that line. The Results below stay as run on 0.11.1-mini.2 until a release run replaces them.
+This proves: stored, on hosted ConfigHub, with the laptop's hub listening on the laptop only; nothing is delivered, and production on the team's hub is not behind approval. The next step this aims to win: putting the team's copy behind the person's approval. Tested on the checksum-verified published confighub mini 0.11.1-mini.2 with the plugin 0.85.0, 14 November 2026: environment, hosted ConfigHub (the test organization) and a local hub; approval, no approval step. At the moment this page's next step belongs to, the plugin showed no line in the runs, so the offer was not made: the plugin missed the moment. From the next release, the plugin says one line at this moment, such as "ConfigHub plugin: copied the app from tiny-cub to team, with the reasons kept beside its values; nothing on tiny-cub changed." The next-step line names words from that line. The Results below stay as run on 0.11.1-mini.2 until a release run replaces them.
 
 <!-- agent-task: team -->
 > My app is in the hub on my laptop (its context is in $LAPTOP, the app's name in $APP). Copy it, with its reasons, up to the team's hub, which I am signed in to as team. Don't open anything on my laptop to the network.
 
 <!-- agent-check team: cub --context team unit data settings --space "$APP-live" | grep -qx 'TIMEOUT_SECONDS=120' && ! lsof -nP -iTCP -sTCP:LISTEN 2>/dev/null | awk '/confighub|postgres/ {print $9}' | grep -qv '^127\.0\.0\.1:' -->
 <!-- arms: b -->
-<!-- next-step when "copied": keep the laptop hub on | Keep the hub on your laptop for your agents' next changes, and copy the work up to the team's hub whenever you choose? -->
+<!-- next-step when "copied": the team's copy behind your approval | Put production's copy on the team's hub behind your approval? -->
 
 ```sh
 cub --context team unit data settings --space "$APP-live"

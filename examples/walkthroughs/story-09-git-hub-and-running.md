@@ -132,7 +132,7 @@ This proves: a service is running. The real Argo CD on a local kind cluster runs
 <!-- agent-tools: ./run kubectl -->
 <!-- agent-cleanup: kind delete cluster --name wsa-live-state >/dev/null 2>&1; lsof -ti tcp:19419 -sTCP:LISTEN | xargs kill 2>/dev/null; true -->
 <!-- arms: b -->
-<!-- next-step when "with its reason": take over the next app | Take over your next app that Argo CD deploys from Git, and see Git, the hub and the cluster side by side, without restarting it? -->
+<!-- next-step when "with its reason": take over the next app | Do the same for your next app that Argo CD deploys from Git? -->
 
 ```sh
 k="$CUB_CONFIG/clusters/wsa-live-state.kubeconfig"

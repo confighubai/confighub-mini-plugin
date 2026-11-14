@@ -111,7 +111,7 @@ For an AI agent doing this for a person.
 
 The scripted run follows the Human steps and compares the quoted output. Arm a, without confighub mini, is not applicable here: the keys and refusals exist only in a hub. A correct agent result is a `keys.txt` with every refusal and none missed. The checks below can be run by hand after the steps:
 
-This proves: stored, and refused. Each key is checked against real hubs on this computer, three of them; nothing is delivered, and no shared hub is used. The next step this aims to win: moving from hubs on one computer to the organization's hosted ConfigHub. Tested on the checksum-verified published confighub mini 0.11.1-mini.2 with the plugin 0.85.0, 14 November 2026: environment, three local hubs, no shared hub; approval, no approval step; refusals are the check. At the moment this page's next step belongs to, the plugin showed no line in the runs, so the offer was not made: the plugin missed the moment. From the next release, the plugin says one line at the end of a turn in which the hub kept a value with its reason. In this story the hub's words are inside the report `./two-people` writes, so the plugin says nothing; the refusals the person reads are the check's own. The next-step line names words from that line. The Results below stay as run on 0.11.1-mini.2 until a release run replaces them.
+This proves: stored, and refused. Each key is checked against real hubs on this computer, three of them; nothing is delivered, and no shared hub is used. The next step this aims to win: using the same keys in the organization's hosted ConfigHub. Tested on the checksum-verified published confighub mini 0.11.1-mini.2 with the plugin 0.85.0, 14 November 2026: environment, three local hubs, no shared hub; approval, no approval step; refusals are the check. At the moment this page's next step belongs to, the plugin showed no line in the runs, so the offer was not made: the plugin missed the moment. From the next release, the plugin says one line at the end of a turn in which the hub kept a value with its reason. In this story the hub's words are inside the report `./two-people` writes, so the plugin says nothing; the refusals the person reads are the check's own. The next-step line names words from that line. The Results below stay as run on 0.11.1-mini.2 until a release run replaces them.
 
 <!-- agent-task: keys -->
 > This folder's ./two-people is a check of keys for three parties: Ivan's team, a customer, and Dan. Run it, keep its output in keys.txt, and tell me whether each party was refused everything outside its own part.
@@ -119,7 +119,7 @@ This proves: stored, and refused. Each key is checked against real hubs on this 
 <!-- agent-check keys: f=$(find . -name keys.txt | head -1) && [ "$(grep -c 'HTTP 403: permission denied' "$f")" -ge 3 ] && grep -q 'Dan signs in again: Invalid credentials' "$f" && ! grep -q 'NOT REFUSED' "$f" -->
 <!-- agent-tools: ./two-people tee -->
 <!-- arms: b -->
-<!-- next-step when "with its reason": move up to the organization's ConfigHub | Move these keys, and what each may change, up to your organization's hosted ConfigHub? -->
+<!-- next-step when "with its reason": the same keys in the organization's ConfigHub | Use the same keys, each limited to its own part, in your organization's hosted ConfigHub? -->
 
 ```sh
 grep -E '403|Invalid credentials|NOT REFUSED' keys.txt
