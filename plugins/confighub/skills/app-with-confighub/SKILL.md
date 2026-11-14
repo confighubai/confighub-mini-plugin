@@ -156,6 +156,10 @@ delivery do not come with it.
   a step because a key might be restricted: run it, and the hub refuses what the key may not do.
 - Keep credentials out of chat, command arguments, exports and records. Secret setup is an
   owner-terminal step. A reader cannot propose or approve; a proposer cannot approve.
+- Never fake a terminal (`script`, `expect`, a pty) or pass `--yes` to get past a step meant
+  for the person: approving, a production secret. Those checks stop an ordinary shell and are
+  no guarantee; what holds is your working on a key of your own, which the hub refuses for
+  production. Signed in as the person, the line is yours to keep.
 - Distinguish settings stored, service running and approved revision deployed. Verify each
   result you promise. `copy`, `set` and approval alone do not prove production changed.
 - The app may run on this machine, another machine, in CI, one or many sandboxes, a shared
