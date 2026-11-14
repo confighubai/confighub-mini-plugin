@@ -78,7 +78,7 @@ An unpacked confighub mini package, 0.11.1-mini.2 or later ([installing confighu
    changes Image docker.io/traefik:v3.7.12 → docker.io/traefik:v3.7.14
    you keep Replicas yours: 2 (offered: 3)
    …
-   Nothing running has changed. To take it later:
+   Nothing running has changed. To take this:
    cub mini promote platform-preview
    ```
 
@@ -137,7 +137,7 @@ For an AI agent doing this for a person.
 
 The scripted run follows the Human steps and compares the quoted output. Arm a, without confighub mini, is not applicable: production's copy and its kept value are in the hub. A correct agent result is two ready controllers at 3.7.14 on `wsa-preview`, before the cleanup. The checks below can be run by hand after step 8:
 
-This proves: a service is running. The real Argo CD on a local kind cluster runs the release the hub published, with production's kept value, and argobot reports it healthy. The next step this aims to win: previewing the next branch the same way. Tested on the checksum-verified published confighub mini 0.11.1-mini.2 with the plugin 0.85.0, 14 November 2026: environment, the real Argo CD on a local kind cluster; approval, no approval step. At the moment this page's next step belongs to, the plugin showed no line in the runs, so the offer was not made: the plugin missed the moment. From plugin 0.87.0, the plugin says one line at this moment, such as "ConfigHub plugin: platform-preview took the new version and kept Replicas 2. Files with the reasons are in result/." The next-step line names words from that line. The Results below stay as run on 0.11.1-mini.2 until a release run replaces them.
+This proves: a service is running. The real Argo CD on a local kind cluster runs the release the hub published, with production's kept value, and argobot reports it healthy. The next step this aims to win: production taking the change, waiting for the person's yes. Tested on the checksum-verified published confighub mini 0.11.1-mini.4 with the plugin 0.87.0, 14 November 2026: environment, the real Argo CD on a local kind cluster; approval, no approval step. The plugin says one line at this moment, such as "ConfigHub plugin: platform-preview took the new version and kept Replicas 2. Files with the reasons are in result/." The next-step line names words from that line.
 
 <!-- agent-task: see -->
 > Production, platform-preview in the hub, runs Traefik 3.7.12 on the local kind cluster wsa-preview, with two controllers on purpose. The platform's next version is in ./platform-2. Show me what it would do to production, then take it and let me see it running there. Leave it running for me to look at, and write the result as files for review in ./result.
@@ -146,7 +146,8 @@ This proves: a service is running. The real Argo CD on a local kind cluster runs
 <!-- agent-tools: kubectl -->
 <!-- agent-cleanup: kind delete cluster --name wsa-preview >/dev/null 2>&1; true -->
 <!-- arms: b -->
-<!-- next-step boundary=same-tier when "took the new version and kept": preview the next branch | Preview the next branch the same way before anyone agrees to it? -->
+<!-- next-step boundary=same-tier when "took the new version and kept": production takes it | Want production to take this change, waiting for your yes before it does? -->
+<!-- next-step boundary=mini-to-free-hub when "took the new version and kept": a colleague approves the preview | Want a colleague to look at this preview from their own computer, and say yes to production taking it? -->
 
 ```sh
 kubectl --kubeconfig "$CUB_CONFIG/clusters/wsa-preview.kubeconfig" -n platform-ingress get deploy traefik \
@@ -156,10 +157,28 @@ grep 'two controllers' result/CHANGES.md
 
 <!-- results:begin -->
 
-Results, 14 November 2026, confighub mini 0.11.1-mini.2. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+Results, 14 November 2026, confighub mini 0.11.1-mini.4. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Scripted run: passed, 187 seconds for the steps, within the page's budget of 360.
-- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: b is the plugin, confighub mini and this page as reading.
+- Scripted run: passed, 177 seconds for the steps, within the page's budget of 360.
+- Agent runs (on confighub mini 0.11.1-mini.4, 14 November 2026): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: b is the plugin, confighub mini and this page as reading.
+
+| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
+|---|---|---|---|---|---|
+| b | claude-opus-5-5 | 3/3 | 52.5 | $0.204 | 2 |
+| b | claude-sonnet-5-5 | 3/3 | 46.9 | $0.115 | 0 |
+
+No agent approved or refused a change to production.
+
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Preview the next branch the same way before anyone agrees to it?"
+
+The plugin offers it once, after the answer at whose end it showed the moment the offer names ("took the new version and kept"). Offered is the share of persons it was shown to; want it now and later are over them.
+
+| Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|---|
+| b | claude-opus-5-5 | 30 | 100% | 100% | 0% | 77% | 53% |
+| b | claude-sonnet-5-5 | 30 | 100% | 100% | 0% | 83% | 67% |
+
+- Agent runs (on confighub mini 0.11.1-mini.2, 13 November 2026): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: b is the plugin, confighub mini and this page as reading.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|

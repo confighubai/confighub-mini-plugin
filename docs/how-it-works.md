@@ -22,6 +22,8 @@ The Codex rows hold for Codex 0.163.0 on macOS, with a local MCP server. They ha
 
 The next agent receives history for supported operations; it is not guaranteed to preserve the value. A server-side production gate additionally requires a deployment path that consumes the approved configuration and an agent without bypass credentials ([approvals](approvals.md)).
 
+Some checks in `cub mini` look for a person at a terminal: `cub mini approve` asks before it approves, and a production secret is set only from a terminal. And `cub mini set` and `rollback` never write production; they propose. These stop an agent's ordinary shell, and none is a guarantee: an agent working on your own sign-in can pass `--yes`, fake a terminal, or write with plain `cub`. What holds is the agent working on a key of its own, which the hub refuses for production.
+
 ## What the agent is told, and when
 
 The local record runs quietly. The plugin supplies earlier reasons when earlier sessions changed the file the agent is looking at. A selected app workflow, an explicit project preference and ConfigHub activity reminders can also give the agent context ([ordinary app requests](agent-workflow.md)). Then, once in the session, it adds the history of that file beside what the agent read. From the [five-minute try](try-the-plugin.md#try-it-in-five-minutes):

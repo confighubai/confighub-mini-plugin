@@ -88,7 +88,7 @@ An unpacked confighub mini package, 0.11.1-mini.2 or later ([installing confighu
    changes tools.open-change false → true
    support-assistant-research
    you keep model yours: large-2026-09 (offered: large-2026-11)
-   Nothing running has changed. To take it later:
+   Nothing running has changed. To take this:
    ```
 
 8. Both teams take it:
@@ -159,7 +159,7 @@ For an AI agent doing this for a person.
 
 The scripted run follows the Human steps on a hub of its own and compares the quoted output. A correct agent result is the two teams' copies as above, with Research's failed evaluation recorded. Without a hub, the equivalent is two files, one for each team, with those values. The checks below can be run by hand after the steps:
 
-This proves: stored. Each team's definition, its reasons and the evaluation are in a hub on this computer; no assistant runs from them. The next step this aims to win: giving the next team its own copy the same way. Tested on the checksum-verified published confighub mini 0.11.1-mini.2 with the plugin 0.85.0, 14 November 2026: environment, local hub, no cluster; approval, no approval step. From plugin 0.87.0, the plugin says one line at this moment, such as "ConfigHub plugin: support-assistant-support and support-assistant-research took the new version and kept read-tickets true and model large-2026-09, each with its reason." The next-step line names words from that line. The Results below stay as run on 0.11.1-mini.2 until a release run replaces them.
+This proves: stored. Each team's definition, its reasons and the evaluation are in a hub on this computer; no assistant runs from them. The next step this aims to win: recording Support's own evaluation. Tested on the checksum-verified published confighub mini 0.11.1-mini.4 with the plugin 0.87.0, 14 November 2026: environment, local hub, no cluster; approval, no approval step. The plugin says one line at this moment, such as "ConfigHub plugin: support-assistant-support and support-assistant-research took the new version and kept read-tickets true and model large-2026-09, each with its reason." The next-step line names words from that line.
 
 <!-- agent-task: assistant -->
 > Our support assistant's definition is support-assistant.yaml in this folder, and the platform team's next version is in next/. Give Support and Research their own copy, named support and research. Support may read customers' tickets because it answers from them. Research keeps model large-2026-09 because its evaluation of the newer model is not finished. Then take the next version for both, and record that Research's evaluation of large-2026-11 failed: 2 of 50 answers cite papers that do not exist.
@@ -167,7 +167,8 @@ This proves: stored. Each team's definition, its reasons and the evaluation are 
 <!-- agent-check assistant: r=$(cub unit data support-assistant --space support-assistant-research) && s=$(cub unit data support-assistant --space support-assistant-support) && echo "$r" | grep -q '^model: large-2026-09 #' && echo "$r" | grep -q 'open-change: true' && echo "$s" | grep -q '^model: large-2026-11' && echo "$s" | grep -q 'read-tickets: true' && cub attestation list --space support-assistant-research | grep -q 'Evaluation *Fail' -->
 <!-- agent-check-a assistant: r=$(grep -rl --include='*.yaml' '^model: large-2026-09' . | xargs grep -l 'open-change: true' | head -1) && s=$(grep -rl --include='*.yaml' '^model: large-2026-11' . | xargs grep -l 'read-tickets: true' | head -1) && [ -n "$r" ] && [ -n "$s" ] -->
 <!-- arms: a,b -->
-<!-- next-step boundary=same-tier when "with its reason": give a third team the assistant | Give a third team its own copy of the assistant the same way? -->
+<!-- next-step boundary=same-tier when "with its reason": record Support's evaluation | Want to record Support's own evaluation of large-2026-11 beside its copy, the way Research's is recorded? -->
+<!-- next-step boundary=mini-to-free-hub when "with its reason": each team on its own copy | Want each team to open and change only its own copy of the assistant, from their own computer? -->
 
 ```sh
 cub unit data support-assistant --space support-assistant-research | grep -E '^model|open-change'
@@ -177,10 +178,28 @@ cub attestation list --space support-assistant-research
 
 <!-- results:begin -->
 
-Results, 14 November 2026, confighub mini 0.11.1-mini.2. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+Results, 14 November 2026, confighub mini 0.11.1-mini.4. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Scripted run: passed, 39 seconds for the steps, within the page's budget of 90.
-- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+- Scripted run: passed, 40 seconds for the steps, within the page's budget of 90.
+- Agent runs (on confighub mini 0.11.1-mini.4, 14 November 2026): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: b is the plugin, confighub mini and this page as reading.
+
+| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
+|---|---|---|---|---|---|
+| b | claude-opus-5-5 | 3/3 | 96.1 | $0.213 | 0 |
+| b | claude-sonnet-5-5 | 3/3 | 71.5 | $0.131 | 0 |
+
+No agent approved or refused a change to production.
+
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Give a third team its own copy of the assistant the same way?" It offers more of the tier the person has, not a step up.
+
+The plugin offers it once, after the answer at whose end it showed the moment the offer names ("with its reason"). Offered is the share of persons it was shown to; want it now and later are over them.
+
+| Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|---|
+| b | claude-opus-5-5 | 30 | 100% | 100% | 0% | 30% | 67% |
+| b | claude-sonnet-5-5 | 30 | 67% | 100% | 0% | 45% | 57% |
+
+- Agent runs (on confighub mini 0.11.1-mini.2, 14 November 2026): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
