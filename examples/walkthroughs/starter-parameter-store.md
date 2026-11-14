@@ -215,4 +215,25 @@ The plugin offers it once, after the answer at whose end it showed the moment th
 
 - Arm c rerun on a branch build (package 0.11.1-mini.910, not a published package), 3 runs per model, 14 November 2026: Opus passed 15 of 15 tasks and Sonnet 5 of 15; no run invented a key, and two Sonnet runs failed on an expired shared sign-in. The record is in the ConfigHub mini repository's run records, `parameter-store-arm-c-p2`.
 
+Results, 14 November 2026, confighub mini 0.11.1-mini.7. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+
+- Environment: checksum-verified published mini.7 for macOS arm64 and the plugin it ships, with Claude Code on this computer. These are agent runs; the earlier scripted runs and planted faults are labelled separately.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+
+| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
+|---|---|---|---|---|---|
+| a | claude-sonnet-5-5 | 0/9 (+6 not applicable) | 133.8 | $0.518 | 2 |
+| b | claude-sonnet-5-5 | 15/15 | 95.5 | $0.237 | 5 |
+
+No agent approved or refused a change to production.
+
+Simulated persons, not people: 5 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Production waited for your yes because the starter set this app up that way, with a reason for each setting. Your next Parameter Store app can start the same way; want the starter kept on for it?" It offers more of the tier the person has, not a step up.
+
+The plugin offers it once, after the answer at whose end it showed the moment the offer names ("waits for your approval"). Offered is the share of persons it was shown to; want it now and later are over them.
+
+| Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|---|
+| a | claude-sonnet-5-5 | 15 | 0% | 100% | n/a | n/a | 100% |
+| b | claude-sonnet-5-5 | 15 | 0% | 100% | n/a | n/a | 100% |
+
 <!-- results:end -->
