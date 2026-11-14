@@ -62,8 +62,8 @@ In the local macOS arm64 mini.908 comparison, the starter passed 19/19 checks an
 
 <!-- results:begin -->
 
-Results, 14 November 2026, confighub mini candidate-782-final. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+Results, 14 November 2026, confighub mini 0.11.1-mini.7. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Scripted run: passed, 142 seconds for the steps, within the page's budget of 360.
+- Scripted run: passed, 158 seconds for the steps, within the page's budget of 360.
 
 <!-- results:end -->
