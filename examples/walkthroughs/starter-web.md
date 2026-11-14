@@ -182,7 +182,7 @@ Results, 14 November 2026, confighub mini 0.11.1-mini.3. Figures from this page'
 
 - Scripted run: passed, 64 seconds for the steps, within the page's budget of 200; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
 - Environment, published confighub mini 0.11.1-mini.3 with its own plugin (0.86.0): A local confighub mini hub on this computer, with hosted ConfigHub (the Kubara organization) for the move to a shared hub; no cluster or service. Approvals were scripted: the test script ran the person's approve commands. After each run the runner removed the hubs it started and everything it made in the shared hub.
-- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
+- Agent runs (on confighub mini 0.11.1-mini.3, 14 November 2026): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
@@ -207,5 +207,27 @@ The plugin offers it once, after the answer at whose end it showed the moment th
 | a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 70% |
 | b | claude-sonnet-5-5 | 30 | 100% | 100% | 27% | 70% | 90% |
 | c | claude-sonnet-5-5 | 30 | 67% | 100% | 25% | 75% | 97% |
+
+- Agent runs (on confighub mini 0.11.1-mini.2, 13 November 2026): 20 runs per arm on each of claude-opus-5-5, claude-sonnet-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+
+| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
+|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 43/60 (+40 not applicable) | 70.1 | $0.276 | 0 |
+| b | claude-opus-5-5 | 100/100 | 129.9 | $0.479 | 3 |
+| a | claude-sonnet-5-5 | 40/60 (+40 not applicable) | 57.6 | $0.134 | 0 |
+| b | claude-sonnet-5-5 | 100/100 | 93.1 | $0.206 | 3 |
+
+No agent approved or refused a change to production.
+
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Production waited for your yes because the web starter set this app up that way, with a reason for each setting. Your next web service can start the same way; want the web starter kept on for it?"
+
+The plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
+
+| Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 200 | 0% | 100% | n/a | n/a | 84% |
+| b | claude-opus-5-5 | 200 | 100% | 100% | 28% | 60% | 74% |
+| a | claude-sonnet-5-5 | 200 | 0% | 100% | n/a | n/a | 82% |
+| b | claude-sonnet-5-5 | 200 | 100% | 100% | 26% | 59% | 89% |
 
 <!-- results:end -->
