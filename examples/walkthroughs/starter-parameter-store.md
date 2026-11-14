@@ -94,14 +94,12 @@ Start here if you have no AWS account: the marked steps use a stand-in. For AWS 
    <!-- run: undo -->
    ```sh
    ORDER=billing-base/$(cub changeorder list --space billing-base -o jq='.[-1].ChangeOrder.Slug')
-   cub mini rollback billing-live --change-order "$ORDER" --reason "Invoices are out; retry as before"
-   cub mini approve --yes --note "Retry as before"
+   cub mini rollback billing-live --change-order "$ORDER" --reason "Invoices are out; retry as before" && cub mini approve --yes --note "Retry as before"
    sh deliver
    ```
    ```text
    Set back in the shared settings (billing-base), with the reason: Invoices are out; retry as before
      SSM_MAX_RETRIES: 2 → 5
-   …
    Production reads {'INVOICE_DAY': '1', 'LOG_LEVEL': 'info', 'SSM_CACHE_SECONDS': '300', 'SSM_MAX_RETRIES': '5', 'SSM_WITH_DECRYPTION': 'true'}
    ```
 8. Move it to your team's shared hub. Sign in once (`auth login` opens a browser). The app's name there, `TEAM_APP`, starts with your user name, so it does not clash with a teammate's.
