@@ -144,25 +144,25 @@ A starter whose version 2 is Bob's fixes with his reasons, approved by Alice; a 
 For an AI agent working as Bob, on Bob's key: run `cub` as `cub --context bob`.
 
 - The request: "Harden shop for production. Debug logs carry request bodies, so LOG_LEVEL should be warn; it needs 3 replicas so one can fail during a deploy; its database takes 20 connections (DB_POOL_SIZE). Then make the fixes that suit every web service version 2 of the team's web starter, each with its reason."
-- Set each value on shop's base with its reason: `cub mini set shop KEY=VALUE --variant base --change-desc "WHY"`.
+- Edit all the shared settings together in `shop/.env`: set `LOG_LEVEL=warn`, `REPLICAS=3` and `DB_POOL_SIZE=20`. Leave `.env.production` alone. Run `cub mini upload shop/.env --component shop --change-desc "LOG_LEVEL: keep request bodies out of debug logs; REPLICAS: keep two serving during deploys; DB_POOL_SIZE: match this shop’s database capacity"` once on Bob's key. The app gets one production order whose reason names each setting. Calling `cub mini set` separately can open extra production orders.
 - Make version 2 of the starter: one `cub function set --space starters-base --unit web --toolchain AppConfig/YAML --change-desc WHY -- set-yq '...'` for each default that suits every app (not shop's own `DB_POOL_SIZE`), the first also setting `.version = 2`; then a change order in `starters-base` with `--in-scope-space starters-approved --change-workflow workflows/starters-approved-approval`.
-- Never approve the starter or production; tell the person to review `cub mini waiting` and use `cub mini approve BASE/ORDER` for the exact change. Never use the no-order shorthand.
+- Wait for Alice to review the app rollout and the reusable starter separately. Give her the two exact approval commands once: the single shop order named by upload and `cub mini approve starters-base/web-v2`. Use the full launcher path if ConfigHub printed one. Do not offer another app while those decisions are waiting.
 - Done when `cub unit data --space shop-base app` has the three values and the proposed starter has `version: 2` with `warn` and `"3"`.
 
 ## Testing
 
-This proves: the settings and the starter's versions were stored in the hub, each value with who set it and why, and production's copy changed only by an approved change order. What was really used: confighub mini on this computer (no stand-in, no cluster, no real service), with Bob as a second key and Alice's approvals made by the scripted steps, not a person; nothing is delivered and no service runs. A correct agent result has Bob's three values on shop's base and a proposed version 2 of the starter with the two fixes for every app, and without shop's pool size. The step it aims to win: keeping the starter on for the next app. The checks below can be run by hand, in bash, in the walkthrough's folder:
+This proves: the settings and the starter's versions were stored in the hub, each value with who set it and why, and production's copy changed only by an approved change order. What was really used: confighub mini on this computer (no stand-in, no cluster, no real service), with Bob as a second key and Alice's approvals made by the scripted steps, not a person; nothing is delivered and no service runs. A correct agent result has Bob's three values on shop's base and a proposed version 2 of the starter with the two fixes for every app, and without shop's pool size. It leaves exactly one app order and a separate starter order, both pending; the production log level and pool size stay as they were. The next-app offer belongs after the owner has approved the starter and used it across both apps. The agent task here ends with proposals, so that later moment is outside its scope. The checks below can be run by hand, in bash, in the walkthrough's folder:
 
 <!-- agent-task: harden after=harden -->
 > Harden shop for production. Debug logs carry request bodies, so LOG_LEVEL should be warn; it needs 3 replicas so one can fail during a deploy; its database takes 20 connections (DB_POOL_SIZE). Then make the fixes that suit every web service version 2 of the team's web starter, each with its reason.
 
-<!-- agent-check harden: cub unit data --space shop-base app | grep -qx 'DB_POOL_SIZE=20' && cub unit data --space shop-base app | grep -qx 'REPLICAS=3' && cub unit data --space starters-base web | grep -q '^version: 2' && cub unit data --space starters-base web | grep -q 'value: warn' && ! cub unit data --space starters-base web | grep -q DB_POOL_SIZE -->
+<!-- agent-check harden: cub unit data --space shop-base app | grep -qx 'DB_POOL_SIZE=20' && cub unit data --space shop-base app | grep -qx 'REPLICAS=3' && cub unit data --space starters-base web | grep -q '^version: 2' && cub unit data --space starters-base web | grep -q 'value: warn' && ! cub unit data --space starters-base web | grep -q DB_POOL_SIZE && cub unit data --space shop-live app | grep -qx 'LOG_LEVEL=error' && cub unit data --space shop-live app | grep -qx 'DB_POOL_SIZE=5' && cub mini waiting --all -o json | jq -e '[.waiting[] | select(.order | startswith("shop-base/"))] | length == 1' && cub mini waiting --all -o json | jq -e '[.waiting[] | select(.order == "starters-base/web-v2")] | length == 1' -->
 <!-- agent-check-a harden: g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g DB_POOL_SIZE 20 | grep -q shop && grep -rlsE '^version: 2' --exclude-dir='.*' team-starters | grep -q . && ! grep -rqs DB_POOL_SIZE team-starters -->
 <!-- arms: a,b,c -->
-<!-- next-step boundary=same-tier when "did not change": keep the starter on | Your next app can start with Bob's fixes already in place, each with its reason; want the starter kept on for it? -->
+<!-- next-step boundary=same-tier when "Staging took it now: cart, shop": review the next app’s defaults | Before your next web app goes live, you can check which approved defaults it inherited. Want to see those settings and their reasons? -->
 
 ```sh
-cub unit data --space shop-base app | grep -qx 'DB_POOL_SIZE=20' && cub unit data --space shop-base app | grep -qx 'REPLICAS=3' && cub unit data --space starters-base web | grep -q '^version: 2' && cub unit data --space starters-base web | grep -q 'value: warn' && ! cub unit data --space starters-base web | grep -q DB_POOL_SIZE
+cub unit data --space shop-base app | grep -qx 'DB_POOL_SIZE=20' && cub unit data --space shop-base app | grep -qx 'REPLICAS=3' && cub unit data --space starters-base web | grep -q '^version: 2' && cub unit data --space starters-base web | grep -q 'value: warn' && ! cub unit data --space starters-base web | grep -q DB_POOL_SIZE && cub unit data --space shop-live app | grep -qx 'LOG_LEVEL=error' && cub unit data --space shop-live app | grep -qx 'DB_POOL_SIZE=5' && cub mini waiting --all -o json | jq -e '[.waiting[] | select(.order | startswith("shop-base/"))] | length == 1' && cub mini waiting --all -o json | jq -e '[.waiting[] | select(.order == "starters-base/web-v2")] | length == 1'
 g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g DB_POOL_SIZE 20 | grep -q shop && grep -rlsE '^version: 2' --exclude-dir='.*' team-starters | grep -q . && ! grep -rqs DB_POOL_SIZE team-starters
 ```
 
@@ -214,5 +214,26 @@ The plugin offers it once, after the answer at whose end it showed the moment th
 |---|---|---|---|---|---|---|---|
 | a | claude-sonnet-5-5 | 15 | 0% | 100% | n/a | n/a | 33% |
 | b | claude-sonnet-5-5 | 15 | 100% | 100% | 27% | 73% | 100% |
+
+Results, 14 November 2026, confighub mini 0.11.1-mini.8. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+
+- Environment: checksum-verified published mini.8 for macOS arm64, with the revised walkthrough and Claude Code. This pilot used only the guided arm. The production copy was checked while both requests were pending. A restricted test key authored the proposals. No live service or outside account was used.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5. Arms: b is the plugin, confighub mini and this page as reading.
+
+| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
+|---|---|---|---|---|---|
+| b | claude-sonnet-5-5 | 3/3 | 34.9 | $0.114 | 2 |
+
+No agent approved or refused a change to production.
+
+Simulated persons, not people: 5 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Before your next web app goes live, you can check which approved defaults it inherited. Want to see those settings and their reasons?" It offers more of the tier the person has, not a step up.
+
+The plugin offers it once, after the answer at whose end it showed the moment the offer names ("Staging took it now: cart, shop"). Offered is the share of persons it was shown to; want it now and later are over them.
+
+| Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|---|
+| b | claude-sonnet-5-5 | 15 | 0% | 100% | n/a | n/a | 87% |
+
+This follow-up left a median of 2 owner commands, compared with 3 in the earlier mini.7 guided arm. The new checks required one order for the app, one for the starter, and the old production settings while both waited. This compares two pilots on different packages. The next-app offer was not shown; its uptake was not measured.
 
 <!-- results:end -->
