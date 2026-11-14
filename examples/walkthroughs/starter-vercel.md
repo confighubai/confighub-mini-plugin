@@ -8,10 +8,9 @@ live_budget_seconds: 1200
 -->
 # An app on Vercel, with production behind your approval
 Connect a Vercel app and keep a reason for every approved production setting. Try a personal Hobby project or use the local stand-in without a Vercel account.
-
 ## Human
-An unpacked confighub mini package ([install confighub mini](../../docs/install-mini.md)) and Python 3. confighub mini is ConfigHub made small enough to run on your computer: a hub, which keeps settings with every change, who made it and why. For step 8, a sign-in to your organization's ConfigHub, such as hosted ConfigHub.
-
+### What you need
+An unpacked [confighub mini package](../../docs/install-mini.md) and Python 3. Step 8 needs a sign-in to your organization's ConfigHub.
 ### Steps
 1. Start a hub of your own; it becomes `cub`'s current context. `MINI` is the unpacked package. `CUB_MINI_STARTERS` switches starters on: a starter is a short file that gives one kind of app its usual settings, each with a reason.
    <!-- run: setup -->
@@ -149,11 +148,13 @@ bash "${WALKTHROUGH_VERCEL_SCRIPT:?set to the path to examples/vercel-hobby.sh}"
     ```text
     Successfully deleted component shop (ID)
     ```
+### Undo it
 In the shared hub: `cub --context shared component delete --recursive --detach "$TEAM_APP"` and `cub --context shared changeworkflow delete --space workflows "$TEAM_APP-live-approval"`. Here: `cub mini uninstall --name shop --delete-data` and `rm -rf ~/starter-example`.
+### What you have now
+The alias serves the approved cache.
 ## Agent
-Use the app folder and the Human steps. Give the owner the exact approval command. Observe staging and the live value separately. Use the fixture for agent trials. After the copy, verify the shared approval workflow. Never approve production, put a secret into a setting, or write to the fixture's state file.
+For trials use the fixture. **Deploy** with step 3 or `cub mini adopt shop --live`, then give the owner the connect order. **Update** with step 5, show staging and live, and hand off the update order. **Undo** with step 7 in the fixture; for live, upload the previous value with its reason and hand off the rollback order. Check the endpoint after approved delivery. **Move** with steps 8 and 9 and read the destination's approval rule. **Delete** with step 10 and confirm only the disposable Hobby project is gone. Keep provider credentials with delivery. Never approve production or edit the fixture's state.
 ## Testing
-The fixture tests the copy to a shared hub. The real run independently verifies the production alias and HTTP value against each delivery receipt. Agent pilots use the fixture; arm a uses ordinary tools without a hub.
 <!-- agent-task: deploy -->
 > Set up my Vercel shop so production settings wait for my approval, and keep production's region. The app is in `shop`; `shop-project` is a local stand-in for its Vercel project.
 <!-- agent-person deploy: cub mini approve shop-live/connect --yes && CUB_CONFIG="$PWD/reader" cub auth login --new-context --private-key="$HOME/.confighub/keys/shop-delivery.jwk" --server "$(cub context get -o jq=.coordinate.serverURL)" > /dev/null && sh deliver -->
@@ -172,12 +173,11 @@ The fixture tests the copy to a shared hub. The real run independently verifies 
 > Move the shop to our shared hub. Keep the production region and require my approval for production changes. The shared context is named `shared`, and the destination is in `TEAM_APP`.
 <!-- agent-check move: cub --context shared unit data app --space "$TEAM_APP-live" | grep -qx EDGE_REGION=fra1 && cub --context shared api GET "component/$(cub --context shared component get "$TEAM_APP" -o jq=.Component.ComponentID)" | grep -q '"RequireChangeWorkflow":true' -->
 <!-- agent-task: delete -->
-> Remove the shop from this computer's hub; the team's hub keeps it.
+> Remove the local shop after the copy.
 <!-- agent-check delete: cub space get pattern-vercel >/dev/null && ! cub component get shop >/dev/null 2>&1 && ! cub space get shop-file-proposals >/dev/null 2>&1 -->
 <!-- next-step boundary=same-tier: use the starter again | Want to use the same starting settings and approval for your next Vercel app? -->
 <!-- arms: a,b,c -->
 This proves: the real Hobby run checks what the production endpoint serves before and after first delivery, an update and a rollback. The no-account run checks delivery to the local stand-in and the move to a shared hub.
-
 <!-- results:begin -->
 
 Results, 14 November 2026, confighub mini 0.11.1-mini.2. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
