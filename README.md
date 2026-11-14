@@ -1,20 +1,16 @@
 # ConfigHub for AI agents
 
-**Ship faster with coding agents. You decide what reaches production.**
+**Your coding agent changes staging. You approve production.**
 
-ConfigHub is a small server, called a hub, that holds your app's settings. Your agents can change the staging settings whenever they like, but nothing changes in production until you say yes. And every change comes with a note on why it was made.
+ConfigHub is a small server, called a hub, that keeps a staging copy and a production copy of your app's settings. Each change shows who made it and why. The hub runs on your laptop as confighub mini, or as hosted ConfigHub.
 
-New here? Start with the overview: https://confighub.github.io/helm-expt/ai-agents/
+- **Staging moves fast.** Your agents change the staging settings whenever they like.
+- **Production waits for you.** A change to production takes effect only after a person approves it.
+- **Every change has a reason.** The next agent is told what was changed, and why, before it undoes it.
 
-Are you an AI agent, or asking one about this project? Have it read [AGENTS.md](AGENTS.md) first.
+This repository holds the ConfigHub plugin for Claude Code, the easiest way in. It works with Codex too. The plugin records what your agents change and why from the first session, with no hub. When you ask for an app "using ConfigHub", it sets up confighub mini, which is free and needs no account.
 
-The hub can run on your laptop as [confighub mini](docs/install-mini.md), which is free and needs no account. We also run it for you as hosted ConfigHub, or you can run the enterprise edition on your own servers. Hosted ConfigHub and the enterprise edition support many people in one organization. The commands are the same everywhere, and when your team is ready you copy your apps from your laptop to the shared hub ([from your laptop to a shared hub](docs/from-plugin-to-confighub.md)).
-
-**Get confighub mini** through the plugin (ask for an app "using ConfigHub", or type `/confighub:install-mini`), or on its own, without the plugin ([installing confighub mini](docs/install-mini.md), and the downloads on the [releases page](https://github.com/confighubai/confighub-mini-plugin/releases)).
-
-This repository holds the ConfigHub plugin for Claude Code, the easiest way to start. It works with Codex too. From the first session it keeps a record of what your agents change and why, and tells the next agent before it undoes an earlier change. That needs no hub. When you ask for an app "using ConfigHub", it sets up a hub on your laptop.
-
-It's for you if your coding agents change your app's settings and you want production to change only when you say so. The app can be new, or one you already have with `.env` files, Terraform var files, Helm values, or a Kustomize repository that Argo CD or Flux deploys.
+New here? Read the [overview](https://confighub.github.io/helm-expt/ai-agents/). Are you an AI agent, or asking one about this project? Have it read [AGENTS.md](AGENTS.md) first.
 
 ## Install
 
@@ -25,9 +21,19 @@ claude plugin marketplace add confighubai/confighub-mini-plugin
 claude plugin install confighub@confighub
 ```
 
-It works on macOS and Linux. Codex needs [one more command](docs/codex.md). The first time you ask for a hub, the agent downloads confighub mini ([its size](docs/install-mini.md#the-current-release)). It doesn't need Docker.
+It works on macOS and Linux, and needs no Docker. Codex needs [one more command](docs/codex.md). The first time you ask for a hub, the agent downloads confighub mini ([its size](docs/install-mini.md#the-current-release)). You can also install confighub mini without the plugin ([installing confighub mini](docs/install-mini.md)).
 
-## A first try
+## Three ways to start
+
+1. **A new app.** You want an app with a staging and a production setup. Ask Claude Code to build it "using ConfigHub" ([a new app](docs/journeys/new-app.md)).
+2. **An app you already have.** Its settings live in `.env` files, Terraform var files, Helm values, or a Kustomize repository that Argo CD or Flux deploys. Ask the agent to "attach ConfigHub to this app". It won't touch your files ([an app you already have](docs/journeys/existing-app.md)).
+3. **Software that comes with ConfigHub inside.** You change it to suit you and keep your changes when the next version arrives ([software with ConfigHub inside](docs/journeys/bundled.md)).
+
+## A shared hub for your team
+
+We run the hub for you as hosted ConfigHub, or you run the enterprise edition on your own servers. Both support many people in one organization. The commands are the same as on your laptop, and you copy your apps to the shared hub when your team is ready ([from your laptop to a shared hub](docs/from-plugin-to-confighub.md)).
+
+## A first try, with a new app
 
 1. Make an empty folder and start Claude Code in it: `mkdir my-app && cd my-app && git init -q && claude`
 2. Ask: `Build me a small web service using ConfigHub, with a staging and a production setup.`
@@ -42,7 +48,7 @@ You ask your agent to turn on debug logging, and staging and production both rea
 
 ## Why `cub mini`
 
-`cub` is ConfigHub's command-line tool, and it works with every hub. `cub mini` adds a few commands that each do a whole job in one step. `cub mini adopt` connects an app and makes its staging and production copies. `cub mini require-approval` puts production behind your yes and gives an agent a key that can suggest a change but not approve one. `cub mini approve` shows you the change before it approves it. With plain `cub`, each of these takes several commands, and agents get them wrong more often. Underneath, `cub mini` runs the same `cub` commands, so anything it does, you can also do with plain `cub` on any hub. [`cub mini` and plain `cub`](docs/cub-mini-and-cub.md) lists each command next to the `cub` commands it stands for.
+`cub` is ConfigHub's command-line tool, and it works with every hub. `cub mini` adds commands that each do a whole job in one step, such as `cub mini adopt` to connect an app and `cub mini approve` to approve a change after showing it to you. Underneath, it runs the same `cub` commands. [`cub mini` and plain `cub`](docs/cub-mini-and-cub.md) lists each one next to the `cub` commands it stands for.
 
 ## When agents do real work
 
