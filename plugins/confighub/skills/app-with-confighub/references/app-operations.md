@@ -69,7 +69,11 @@ and hand over the approval again. Do not set a value in production directly, or 
 production overlay, for a change the person wants everywhere.
 
 Deleting an app a starter connected: first remove what runs on the cluster, then the app from the
-hub. For Argo CD, delete the Application with its finalizer, so Argo CD removes what it deployed.
+hub. Never delete a cluster to remove one app: not with `cub cluster down`, `kind delete cluster`
+or anything else, since other apps and the person's own work run there. If deleting the
+Application or Kustomization fails, stop there and say so; do not go on to the hub, or around
+it. Agents' shells are often zsh, which does not split a command kept in a variable, such as
+`K="kubectl --context X"; $K delete ...`, so write `kubectl --context CONTEXT` in each command. For Argo CD, delete the Application with its finalizer, so Argo CD removes what it deployed.
 For Flux, deleting a Kustomization removes what it applied only when its `spec.prune` is true, and
 the Kustomization the hub's cutover made does not prune. Find it, and the Git one it suspended, with
 `kubectl get kustomizations -A`: after the cutover the hub's is named `APP-live`, in Flux's own
@@ -238,6 +242,12 @@ cub mini waiting                                                      # what wai
 The person approves in a terminal with `cub mini approve APP-base/ORDER`, which `cub mini
 waiting` prints. Never run `cub mini approve` yourself, and never ask for the right to write
 `APP-live`.
+
+To undo a change production already took: `cub mini rollback APP-live --change-order
+APP-base/ORDER --reason "WHY"`. Production does not change: the values go back in the base,
+and a change order waits for the person, whose approval brings them to production. Undo is
+that rollback and the person's approve; give them the approve line it prints, and do not say
+production is back until they have run it.
 
 A secret (a password, a key, a token) is kept by the person, in a terminal, with
 `cub mini secret set APP KEY --variant live --change-desc "WHY"`, which puts it where your
