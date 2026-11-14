@@ -179,17 +179,20 @@ This proves: the exact approved revision was delivered and is running, under a r
 
 <!-- results:begin -->
 
-Results, 13 November 2026, confighub mini 0.11.1-mini.2. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+Results, 14 November 2026, confighub mini 0.11.1-mini.3. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Scripted run, on confighub mini 0.11.1-mini.2: passed, 308 seconds for the steps, within the page's budget of 600; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
-- Agent runs (on confighub mini 0.11.1-mini.0): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+- Scripted run: passed, 206 seconds for the steps, within the page's budget of 600; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
+- Environment, published confighub mini 0.11.1-mini.3 with its own plugin (0.86.0): A local confighub mini hub and a real Flux on a local kind cluster; hosted ConfigHub (the Kubara organization) for the move to a shared hub. Approvals were scripted: the test script ran the person's approve and deploy-from-hub commands. After each run the runner removed the hubs it started and everything it made in the shared hub.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
-| a | claude-opus-5-5 | 5/6 (+9 not applicable) | 633.8 | $1.918 | 0 |
-| b | claude-opus-5-5 | 15/15 | 144.4 | $0.538 | 6 |
-| a | claude-sonnet-5-5 | 5/6 (+9 not applicable) | 168.8 | $0.408 | 0 |
-| b | claude-sonnet-5-5 | 15/15 | 130.7 | $0.286 | 4 |
+| a | claude-opus-5-5 | 5/6 (+9 not applicable) | 205.5 | $0.792 | 0 |
+| b | claude-opus-5-5 | 15/15 | 153.2 | $0.544 | 8 |
+| c | claude-opus-5-5 | 13/15 | 284.2 | $0.878 | 3 |
+| a | claude-sonnet-5-5 | 6/6 (+9 not applicable) | 69.6 | $0.201 | 0 |
+| b | claude-sonnet-5-5 | 15/15 | 122.0 | $0.252 | 7 |
+| c | claude-sonnet-5-5 | 15/15 | 151.9 | $0.407 | 2 |
 
 No agent approved or refused a change to production.
 
@@ -199,27 +202,11 @@ The plugin offers it once, after the answer at whose end it showed the moment th
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|
-| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 80% |
-| b | claude-opus-5-5 | 30 | 100% | 100% | 13% | 67% | 90% |
-| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 97% |
-| b | claude-sonnet-5-5 | 30 | 67% | 100% | 10% | 65% | 100% |
-
-- Agent runs (on confighub mini 0.11.1-mini.14): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: c is the plugin and confighub mini, without this page.
-
-| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
-|---|---|---|---|---|---|
-| c | claude-opus-5-5 | 15/15 | 227.1 | $0.994 | 3 |
-| c | claude-sonnet-5-5 | 15/15 | 176.1 | $0.445 | 3 |
-
-No agent approved or refused a change to production.
-
-Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Production waited for your yes because the starter set this app up that way, with a reason for each setting. Your next Flux app can start the same way; want the starter kept on for it?"
-
-The plugin offers it once, after the answer at whose end it showed the moment the offer names ("waits for your approval"). Offered is the share of persons it was shown to; want it now and later are over them.
-
-| Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
-|---|---|---|---|---|---|---|---|
-| c | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 87% |
-| c | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 100% |
+| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 97% |
+| b | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 97% |
+| c | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 97% |
+| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 100% |
+| b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 100% |
+| c | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 73% |
 
 <!-- results:end -->

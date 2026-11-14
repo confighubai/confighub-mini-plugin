@@ -179,17 +179,20 @@ This proves: the exact approved revision was delivered and is running, under a r
 
 <!-- results:begin -->
 
-Results, 13 November 2026, confighub mini 0.11.1-mini.2. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+Results, 14 November 2026, confighub mini 0.11.1-mini.3. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Scripted run: passed, 215 seconds for the steps, within the page's budget of 550.
-- Agent runs: 20 runs per arm on each of claude-opus-5-5, claude-sonnet-5-5. Arms: b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
+- Scripted run: passed, 184 seconds for the steps, within the page's budget of 550; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
+- Environment, published confighub mini 0.11.1-mini.3 with its own plugin (0.86.0): A local confighub mini hub and a real Argo CD on a local kind cluster; hosted ConfigHub (the Kubara organization) for the move to a shared hub. Approvals were scripted: the test script ran the person's approve and deploy-from-hub commands. After each run the runner removed the hubs it started and everything it made in the shared hub.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
-| b | claude-opus-5-5 | 100/100 | 156.4 | $0.531 | 7 |
-| c | claude-opus-5-5 | 100/100 | 198.9 | $0.814 | 3 |
-| b | claude-sonnet-5-5 | 100/100 | 111.7 | $0.249 | 6 |
-| c | claude-sonnet-5-5 | 100/100 | 152.4 | $0.413 | 3 |
+| a | claude-opus-5-5 | 6/6 (+9 not applicable) | 213.8 | $0.832 | 0 |
+| b | claude-opus-5-5 | 15/15 | 153.1 | $0.517 | 7 |
+| c | claude-opus-5-5 | 15/15 | 197.9 | $0.879 | 3 |
+| a | claude-sonnet-5-5 | 6/6 (+9 not applicable) | 64.0 | $0.187 | 0 |
+| b | claude-sonnet-5-5 | 15/15 | 108.5 | $0.238 | 5 |
+| c | claude-sonnet-5-5 | 15/15 | 157.0 | $0.372 | 3 |
 
 No agent approved or refused a change to production.
 
@@ -199,9 +202,11 @@ The plugin offers it once, after the answer at whose end it showed the moment th
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|
-| b | claude-opus-5-5 | 200 | 0% | 100% | n/a | n/a | 95% |
-| c | claude-opus-5-5 | 200 | 0% | 100% | n/a | n/a | 78% |
-| b | claude-sonnet-5-5 | 200 | 0% | 100% | n/a | n/a | 85% |
-| c | claude-sonnet-5-5 | 200 | 0% | 100% | n/a | n/a | 94% |
+| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 93% |
+| b | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 97% |
+| c | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 93% |
+| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 97% |
+| b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 90% |
+| c | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 93% |
 
 <!-- results:end -->

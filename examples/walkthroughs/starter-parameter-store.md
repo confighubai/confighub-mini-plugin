@@ -181,19 +181,20 @@ This proves: the exact approved revision was delivered, to a local stand-in for 
 
 <!-- results:begin -->
 
-Results, 13 November 2026, confighub mini 0.11.1-mini.2. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+Results, 14 November 2026, confighub mini 0.11.1-mini.3. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Scripted run, on confighub mini 0.11.1-mini.2: passed, 98 seconds for the steps, within the page's budget of 240; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
-- Agent runs (on confighub mini 0.11.1-mini.0): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
+- Scripted run: passed, 75 seconds for the steps, within the page's budget of 240; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
+- Environment, published confighub mini 0.11.1-mini.3 with its own plugin (0.86.0): A local confighub mini hub and a local stand-in for AWS Parameter Store (no AWS account); hosted ConfigHub (the Kubara organization) for the move to a shared hub. Approvals were scripted: the test script ran the person's approve and deliver commands. This is the no-account path, not live AWS. After each run the runner removed the hubs it started and everything it made in the shared hub.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
-| a | claude-opus-5-5 | 4/9 (+6 not applicable) | 265.2 | $1.63 | 5 |
-| b | claude-opus-5-5 | 15/15 | 135.6 | $0.54 | 4 |
-| c | claude-opus-5-5 | 9/15 | 292.1 | $1.59 | 3 |
-| a | claude-sonnet-5-5 | 3/9 (+6 not applicable) | 212.2 | $0.641 | 3 |
-| b | claude-sonnet-5-5 | 15/15 | 130.4 | $0.296 | 3 |
-| c | claude-sonnet-5-5 | 3/15 | 242.3 | $0.54 | 4 |
+| a | claude-opus-5-5 | 3/9 (+6 not applicable) | 268.1 | $1.562 | 5 |
+| b | claude-opus-5-5 | 15/15 | 139.2 | $0.522 | 6 |
+| c | claude-opus-5-5 | 9/15 | 227.3 | $1.096 | 3 |
+| a | claude-sonnet-5-5 | 0/9 (+6 not applicable) | 182.0 | $0.718 | 2 |
+| b | claude-sonnet-5-5 | 15/15 | 95.1 | $0.216 | 5 |
+| c | claude-sonnet-5-5 | 0/15 | 135.2 | $0.498 | 6 |
 
 No agent approved or refused a change to production.
 
@@ -203,13 +204,11 @@ The plugin offers it once, after the answer at whose end it showed the moment th
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|
-| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 100% |
-| b | claude-opus-5-5 | 30 | 100% | 100% | 10% | 73% | 97% |
-| c | claude-opus-5-5 | 30 | 33% | 100% | 0% | 70% | 100% |
-| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 97% |
-| b | claude-sonnet-5-5 | 30 | 100% | 100% | 10% | 83% | 97% |
+| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 97% |
+| b | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 100% |
+| c | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 100% |
+| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 93% |
+| b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 93% |
 | c | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 100% |
-
-- Downloaded [mini-v0.11.1-mini.2](https://github.com/confighubai/confighub-mini-plugin/releases/tag/mini-v0.11.1-mini.2) and verified its SHA-256. The scripted walkthrough passed in 88.2 seconds, including the hosted handoff. A separate adoption recorded the approved Parameter Store starter revision from the hub. The live adapter refused the pending hosted order; no approved AWS delivery is recorded.
 
 <!-- results:end -->
