@@ -151,7 +151,7 @@ The scripted run follows the Human steps on a hub of its own and checks that eac
 <!-- agent-check size: cub unit data --space notes-staging app | python3 -c 'import re,sys; d=dict(l.split("=",1) for l in sys.stdin.read().split() if "=" in l); n,u=re.fullmatch(r"([0-9.]+)(Mi|Gi)",d["MEMORY"]).groups(); c=d["CPU"]; c=float(c[:-1])/1000 if c.endswith("m") else float(c); sys.exit(not (300<=float(n)*(1024 if u=="Gi" else 1)<=1024 and 0.1<=c<=1))' && cub unit data --space notes-live app | grep -qx 'CPU=2' && cub unit data --space notes-live app | grep -qx 'MEMORY=4Gi' && cub mini receipts notes-staging | grep -qiE 'Why:.*(measur|used).*[0-9]+ ?Mi' -->
 <!-- agent-check-a size: grep -qx 'CPU=2' notes/app.env && grep -qx 'MEMORY=4Gi' notes/app.env && f=$(grep -rlsE '^ *"?MEMORY"? *[=:] *"?[0-9]+(Mi|M|MiB)' --exclude-dir='.*' --exclude-dir=Library * | grep -i staging | head -1) && test -n "$f" && grep -rlsiE '[0-9.]+ ?(Mi|MiB|MB)\b.*(peak|used|measur|steady|start)|(peak|used|measur|steady|start).*[0-9.]+ ?(Mi|MiB|MB)\b' --exclude-dir='.*' --exclude-dir=Library * | grep -qv server.py -->
 <!-- arms: a,b -->
-<!-- next-step boundary=same-tier: sizes from live | Once notes runs, what it uses there can come back as a proposed size the same way, with live's numbers as the reason and Sam's approval before it changes; want that for notes? -->
+<!-- next-step boundary=same-tier when "did not change": sizes from live | Once notes runs, what it uses there can come back as a proposed size the same way, with live's numbers as the reason and Sam's approval before it changes; want that for notes? -->
 
 The checks below can be run by hand, in bash, in `~/walkthrough`:
 
