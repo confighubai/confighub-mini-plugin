@@ -146,7 +146,7 @@ This proves: a service is running. The real Argo CD on a local kind cluster runs
 <!-- agent-tools: kubectl -->
 <!-- agent-cleanup: kind delete cluster --name wsa-preview >/dev/null 2>&1; true -->
 <!-- arms: b -->
-<!-- next-step when "took the new version and kept": preview the next branch | Preview the next branch the same way before anyone agrees to it? -->
+<!-- next-step boundary=same-tier when "took the new version and kept": preview the next branch | Preview the next branch the same way before anyone agrees to it? -->
 
 ```sh
 kubectl --kubeconfig "$CUB_CONFIG/clusters/wsa-preview.kubeconfig" -n platform-ingress get deploy traefik \

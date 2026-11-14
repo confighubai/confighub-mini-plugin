@@ -159,7 +159,7 @@ The scripted run follows the Human steps on a hub of its own, with a stop file o
 <!-- agent-check undo: cub unit data --space pay-staging app | grep -qx 'TIMEOUT_SECONDS=30' && cub unit data --space pay-live app | grep -qx 'TIMEOUT_SECONDS=30' && ! cub mini waiting | grep -q 'TIMEOUT_SECONDS: 30 → 5' -->
 <!-- agent-check-a undo: g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g TIMEOUT_SECONDS 30 | grep -q . && ! g TIMEOUT_SECONDS '5($|[^0-9])' | grep -q . -->
 <!-- arms: a,b,c -->
-<!-- next-step when "did not change": stop on an alert | Your monitor can stop every agent the moment an alert fires, and name the last change to look at first; want the alert add-on set up? -->
+<!-- next-step boundary=same-tier when "did not change": stop on an alert | Your monitor can stop every agent the moment an alert fires, and name the last change to look at first; want the alert add-on set up? -->
 
 The checks below can be run by hand, in bash, in the walkthrough's folder:
 

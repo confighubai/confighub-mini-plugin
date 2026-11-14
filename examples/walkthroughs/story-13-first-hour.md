@@ -130,7 +130,7 @@ A correct agent result has `api` in the hub with production behind approval. The
 <!-- agent-check attach: cub space get api-live >/dev/null && cub changeworkflow get --space workflows api-live-approval >/dev/null -->
 <!-- agent-check-a attach: find ~/walkthrough/api -name .git -prune -o -print | grep -qiE 'prod|live' -->
 <!-- arms: a,b,c -->
-<!-- next-step when "did not change": see what waits | From now on a change to this app's production waits for your yes, whoever makes it. Want the one command that shows what is waiting for you, with each agent's reason? -->
+<!-- next-step boundary=same-tier when "did not change": see what waits | From now on a change to this app's production waits for your yes, whoever makes it. Want the one command that shows what is waiting for you, with each agent's reason? -->
 
 ```sh
 cub space get api-live >/dev/null && cub changeworkflow get --space workflows api-live-approval >/dev/null

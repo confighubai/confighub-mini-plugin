@@ -148,7 +148,7 @@ This proves: stored. The colleague's copy and George's update are kept in a hub 
 <!-- agent-check-a keep: f=$(grep -rl --include='*.yaml' '^columns: 4' . | head -1) && grep -q '^theme: dark' "$f" && grep -q '^footer: Support desk, floor 3' "$f" -->
 <!-- agent-tools: ./startpage -->
 <!-- arms: a,b -->
-<!-- next-step when "with its reason": take George's next update | When George sends his next version, take it the same way and keep your changes? -->
+<!-- next-step boundary=same-tier when "with its reason": take George's next update | When George sends his next version, take it the same way and keep your changes? -->
 
 ```sh
 d=$(find . -name .my-settings.yaml | head -1)

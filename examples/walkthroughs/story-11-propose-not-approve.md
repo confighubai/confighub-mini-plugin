@@ -149,7 +149,7 @@ This proves: stored, behind approval. The proposed change waits in a hub on this
 <!-- agent-check propose: cub mini waiting | grep -q 'spec.replicas: 2 → 4' && cub unit data api --space api-live | grep -q 'replicas: 2$' -->
 <!-- agent-check-a propose: grep -q 'replicas: 2' api/api.yaml && grep -rlqs --include='*.yaml' 'replicas: 4' . -->
 <!-- arms: a,b -->
-<!-- next-step when "did not change": keep production behind your approval | Keep production behind your approval for every agent that works on it from now on? -->
+<!-- next-step boundary=same-tier when "did not change": keep production behind your approval | Keep production behind your approval for every agent that works on it from now on? -->
 
 ```sh
 cub mini waiting

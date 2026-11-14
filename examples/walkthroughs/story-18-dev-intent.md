@@ -138,7 +138,7 @@ A correct agent result has the notes app on `pattern-web`, with staging and a li
 <!-- agent-check adopt: test "$(cub unit get app --space notes-base -o jq=.Unit.UpstreamUnitID)" = "$(cub unit get web-service --space pattern-web -o jq=.Unit.UnitID)" && cub space get notes-staging >/dev/null && cub changeworkflow get --space workflows notes-live-approval >/dev/null -->
 <!-- agent-check-a adopt: find ~/walkthrough/notes -name .git -prune -o -print | grep -qi staging && find ~/walkthrough/notes -name .git -prune -o -print | grep -qiE 'live|prod' -->
 <!-- arms: a,b,c -->
-<!-- next-step when "did not change": next app from this one | Your next app can start from this one, with its rules, staging and production already in place; want the next one made from notes? -->
+<!-- next-step boundary=same-tier when "did not change": next app from this one | Your next app can start from this one, with its rules, staging and production already in place; want the next one made from notes? -->
 
 ```sh
 test "$(cub unit get app --space notes-base -o jq=.Unit.UpstreamUnitID)" = "$(cub unit get web-service --space pattern-web -o jq=.Unit.UnitID)" && cub space get notes-staging >/dev/null && cub changeworkflow get --space workflows notes-live-approval >/dev/null

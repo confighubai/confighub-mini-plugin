@@ -151,7 +151,7 @@ This proves: stored. The answers are read from what a hub on this computer holds
 <!-- agent-check-a inventory: f=$(find . -name answer.md | head -1) && grep -qi 'birch' "$f" && grep -q 'registry.dev.example' "$f" && grep -q '580.95.05' "$f" && grep -qi '1Gi' "$f" -->
 <!-- agent-tools: ./customers -->
 <!-- arms: a,b -->
-<!-- next-step when "lists what each copy changed": record the missing reasons | Ask Birch and Elm why they changed what they did, and record it beside the change? -->
+<!-- next-step boundary=same-tier when "lists what each copy changed": record the missing reasons | Ask Birch and Elm why they changed what they did, and record it beside the change? -->
 
 ```sh
 cat answer.md

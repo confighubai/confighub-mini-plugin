@@ -149,7 +149,7 @@ A correct agent result leaves no copy breaking a rule, with worker's staging pri
 <!-- agent-check rules: cub unit data --space worker-staging app | grep -qx 'PUBLIC=false' && test "$(cub unit list --space '*' --where 'LEN(ApplyGates) > 0' -o jq='.[].Unit.Slug' | wc -l | tr -d ' ')" = 0 && cub trigger get --space pattern-web not-public >/dev/null -->
 <!-- agent-check-a rules: g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g PORT 3100 | grep -q . && ! g PUBLIC true | grep -q . -->
 <!-- arms: a,b,c -->
-<!-- next-step when "did not change": a rule of your own | Any rule you choose, such as no debug logging in production, can be checked on every service the same way; want your first one added? -->
+<!-- next-step boundary=same-tier when "did not change": a rule of your own | Any rule you choose, such as no debug logging in production, can be checked on every service the same way; want your first one added? -->
 
 ```sh
 cub unit data --space worker-staging app | grep -qx 'PUBLIC=false' && test "$(cub unit list --space '*' --where 'LEN(ApplyGates) > 0' -o jq='.[].Unit.Slug' | wc -l | tr -d ' ')" = 0 && cub trigger get --space pattern-web not-public >/dev/null

@@ -171,7 +171,7 @@ Each task starts where the Human steps before it leave off, in the same folder f
 > Delete the orders app, from the cluster and from this computer's hub.
 <!-- agent-check delete: test -d orders/base && ! cub component get orders >/dev/null 2>&1 && ! kubectl --context kind-orders-flux -n flux-system get kustomization orders >/dev/null 2>&1 && ! kubectl --context kind-orders-flux -n flux-system get kustomization orders-live >/dev/null 2>&1 && kubectl --context kind-orders-flux get namespace kube-system >/dev/null -->
 <!-- agent-cleanup: pkill -f 'git-serve.py .* 28412'; kind delete cluster --name orders-flux -->
-<!-- next-step when "waits for your approval": keep the starter on for the next app | Production waited for your yes because the starter set this app up that way, with a reason for each setting. Your next Flux app can start the same way; want the starter kept on for it? -->
+<!-- next-step boundary=same-tier when "waits for your approval": keep the starter on for the next app | Production waited for your yes because the starter set this app up that way, with a reason for each setting. Your next Flux app can start the same way; want the starter kept on for it? -->
 <!-- arms: a,b,c -->
 This proves: the exact approved revision was delivered and is running, under a real Flux on a local kind cluster; the hub publishes each approved revision as a release, Flux pulls it, and the cluster's ConfigMap shows the value. The move stores the app in hosted ConfigHub, with production there waiting for approval. The checks above can be run by hand, in `~/starter-example`, with step 1's settings. The next step it aims to win is keeping the starter on, so that the next Flux app gets the same settings and the same wait for approval.
 

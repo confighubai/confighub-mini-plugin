@@ -165,7 +165,7 @@ Arm a is an agent with no plugin and no hub, in the same repository after the sa
 <!-- agent-check-a why: test -s WHY.md && grep -qx CACHE=on .env && grep -qx LOG_LEVEL=warn .env -->
 <!-- agent-check to-hub: cub=$(ls -d ~/.confighub/mini/confighub-mini-*/bin/cub | tail -1) && s=$($cub space list -o 'jq=.[].Space.Slug' | grep -- '-local$' | head -1) && test -n "$s" && $cub unit list --space "$s" -o 'jq=.[].Unit.Slug' | while read u; do $cub revision list "$u" --space "$s" -o 'jq=.[].Revision.Description'; done | grep -q "sale" -->
 <!-- arms: a,b,c -->
-<!-- next-step when "production has it too": connect a hub | That change reached production too, since production reads .env. In a ConfigHub hub on this computer, production waits for your yes before an agent's change reaches it, and each value keeps its reason for good. If you want that, type /confighub:install-mini; you can remove it. -->
+<!-- next-step boundary=plugin-to-mini when "production has it too": connect a hub | That change reached production too, since production reads .env. In a ConfigHub hub on this computer, production waits for your yes before an agent's change reaches it, and each value keeps its reason for good. If you want that, type /confighub:install-mini; you can remove it. -->
 The step this aims to win: connecting a hub with `/confighub:install-mini`.
 
 This proves: the record of changes and requests kept on this computer by the real plugin in real Claude Code sessions, and, in the last step, the changes stored in a confighub mini hub on this computer. Nothing is delivered to a service or cluster. A right result: `WHY.md` names next week's sale as the reason, and the hub holds each change with its request. The checks below can be run by hand, in `try-confighub`:

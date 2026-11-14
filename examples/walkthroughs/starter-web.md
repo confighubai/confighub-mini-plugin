@@ -163,7 +163,7 @@ Each task below is given to an agent in the folder that holds `menu`, after the 
 <!-- agent-check-a deploy: grep -rlsE '^[ -]*"?PORT"?[=:] *"?5000' --exclude-dir='.*' --exclude-dir=Library * .env* | grep -vqxE 'menu/\.env(\.staging)?' -->
 <!-- agent-check-a update: grep -rlsE '^[ -]*"?LOG_LEVEL"?[=:] *"?info' --exclude-dir='.*' --exclude-dir=Library * .env* | grep -q . && grep -qx LOG_LEVEL=debug menu/.env.staging -->
 <!-- agent-check-a undo: ! grep -rqsE '^[ -]*"?LOG_LEVEL"?[=:] *"?info' --exclude-dir='.*' --exclude-dir=Library * .env* && grep -rlsE '^[ -]*"?LOG_LEVEL"?[=:] *"?warn' --exclude-dir='.*' --exclude-dir=Library * .env* | grep -q . -->
-<!-- next-step when "did not change": keep the web starter on | Production waited for your yes because the web starter set this app up that way, with a reason for each setting. Your next web service can start the same way; want the web starter kept on for it? -->
+<!-- next-step boundary=same-tier when "did not change": keep the web starter on | Production waited for your yes because the web starter set this app up that way, with a reason for each setting. Your next web service can start the same way; want the web starter kept on for it? -->
 <!-- arms: a,b,c -->
 This proves: the settings were stored in the hub, on confighub mini and on hosted ConfigHub, with production there waiting for approval, and production's approved revision was written to the file a service reads, with `cub mini pull`. No service is started, and no controller is used. The page aims to win one next step: that the person keeps the starter on for their next app.
 

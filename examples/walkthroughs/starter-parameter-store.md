@@ -174,7 +174,7 @@ The no-account rehearsal checks provider values after approval and rollback, the
 <!-- agent-task: delete -->
 > Remove billing from this computer's hub; the team's hub keeps it.
 <!-- agent-check delete: cub space get pattern-parameter-store >/dev/null && ! cub component get billing >/dev/null 2>&1 && ! cub space get billing-file-proposals >/dev/null 2>&1 -->
-<!-- next-step when "waits for your approval": keep the starter on for the next app | Production waited for your yes because the starter set this app up that way, with a reason for each setting. Your next Parameter Store app can start the same way; want the starter kept on for it? -->
+<!-- next-step boundary=same-tier when "waits for your approval": keep the starter on for the next app | Production waited for your yes because the starter set this app up that way, with a reason for each setting. Your next Parameter Store app can start the same way; want the starter kept on for it? -->
 <!-- arms: a,b,c -->
 This proves: the exact approved revision was delivered, to a local stand-in for Parameter Store (the add-on reads the revision you approved, with a key that can only read production); the move stores the app in hosted ConfigHub, with production there waiting for approval. This scripted walkthrough uses a stand-in. A separate live AWS run is recorded below. The checks above can be run by hand, in `~/starter-example`, with step 1's settings. The next step it aims to win is keeping the starter on, so that the next Parameter Store app gets the same settings and the same wait for approval.
 
