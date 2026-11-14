@@ -117,16 +117,15 @@ An unpacked confighub mini package ([install confighub mini](../../docs/install-
    COMP=$(cub --context shared component get "$TEAM_APP" -o jq=.Component.ComponentID)
    echo "{\"RequireChangeWorkflow\": true, \"AllowedChangeWorkflowIDs\": [\"$WF\"]}" | cub --context shared api PATCH "component/$COMP" --content-type application/merge-patch+json --data - > /dev/null
    ```
-9. Check that production in the shared hub waits for you: change the shared settings there, and ask for the change in production with a change order. Nothing reaches production there until you approve it.
+9. Check that production in the shared hub waits for you, without changing anything there: the app takes a change only through its change workflow (the first `true`), and that workflow's production stage needs an approval (the second).
    <!-- run: move-waits -->
    ```sh
-   cub --context shared function set --space "$TEAM_APP-base" --unit app --toolchain AppConfig/Env --change-desc "Cache for forty-five seconds" -- set-string-path '*' EDGE_CACHE_SECONDS 45 > /dev/null
-   cub --context shared changeorder create --space "$TEAM_APP-base" cache-45 --in-scope-space "$TEAM_APP-live" --change-workflow "workflows/$TEAM_APP-live-approval" --description "Cache for forty-five seconds"
-   cub --context shared mini waiting
+   cub --context shared component get "$TEAM_APP" -o jq=.Component.RequireChangeWorkflow
+   cub --context shared changeworkflow get --space workflows "$TEAM_APP-live-approval" -o jq='.ChangeWorkflow.Stages[] | select(.Name == "live") | .Prerequisites | length > 0'
    ```
    ```text
-     Approving it changes production:
-       EDGE_CACHE_SECONDS: 60 → 45
+   true
+   true
    ```
 10. Delete the app from your own hub, now that the shared hub holds it. The Vercel project keeps the settings it was last given.
     <!-- run: delete -->

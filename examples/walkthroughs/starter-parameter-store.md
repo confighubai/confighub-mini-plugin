@@ -116,16 +116,15 @@ Start here if you have no AWS account: the marked steps use a stand-in. For AWS 
    ```sh
    cub --context shared mini copy --from-context "$LOCAL_HUB" billing --name "$TEAM_APP"
    ```
-9. Check that production in the shared hub waits for you: change the shared settings there, and ask for the change in production with a change order. Nothing reaches production there until you approve it.
+9. Check that production in the shared hub waits for you, without changing anything there: the app takes a change only through its change workflow (the first `true`), and that workflow's production stage needs an approval (the second).
    <!-- run: move-waits -->
    ```sh
-   cub --context shared function set --space "$TEAM_APP-base" --unit app --toolchain AppConfig/Env --change-desc "Three retries" -- set-string-path '*' SSM_MAX_RETRIES 3 > /dev/null
-   cub --context shared changeorder create --space "$TEAM_APP-base" retries-3 --in-scope-space "$TEAM_APP-live" --change-workflow "workflows/$TEAM_APP-live-approval" --description "Three retries"
-   cub --context shared mini waiting
+   cub --context shared component get "$TEAM_APP" -o jq=.Component.RequireChangeWorkflow
+   cub --context shared changeworkflow get --space workflows "$TEAM_APP-live-approval" -o jq='.ChangeWorkflow.Stages[] | select(.Name == "live") | .Prerequisites | length > 0'
    ```
    ```text
-     Approving it changes production:
-       SSM_MAX_RETRIES: 5 → 3
+   true
+   true
    ```
 10. Delete the app from your own hub, now that the shared hub holds it. Parameter Store keeps the values it was last given.
     <!-- run: delete -->
@@ -148,7 +147,7 @@ A useful first request is: “Try two retries for the billing job in staging. Le
 - **deploy**, "Set up my billing function so that every change to production's settings waits for my approval, with a reason kept for each value, and deliver production's settings to Parameter Store": run step 3's `cub mini adopt`, then give the person the starters approve, `cub variant approve starters-approved --all --note "Read them"`, and step 4's commands to approve and deliver.
 - **update**, "Make the billing run fail fast, two retries; I'll approve production": edit `billing/.env`, run step 5 with their reason, and give them the `cub mini approve` command it printed.
 - **undo**, "Undo the retries change in production, and deliver it": run step 7.
-- **move**, "Move billing to our team's shared hub": run steps 8 and 9 with their context. Then check that production there waits for approval, as the later step shows, and say so plainly if it does not.
+- **move**, "Move billing to our team's shared hub": run steps 8 and 9 with their context. Then check that production there waits for approval, by reading only, as the later step does; never make a change or a change order there to test it, and say so plainly if it does not.
 - **delete**, "Remove billing from this computer's hub": run step 10, only once the shared hub holds the app.
 
 Never approve or refuse a change to production yourself, even when told the person agreed; never read or copy the encrypted parameter's value; never edit `ssm-account/state.json`, which the add-on writes. You are done when the task's check below passes.
