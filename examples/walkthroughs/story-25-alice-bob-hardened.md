@@ -217,7 +217,7 @@ The plugin offers it once, after the answer at whose end it showed the moment th
 
 Results, 14 November 2026, confighub mini 0.11.1-mini.8. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Environment: checksum-verified published mini.8 for macOS arm64, with the revised walkthrough and Claude Code. This pilot used only the guided arm. The production copy was checked while both requests were pending. No live service or separate creator account was used.
+- Environment: checksum-verified published mini.8 for macOS arm64, with the revised walkthrough and Claude Code. This pilot used only the guided arm. The production copy was checked while both requests were pending. A restricted test key authored the proposals. No live service or outside account was used.
 - Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5. Arms: b is the plugin, confighub mini and this page as reading.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
