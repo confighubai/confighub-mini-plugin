@@ -124,7 +124,7 @@ For an AI agent doing this for a person.
 
 The scripted run follows the Human steps against hosted ConfigHub, in its test organization, and compares the quoted output. Arm a, without confighub mini, is not applicable: there is no laptop hub to copy from. A correct agent result is the app's live copy on the team's hub with the kept timeout. The checks below can be run by hand after step 7:
 
-This proves: stored, on hosted ConfigHub, with the laptop's hub listening on the laptop only; nothing is delivered, and production on the team's hub is not behind approval. The next step this aims to win: keeping the laptop hub as the place agents work, with the team's hub above it.
+This proves: stored, on hosted ConfigHub, with the laptop's hub listening on the laptop only; nothing is delivered, and production on the team's hub is not behind approval. The next step this aims to win: keeping the laptop hub as the place agents work, with the team's hub above it. Tested on the checksum-verified published confighub mini 0.11.1-mini.2 with the plugin 0.85.0, 14 November 2026: environment, hosted ConfigHub (the test organization) and a local hub; approval, no approval step.
 
 <!-- agent-task: team -->
 > My app is in the hub on my laptop (its context is in $LAPTOP, the app's name in $APP). Copy it, with its reasons, up to the team's hub, which I am signed in to as team. Don't open anything on my laptop to the network.
@@ -137,3 +137,32 @@ This proves: stored, on hosted ConfigHub, with the laptop's hub listening on the
 cub --context team unit data settings --space "$APP-live"
 lsof -nP -iTCP -sTCP:LISTEN | awk '/confighub|postgres/ {print $9}' | sort -u
 ```
+
+<!-- results:begin -->
+
+Results, 14 November 2026, confighub mini 0.11.1-mini.2. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+
+- Scripted run: passed, 27 seconds for the steps, within the page's budget of 120.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
+
+| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
+|---|---|---|---|---|---|
+| b | claude-opus-5-5 | 3/3 | 36.5 | $0.172 | 0 |
+| c | claude-opus-5-5 | 3/3 | 46.1 | $0.189 | 0 |
+| b | claude-sonnet-5-5 | 3/3 | 28.2 | $0.069 | 0 |
+| c | claude-sonnet-5-5 | 3/3 | 33.6 | $0.108 | 0 |
+
+No agent approved or refused a change to production.
+
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Keep the hub on your laptop for your agents' next changes, and copy the work up to the team's hub whenever you choose?"
+
+The plugin offers it once, after the answer at whose end it showed the moment the offer names ("recorded"). Offered is the share of persons it was shown to; want it now and later are over them.
+
+| Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|---|
+| b | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 43% |
+| c | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 53% |
+| b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 40% |
+| c | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 53% |
+
+<!-- results:end -->

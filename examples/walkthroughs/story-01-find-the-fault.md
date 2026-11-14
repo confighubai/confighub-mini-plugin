@@ -151,7 +151,7 @@ For an AI agent doing this for a person.
 
 The scripted run follows the Human steps on a hub of its own and compares the quoted output. A correct agent result is the customer's copy, `gpu-operator-customer`, with the two kept values and their reasons and no misspelled registry, written out with `CHANGES.md`. Without a hub, the equivalent is a fixed file with both values and the registry corrected. The checks below can be run by hand after the steps:
 
-This proves: stored. The fix is kept in a hub on this computer and written out as files for Git; nothing is delivered to a cluster. The next step this aims to win: moving the work from a hub on one computer to a shared hub.
+This proves: stored. The fix is kept in a hub on this computer and written out as files for Git; nothing is delivered to a cluster. The next step this aims to win: moving the work from a hub on one computer to a shared hub. Tested on the checksum-verified published confighub mini 0.11.1-mini.2 with the plugin 0.85.0, 14 November 2026: environment, local hub and local files (no cluster); approval, no approval step.
 
 <!-- agent-task: fix -->
 > The customer's GPU nodes stopped showing GPUs. In this folder, given/ is the GPU platform we gave them and as-found/ is what they run. Compare the two and fix it. They changed the driver to 580.95.05 because their nodes are certified with it, and switched our metrics exporter off because they use their own; keep both, with those reasons, in their installation, called "customer". Give me files for their Git.
@@ -165,3 +165,32 @@ This proves: stored. The fix is kept in a hub on this computer and written out a
 cub unit data cluster-policy-clusterpolicy --space gpu-operator-customer | grep -E '# Customer|nvdia'
 grep -r 'certified with driver' --include=CHANGES.md .
 ```
+
+<!-- results:begin -->
+
+Results, 14 November 2026, confighub mini 0.11.1-mini.2. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+
+- Scripted run: passed, 59 seconds for the steps, within the page's budget of 120.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+
+| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
+|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 3/3 | 81.6 | $0.328 | 5 |
+| b | claude-opus-5-5 | 3/3 | 61.9 | $0.215 | 0 |
+| a | claude-sonnet-5-5 | 3/3 | 18.0 | $0.095 | 0 |
+| b | claude-sonnet-5-5 | 3/3 | 48.9 | $0.089 | 0 |
+
+No agent approved or refused a change to production.
+
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Your fix and its reasons are kept on this computer. Copy them to your team's hub, so the next person who looks at this customer starts from them?"
+
+The plugin offers it once, after the answer at whose end it showed the moment the offer names ("recorded"). Offered is the share of persons it was shown to; want it now and later are over them.
+
+| Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 100% |
+| b | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 50% |
+| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 60% |
+| b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 53% |
+
+<!-- results:end -->

@@ -111,7 +111,7 @@ For an AI agent doing this for a person.
 
 The scripted run follows the Human steps and compares the quoted output. Arm a, without confighub mini, is not applicable here: the keys and refusals exist only in a hub. A correct agent result is a `keys.txt` with every refusal and none missed. The checks below can be run by hand after the steps:
 
-This proves: stored, and refused. Each key is checked against real hubs on this computer, three of them; nothing is delivered, and no shared hub is used. The next step this aims to win: moving from hubs on one computer to the organization's hosted ConfigHub.
+This proves: stored, and refused. Each key is checked against real hubs on this computer, three of them; nothing is delivered, and no shared hub is used. The next step this aims to win: moving from hubs on one computer to the organization's hosted ConfigHub. Tested on the checksum-verified published confighub mini 0.11.1-mini.2 with the plugin 0.85.0, 14 November 2026: environment, three local hubs, no shared hub; approval, no approval step; refusals are the check.
 
 <!-- agent-task: keys -->
 > This folder's ./two-people is a check of keys for three parties: Ivan's team, a customer, and Dan. Run it, keep its output in keys.txt, and tell me whether each party was refused everything outside its own part.
@@ -124,3 +124,28 @@ This proves: stored, and refused. Each key is checked against real hubs on this 
 ```sh
 grep -E '403|Invalid credentials|NOT REFUSED' keys.txt
 ```
+
+<!-- results:begin -->
+
+Results, 14 November 2026, confighub mini 0.11.1-mini.2. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+
+- Scripted run: passed, 79 seconds for the steps, within the page's budget of 150.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: b is the plugin, confighub mini and this page as reading.
+
+| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
+|---|---|---|---|---|---|
+| b | claude-opus-5-5 | 3/3 | 126.6 | $0.184 | 0 |
+| b | claude-sonnet-5-5 | 3/3 | 107.2 | $0.078 | 0 |
+
+No agent approved or refused a change to production.
+
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Move these keys, and what each may change, up to your organization's hosted ConfigHub?"
+
+The plugin offers it once, after the answer at whose end it showed the moment the offer names ("recorded"). Offered is the share of persons it was shown to; want it now and later are over them.
+
+| Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|---|
+| b | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 47% |
+| b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 33% |
+
+<!-- results:end -->

@@ -139,7 +139,7 @@ For an AI agent doing this for a person.
 
 The scripted run follows the Human steps on a hub of its own and compares the quoted output. A correct agent result leaves the person's copy, `startpage-mine`, with the dark theme and the footer kept and George's four columns taken, each change with its reason. The checks below can be run by hand, from the start page's folder, after the steps:
 
-This proves: stored. The colleague's copy and George's update are kept in a hub on this computer, and the app draws its page from it; no service runs. The next step this aims to win: keeping the hub on for the next update.
+This proves: stored. The colleague's copy and George's update are kept in a hub on this computer, and the app draws its page from it; no service runs. The next step this aims to win: keeping the hub on for the next update. Tested on the checksum-verified published confighub mini 0.11.1-mini.2 with the plugin 0.85.0, 14 November 2026: environment, local hub and local files (no cluster); approval, no approval step.
 
 <!-- agent-task: keep -->
 > George's start page app is in this folder: run it. Make it dark because it's easier on my eyes, put "Support desk, floor 3" in the footer so people can find us, then take George's newest version (in its georges-next-version folder) without losing my changes.
@@ -155,3 +155,32 @@ d=$(find . -name .my-settings.yaml | head -1)
 grep -E '^(theme|footer|columns):' "$d"
 (cd "$(dirname "$d")" && ./startpage why)
 ```
+
+<!-- results:begin -->
+
+Results, 14 November 2026, confighub mini 0.11.1-mini.2. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+
+- Scripted run: passed, 59 seconds for the steps, within the page's budget of 180.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+
+| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
+|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 0/3 | 30.5 | $0.236 | 0 |
+| b | claude-opus-5-5 | 3/3 | 41.7 | $0.169 | 0 |
+| a | claude-sonnet-5-5 | 0/3 | 15.3 | $0.096 | 0 |
+| b | claude-sonnet-5-5 | 3/3 | 43.2 | $0.096 | 0 |
+
+No agent approved or refused a change to production.
+
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "George will update the app again. Keep your changes and their reasons in a hub, so the next update keeps them too?"
+
+The plugin offers it once, after the answer at whose end it showed the moment the offer names ("recorded"). Offered is the share of persons it was shown to; want it now and later are over them.
+
+| Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 100% |
+| b | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 37% |
+| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 100% |
+| b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 90% |
+
+<!-- results:end -->

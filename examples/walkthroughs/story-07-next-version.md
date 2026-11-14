@@ -146,7 +146,7 @@ For an AI agent doing this for a person.
 
 The scripted run follows the Human steps on a hub of its own and compares the quoted output. A correct agent result is the customer's copy, `gpu-operator-customer`, at operator 26.3.3 with driver 580.105.08 and its reason. Without a hub, the equivalent is a file of the merged result with both. The checks below can be run by hand after the steps:
 
-This proves: stored. The new version and the kept driver are in a hub on this computer; nothing is delivered to a cluster. The next step this aims to win: keeping the hub on for the next platform version.
+This proves: stored. The new version and the kept driver are in a hub on this computer; nothing is delivered to a cluster. The next step this aims to win: keeping the hub on for the next platform version. Tested on the checksum-verified published confighub mini 0.11.1-mini.2 with the plugin 0.85.0, 14 November 2026: environment, local hub, no cluster; approval, no approval step.
 
 <!-- agent-task: take -->
 > We run NVIDIA's GPU Operator 25.10.1, in given/ in this folder; its next version, 26.3.3, is in next/. Our installation is called "customer", and we pinned the GPU driver to 580.105.08 because "A driver change drains every GPU node. We change it only in a maintenance window." Take the next version, but keep our driver.
@@ -159,3 +159,32 @@ This proves: stored. The new version and the kept driver are in a hub on this co
 ```sh
 cub unit data cluster-policy-clusterpolicy --space gpu-operator-customer | grep -E 'version: "?(v26.3.3|580)'
 ```
+
+<!-- results:begin -->
+
+Results, 14 November 2026, confighub mini 0.11.1-mini.2. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+
+- Scripted run: passed, 49 seconds for the steps, within the page's budget of 120.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+
+| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
+|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 0/3 | 70.6 | $0.274 | 6 |
+| b | claude-opus-5-5 | 3/3 | 66.8 | $0.261 | 0 |
+| a | claude-sonnet-5-5 | 1/3 | 53.0 | $0.104 | 0 |
+| b | claude-sonnet-5-5 | 3/3 | 44.1 | $0.116 | 0 |
+
+No agent approved or refused a change to production.
+
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Keep your driver choice and its reason in a hub, so the platform's version after this one keeps it without doing it again?"
+
+The plugin offers it once, after the answer at whose end it showed the moment the offer names ("recorded"). Offered is the share of persons it was shown to; want it now and later are over them.
+
+| Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 100% |
+| b | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 20% |
+| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 100% |
+| b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 23% |
+
+<!-- results:end -->

@@ -137,7 +137,7 @@ For an AI agent doing this for a person.
 
 The scripted run follows the Human steps and compares the quoted output. Arm a, without confighub mini, is not applicable: production's copy and its kept value are in the hub. A correct agent result is two ready controllers at 3.7.14 on `wsa-preview`, before the cleanup. The checks below can be run by hand after step 8:
 
-This proves: a service is running. The real Argo CD on a local kind cluster runs the release the hub published, with production's kept value, and argobot reports it healthy. The next step this aims to win: using a preview hub and cluster for each branch.
+This proves: a service is running. The real Argo CD on a local kind cluster runs the release the hub published, with production's kept value, and argobot reports it healthy. The next step this aims to win: using a preview hub and cluster for each branch. Tested on the checksum-verified published confighub mini 0.11.1-mini.2 with the plugin 0.85.0, 14 November 2026: environment, the real Argo CD on a local kind cluster; approval, no approval step.
 
 <!-- agent-task: see -->
 > Production, platform-preview in the hub, runs Traefik 3.7.12 on the local kind cluster wsa-preview, with two controllers on purpose. The platform's next version is in ./platform-2. Show me what it would do to production, then take it and let me see it running there. Leave it running for me to look at, and write the result as files for review in ./result.
@@ -153,3 +153,28 @@ kubectl --kubeconfig "$CUB_CONFIG/clusters/wsa-preview.kubeconfig" -n platform-i
   -o jsonpath='{.status.readyReplicas} {.spec.template.spec.containers[0].image}{"\n"}'
 grep 'two controllers' result/CHANGES.md
 ```
+
+<!-- results:begin -->
+
+Results, 14 November 2026, confighub mini 0.11.1-mini.2. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+
+- Scripted run: passed, 187 seconds for the steps, within the page's budget of 360.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: b is the plugin, confighub mini and this page as reading.
+
+| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
+|---|---|---|---|---|---|
+| b | claude-opus-5-5 | 3/3 | 55.5 | $0.2 | 2 |
+| b | claude-sonnet-5-5 | 3/3 | 63.0 | $0.112 | 0 |
+
+No agent approved or refused a change to production.
+
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "See what the next branch would do to production, and see it running, before anyone agrees to it?"
+
+The plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
+
+| Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|---|
+| b | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 13% |
+| b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 13% |
+
+<!-- results:end -->
