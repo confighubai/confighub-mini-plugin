@@ -304,6 +304,14 @@ With the gate on and the agent on a key of its own, the plugin tells you four th
 
 Nothing else is said of a change within the agent's rights. Nothing is said of a change you approved, a pull, or an agent the gate stopped that did not try again. `CUB_MINI_TELL=0` turns the lines off.
 
+## Approving from Slack
+
+Where your team asks for work in Slack, the person who approves can be told there too. A small add-on, `confighub-slack`, in the confighub mini package, reads what waits with `cub mini waiting -o json` and posts it in the thread where the work was asked for: what the change would do to production, the reason, who asked, which agent made it, and who may approve it, with an Approve button.
+
+A press of Approve does not approve anything by itself. The approver is handed one command, `cub mini approve ORDER --from-slack CHANNEL/TIMESTAMP/DIGEST --yes`, to run under her own sign-in. The hub records the approval as hers, with a note that it was given from Slack and what the message showed. It refuses the command if what waits has changed since the message was posted, and the add-on posts what waits now. Anyone else who presses Approve is told who may approve, and the hub would refuse the command for them too. An agent that says "Priya said yes on Slack" approves nothing, since it has no approval of its own to give.
+
+The press does not count with nothing to run because the hub records an approval only from a person's own sign-in, and it does not know which Slack account is which person. The add-on holds no sign-in that can approve. [The walkthrough](../examples/walkthroughs/story-22-priya-slack.md) runs it on your computer with a Slack stand-in; it has not been run against a real Slack workspace.
+
 ## When a cluster deploys from Git: a check on each pull request
 
 Argo CD and Flux can pull the approved copy straight from ConfigHub, over OCI ([GitOps over OCI](gitops-over-oci.md)). Where a cluster still deploys from Git, make each pull request check that its files are the approved copy. A pull request whose files differ from what was approved fails, and names each value that differs.
