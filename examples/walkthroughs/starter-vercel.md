@@ -190,4 +190,6 @@ Results, 14 November 2026, confighub mini 0.11.1-mini.2. Figures from this page'
 
 - A separate build of the updated starter selected approved `starters-approved/vercel@2` when asked to connect a linked project. Staging got the 60-second setting, production kept its Frankfurt region, and the same checkout did not match without opt-in. This check used a local hub and a test link file.
 
+- The checksum-verified macOS arm64 mini.4 package selected `starters-approved/vercel@2` with `--live` and kept the Frankfurt override. Without the flag, the link did not select the Vercel starter. This was a clean hub with a test link, and it was removed afterward. The live Hobby endpoint was not exercised by this run.
+
 <!-- results:end -->
