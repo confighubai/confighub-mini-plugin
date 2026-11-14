@@ -36,7 +36,7 @@ Use an unpacked mini package containing the Temporal worker starter, plus Go, Py
 
 ## Agent
 
-Ask which Activity needs different retries and what outcome a probe should see. Show staging, the pending order and the running policy. Give the owner the exact approval command. In a new workflow run, report the number of attempts and the revision the worker actually loaded. Use the disposable example for checks; only the owner approves real production.
+Ask which Activity needs different retries and what outcome a probe should see. Show staging, the pending order and the running policy. Give the owner the exact approval command. In a new workflow run, report the number of attempts and the revision the worker actually loaded. Use the disposable example for checks. Tell the person that the rehearsal uses scripted fixture approvals. In a real rollout, only the owner approves production. The rehearsal stops its own Temporal processes and test hubs. Keep the output in `temporal-results` for later checks and leave the Go cache alone.
 
 ## Testing
 
@@ -52,9 +52,9 @@ The comparison uses a real Temporal service and the same worker for two arms. Th
 > Restore the policy and show the Temporal worker uses the new rollback revision.
 <!-- agent-check undo: jq -e '.arms[0] | .after_rollback.succeeded and .after_rollback.attempts==3 and .after_rollback.config.revision>.after_approval.config.revision' temporal-results/result.json -->
 <!-- agent-task: move -->
-> Explain which orders and reader I need on the destination hub.
+> Explain what I would need to move this to a shared hub. Give me the owner approval and reader setup steps without signing in or making changes there.
 <!-- agent-task: delete -->
-> Stop and remove the example's test resources after checking the result.
+> Make sure the rehearsal stopped its Temporal workers and test hubs. Check only the processes and folders this rehearsal created. Keep the result files so I can review them.
 <!-- next-step boundary=same-tier: try the runtime policy | Want to compare the retries your Temporal worker uses before and after approval? -->
 <!-- arms: b -->
 
@@ -70,5 +70,8 @@ Results, 14 November 2026, confighub mini 0.11.1-mini.7. Figures from this page'
 - Scripted run: passed, 158 seconds for the steps, within the page's budget of 360. The real local Temporal worker passed 19 of 19 checks with the starter and 11 of 11 with manual mini. Both arms used scripted approvals.
 
 Two Claude Sonnet 5.5 pilots with the plugin passed all six deploy, update and rollback checks. The agents ran the disposable comparison, which supplies its own scripted approvals. Move and delete had no assertions. All ten simulated readers noticed the result and reported friction. Several flagged cleanup of local test files and the build cache as unexpected. The plugin showed no next-step offer.
+
+Two follow-up Sonnet 5.5 pilots used the same mini.7 package and passed all six deploy, update and rollback checks. Move and cleanup were discussion and verification tasks with no scored assertions. Seven of ten simulated readers reported friction. Agents brought up unrelated database processes, and some readers still found the handoff hard to follow. The runner reported no processes left by these pilots. The cleanup prompt now scopes the check to resources created by the rehearsal. That final wording has not been piloted.
+
 
 <!-- results:end -->
