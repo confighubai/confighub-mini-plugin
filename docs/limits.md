@@ -40,7 +40,7 @@ The [client capability matrix](how-it-works.md#client-capabilities) distinguishe
 
 - **`cub mini adopt` refuses some Kustomize overlays.** A copy in the hub holds the base's resources with the overlay's values, so an overlay that adds or leaves out a resource, takes a field out, or changes a list's length is refused by name, and nothing is written ([what adopt refuses](journeys/existing-app.md#what-adopt-refuses-in-a-kustomize-repository)).
 
-- **Approved hub delivery to Vercel or AWS has not been run.** The plugin records what agents set there ([integrations](integrations.md)); the hub delivering an approved value to them is not shown.
+- **Delivery to a real AWS account has been run only with a pre-release build of the add-on.** An approved delivery of a Vercel project's settings has run on the published package, to a real Hobby project, and the Parameter Store add-on can deliver to a real AWS account, but that path has not yet been run with the packaged add-on ([starters](starters.md#switch-starters-on)). The plugin records what agents set in both ([integrations](integrations.md)).
 
 - **The inventory reads one repository's files.** A folder deployed from another repository shows as deployed by nothing, and the inventory says what the files ask for, not what is running. Some ApplicationSet generators are listed but not followed ([what it does not do](inventory.md#what-it-does-not-do)).
 

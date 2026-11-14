@@ -6,7 +6,7 @@ Pick a page by what the person is doing. Commands and outputs on these pages are
 
 Read [AGENTS.md](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/AGENTS.md) first: what the project is, what an agent may and may not do, the commands, and which page answers which question.
 
-Then read the matching walkthrough in [the walkthroughs index](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/examples/walkthroughs/README.md): one page for each tool, starter and user story, each with an "Agent" section written for an agent doing that job for a person.
+Then read the matching walkthrough in [the walkthroughs index](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/examples/walkthroughs/README.md): one page for each tool and for most starters and user stories, each with an "Agent" section written for an agent doing that job for a person.
 
 An agent in Claude Code with the plugin also has its skill, [app-with-confighub](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/plugins/confighub/skills/app-with-confighub/SKILL.md): the commands to run for an app with ConfigHub, and what it must not do. [The plugin's own README](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/plugins/confighub/README.md) has the slash commands and settings, in short.
 
@@ -46,7 +46,7 @@ An agent in Claude Code with the plugin also has its skill, [app-with-confighub]
 
 ## Get started
 
-- [Walkthroughs](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/examples/walkthroughs/README.md): One job from start to finish for each tool, starter and user story, with every command and what it prints
+- [Walkthroughs](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/examples/walkthroughs/README.md): One job from start to finish for each tool, and for most starters and user stories, with every command and what it prints
 - [Try the plugin on its own](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/try-the-plugin.md): See the record at work, with no hub; what it records, and setting it up for your whole team
 - [A new app](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/journeys/new-app.md): One request in Claude Code gives you the app, with staging and production settings in a hub
 - [An app you already have](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/journeys/existing-app.md): Attach `.env` files, Terraform var files, Kustomize or Helm values, with your values kept as they are

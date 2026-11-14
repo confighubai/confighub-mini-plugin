@@ -1,6 +1,6 @@
 # Walkthroughs
 
-A walkthrough shows one job from start to finish, in one short page, with every command and what it prints. There is one for each tool, each starter and each user story.
+A walkthrough shows one job from start to finish, in one short page, with every command and what it prints. There is one for each tool and for most starters and user stories; the tables below list the ones not built yet.
 
 Each walkthrough has three parts:
 
@@ -19,7 +19,7 @@ To pick one: start with a tool's walkthrough to learn the commands. Pick a start
 
 ## Starters
 
-A starter gives a new app of one kind its usual settings, each with a reason ([starters](../../docs/starters.md)). Each starter's walkthrough deploys an app, updates it, undoes the update, moves it to a shared hub, and deletes it.
+A starter gives a new app of one kind its usual settings, each with a reason ([starters](../../docs/starters.md)). Each starter's walkthrough deploys an app, updates it, undoes the update, moves it to a shared hub, and deletes it; for Daytona, the move is your own step. The temporal-worker and unikraft starters have no walkthrough yet.
 
 | Starter | What you get | Starts with |
 |---|---|---|
