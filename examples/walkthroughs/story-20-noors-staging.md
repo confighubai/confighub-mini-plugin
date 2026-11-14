@@ -141,7 +141,7 @@ The scripted run follows the Human steps on a hub of its own and checks that eac
 <!-- agent-check staging: cub unit data --space image-processor-staging app | grep -qx 'MEMORY_LIMIT=1Gi' && cub unit data --space image-processor-live app | grep -qx 'MEMORY_LIMIT=512Mi' && cub unit data --space image-processor-base app | grep -qx 'MEMORY_LIMIT=512Mi' -->
 <!-- agent-check-a staging: g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g MEMORY_LIMIT 1Gi | grep -qi staging && ! g MEMORY_LIMIT 1Gi | grep -vqi staging -->
 <!-- arms: a,b,c -->
-<!-- next-step when "did not change": try a change first | Your next change can be tried in a copy of staging of its own, then kept or dropped, with staging and production untouched; want a try copy for it? -->
+<!-- next-step boundary=same-tier when "did not change": try a change first | Your next change can be tried in a copy of staging of its own, then kept or dropped, with staging and production untouched; want a try copy for it? -->
 
 The checks below can be run by hand, in bash, in the walkthrough's folder:
 

@@ -154,7 +154,7 @@ This proves: stored. The new version and the kept driver are in a hub on this co
 <!-- agent-check take: d=$(cub unit data cluster-policy-clusterpolicy --space gpu-operator-customer) && echo "$d" | grep -q 'version: "v26.3.3"' && echo "$d" | grep -q 'version: "580.105.08" # A driver change drains' -->
 <!-- agent-check-a take: grep -rl --include='*.yaml' 'gpu-operator:v26.3.3' . | grep -v -e '/next/' -e '/given/' | xargs grep -l '580.105.08' | grep -q . -->
 <!-- arms: a,b -->
-<!-- next-step when "took the new version and kept": take the version after this one | When the next version comes out, take it the same way, keeping your driver? -->
+<!-- next-step boundary=same-tier when "took the new version and kept": take the version after this one | When the next version comes out, take it the same way, keeping your driver? -->
 
 ```sh
 cub unit data cluster-policy-clusterpolicy --space gpu-operator-customer | grep -E 'version: "?(v26.3.3|580)'

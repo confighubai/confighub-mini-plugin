@@ -119,7 +119,7 @@ This proves: stored, and refused. Each key is checked against real hubs on this 
 <!-- agent-check keys: f=$(find . -name keys.txt | head -1) && [ "$(grep -c 'HTTP 403: permission denied' "$f")" -ge 3 ] && grep -q 'Dan signs in again: Invalid credentials' "$f" && ! grep -q 'NOT REFUSED' "$f" -->
 <!-- agent-tools: ./two-people tee -->
 <!-- arms: b -->
-<!-- next-step when "with its reason": the same keys in the organization's ConfigHub | Use the same keys, each limited to its own part, in your organization's hosted ConfigHub? -->
+<!-- next-step boundary=mini-to-free-hub when "with its reason": the same keys in the organization's ConfigHub | Use the same keys, each limited to its own part, in your organization's hosted ConfigHub? -->
 
 ```sh
 grep -E '403|Invalid credentials|NOT REFUSED' keys.txt

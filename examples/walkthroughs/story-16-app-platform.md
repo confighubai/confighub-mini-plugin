@@ -153,7 +153,7 @@ The scripted run follows the Human steps on a hub of its own and checks that eac
 <!-- agent-check propose: cub unit data --space shop-staging app | grep -q 'RELEASE=shop-1.1.0@sha256:6d51e2f3' && cub changeorder list --space shop-base -o jq='.[].ChangeOrder.Slug' | grep -qvx adopt && cub unit data --space shop-live app | grep -q 'RELEASE=shop-1.0.0@' -->
 <!-- agent-check-a propose: grep -rlsE 'shop-1[.]1[.]0@sha256:6d51e2f3' --exclude-dir='.*' --exclude-dir=Library * .env* | grep -q . -->
 <!-- arms: a,b,c -->
-<!-- next-step when "did not change": live waits for staging's check | Production can wait until staging answers the new release's health check, so a broken release never reaches users; want live to wait for that check? -->
+<!-- next-step boundary=same-tier when "did not change": live waits for staging's check | Production can wait until staging answers the new release's health check, so a broken release never reaches users; want live to wait for that check? -->
 
 The checks below can be run by hand, in bash, in the walkthrough's folder:
 

@@ -131,7 +131,7 @@ This proves: stored, on hosted ConfigHub, with the laptop's hub listening on the
 
 <!-- agent-check team: cub --context team unit data settings --space "$APP-live" | grep -qx 'TIMEOUT_SECONDS=120' && ! lsof -nP -iTCP -sTCP:LISTEN 2>/dev/null | awk '/confighub|postgres/ {print $9}' | grep -qv '^127\.0\.0\.1:' -->
 <!-- arms: b -->
-<!-- next-step when "copied": the team's copy behind your approval | Put production's copy on the team's hub behind your approval? -->
+<!-- next-step boundary=same-tier when "copied": the team's copy behind your approval | Put production's copy on the team's hub behind your approval? -->
 
 ```sh
 cub --context team unit data settings --space "$APP-live"

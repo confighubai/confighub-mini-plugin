@@ -159,7 +159,7 @@ This proves: stored. The fix is kept in a hub on this computer and written out a
 <!-- agent-check fix: d=$(cub unit data cluster-policy-clusterpolicy --space gpu-operator-customer) && echo "$d" | grep -q 'version: "580.95.05" # Customer' && echo "$d" | grep -q 'enabled: false # Customer' && ! echo "$d" | grep -q 'nvcr.io/nvdia' && grep -rqs 'certified with driver 580.95.05' --include=CHANGES.md . -->
 <!-- agent-check-a fix: f=$(grep -rl --include='*.yaml' '580.95.05' . | grep -v -e '/as-found/' -e '/given/' -e '/next/' | head -1) && [ -n "$f" ] && ! grep -q 'nvcr.io/nvdia' "$f" && grep -q 'repository: nvcr.io/nvidia$' "$f" -->
 <!-- arms: a,b -->
-<!-- next-step when "with its reason, so a later version will not overwrite": copy the fix to the team's hub | Copy this fix and its reasons to your team's hub, so the next person on this customer sees why? -->
+<!-- next-step boundary=mini-to-free-hub when "with its reason, so a later version will not overwrite": copy the fix to the team's hub | Copy this fix and its reasons to your team's hub, so the next person on this customer sees why? -->
 
 ```sh
 cub unit data cluster-policy-clusterpolicy --space gpu-operator-customer | grep -E '# Customer|nvdia'

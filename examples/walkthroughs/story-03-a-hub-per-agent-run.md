@@ -150,7 +150,7 @@ This proves: stored, in a hub of the run's own that was then deleted, with the f
 <!-- agent-check fix: r=$(find . -path '*result/CHANGES.md' | head -1) && grep 'gpu-operator-birch' "$r" | grep -q 'nvcr.io/nvidia/gpu-operator:v25.10.1' && ! ls -d "$(dirname "$(dirname "$r")")"/sandbox-a/servers/*/ >/dev/null 2>&1 && cub function get --space gpu-operator-birch --unit gpu-operator --show values get-string-path apps/v1/Deployment 'spec.template.spec.containers.?name=gpu-operator.image' | grep -q 'registry.dev.example' -->
 <!-- agent-tools: ./sandbox -->
 <!-- arms: b -->
-<!-- next-step when "with its reason": a hub of its own for the next agent run | Give the next agent run a hub of its own the same way? -->
+<!-- next-step boundary=same-tier when "with its reason": a hub of its own for the next agent run | Give the next agent run a hub of its own the same way? -->
 
 ```sh
 grep birch result/CHANGES.md

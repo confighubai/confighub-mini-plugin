@@ -9,8 +9,11 @@ A walkthrough starts with a header block, then one title, then three sections
 in order: Human (numbered steps, each command block marked <!-- run: STEP -->),
 Agent, and Testing (an <!-- agent-task --> with a > quoted request, at least
 one <!-- agent-check: COMMAND -->, a line starting "This proves: ", and at
-most two <!-- next-step: NAME | OFFER --> lines, each in that form; a page
-with none is warned about). Figures from test runs belong only in Testing.
+most two <!-- next-step boundary=BOUNDARY[ when "TEXT"]: NAME | OFFER -->
+lines, each in that form; a page with none is warned about). BOUNDARY is the
+step up the tiers the offer tests (BOUNDARIES below), or same-tier for an
+offer of more of what the person already has. Figures from test runs belong
+only in Testing.
 
     <!-- walkthrough
     id: starter-web            # the file name without .md
@@ -48,7 +51,11 @@ TASK = re.compile(r"^<!-- agent-task(?:: ([a-z0-9-]+)(?: after=([a-z0-9-]+))?)? 
 PERSON = re.compile(r"^<!-- agent-person ([a-z0-9-]+): (.+) -->$")
 TOOLS = re.compile(r"^<!-- agent-tools: ([^>]+) -->$")
 CHECK = re.compile(r"^<!-- agent-check(-a)?(?: ([a-z0-9-]+))?: (.+) -->$")
-NEXT_STEP = re.compile(r'^<!-- next-step(?: when "([^"]+)")?: ([^|]+?) \| ([^|]+?) -->$')
+NEXT_STEP = re.compile(r'^<!-- next-step(?: boundary=([a-z-]+))?(?: when "([^"]+)")?: ([^|]+?) \| ([^|]+?) -->$')
+# The step up the tiers an offer tests: from the plugin alone to confighub
+# mini, to a free hosted hub, to a paid hub, to ConfigHub in full for an
+# organization; or same-tier, an offer of more of the tier the person has.
+BOUNDARIES = ["plugin-to-mini", "mini-to-free-hub", "free-hub-to-paid-hub", "paid-hub-to-enterprise", "same-tier"]
 RESULTS_BEGIN, RESULTS_END = "<!-- results:begin -->", "<!-- results:end -->"
 FIGURE = re.compile(r"\b\d+ of \d+ (?:checks|runs|persons|people|arms)\b|\b\d+/\d+ checks\b|\bpilot\b|\bsimulated persons?\b|"
                     r"\bmedian\b|\bconversion\b|\bchecks passed\b|\btried \d+ times\b|\bin[- ]the[- ]way\b", re.I)
@@ -239,8 +246,13 @@ def lint(path):
     if not re.search(r"(?m)^This proves: \S", section(text, "Testing")):
         bad.append('the Testing section has no line starting "This proves: "')
     for l in text.split("\n"):
-        if l.strip().startswith("<!-- next-step") and not NEXT_STEP.match(l.strip()):
-            bad.append(f"a next-step line is not <!-- next-step[ when \"TEXT\"]: SHORT NAME | OFFER -->: {l.strip()[:80]}")
+        m = NEXT_STEP.match(l.strip())
+        if l.strip().startswith("<!-- next-step") and not m:
+            bad.append(f"a next-step line is not <!-- next-step boundary=BOUNDARY[ when \"TEXT\"]: SHORT NAME | OFFER -->: {l.strip()[:80]}")
+        elif m and not m.group(1):
+            bad.append(f"a next-step line names no boundary: write boundary=B after next-step, B one of {', '.join(BOUNDARIES)}: {l.strip()[:80]}")
+        elif m and m.group(1) not in BOUNDARIES:
+            bad.append(f"a next-step line's boundary {m.group(1)} is not one of {', '.join(BOUNDARIES)}")
     if len([1 for l in text.split("\n") if NEXT_STEP.match(l.strip())]) > 2:
         bad.append("more than two next-step lines")
     if text.count(RESULTS_BEGIN) != text.count(RESULTS_END) or text.count(RESULTS_BEGIN) > 1:
@@ -286,6 +298,9 @@ FAULTS = [
     ("no agent-check", lambda t: re.sub(r"(?m)^<!-- agent-check(?!-a).*-->$", "", t)),
     ("no This proves", lambda t: t.replace("This proves: ", "It proves: ")),
     ("a bad next-step line", lambda t: t.replace("\n## Testing\n", "\n## Testing\n\n<!-- next-step: no offer -->\n", 1)),
+    ("a next-step with no boundary", lambda t: re.sub(r"(?m)^<!-- next-step boundary=[a-z-]+ ", "<!-- next-step ", t)),
+    ("a next-step with an unknown boundary",
+     lambda t: t.replace("\n## Testing\n", '\n## Testing\n\n<!-- next-step boundary=plugin-to-cloud when "kept": a | b -->\n', 1)),
     ("a figure outside Testing", lambda t: t.replace("\n## Agent\n", "\n## Agent\n\nIn the pilot, 3 of 4 runs passed.\n", 1)),
     ("another repository named", lambda t: t.replace("\n## Agent\n", "\n## Agent\n\nSee https://github.com/confighubai/other-repo.\n", 1)),
 ]
@@ -327,6 +342,6 @@ if __name__ == "__main__":
         print(p)
     for f in sorted(folder.glob("*.md")):
         if f.name != "README.md" and not any(NEXT_STEP.match(l.strip()) for l in f.read_text().split("\n")):
-            print(f"{f.name}: warning: no <!-- next-step: NAME | OFFER --> line says which next step the page aims for")
+            print(f"{f.name}: warning: no <!-- next-step boundary=BOUNDARY: NAME | OFFER --> line says which next step the page aims for")
     print(f"{len(problems)} problems in {len([f for f in folder.glob('*.md')])} files")
     sys.exit(1 if problems else 0)

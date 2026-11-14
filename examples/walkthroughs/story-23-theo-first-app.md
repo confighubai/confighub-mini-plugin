@@ -78,7 +78,7 @@ The scripted run makes only the folder; the rest needs a Claude Code session, so
 <!-- agent-check build: /absolute/path/to/unpacked-confighub-mini/bin/confighub-mini-app mini changes --dir . 2>/dev/null | tr '\n' ' ' | grep -q 'example/yoga-bookings.*20 bookings a day' -->
 <!-- agent-check-a build: grep -rlsE '(^|[^0-9])20([^0-9]|$)' --exclude-dir='.*' --exclude-dir=Library --exclude-dir=node_modules * .env* | xargs grep -lsiE 'mats?|room' | grep -q . -->
 <!-- arms: a,b,c -->
-<!-- next-step when "did not change": keep the plugin on | Your next app can keep the reason for each setting from its first file, so nobody has to guess later why a value is what it is; want the plugin kept on for it? -->
+<!-- next-step boundary=same-tier when "did not change": keep the plugin on | Your next app can keep the reason for each setting from its first file, so nobody has to guess later why a value is what it is; want the plugin kept on for it? -->
 
 ```sh
 cub mini changes --dir . | tr '\n' ' ' | grep -q 'example/yoga-bookings.*20 bookings a day'
