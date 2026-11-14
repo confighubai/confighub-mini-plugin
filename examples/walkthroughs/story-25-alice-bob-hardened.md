@@ -51,7 +51,7 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
    cub space update starters-approved --permission View:$BOB --permission ViewChildren:$BOB --permission Use:$BOB --permission UseChildren:$BOB --quiet
    ```
    ```text
-   Starter: your hub keeps no starters, so the package's 5 (kustomize-argocd, kustomize-flux, parameter-store, vercel, web) are now in it, as version 1, waiting for your approval: the Component starters, whose approved Variant is the Space starters-approved. Until you approve them, adopt uses the package's files. Read them with cub unit list --space starters-approved, and approve them, which is for the person to do, not an agent, with:
+   Starter: your hub keeps no starters, so the package's 6 (daytona, kustomize-argocd, kustomize-flux, parameter-store, vercel, web) are now in it, as version 1, waiting for your approval: the Component starters, whose approved Variant is the Space starters-approved. Until you approve them, adopt uses the package's files. Read them with cub unit list --space starters-approved, and approve them, which is for the person to do, not an agent, with:
    …
      Sets REPLICAS=2, as a setting: Two instances, so that one can restart without the service going down.
    …
@@ -151,7 +151,7 @@ For an AI agent working as Bob, on Bob's key: run `cub` as `cub --context bob`.
 
 ## Testing
 
-This proves: the settings and the starter's versions were stored in the hub, each value with who set it and why, and production's copy changed only by an approved change order. What was really used: confighub mini on this computer, with Bob as a second key; nothing is delivered and no service runs. A correct agent result has Bob's three values on shop's base and a proposed version 2 of the starter with the two fixes for every app, and without shop's pool size. The step it aims to win: keeping the starter on for the next app. The checks below can be run by hand, in bash, in the walkthrough's folder:
+This proves: the settings and the starter's versions were stored in the hub, each value with who set it and why, and production's copy changed only by an approved change order. What was really used: confighub mini on this computer (no stand-in, no cluster, no real service), with Bob as a second key and Alice's approvals made by the scripted steps, not a person; nothing is delivered and no service runs. A correct agent result has Bob's three values on shop's base and a proposed version 2 of the starter with the two fixes for every app, and without shop's pool size. The step it aims to win: keeping the starter on for the next app. The checks below can be run by hand, in bash, in the walkthrough's folder:
 
 <!-- agent-task: harden after=harden -->
 > Harden shop for production. Debug logs carry request bodies, so LOG_LEVEL should be warn; it needs 3 replicas so one can fail during a deploy; its database takes 20 connections (DB_POOL_SIZE). Then make the fixes that suit every web service version 2 of the team's web starter, each with its reason.
@@ -168,17 +168,17 @@ g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Lib
 
 <!-- results:begin -->
 
-Results, 13 November 2026, a build of confighub mini from main at f699fc25. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+Results, 14 November 2026, confighub mini 0.11.1-mini.2. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Scripted run: passed, 104 seconds for the steps, within the page's budget of 300.
+- Scripted run: passed, 63 seconds for the steps, within the page's budget of 300.
 - Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
-| a | claude-opus-5-5 | 3/3 | 37.5 | $0.184 | 0 |
-| b | claude-opus-5-5 | 3/3 | 33.6 | $0.198 | 2 |
-| a | claude-sonnet-5-5 | 3/3 | 25.2 | $0.07 | 0 |
-| b | claude-sonnet-5-5 | 3/3 | 29.2 | $0.079 | 2 |
+| a | claude-opus-5-5 | 3/3 | 38.6 | $0.177 | 0 |
+| b | claude-opus-5-5 | 3/3 | 36.0 | $0.208 | 2 |
+| a | claude-sonnet-5-5 | 2/3 | 18.9 | $0.077 | 0 |
+| b | claude-sonnet-5-5 | 3/3 | 24.6 | $0.09 | 2 |
 
 No agent approved or refused a change to production.
 
@@ -188,9 +188,9 @@ The plugin offers it once, after the answer at whose end it showed the moment th
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|
-| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 60% |
-| b | claude-opus-5-5 | 30 | 100% | 100% | 43% | 43% | 80% |
-| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 17% |
-| b | claude-sonnet-5-5 | 30 | 100% | 100% | 27% | 57% | 57% |
+| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 47% |
+| b | claude-opus-5-5 | 30 | 33% | 100% | 40% | 50% | 43% |
+| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 40% |
+| b | claude-sonnet-5-5 | 30 | 100% | 100% | 13% | 70% | 87% |
 
 <!-- results:end -->

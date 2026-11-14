@@ -131,7 +131,7 @@ For an AI agent doing this for a person.
 
 ## Testing
 
-This proves: the settings were stored in the hub, staging's and production's apart, with production's change held for approval. What was really used: confighub mini on this computer; nothing is delivered, and no pods run, so whether 1Gi stops the out-of-memory kills is not shown. The step it aims to win: trying a change in a copy of its own with `cub mini try`. Its moment is the plugin's line at the end of a turn that production did not change and waits for a yes; in the runs below the plugin showed no line at the end of the agent's turn, so the offer was not made and conversion was not measured.
+This proves: the settings were stored in the hub, staging's and production's apart, with production's change held for approval. What was really used: confighub mini on this computer (no stand-in, no cluster, no real service), with the refusal made by the scripted steps, not a person; nothing is delivered, and no pods run, so whether 1Gi stops the out-of-memory kills is not shown. The step it aims to win: trying a change in a copy of its own with `cub mini try`. Its moment is the plugin's line at the end of a turn that production did not change and waits for a yes; in the runs below the plugin showed no line at the end of the agent's turn, so the offer was not made and conversion was not measured.
 
 The scripted run follows the Human steps on a hub of its own and checks that each quoted line is still printed. A correct agent result gives staging 1Gi and leaves production and the shared default at 512Mi; in plain files, the shared `.env` stays at 512Mi and only a staging file has 1Gi. The checks below hold right after step 5.
 
@@ -152,17 +152,17 @@ g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Lib
 
 <!-- results:begin -->
 
-Results, 13 November 2026, a build of confighub mini from main at c564cd36. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+Results, 14 November 2026, confighub mini 0.11.1-mini.2. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Scripted run: passed, 65 seconds for the steps, within the page's budget of 180.
-- Agent runs (on confighub mini 0.11.1-mini.1): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+- Scripted run: passed, 44 seconds for the steps, within the page's budget of 180.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
-| a | claude-opus-5-5 | 0/3 | 15.8 | $0.118 | 0 |
-| b | claude-opus-5-5 | 3/3 | 21.4 | $0.162 | 0 |
-| a | claude-sonnet-5-5 | 0/3 | 32.1 | $0.082 | 0 |
-| b | claude-sonnet-5-5 | 3/3 | 22.2 | $0.084 | 0 |
+| a | claude-opus-5-5 | 0/3 | 13.0 | $0.093 | 0 |
+| b | claude-opus-5-5 | 3/3 | 22.1 | $0.133 | 0 |
+| a | claude-sonnet-5-5 | 0/3 | 10.6 | $0.062 | 0 |
+| b | claude-sonnet-5-5 | 3/3 | 14.5 | $0.075 | 0 |
 
 No agent approved or refused a change to production.
 
@@ -172,9 +172,9 @@ The plugin offers it once, after the answer at whose end it showed the moment th
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|
-| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 30% |
-| b | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 13% |
-| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 60% |
+| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 47% |
+| b | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 53% |
+| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 70% |
 | b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 7% |
 
 <!-- results:end -->
