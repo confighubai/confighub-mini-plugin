@@ -190,7 +190,7 @@ Results, 14 November 2026, confighub mini 0.11.1-mini.5-s22-8c554aaf: a build of
 | a | claude-sonnet-5-5 | 0/3 | 9.5 | $0.046 | 0 |
 | b | claude-sonnet-5-5 | 3/3 | 14.9 | $0.059 | 1 |
 
-No agent approved or refused a change to production.
+No agent approved or refused a change to production. On the published confighub mini 0.11.1-mini.5, which has no Slack add-on, the steps stop at step 6; arm a, which needs only the files, passed 0 of 6 there too.
 
 Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Priya can be told in your team's real Slack thread, and approve there as herself, once this app is on your organization's ConfigHub. Want it set up there?"
 
