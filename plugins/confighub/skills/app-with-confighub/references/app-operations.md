@@ -235,6 +235,9 @@ To change a copy later:
 
 ```
 cub mini set APP KEY=VALUE --variant staging --change-desc "WHY"      # staging, at once
+cub mini set APP KEY=VALUE --variant base --change-desc "WHY"         # shared; production waits
+cub mini set APP KEY=VALUE --variant live --change-desc "WHY"         # production's own; it waits
+cub mini promote APP-live                                             # production behind the shared settings: proposed
 cub mini upload APP-FOLDER --component APP --change-desc "WHY"        # the files as edited; staging now, live waits
 cub mini waiting                                                      # what waits, and the approve command
 ```

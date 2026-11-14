@@ -115,7 +115,7 @@ For an AI agent working on the api, on its own key: run `cub` as `cub --context 
 
 ## Testing
 
-This proves: the settings and the refusal were stored in the hub, and the messages were printed where a person reads them. What was really used: confighub mini on this computer; no Claude Code session runs in the scripted steps, so the end-of-turn line for a repeated proposal is not checked here, and nothing is delivered. The step it aims to win: the person reading what waits for them, refusals included, with `cub mini waiting`. Its moment is the plugin's line at the end of a turn that production did not change and waits for a yes; in the runs below the plugin showed no line at the end of the agent's turn, so the offer was not made and conversion was not measured.
+This proves: the settings and the refusal were stored in the hub, and the messages were printed where a person reads them. What was really used: confighub mini on this computer; no Claude Code session runs in the scripted steps, so the end-of-turn line for a repeated proposal is not checked here, and nothing is delivered. The step it aims to win: the person reading what waits for them, refusals included, with `cub mini waiting`. Its moment is the plugin's line at the end of a turn that production did not change and waits for a yes; in the runs below the plugin showed no line at the end of the agent's turn, so the offer was not made and conversion was not measured. In plain files, arm a passes only if the service's file still says 30, the 180 waits elsewhere, and the earlier refusal's reason is told with it; the refusal is kept only in the hub, so plain files cannot give it: arm a cannot pass this judge by construction, and its result shows a capability plain files lack, not that the agents did worse.
 
 A correct agent result, starting after Sam refused 120, leaves production at 30 with a proposal for 180 waiting for Sam. The checks below hold right after step 6. The checks below can be run by hand, in bash, in the walkthrough's folder:
 
@@ -123,40 +123,45 @@ A correct agent result, starting after Sam refused 120, leaves production at 30 
 > The large model still times out. Raise TIMEOUT_SECONDS to 180 for production.
 
 <!-- agent-check again: cub unit data --space api-live app | grep -qx 'TIMEOUT_SECONDS=30' && cub mini waiting | grep -q 'TIMEOUT_SECONDS: .* → 180' -->
-<!-- agent-check-a again: g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g TIMEOUT_SECONDS 180 | grep -q . -->
+<!-- agent-check-a again: grep -qx 'TIMEOUT_SECONDS=30' api/.env && g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g TIMEOUT_SECONDS 180 | grep -vqx 'api/.env' && grep -rlsiE 'hides the slow model|fix the model first' --exclude-dir='.*' --exclude-dir=Library * .env* | grep -q . -->
 <!-- arms: a,b,c -->
 <!-- next-step boundary=same-tier when "did not change": see what waits | This change waits for your yes, and you refused the last one like it, with a reason. Want the one command that lists what waits for you? -->
 
 ```sh
 cub unit data --space api-live app | grep -qx 'TIMEOUT_SECONDS=30' && cub mini waiting | grep -q 'TIMEOUT_SECONDS: .* → 180'
-g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g TIMEOUT_SECONDS 180 | grep -q .
+grep -qx 'TIMEOUT_SECONDS=30' api/.env && g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g TIMEOUT_SECONDS 180 | grep -vqx 'api/.env' && grep -rlsiE 'hides the slow model|fix the model first' --exclude-dir='.*' --exclude-dir=Library * .env* | grep -q .
 ```
 
 <!-- results:begin -->
 
-Results, 13 November 2026, confighub mini 0.11.1-mini.1. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+Results, 14 November 2026, confighub mini 0.11.1-mini.5. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Scripted run: passed, 40 seconds for the steps, within the page's budget of 180.
-- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+- Scripted run: passed, 45 seconds for the steps, within the page's budget of 180.
+- Environment, published confighub mini 0.11.1-mini.5 (tag mini-v0.11.1-mini.5, darwin-arm64, verified against SHA256SUMS) and the plugin it carries: a local hub on this computer, with no stand-in, cluster or real service; every approval and refusal was made by the scripted steps or, in the agent runs, by the setup before the agent's task, never by a person. Each planted fault (stale-page, slow and broken-check) failed its scripted run. Arm a was run again the same day on the same package with a tightened file-level judge that asks for what the story promises; arms b and c are from the first mini.5 pilot. Arm a cannot pass this judge by construction: plain files keep no record of a refusal, so its result shows a capability plain files lack, not that the agents did worse.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
-| a | claude-opus-5-5 | 3/3 | 11.5 | $0.107 | 0 |
-| b | claude-opus-5-5 | 3/3 | 24.2 | $0.157 | 1 |
-| a | claude-sonnet-5-5 | 3/3 | 17.1 | $0.062 | 0 |
-| b | claude-sonnet-5-5 | 3/3 | 28.4 | $0.096 | 1 |
+| a | claude-opus-5-5 | 0/3 | 10.7 | $0.088 | 0 |
+| a | claude-sonnet-5-5 | 0/3 | 7.6 | $0.048 | 0 |
+| b | claude-opus-5-5 | 3/3 | 22.6 | $0.142 | 1 |
+| c | claude-opus-5-5 | 2/3 | 29.4 | $0.177 | 1 |
+| b | claude-sonnet-5-5 | 3/3 | 22.6 | $0.08 | 1 |
+| c | claude-sonnet-5-5 | 1/3 | 24.5 | $0.096 | 0 |
 
 No agent approved or refused a change to production.
 
-Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "This change waits for your yes, and you refused the last one like it, with a reason. Want the one command that lists what waits for you?"
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "This change waits for your yes, and you refused the last one like it, with a reason. Want the one command that lists what waits for you?" It offers more of the tier the person has, not a step up.
 
 The plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|
-| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 20% |
-| b | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 73% |
-| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 30% |
-| b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 70% |
+| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 37% |
+| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 10% |
+| b | claude-opus-5-5 | 30 | 100% | 100% | 53% | 40% | 83% |
+| c | claude-opus-5-5 | 30 | 67% | 100% | 70% | 15% | 80% |
+| b | claude-sonnet-5-5 | 30 | 100% | 100% | 70% | 23% | 70% |
+| c | claude-sonnet-5-5 | 30 | 33% | 100% | 80% | 20% | 43% |
 
 <!-- results:end -->

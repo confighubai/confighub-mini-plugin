@@ -25,3 +25,5 @@ jobs:
         run: python3 -I .github/tools/lint-walkthroughs.py --self-test examples/walkthroughs
       - name: Every walkthrough, and the index
         run: python3 -I .github/tools/lint-walkthroughs.py examples/walkthroughs
+      - name: llms.txt is made from the indexes
+        run: python3 -I .github/tools/llms-txt.py . | diff -u llms.txt -

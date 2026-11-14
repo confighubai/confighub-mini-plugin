@@ -90,17 +90,16 @@ Start here if you have no AWS account: the marked steps use a stand-in. For AWS 
    ```text
    Production reads {'INVOICE_DAY': '1', 'LOG_LEVEL': 'info', 'SSM_CACHE_SECONDS': '300', 'SSM_MAX_RETRIES': '2', 'SSM_WITH_DECRYPTION': 'true'}
    ```
-7. Undo the update in production. `cub mini rollback` sets back each value the upload's change order changed, with your reason, and nothing else.
+7. Undo the update in production. `cub mini rollback` sets back each value the upload's change order changed, with your reason, and nothing else, in the shared settings; production takes it only once you approve it, as any change.
    <!-- run: undo -->
    ```sh
    ORDER=billing-base/$(cub changeorder list --space billing-base -o jq='.[-1].ChangeOrder.Slug')
-   cub mini rollback billing-live --change-order "$ORDER" --reason "Invoices are out; retry as before"
+   cub mini rollback billing-live --change-order "$ORDER" --reason "Invoices are out; retry as before" && cub mini approve --yes --note "Retry as before"
    sh deliver
    ```
    ```text
-   Set back on billing-live, each with the reason:
-     app: SSM_MAX_RETRIES 2 → 5
-   …
+   Set back in the shared settings (billing-base), with the reason: Invoices are out; retry as before
+     SSM_MAX_RETRIES: 2 → 5
    Production reads {'INVOICE_DAY': '1', 'LOG_LEVEL': 'info', 'SSM_CACHE_SECONDS': '300', 'SSM_MAX_RETRIES': '5', 'SSM_WITH_DECRYPTION': 'true'}
    ```
 8. Move it to your team's shared hub. Sign in once (`auth login` opens a browser). The app's name there, `TEAM_APP`, starts with your user name, so it does not clash with a teammate's.
@@ -162,6 +161,7 @@ The no-account rehearsal checks provider values after approval and rollback, the
 <!-- agent-task: update -->
 > Make the billing run fail fast, with two retries; I'll approve production myself.
 <!-- agent-person update: cub mini approve --yes && sh deliver -->
+<!-- agent-person undo: cub mini approve --yes && sh deliver -->
 <!-- agent-check update: cub unit data app --space billing-staging | grep -qx SSM_MAX_RETRIES=2 && cub unit data app --space billing-live | grep -qx SSM_MAX_RETRIES=2 && python3 -c "import json,sys; sys.exit(json.load(open('ssm-account/state.json'))['parameters']['/billing/production/SSM_MAX_RETRIES']['Value']!='2')" -->
 <!-- agent-check-a update: grep -rqsE '^[ -]*"?SSM_MAX_RETRIES"?[=:] *"?2"? *$' --exclude-dir='.*' --exclude-dir=Library * .env* -->
 <!-- agent-task: undo -->
