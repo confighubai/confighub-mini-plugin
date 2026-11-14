@@ -140,7 +140,7 @@ For an AI agent working for the platform team.
 
 ## Testing
 
-This proves: the settings were stored in the hub, the base's change reached each app's copy and each app's own values were kept. What was really used: confighub mini on this computer, with three apps for the story's ten; nothing is delivered and the story's hosted ConfigHub is not used. The step it aims to win: approving the bump for production, app by app. Its moment is the plugin's line at the end of a turn that production did not change and waits for a yes; in the runs below the plugin showed no line at the end of the agent's turn, so the offer was not made and conversion was not measured.
+This proves: the settings were stored in the hub, the base's change reached each app's copy and each app's own values were kept. What was really used: confighub mini on this computer, with three apps for the story's ten; nothing is delivered and the story's hosted ConfigHub is not used. The step it aims to win: approving the bump for production, app by app. Its moment is the plugin's line at the end of a turn that production did not change and waits for a yes; in the runs below the plugin showed no line at the end of the agent's turn, so the offer was not made and conversion was not measured. In plain files, arm a passes only if every app's own settings, the files each app reads, take the base's change, with billing's own log level kept; changing company.env alone reaches no app.
 
 A correct agent result has the bump in the base and in every app's base, with billing's own `LOG_LEVEL=debug` kept. The checks below hold right after step 6. The checks below can be run by hand, in bash, in the walkthrough's folder:
 
@@ -148,13 +148,13 @@ A correct agent result has the bump in the base and in every app's base, with bi
 > Make warn the default log level for every service on the company base, and give them all HEALTH_PATH=/healthz. Don't touch what any service set for itself.
 
 <!-- agent-check bump: cub unit data --space company-base app | grep -qx 'LOG_LEVEL=warn' && ! for a in billing search ledger; do cub unit data --space $a-base app | grep -qx 'HEALTH_PATH=/healthz' || echo missing; done | grep -q missing && cub unit data --space billing-base app | grep -qx 'LOG_LEVEL=debug' && cub unit data --space search-base app | grep -qx 'LOG_LEVEL=warn' -->
-<!-- agent-check-a bump: g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g LOG_LEVEL warn | grep -q company && g HEALTH_PATH /healthz | grep -q . && g LOG_LEVEL debug | grep -q billing -->
+<!-- agent-check-a bump: grep -qx 'LOG_LEVEL=warn' company.env && ! for a in search ledger; do grep -qx 'LOG_LEVEL=warn' apps/$a/.env && grep -qx 'HEALTH_PATH=/healthz' apps/$a/.env || echo miss; done | grep -q miss && grep -qx 'HEALTH_PATH=/healthz' apps/billing/.env && grep -qx 'LOG_LEVEL=debug' apps/billing/.env -->
 <!-- arms: a,b,c -->
 <!-- next-step boundary=same-tier when "did not change": production for every app | Every app's production can take the base's change with one approval each, all listed in one place; want them listed now? -->
 
 ```sh
 cub unit data --space company-base app | grep -qx 'LOG_LEVEL=warn' && ! for a in billing search ledger; do cub unit data --space $a-base app | grep -qx 'HEALTH_PATH=/healthz' || echo missing; done | grep -q missing && cub unit data --space billing-base app | grep -qx 'LOG_LEVEL=debug' && cub unit data --space search-base app | grep -qx 'LOG_LEVEL=warn'
-g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g LOG_LEVEL warn | grep -q company && g HEALTH_PATH /healthz | grep -q . && g LOG_LEVEL debug | grep -q billing
+grep -qx 'LOG_LEVEL=warn' company.env && ! for a in search ledger; do grep -qx 'LOG_LEVEL=warn' apps/$a/.env && grep -qx 'HEALTH_PATH=/healthz' apps/$a/.env || echo miss; done | grep -q miss && grep -qx 'HEALTH_PATH=/healthz' apps/billing/.env && grep -qx 'LOG_LEVEL=debug' apps/billing/.env
 ```
 
 <!-- results:begin -->
@@ -162,15 +162,15 @@ g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Lib
 Results, 14 November 2026, confighub mini 0.11.1-mini.5. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run: passed, 46 seconds for the steps, within the page's budget of 300.
-- Environment, published confighub mini 0.11.1-mini.5 (tag mini-v0.11.1-mini.5, darwin-arm64, verified against SHA256SUMS) and the plugin it carries: a local hub on this computer, with no stand-in, cluster or real service; every approval and refusal was made by the scripted steps or, in the agent runs, by the setup before the agent's task, never by a person. Each planted fault (stale-page, slow and broken-check) failed its scripted run.
+- Environment, published confighub mini 0.11.1-mini.5 (tag mini-v0.11.1-mini.5, darwin-arm64, verified against SHA256SUMS) and the plugin it carries: a local hub on this computer, with no stand-in, cluster or real service; every approval and refusal was made by the scripted steps or, in the agent runs, by the setup before the agent's task, never by a person. Each planted fault (stale-page, slow and broken-check) failed its scripted run. Arm a was run again the same day on the same package with a tightened file-level judge that asks for what the story promises; arms b and c are from the first mini.5 pilot.
 - Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
-| a | claude-opus-5-5 | 3/3 | 15.6 | $0.101 | 0 |
+| a | claude-opus-5-5 | 0/3 | 21.6 | $0.09 | 0 |
+| a | claude-sonnet-5-5 | 0/3 | 8.9 | $0.05 | 0 |
 | b | claude-opus-5-5 | 3/3 | 47.6 | $0.161 | 0 |
 | c | claude-opus-5-5 | 3/3 | 64.8 | $0.398 | 6 |
-| a | claude-sonnet-5-5 | 3/3 | 9.8 | $0.039 | 0 |
 | b | claude-sonnet-5-5 | 3/3 | 17.8 | $0.077 | 0 |
 | c | claude-sonnet-5-5 | 0/3 | 13.1 | $0.08 | 0 |
 
@@ -182,10 +182,10 @@ The plugin offers it once, after the answer at whose end it showed the moment th
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|
-| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 0% |
+| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 7% |
+| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 3% |
 | b | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 0% |
 | c | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 33% |
-| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 3% |
 | b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 0% |
 | c | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 23% |
 

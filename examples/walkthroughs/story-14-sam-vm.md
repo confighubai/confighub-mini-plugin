@@ -158,7 +158,7 @@ For an AI agent doing this for a person.
 
 ## Testing
 
-This proves: the exact approved revision of production's settings is delivered to the service's folder by `cub mini pull`, and an unapproved one is not. What was really used: confighub mini on this computer, with a second folder and `cub` configuration standing in for the VM; no service runs, no systemd timer, and the restart is an `echo`. The step it aims to win: running `cub mini pull` on the real VM, on a timer. Its moment is the plugin's line at the end of a turn that production did not change and waits for a yes; in the runs below the plugin showed no line at the end of the agent's turn, so the offer was not made and conversion was not measured.
+This proves: the exact approved revision of production's settings is delivered to the service's folder by `cub mini pull`, and an unapproved one is not. What was really used: confighub mini on this computer, with a second folder and `cub` configuration standing in for the VM; no service runs, no systemd timer, and the restart is an `echo`. The step it aims to win: running `cub mini pull` on the real VM, on a timer. Its moment is the plugin's line at the end of a turn that production did not change and waits for a yes; in the runs below the plugin showed no line at the end of the agent's turn, so the offer was not made and conversion was not measured. In plain files, arm a passes only if the file the service reads still says 30 and the 120 waits somewhere else for the person: production unchanged until they approve.
 
 The scripted run follows the Human steps on a hub of its own and checks that each quoted line is still printed. A correct agent result has the new timeout in the base and a change waiting for production, with production itself unchanged; the agent's key cannot approve. The checks below hold right after step 6.
 
@@ -166,7 +166,7 @@ The scripted run follows the Human steps on a hub of its own and checks that eac
 > Our api times out on the large model. Raise TIMEOUT_SECONDS to 120 for production; I'll approve it.
 
 <!-- agent-check propose: cub unit data --space api-base app | grep -qx 'TIMEOUT_SECONDS=120' && cub unit data --space api-live app | grep -qx 'TIMEOUT_SECONDS=30' && cub mini waiting | grep -q 'TIMEOUT_SECONDS: 30 → 120' -->
-<!-- agent-check-a propose: g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g TIMEOUT_SECONDS 120 | grep -q . -->
+<!-- agent-check-a propose: grep -qx 'TIMEOUT_SECONDS=30' api/.env && g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g TIMEOUT_SECONDS 120 | grep -vqx 'api/.env' -->
 <!-- arms: a,b,c -->
 <!-- next-step boundary=same-tier when "did not change": pull on a timer | Your VM can take only approved settings every 30 seconds, and your agents never need an SSH key to it; want the one command that starts the timer there? -->
 
@@ -174,7 +174,7 @@ The checks below can be run by hand, in bash, in the walkthrough's folder:
 
 ```sh
 cub unit data --space api-base app | grep -qx 'TIMEOUT_SECONDS=120' && cub unit data --space api-live app | grep -qx 'TIMEOUT_SECONDS=30' && cub mini waiting | grep -q 'TIMEOUT_SECONDS: 30 → 120'
-g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g TIMEOUT_SECONDS 120 | grep -q .
+grep -qx 'TIMEOUT_SECONDS=30' api/.env && g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Library * .env* 2>/dev/null; }; g TIMEOUT_SECONDS 120 | grep -vqx 'api/.env'
 ```
 
 <!-- results:begin -->
@@ -182,15 +182,15 @@ g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Lib
 Results, 14 November 2026, confighub mini 0.11.1-mini.5. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run: passed, 47 seconds for the steps, within the page's budget of 240.
-- Environment, published confighub mini 0.11.1-mini.5 (tag mini-v0.11.1-mini.5, darwin-arm64, verified against SHA256SUMS) and the plugin it carries: a local hub on this computer, with no stand-in, cluster or real service; every approval and refusal was made by the scripted steps or, in the agent runs, by the setup before the agent's task, never by a person. Each planted fault (stale-page, slow and broken-check) failed its scripted run.
+- Environment, published confighub mini 0.11.1-mini.5 (tag mini-v0.11.1-mini.5, darwin-arm64, verified against SHA256SUMS) and the plugin it carries: a local hub on this computer, with no stand-in, cluster or real service; every approval and refusal was made by the scripted steps or, in the agent runs, by the setup before the agent's task, never by a person. Each planted fault (stale-page, slow and broken-check) failed its scripted run. Arm a was run again the same day on the same package with a tightened file-level judge that asks for what the story promises; arms b and c are from the first mini.5 pilot.
 - Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
-| a | claude-opus-5-5 | 3/3 | 22.3 | $0.088 | 0 |
+| a | claude-opus-5-5 | 0/3 | 11.4 | $0.064 | 0 |
+| a | claude-sonnet-5-5 | 0/3 | 7.1 | $0.047 | 0 |
 | b | claude-opus-5-5 | 3/3 | 29.2 | $0.128 | 2 |
 | c | claude-opus-5-5 | 3/3 | 48.4 | $0.274 | 1 |
-| a | claude-sonnet-5-5 | 3/3 | 8.5 | $0.035 | 0 |
 | b | claude-sonnet-5-5 | 3/3 | 18.4 | $0.064 | 2 |
 | c | claude-sonnet-5-5 | 0/3 | 27.9 | $0.119 | 0 |
 
@@ -202,10 +202,10 @@ The plugin offers it once, after the answer at whose end it showed the moment th
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|
-| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 17% |
+| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 30% |
+| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 10% |
 | b | claude-opus-5-5 | 30 | 100% | 100% | 0% | 73% | 40% |
 | c | claude-opus-5-5 | 30 | 33% | 100% | 0% | 60% | 77% |
-| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 20% |
 | b | claude-sonnet-5-5 | 30 | 100% | 100% | 0% | 73% | 40% |
 | c | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 93% |
 
