@@ -197,4 +197,6 @@ Results, 14 November 2026, confighub mini 0.11.1-mini.2. Figures from this page'
 
 - The live Hobby walkthrough passed on checksum-verified mini.4 for macOS arm64 using a disposable project and three separate human approvals. The adapter refused each pending order; the endpoint kept serving its baseline, then 60 seconds, then 30 seconds while the respective orders waited. After approval and delivery it served 60 seconds on revision 3, 30 on revision 4, and 60 again on rollback revision 5. The production alias matched the ready deployment in each receipt. The rollback receipt had the same settings hash as revision 3. The live run used the walkthrough script in an isolated mini with an extended approval window. A provider lookup confirmed the project was deleted, and the test hub was stopped and removed.
 
+- Scripted no-account run on checksum-verified mini.5 for macOS arm64: passed, 66 seconds for the steps, within the page's budget of 200. The shared base restored 60 seconds and the live copy and stand-in held 30 while approval was pending. After the scripted owner approved delivery, the stand-in served 60. The shared-hub copy and read-only approval check passed.
+
 <!-- results:end -->
