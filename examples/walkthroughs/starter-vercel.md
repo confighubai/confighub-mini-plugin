@@ -97,12 +97,12 @@ bash "${WALKTHROUGH_VERCEL_SCRIPT:?set to the path to examples/vercel-hobby.sh}"
    ```text
    Production runs with {'SHOP_CURRENCY': 'EUR', 'EDGE_REGION': 'fra1', 'EDGE_CACHE_SECONDS': '30', 'EDGE_MAX_DURATION': '10', 'LOG_LEVEL': 'warn'}
    ```
-7. Propose a rollback with `cub mini rollback`. Staging takes the restored value and production keeps its current value. As owner, approve that rollback before delivering it.
+7. Propose a rollback with `cub mini rollback`. The shared base takes the restored value and production keeps its current value. As owner, approve that rollback before delivering it.
    <!-- run: undo vercel-fixture -->
    ```sh
    ORDER=shop-base/$(cub changeorder list --space shop-base -o jq='.[-1].ChangeOrder.Slug')
    cub mini rollback shop-live --change-order "$ORDER" --reason "The sale is over"
-   cub unit data app --space shop-staging | grep -qx EDGE_CACHE_SECONDS=60 && cub unit data app --space shop-live | grep -qx EDGE_CACHE_SECONDS=30 || exit 1
+   cub unit data app --space shop-base | grep -qx EDGE_CACHE_SECONDS=60 && cub unit data app --space shop-live | grep -qx EDGE_CACHE_SECONDS=30 || exit 1
    python3 -c 'import json; assert json.load(open("shop-project/state.json"))["deployments"]["production"]["EDGE_CACHE_SECONDS"] == "30"'
    cub mini approve --yes --note "Back to a minute" && sh deliver
    ```

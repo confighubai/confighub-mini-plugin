@@ -97,7 +97,7 @@ ROLLBACK_REASON="Restore the cache after the sale"
 CUB_CONFIG="$CUB_CONFIG-agent-shop-proposer" CUB_CONTEXT=shop-proposer \
   cub mini rollback shop-live --change-order "$ORDER" --reason "$ROLLBACK_REASON"
 ORDER="shop-base/$(cub changeorder list --space shop-base -o json | jq -er --arg why "$ROLLBACK_REASON" '[.[].ChangeOrder | select(.Description | split("\n") | .[0] | endswith(": " + $why))] | if length==1 then .[0].Slug else error("expected one rollback proposal") end')"
-cub unit data app --space shop-staging | grep -qx EDGE_CACHE_SECONDS=60
+cub unit data app --space shop-base | grep -qx EDGE_CACHE_SECONDS=60
 cub unit data app --space shop-live | grep -qx EDGE_CACHE_SECONDS=30
 refuses "$ORDER" "$((REV+1))"
 serves 30
