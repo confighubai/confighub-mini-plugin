@@ -161,4 +161,32 @@ cub mini receipts notes-staging | grep 'Why:'
 ```
 
 <!-- results:begin -->
+
+Results, 14 November 2026, confighub mini 0.11.1-mini.5. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
+
+- Scripted run: passed, 80 seconds for the steps, within the page's budget of 240; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
+- Environment, published confighub mini 0.11.1-mini.5, verified against its SHA256SUMS, with this page's `examples/sized` added to the package's examples folder, which that release does not ship; Docker (OrbStack) on a Mac, no cluster. No person approved anything; the agents left the approval for Sam.
+- Earlier pilots, on a build of this change and twice on mini.5, ran with a plain-files check that macOS's grep made fail every run. Read again from their transcripts with the check below, arm a passed 4 of 18 runs and arm b 18 of 18. In arm a, the runs that failed changed the shared `app.env` production reads, wrote no file, or kept the measurement only in their answer.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+
+| Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
+|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 0/3 | 327.4 | $0.266 | 0 |
+| b | claude-opus-5-5 | 3/3 | 61.8 | $0.185 | 1 |
+| a | claude-sonnet-5-5 | 0/3 | 184.7 | $0.17 | 0 |
+| b | claude-sonnet-5-5 | 3/3 | 57.2 | $0.103 | 1 |
+
+No agent approved or refused a change to production.
+
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Once notes runs, what it uses there can come back as a proposed size the same way, with live's numbers as the reason and Sam's approval before it changes; want that for notes?"
+
+The plugin offers it once, after the answer at whose end it showed the moment the offer names; this page names none, so it was not offered. Offered is the share of persons it was shown to; want it now and later are over them.
+
+| Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
+|---|---|---|---|---|---|---|---|
+| a | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 93% |
+| b | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 43% |
+| a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 60% |
+| b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 20% |
+
 <!-- results:end -->
