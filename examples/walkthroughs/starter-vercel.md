@@ -3,7 +3,8 @@ id: starter-vercel
 starts_with: mini
 starter: vercel
 needs: [cub mini package, Python 3, a hosted ConfigHub organization for step 8]
-budget_seconds: 1200
+budget_seconds: 200
+live_budget_seconds: 1200
 -->
 # An app on Vercel, with production behind your approval
 
@@ -24,11 +25,21 @@ An unpacked confighub mini package ([install confighub mini](../../docs/install-
    export LOCAL_HUB=$(cub context get -o jq=.name)
    ```
 
-**Real Hobby project.** Use a personal, noncommercial test app in your Hobby scope and [sign in with the Vercel CLI](https://vercel.com/docs/cli/login). Set `WALKTHROUGH_VERCEL_SCOPE` to your Hobby scope. You need Vercel CLI, jq, and a package whose `cub mini adopt --help` lists `--vercel-live`. Mini.2 includes the delivery adapter. The live starter selection needs a later build. Run the setup in step 1, then download [the test script](../vercel-hobby.sh) and run it in place of steps 2–10. It checks first delivery, a cache change, and an approved rollback on a disposable project. For a Pro team, use a disposable project in the team scope and a sign-in allowed to deploy there. Keep the Vercel sign-in with the owner who delivers changes. Someone who can write directly to Vercel can go around the ConfigHub approval flow.
+**Real Hobby project.** For a personal, noncommercial test app, [sign in with the Vercel CLI](https://vercel.com/docs/cli/login), set `WALKTHROUGH_VERCEL_SCOPE` to your Hobby scope and choose a unique disposable project name. A Pro team can use a disposable project in its own scope. Use a package whose adoption help lists `--live`. Keep the Vercel sign-in with the person or delivery service. A user with direct production access in Vercel can still write there.
+
+- Create a test app with an `/api/settings` route that returns its `EDGE_CACHE_SECONDS` value (or `baseline` if absent), and write `EDGE_REGION=fra1` in `shop/.env.production`. Run `vercel link --cwd shop --scope "$WALKTHROUGH_VERCEL_SCOPE" --project "$PROJECT"` and `vercel deploy --cwd shop --scope "$WALKTHROUGH_VERCEL_SCOPE" --prod`. Copy the production URL into `URL`; `curl -fsS "$URL/api/settings"` should report the baseline.
+- Run `cub mini adopt shop --live` and read `cub mini receipts shop --setup`. Before the first delivery, run `cub mini approve shop-live/connect` in the owner's context. The reader key remains separate. Grant `shop-delivery` read access to the base order and its attestations using `cub space update shop-base --permission View:serviceaccount:shop-delivery --permission ViewChildren:serviceaccount:shop-delivery`, then use the reader sign-in in step 4.
+- To deliver each approved order, use its exact name as `ORDER`, read `REV=$(cub unit get app --space shop-live -o jq=.Unit.HeadRevisionNum)` as owner, then run the add-on from the separate reader context. Check the production alias with `vercel inspect "$URL" --scope "$WALKTHROUGH_VERCEL_SCOPE" --json` and match its deployment ID to the receipt. Read `"$URL/api/settings"` to check the served value.
+  ```sh
+  CUB_CONFIG="$PWD/reader" "$MINI/starters/addons/vercel/run" --live --dir "$PWD/shop" \
+    --scope "$WALKTHROUGH_VERCEL_SCOPE" --project "$PROJECT" --space shop-live \
+    --order "$ORDER" --revision "$REV" --context "$READER" --keys EDGE_CACHE_SECONDS apply
+  ```
+- Propose the sale cache change with step 5. Check that the endpoint keeps its old value while the order waits. After owner approval, run the same delivery and check the new setting. To undo, restore the previous cache value in the file and upload it with the reason. Verify the endpoint before approval, then again after delivery of that rollback. Follow steps 8 and 9 to copy the app and verify approval on the shared hub. Remove the test project and the local app when finished.
 
 <!-- run: live-delivery vercel-live -->
 ```sh
-bash "${WALKTHROUGH_VERCEL_SCRIPT:-/absolute/path/to/vercel-hobby.sh}"
+bash "${WALKTHROUGH_VERCEL_SCRIPT:?set to this repository's examples/vercel-hobby.sh}"
 ```
 
 2. For the no-account path, make the app and its stand-in Vercel project. `shop/.vercel/project.json` links the app to the project, as `vercel link` does. In `shop-project`, `state.json` holds the project's settings, with production in Frankfurt (`fra1`), and `bin/vercel` answers as the `vercel` command does. The script `deliver` sends production's approved settings to the project and prints them. Last, the Vercel add-on, a small program in the package, reads the project's settings into `shop/.env.staging` and `shop/.env.production`.
@@ -51,10 +62,16 @@ bash "${WALKTHROUGH_VERCEL_SCRIPT:-/absolute/path/to/vercel-hobby.sh}"
    EOF
    VERCEL_STANDIN_AUTH=owner python3 "$MINI/examples/extensions/delivery/vercel.py" import --provider-root shop-project --dir shop --project prj_shop --scope team_shop --deployment shop.vercel.invalid
    ```
+   ```text
+   Imported environment files; owner can now run cub mini adopt.
+   ```
 3. Deploy it. `cub mini adopt` connects the app with the Vercel starter. The hub keeps three copies of the settings: `shop-base`, shared by the other two; `shop-staging`; and `shop-live`, for production. The starter adds three settings, each with its reason, and leaves your Frankfurt region alone.
    <!-- run: deploy vercel-fixture -->
    ```sh
    cub mini adopt shop --provider-root shop-project
+   ```
+   ```text
+     Leaves EDGE_REGION alone in live: it is set already, EDGE_REGION=fra1, by you, in .env.production.
    ```
 4. Approve production and deliver it. Then sign a separate `cub` configuration in with the reader key the starter made, which can read production and nothing else, and deliver with it.
    <!-- run: deploy-approve vercel-fixture -->
@@ -95,6 +112,12 @@ bash "${WALKTHROUGH_VERCEL_SCRIPT:-/absolute/path/to/vercel-hobby.sh}"
    cub mini rollback shop-live --change-order "$ORDER" --reason "The sale is over"
    sh deliver
    ```
+   ```text
+   Set back on shop-live, each with the reason:
+     app: EDGE_CACHE_SECONDS 30 → 60
+   …
+   Production runs with {'SHOP_CURRENCY': 'EUR', 'EDGE_REGION': 'fra1', 'EDGE_CACHE_SECONDS': '60', 'EDGE_MAX_DURATION': '10', 'LOG_LEVEL': 'warn'}
+   ```
 8. Move it to your team's shared hub. Sign in once (`auth login` opens a browser). The app's name there, `TEAM_APP`, starts with your user name, so it does not clash with a teammate's.
    <!-- run: sign-in sign-in vercel-fixture -->
    ```sh
@@ -103,7 +126,7 @@ bash "${WALKTHROUGH_VERCEL_SCRIPT:-/absolute/path/to/vercel-hobby.sh}"
    export PREFIX="${WALKTHROUGH_PREFIX:-$USER-}"
    export TEAM_APP="${PREFIX}shop"
    ```
-   The copy keeps every value and its reason. Check the approval rule on the shared hub before delivery.
+   The copy keeps every value and its reason. Check the destination's approval rule before delivery. The commands after the copy install or verify the destination workflow and bind it to the app on a hub of version 0.11.1 or later. On an older hub, run `cub --context shared mini require-approval "$TEAM_APP" --variant live`.
    <!-- run: move vercel-fixture -->
    ```sh
    cub --context shared mini copy --from-context "$LOCAL_HUB" shop --name "$TEAM_APP"
@@ -129,6 +152,9 @@ bash "${WALKTHROUGH_VERCEL_SCRIPT:-/absolute/path/to/vercel-hobby.sh}"
     ```sh
     cub component delete --recursive --detach shop
     cub space delete --recursive shop-file-proposals
+    ```
+    ```text
+    Successfully deleted component shop (ID)
     ```
 
 ### Undo it
@@ -180,7 +206,7 @@ This proves: the real Hobby run checks what the production endpoint serves befor
 
 Results, 14 November 2026, confighub mini 0.11.1-mini.2. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Scripted run: passed, 88 seconds for the steps, within the page's budget of 1200.
+- Scripted run: passed, 88 seconds for the steps, within the page's budget of 200.
 - Scripted run on Vercel Hobby (local build with the mini.1 server and CLI): passed, 467 seconds for the steps, within the page's budget of 1200.
 
 - In the Hobby test, the running endpoint held its prior value while each order waited. After three separate owner approvals it served 60, then 30, then 60 from revisions 3, 4 and 5. The production alias matched the deployment in each receipt. The test project was deleted and the lookup returned project not found. The published mini.2 run used the stand-in and verified the copy to a shared hub separately.

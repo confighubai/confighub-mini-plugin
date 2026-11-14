@@ -4,21 +4,25 @@ umask 077
 export CUB_CONFIG="${CUB_CONFIG:-$HOME/.confighub}"
 : "${MINI:?set MINI to the unpacked ConfigHub mini package}"
 : "${WALKTHROUGH_VERCEL_SCOPE:?set this to your personal Hobby scope or disposable team project scope}"
-if ! cub mini adopt --help 2>&1 | grep -- '--vercel-live' >/dev/null; then
-  echo "Use a mini package that lists --vercel-live in cub mini adopt --help." >&2
+if ! cub mini adopt --help 2>&1 | grep -- '--live' >/dev/null; then
+  echo "Use a mini package that lists --live in cub mini adopt --help." >&2
   exit 2
 fi
 PROJECT="${WALKTHROUGH_PREFIX:-ch-vercel-$(date +%s)-}shop"
 export PROJECT
-mkdir "$HOME/vercel-proof"
-cd "$HOME/vercel-proof"
+cd "$(mktemp -d "$HOME/vercel-proof.XXXXXX")"
 mkdir -p shop/api
 printf '%s\n' 'module.exports = (_, res) => { res.setHeader("Cache-Control", "no-store"); res.json({cache: Reflect.get(process.env, ["EDGE", "CACHE", "SECONDS"].join("_")) || "baseline"}); };' > shop/api/settings.js
 printf 'EDGE_REGION=fra1\n' > shop/.env.production
 v() { if [ -n "${WALKTHROUGH_VERCEL_CONFIG:-}" ]; then vercel --global-config "$WALKTHROUGH_VERCEL_CONFIG" "$@"; else vercel "$@"; fi; }
 v link --cwd shop --scope "$WALKTHROUGH_VERCEL_SCOPE" --project "$PROJECT" --yes
 cleanup() {
-  v project delete "$PROJECT" --confirm-name "$PROJECT" --scope "$WALKTHROUGH_VERCEL_SCOPE"
+  local result=0
+  v project delete "$PROJECT" --confirm-name "$PROJECT" --scope "$WALKTHROUGH_VERCEL_SCOPE" || result=$?
+  if cub component get shop >/dev/null 2>&1; then
+    cub component delete --recursive --detach shop || result=$?
+  fi
+  return "$result"
 }
 trap 'cleanup || printf "Remove the disposable Vercel project %s to finish cleanup.\n" "$PROJECT" >&2' EXIT
 v deploy --cwd shop --scope "$WALKTHROUGH_VERCEL_SCOPE" --prod --yes --json > baseline.json
@@ -26,7 +30,7 @@ URL=$(jq -er '.deployment.productionUrl // .deployment.url' baseline.json)
 case "$URL" in https://*) ;; *) URL="https://$URL";; esac
 serves() { curl -fsS --retry 5 --retry-all-errors --retry-delay 2 "$URL/api/settings" | jq -e --arg n "$1" '.cache == $n' >/dev/null; }
 serves baseline
-cub mini adopt shop --vercel-live
+cub mini adopt shop --live
 cub mini require-approval shop --variant live --agent shop-proposer
 cub space update shop-base --permission View:serviceaccount:shop-delivery --permission ViewChildren:serviceaccount:shop-delivery
 CUB_CONFIG="$PWD/reader" cub auth login --new-context --private-key="$CUB_CONFIG/keys/shop-delivery.jwk" --server "$(cub context get -o jq=.coordinate.serverURL)" >/dev/null
