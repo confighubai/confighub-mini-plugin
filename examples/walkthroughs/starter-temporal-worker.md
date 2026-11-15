@@ -67,10 +67,10 @@ The comparison uses a real Temporal service and the same worker for two arms. Th
 <!-- next-step boundary=same-tier: try the runtime policy | Want to compare the retries your Temporal worker uses before and after approval? -->
 <!-- arms: b -->
 
-This proves: the structured starter is stored and selected, and a real Temporal worker runs the exact approved policy and its rollback on a local service. A shared-hub delivery needs its own observation.
+This proves: the structured starter is stored and selected, and a real Temporal worker runs the exact approved policy and its rollback on a local service. The hosted run below verifies delivery from a shared hub to a local Temporal worker.
 
 
-In the local macOS arm64 mini.908 comparison, the starter passed 19/19 checks and manual mini passed 11/11 using scripted approvals. Both used revisions 3, 4 and 5 and showed the same retry behavior. The starter kept the original runtime environment and rejected a changed policy with the old digest. After catalog review it connected in one command (9.2 s). Manual mini took two (12.3 s) to create and connect a new pattern. Shared-hub delivery still needs its own run.
+In the local macOS arm64 mini.908 comparison, the starter passed 19/19 checks and manual mini passed 11/11 using scripted approvals. Both used revisions 3, 4 and 5 and showed the same retry behavior. The starter kept the original runtime environment and rejected a changed policy with the old digest. After catalog review it connected in one command (9.2 s). Manual mini took two (12.3 s) to create and connect a new pattern.
 
 <!-- results:begin -->
 
@@ -84,5 +84,7 @@ Two follow-up Sonnet 5.5 pilots used the same mini.7 package and passed all six 
 
 
 On the checksum-verified macOS arm64 mini.8 archive, the separate Story 5 restart rehearsal passed all 17 checks. Plain Temporal passed all seven shared runtime checks using a custom approval signal and digest-checked file delivery. Restart to delivery took 2.827 seconds with the starter and 0.983 seconds with plain Temporal in this local run. The scripted owner approved the main rollout once in each arm. Only the starter arm checks the approved catalog and the hub's approval record. The plain arm does not authenticate a separate owner.
+
+- Focused shared-hub check on [published mini.9](https://github.com/confighubai/confighub-mini-plugin/releases/tag/mini-v0.11.1-mini.9), 15 November 2026. The packaged Temporal starter established the initial policy, and the app was copied to hosted ConfigHub. The packaged delivery program refused the pending order. A real local Temporal worker still succeeded on attempt three from revision 2. The owner approved the destination order in the browser. The package delivered revision 3 using the destination's scoped reader, and a new workflow failed after one attempt as expected. The worker reported the same settings hash as the approved revision. The test app, workflows, reader and local processes were removed.
 
 <!-- results:end -->
