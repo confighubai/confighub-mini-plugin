@@ -31,6 +31,13 @@ An unpacked [confighub mini package](../../docs/install-mini.md) and Python 3. S
     --order "$ORDER" --revision "$REV" --context "$READER" --keys EDGE_CACHE_SECONDS apply
   ```
 - Propose the sale cache change with step 5. Check that the endpoint keeps its old value while the order waits. After owner approval, run the same delivery and check the new setting. To undo on mini.5, use `cub mini rollback shop-live --change-order "$ORDER" --reason "The sale is over"`. Read the rollback order, then approve and deliver it separately. The mini.4 Hobby test used a file upload to propose the rollback. Follow steps 8 and 9 to copy the app and verify approval on the shared hub. Remove the test project and the local app when finished.
+**Next.js in Preview before approval.** Use a linked project with a deployment already in its history. Vercel assigns the first deployment of a new project to Production. An owner preparing a disposable project can stage a placeholder build with `vercel deploy --prod --skip-domain` to leave production traffic unassigned. [Vercel staged deployments](https://vercel.com/docs/deployments/promoting-a-deployment).
+
+- Put `next` in the app's package dependencies, and give the app a `.env.production` file with the settings you want ConfigHub to manage. If the app reads a banner from `APP_BANNER`, use `.env.staging` for its staging value and `.env.production` for its production value.
+- Run `cub mini adopt APP --live` with starters on. Check that it selects `nextjs-vercel` after `vercel`. For an app already connected, change the banner in the hub's staging copy with `cub mini set APP APP_BANNER=preview-coral --variant staging --change-desc "Show the coral banner in Preview"`.
+- Deploy to the linked project's Preview environment with `vercel deploy --environment preview --env APP_BANNER=preview-coral`. Check the response with `vercel curl /api/settings --deployment PREVIEW_URL`. This passes the staging value to Vercel explicitly.
+- Use `cub mini waiting` to show the pending `APP-live/connect` order. The owner reviews it before delivery to production.
+
 <!-- run: live-delivery vercel-live -->
 ```sh
 bash "${WALKTHROUGH_VERCEL_SCRIPT:?set to the path to examples/vercel-hobby.sh}"
