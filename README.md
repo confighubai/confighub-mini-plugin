@@ -2,7 +2,7 @@
 
 **Your agent makes your apps. Durable config makes the platform.**
 
-Ask a coding agent for an app and it writes the app, with a staging and a production setup. ConfigHub keeps that setup as durable config: every setting with its reason, kept through the next session, the next version and the next app. Kept that way, the setup of your apps is your platform. Your agent changes staging at once, and production changes when you say.
+ConfigHub keeps your app’s settings and the reason for each change. Try changes in staging, review what goes to production, and reuse the setup for your next app.
 
 Start with the Claude plugin alone: it keeps a record of the settings your agent changes and the reason for each, and `/confighub:why` shows them. Add a free local hub when you want your agent to change staging while production waits for you. It runs on macOS or Linux with no ConfigHub account, Docker or Kubernetes.
 
@@ -58,7 +58,7 @@ Platform engineering builds a platform and fits apps to it. Durable config start
 | Where the knowledge lives | Docs, tickets and the platform team's heads | With each value, as its reason |
 | Who it is built for | People: portals, forms and golden-path guides | Agents and people |
 | How a change spreads | One pull request in each repository | One change, read across every app |
-| What it takes to start | A team and months | One yes at install |
+| Where you can start | With a platform team | With one app on your computer |
 
 ConfigHub doesn't run your app. Your cluster, hosting service or VM still does, and Argo CD and Flux still deliver to your clusters. It replaces the templates, the portal and the scattered settings files above them.
 
@@ -67,7 +67,7 @@ ConfigHub doesn't run your app. Your cluster, hosting service or VM still does, 
 1. **Nothing to build first.** Start with an app. Its staging and production setup can become the starting point for the next app.
 2. **Templates that keep working after day one.** A scaffolded app is a copy made once, so the template's next version never reaches it. Here a [starter](docs/starters.md)'s next version reaches every app made from it, and each app keeps its own values and reasons.
 3. **The reason travels with the value** (for agents). An agent can't ask the platform team why a limit is set as it is. Without the reason it "fixes" the value, and the next agent fixes it back. With the record, the next agent can see why a value was chosen before changing it. [How the Claude plugin works](docs/how-it-works.md).
-4. **Auto-staging and agentic guardrails** (for agents). Give agents a way to test changes and give the owner a separate decision about production:
+4. **Let agents change staging.** Give them what they need to try a change. The owner still decides what reaches production:
    - a key of their own
    - a staging copy they can change at once
    - a line they cannot cross
@@ -79,13 +79,13 @@ ConfigHub doesn't run your app. Your cluster, hosting service or VM still does, 
 
 1. **Make a new app.** Ask Claude Code to build it "using ConfigHub". It writes the app and gives it a staging and a production setup ([a new app](docs/journeys/new-app.md)).
 2. **Attach an app you already have.** Its settings live in `.env` files, Terraform var files, Helm values, or a Kustomize repository that Argo CD or Flux deploys. Ask the agent to "attach ConfigHub to this app". It won't touch your files ([an app you already have](docs/journeys/existing-app.md)).
-3. **Use a starter.** A ready setup for one kind of app or service, such as a project on Vercel. It gives your app sensible settings, each with its reason, and connects staging, production and delivery ([starters](docs/starters.md)).
+3. **Use a starter.** [Pick one for your app](docs/starters.md) to fill in settings and see what it can connect.
 
 Some software comes with a hub inside. You change it to suit you, and keep your changes when its next version arrives ([software with ConfigHub inside](docs/journeys/bundled.md)).
 
 ## A shared hub for your team
 
-We run the hub for you as a shared hub on confighub.com, or you run a shared hub on your own servers on your own servers. Both support many people in one organization. The commands are the same as on your laptop, and you copy your apps to the shared hub when your team is ready ([from your laptop to a shared hub](docs/from-plugin-to-confighub.md)).
+Use a shared hub on confighub.com or run one on your own servers. The commands work the same way. Copy your apps over when your team is ready ([from your laptop to a shared hub](docs/from-plugin-to-confighub.md)).
 
 ## A first try, with a new app
 
@@ -104,7 +104,7 @@ You ask your agent to turn on debug logging, and staging and production both rea
 
 `cub` is ConfigHub's command-line tool, and it works with every hub. `cub mini` adds commands that each do a whole job in one step, such as `cub mini adopt` to connect an app and `cub mini approve` to approve a change after showing it to you. Underneath, it runs the same `cub` commands. [`cub mini` and plain `cub`](docs/cub-mini-and-cub.md) lists each one next to the `cub` commands it stands for.
 
-## Upgrade to get more advanced operations and features
+## When more people or agents share an app
 
 Once agents run for hours, or several of them share an app, you'll want more control. A hub gives you:
 
