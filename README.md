@@ -46,7 +46,6 @@ Use a "[starter](docs/starters.md)" to autowire an app into ConfigHub. A starter
 
 - **Where your app runs:** [Web](examples/walkthroughs/starter-web.md), [Vercel](examples/walkthroughs/starter-vercel.md), [Next.js on Vercel](docs/starters.md#nextjs-on-vercel), [AWS Parameter Store](examples/walkthroughs/starter-parameter-store.md), [Argo CD](examples/walkthroughs/starter-kustomize-argocd.md), [Flux](examples/walkthroughs/starter-kustomize-flux.md), [Daytona](examples/walkthroughs/starter-daytona.md), [Temporal worker](examples/walkthroughs/starter-temporal-worker.md) and [Unikraft](examples/walkthroughs/starter-unikraft.md).
 - **Around the app:** Git and GitHub, Vault, Sigstore, SPIFFE, OpenTelemetry, Entire, MCP servers, sandboxes and containers, and Codex ([Integrations](docs/integrations.md) says what you get with each and how far along it is).
-- **No starter for your stack?** It is one YAML file, and your agent can write it ([write a starter](docs/write-a-starter.md)).
 
 ## Agents + Durable Config = app platform without the pain
 
@@ -80,7 +79,7 @@ ConfigHub doesn't run your app. Your cluster, hosting service or VM still does, 
 
 1. **Make a new app.** Ask Claude Code to build it "using ConfigHub". It writes the app and gives it a staging and a production setup ([a new app](docs/journeys/new-app.md)).
 2. **Attach an app you already have.** Its settings live in `.env` files, Terraform var files, Helm values, or a Kustomize repository that Argo CD or Flux deploys. Ask the agent to "attach ConfigHub to this app". It won't touch your files ([an app you already have](docs/journeys/existing-app.md)).
-3. **Use a starter.** A starter is a ready setup for one kind of app or service, such as a project on Vercel or a repository that Argo CD deploys. It gives your app sensible settings, each with its reason, and connects staging, production and delivery for you ([starters](docs/starters.md)).
+3. **Use a starter.** A ready setup for one kind of app or service, such as a project on Vercel. It gives your app sensible settings, each with its reason, and connects staging, production and delivery ([starters](docs/starters.md)).
 
 Some software comes with a hub inside. You change it to suit you, and keep your changes when its next version arrives ([software with ConfigHub inside](docs/journeys/bundled.md)).
 
@@ -120,7 +119,7 @@ Once agents run for hours, or several of them share an app, you'll want more con
 
 A starter gives every new app of one kind your team's default settings, such as retries, timeouts and worker limits, each with a note on why it is set. It is one short YAML file, the same idea as a [Spring Boot starter](https://docs.spring.io/spring-boot/reference/using/build-systems.html#using.build-systems.starters) but for any kind of app. When you connect an app, it gets the starter's settings, except where you have already set a value. When your team fixes a default, the fix goes into the starter's next version, and every new app gets it.
 
-Start with the walkthrough for your app: [Web](examples/walkthroughs/starter-web.md), [Argo CD](examples/walkthroughs/starter-kustomize-argocd.md), [AWS Parameter Store](examples/walkthroughs/starter-parameter-store.md), [Vercel](examples/walkthroughs/starter-vercel.md), [Flux](examples/walkthroughs/starter-kustomize-flux.md), [Daytona](examples/walkthroughs/starter-daytona.md), [Temporal worker](examples/walkthroughs/starter-temporal-worker.md), and [Unikraft](examples/walkthroughs/starter-unikraft.md). The Vercel, AWS Parameter Store and Daytona walkthroughs include a local rehearsal that needs no provider account. Starters are off until you switch them on. See [how to turn them on and write your own](docs/starters.md).
+The Vercel, AWS Parameter Store and Daytona walkthroughs include a local rehearsal that needs no provider account. Starters are off until you switch them on. See [how to turn them on and write your own](docs/starters.md).
 
 Then try [the cub mini tour](examples/walkthroughs/tool-cub-mini.md), [your first hour](examples/walkthroughs/story-13-first-hour.md), [approve from Slack](examples/walkthroughs/story-22-priya-slack.md), [size a service from real use](examples/walkthroughs/story-21-ana-sized.md), [Git, the hub and what is running](examples/walkthroughs/story-09-git-hub-and-running.md), and [one base for ten apps](examples/walkthroughs/story-24-company-base.md). Find more tools and user stories in the [walkthrough index](examples/walkthroughs/README.md).
 
@@ -161,8 +160,11 @@ The [documentation index](docs/README.md) lists every page, with a line on each.
 | `entire-plugin.yml` | Installs the Claude plugin into the CLI of [Entire](https://entire.io), if you use it |
 | `AGENTS.md`, `llms.txt` | What an AI agent should read first, and every page listed for AI agents |
 
-## Help and contributing
+## Open, and yours to extend
 
-If something doesn't work, [report an issue](https://github.com/confighubai/confighub-mini-plugin/issues/new). See [contributing](CONTRIBUTING.md) to fix a guide, share an example or propose a starter.
+- **The Claude plugin is MIT-licensed** ([LICENSE](LICENSE)). Third-party licenses are in [`plugins/confighub/THIRD_PARTY_LICENSES.txt`](plugins/confighub/THIRD_PARTY_LICENSES.txt).
+- **A starter is a plain YAML file.** Write one, or ask your agent to, and share it ([write a starter](docs/write-a-starter.md)).
+- **The UI and the SDKs are MIT-licensed too,** so you can build your own tools on a hub: [the UI](https://github.com/confighub/ui), [the SDK](https://github.com/confighub/sdk) and [the JavaScript SDK](https://github.com/confighub/js-sdk).
+- **Contribute:** fix a guide, share an example or propose a starter ([contributing](CONTRIBUTING.md)). If something doesn't work, [report an issue](https://github.com/confighubai/confighub-mini-plugin/issues/new).
 
-The Claude plugin is MIT-licensed ([LICENSE](LICENSE)). Third-party licenses are in [`plugins/confighub/THIRD_PARTY_LICENSES.txt`](plugins/confighub/THIRD_PARTY_LICENSES.txt).
+The local hub is the full ConfigHub server, free, in one download. **[Click here to download a full ConfigHub binary](docs/install-mini.md#the-current-release).**
