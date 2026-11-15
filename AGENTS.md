@@ -14,7 +14,9 @@ There are three ways to run a hub. They are the same server, and `cub`, ConfigHu
 
 Hosted ConfigHub and the enterprise edition support many people in one organization. An app made on confighub mini can be copied to a shared hub ([from your laptop to a shared hub](docs/from-plugin-to-confighub.md)).
 
-Every starter, user story and tool has a walkthrough in [examples/walkthroughs/](examples/walkthroughs/README.md): one page that does one job from start to finish. Each has an "Agent" section written for you. Before you do one of those jobs for a person, read the matching walkthrough.
+Start with the walkthrough for the app: [Web](examples/walkthroughs/starter-web.md), [Argo CD](examples/walkthroughs/starter-kustomize-argocd.md), [AWS Parameter Store](examples/walkthroughs/starter-parameter-store.md), [Vercel](examples/walkthroughs/starter-vercel.md), [Flux](examples/walkthroughs/starter-kustomize-flux.md), [Daytona](examples/walkthroughs/starter-daytona.md), [Temporal worker](examples/walkthroughs/starter-temporal-worker.md), and [Unikraft](examples/walkthroughs/starter-unikraft.md). Read its Agent section before doing the job for a person.
+
+Then use [the cub mini tour](examples/walkthroughs/tool-cub-mini.md), [your first hour](examples/walkthroughs/story-13-first-hour.md), [approve from Slack](examples/walkthroughs/story-22-priya-slack.md), [size a service from real use](examples/walkthroughs/story-21-ana-sized.md), [Git, the hub and what is running](examples/walkthroughs/story-09-git-hub-and-running.md), and [one base for ten apps](examples/walkthroughs/story-24-company-base.md). The [walkthrough index](examples/walkthroughs/README.md) has the remaining tools and stories.
 
 **The plugin** in this repository, for Claude Code and Codex, is the easy way to start. On its own, with no hub, it records each setting an agent changes, with the request and the reason, and tells the next agent before it undoes an earlier change. When the person asks for an app "using ConfigHub", it sets up confighub mini.
 
