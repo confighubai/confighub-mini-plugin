@@ -23,7 +23,7 @@ Open a new session and [try the plugin without a hub](docs/try-the-plugin.md). U
 
 1. **People make and run apps by asking agents.** An agent changes settings many times a day, across staging, production and every customer's copy. That is faster than anyone reads a diff.
 2. **So the platform has to come from somewhere else.** Staging, production, promotion, rollback and limits used to come from a platform team or a hosting service. An agent can now write all of that in the same request as the app. But it lands in scattered files, the next session overwrites it, and every new app starts from nothing.
-3. **ConfigHub keeps it.** ConfigHub keeps what the agent set up as the app's platform, wherever the app runs. Each value has its reason. Staging changes at once, production changes when you say, and the next app starts from the first.
+3. **ConfigHub keeps the setup, its changes and their context.** ConfigHub keeps the setup itself, wherever the app runs, along with every change to it and the context for each change: what was asked, and why. Staging changes at once, production changes when you say, and the next app starts from the first.
 
 ## What durable means
 
