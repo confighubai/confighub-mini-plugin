@@ -40,14 +40,14 @@ A developer builds a web shop with an agent. Their next app is a cart service.
 
 The walkthrough [Alice ships it, Bob hardens it](examples/walkthroughs/story-25-alice-bob-hardened.md) runs this on your laptop.
 
-## Starters autowire your app to the tools you use
+## Give your app a starting setup
 
-Use a "[starter](docs/starters.md)" to autowire an app into ConfigHub. A starter looks for what the app already uses, then sets up staging and production, puts production behind your approval, and connects delivery. It leaves alone what you set yourself.
+A [starter](docs/starters.md) recognizes the tools your app already uses and fills in settings you haven’t set. It makes staging and production copies in ConfigHub. Some starters also connect delivery. Pick the guide for your app to see what it does and where you’ll be asked to approve a change.
 
 - **Where your app runs:** [Web](examples/walkthroughs/starter-web.md), [Vercel](examples/walkthroughs/starter-vercel.md), [Next.js on Vercel](docs/nextjs-on-vercel.md), [AWS Parameter Store](examples/walkthroughs/starter-parameter-store.md), [Argo CD](examples/walkthroughs/starter-kustomize-argocd.md), [Flux](examples/walkthroughs/starter-kustomize-flux.md), [Daytona](examples/walkthroughs/starter-daytona.md), [Temporal worker](examples/walkthroughs/starter-temporal-worker.md) and [Unikraft](examples/walkthroughs/starter-unikraft.md).
 - **Around the app:** Git and GitHub, Vault, Sigstore, SPIFFE, OpenTelemetry, Entire, MCP servers, sandboxes and containers, and Codex ([Integrations](docs/integrations.md) says what you get with each and how far along it is).
 
-## Agents + Durable Config = app platform without the pain
+## How one app’s setup becomes a starting point
 
 Platform engineering builds a platform and fits apps to it. Durable config starts with the app, so the platform grows out of the apps.
 

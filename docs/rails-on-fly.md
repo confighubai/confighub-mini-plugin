@@ -1,6 +1,6 @@
 # Two Rails apps on Fly, one shared setup
 
-**Build preview.** This guide needs a confighub mini build that contains `starters/rails-fly.yaml`. The starter manages settings in ConfigHub. You keep using Fly's own tools to deploy. Try this on disposable apps first.
+**Preview.** Use a local hub build with `starters/rails-fly.yaml`. The starter sets up your Rails settings in ConfigHub. You can try it on your computer without a Fly account.
 
 Suppose a shop and a cart use the same support hours. Each has its own banner, and the cart needs quieter logs. Start the cart from the shop's setup, then change the hours once. You can try the change in both staging copies before touching production.
 
@@ -43,13 +43,12 @@ cub mini install --name rails-fly-example --use
 
 Then move to the directory containing `shop` and `cart`:
 
-
 ```sh
 export CUB_MINI_STARTERS=on
 cub mini adopt ./shop --name rails-shop --dry-run
 ```
 
-Look for `rails-fly` in the plan. It fills in `RAILS_LOG_LEVEL=info` with a reason and says delivery is left to you. If you're using Claude Code or Codex, have the agent read the plan and report the selected starter before it connects either app.
+Look for `rails-fly` in the plan. It fills in `RAILS_LOG_LEVEL=info` with a reason and says delivery is left to you.
 
 ```sh
 cub mini adopt ./shop --name rails-shop
@@ -70,16 +69,34 @@ cub unit data --space rails-cart-staging app
 cub mini waiting
 ```
 
-Look for `Daily` in both staging copies, `coral` and `info` in the shop, and `indigo` and `warn` in the cart. To try the change in Rails, supply those three values to each app's staging process and check the page or endpoint that uses them. For this example, use an endpoint that returns the banner, support hours and Rails log level. Do not replace a whole env file with the hub output: it includes metadata and omits secrets.
+Look for `Daily` in both staging copies, `coral` and `info` in the shop, and `indigo` and `warn` in the cart. Pass those three values to each staging app. Check the page or endpoint that uses them. For the sample app, use `/api/settings`. Copy only those three values so you don’t lose any settings your app already uses.
 
 `cub mini waiting` shows the exact ConfigHub orders and the commands the owner can use to review each. Leave them pending for this exercise. ConfigHub does not block a direct Fly deploy by someone with Fly credentials. A hub approval changes the hub's production copy; it does not deploy a Fly Machine.
 
 When done, remove the disposable hub with `cub mini uninstall --name rails-fly-example --delete-data`.
 
+## Send approved settings to an app on Fly
+
+This step needs a build with `bin/fly-settings`, a signed-in `flyctl`, and a test app on Fly with one Machine running an image pinned by digest in the Fly registry. Use `flyctl machines list --app "$FLY_APP"` to find the Machine ID.
+
+First review the order in ConfigHub. When you approve it, note the new production revision from `cub unit get --space rails-shop-live app -o jq=.Unit.HeadRevisionNum`. Set `FLY_APP`, `MACHINE`, `HUB_CONTEXT`, `ORDER` (the full order name), and `REVISION` to the values for this app. Keep using the same `CUB_CONFIG` as above.
+
+```sh
+"$MINI/bin/fly-settings" apply --cub "$MINI/bin/cub" \
+  --app "$FLY_APP" --machine "$MACHINE" \
+  --context "$HUB_CONTEXT" --space rails-shop-live \
+  --order "$ORDER" --revision "$REVISION" \
+  --keys APP_BANNER,APP_SUPPORT_HOURS,RAILS_LOG_LEVEL
+```
+
+The command checks the approval before contacting Fly. It changes only the named settings and adds the ConfigHub revision number. It keeps the image and starts the Machine if it was stopped. Use `compare` in place of `apply` to check the Machine without changing it. Open the app afterward to see what it serves.
+
+To go back, propose the old settings as a new change. Wait for approval, then use the new order and revision in the same command. Anyone with Fly deploy access can still deploy directly; this check applies only to this command.
+
 ## Testing
 
 On an unreleased mini build, a disposable local hub stored the two apps' settings. One change moved both staging copies from revision 2 to 3. Two Rails processes running locally read the staging settings and served `Daily`, with their own banners and log levels. Both hub production copies stayed at revision 2 and orders still waited for the owner. The starter check also caught three planted faults.
 
-In a separate Fly.io run with the same candidate package, two staging Machines served the daily hours from revision 3. The shop kept `coral` and `info`, and the cart kept `indigo` and `warn`. The test's delivery check refused both pending orders, and both production Machines still served `Weekdays`. The test used Fly's CLI and a separate revision check; the starter does not ship a Fly delivery add-on.
+On Fly, both staging apps served `Daily` from revision 3 and kept their own banners and log levels. Both production apps served `Weekdays` while their orders waited. After the owner approved the shop’s change, the shop served `Daily` from revision 3. Attempting its pending rollback left it at `Daily`. The new command also restarted the shop on its already approved settings. Tests against a stand-in checked that the command changes only the settings you name.
 
-**What did not run yet:** owner-approved production delivery, rollback on Fly, or a shared-hub move. The starter is still a build preview.
+**Still to run:** the cart’s approved production delivery, the shop rollback after approval, and a move to a shared hub. The starter is still a preview.
