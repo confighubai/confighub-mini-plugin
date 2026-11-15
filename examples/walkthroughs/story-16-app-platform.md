@@ -27,9 +27,9 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
    export CUB_CONFIG="$HOME/.confighub-walkthrough"
    unset CUB_CONTEXT
    "$MINI/bin/confighub-mini-app" mini install-plugin "$CUB_CONFIG" >/dev/null
-   cub mini install --name sam --use --arrival no >/dev/null
+   cub mini install --name sam --use >/dev/null
    ```
-   `--arrival no` answers the one question a first install asks: whether a hub may start by itself when an agent works in an app's folder.
+   The walkthrough starts this hub explicitly. It does not change your setting for starting hubs automatically.
 
 2. Sam's service, `shop`, names its release in `shop/.env` by digest, the `sha256:` checksum of the build:
    <!-- run: app files -->
@@ -68,8 +68,10 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
    <!-- run: propose -->
    ```sh
    sed -i.bak 's/shop-1.0.0@sha256:83df[0-9a-f]*/shop-1.1.0@sha256:6d51e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1/' shop/.env && rm shop/.env.bak
-   cub --context bot mini upload shop --component shop --change-desc "Release 1.1.0: /health for the load balancer"
-   cub --context bot mini approve shop-live --yes || true
+   UPDATE_ORDER_REPORT=$(cub --context bot mini upload shop --component shop --change-desc "Release 1.1.0: /health for the load balancer")
+   printf '%s\n' "$UPDATE_ORDER_REPORT"
+   UPDATE_ORDER=$(printf '%s\n' "$UPDATE_ORDER_REPORT" | sed -nE 's/^.*mini approve (shop-base\/upload-[a-z0-9-]+)[[:space:]]*$/\1/p')
+   cub --context bot mini approve "${UPDATE_ORDER:?Find the exact order from the proposal first}" --yes || true
    ```
    ```text
    Changed the shared settings (shop-base), with the reason: Release 1.1.0: /health for the load balancer
@@ -82,7 +84,7 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
 6. Sam reads what production would take and approves it. The runtime's next pull deploys release 1.1.0:
    <!-- run: approve -->
    ```sh
-   cub mini approve shop-live --note "Staging answered /health; ship it" --yes >/dev/null
+   cub mini approve "${UPDATE_ORDER:?Find the exact order from the proposal first}" --note "Staging answered /health; ship it" --yes >/dev/null
    CUB_CONFIG=$RUNTIME_CONFIG cub mini pull shop --variant live --dir ~/walkthrough/service --restart "echo deploying the release the settings name"
    ```
    ```text
@@ -91,12 +93,14 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
    Restarting: echo deploying the release the settings name
    ```
 
-7. Release 1.1.0 turns out slow under load. Roll production back, with the reason: the rollback sets the release back in the shared settings, and production takes it once you approve, as any release. `ORDER` is the change order's name, the one `cub mini waiting` showed; this line looks it up:
+7. Release 1.1.0 turns out slow under load. Roll production back, with the reason: the rollback sets the release back in the shared settings, and production takes it once you approve, as any release. The rollback creates a new order; read its diff before approving:
    <!-- run: rollback -->
    ```sh
-   ORDER=$(cub changeorder list --space shop-base -o jq='.[] | select(.ChangeOrder.Description | startswith("Release 1.1.0")) | .ChangeOrder.Slug')
-   cub mini rollback shop-live --change-order shop-base/$ORDER --reason "1.1.0 answers /health slowly under load; back to 1.0.0"
-   cub mini approve --yes --note "Back to 1.0.0" >/dev/null
+   ROLLBACK_ORDER_REPORT=$(cub mini rollback shop-live --change-order "${UPDATE_ORDER:?Find the exact order from the proposal first}" --reason "1.1.0 answers /health slowly under load; back to 1.0.0")
+   printf '%s\n' "$ROLLBACK_ORDER_REPORT"
+   ROLLBACK_ORDER=$(printf '%s\n' "$ROLLBACK_ORDER_REPORT" | sed -nE 's/^.*mini approve (shop-base\/upload-[a-z0-9-]+)[[:space:]]*$/\1/p')
+   cub mini waiting
+   cub mini approve "${ROLLBACK_ORDER:?Find the exact order from the proposal first}" --yes --note "Back to 1.0.0" >/dev/null
    CUB_CONFIG=$RUNTIME_CONFIG cub mini pull shop --variant live --dir ~/walkthrough/service --restart "echo deploying the release the settings name"
    grep RELEASE service/app.env
    ```
@@ -138,7 +142,7 @@ For an AI agent doing this for a person.
 
 - The request: "Ship release 1.1.0 of shop, digest sha256:6d51e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1. Staging first; I approve production."
 - Work in the app's folder with the key you were given: run `cub` as `cub --context bot`. Set `RELEASE=shop-1.1.0@sha256:…` in `shop/.env`, then `cub mini upload shop --component shop --change-desc "WHY"`. Staging has it at once; production waits.
-- End by telling the person the release waits for production, and the command for their own terminal: `cub mini approve shop-live` (`cub mini waiting` shows it first). If they later ask to undo it, the command is `cub mini rollback shop-live --change-order shop-base/NAME --reason WHY`, which is theirs to run.
+- End by telling the person the release waits for production, and the command for their own terminal: `cub mini approve BASE/ORDER` with the exact order from `cub mini waiting`. If they later ask to undo it, the command is `cub mini rollback shop-live --change-order shop-base/NAME --reason WHY`, which is theirs to run.
 - Never: approve the release yourself, sign in as the person, write `shop-live` directly, or change the files the runtime pulls into.
 - Done when `cub unit data --space shop-staging app` shows the new digest and `cub mini waiting` names the release for production.
 

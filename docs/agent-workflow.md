@@ -82,7 +82,7 @@ One question, asked once on this machine. When an agent works in a folder that h
 ```
 
 Enter means no. Your answer is kept, and the question is not asked again on that machine.
-A script answers with `--arrival yes` or `--arrival no` on the same commands. In Claude
+In your own terminal you can set it explicitly with `--arrival yes` or `--arrival no`. A coding agent cannot set it for you. In Claude
 Code, `/confighub:install-mini` asks nothing, since whatever you could type there the
 agent could type too. It prints this line instead, once in a session, and the setting
 stays off. The command in it is the package's own `cub`, with your version and platform, so it runs as printed on a

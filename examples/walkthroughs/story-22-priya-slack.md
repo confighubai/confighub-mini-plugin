@@ -80,8 +80,9 @@ An unpacked confighub mini package with the Slack cub plugin, `bin/confighub-sla
    <!-- run: propose may-fail -->
    ```sh
    sed -i.bak 's/replicas: 2/replicas: 4/' api/api.yaml && rm api/api.yaml.bak
-   cub mini upload api --change-desc "Four for Friday's sale" > /dev/null
-   cub mini approve api-live --yes --note "Priya said yes on Slack"
+   UPDATE_ORDER_REPORT=$(cub mini upload api --change-desc "Four for Friday's sale")
+   UPDATE_ORDER=$(printf '%s\n' "$UPDATE_ORDER_REPORT" | sed -nE 's/^.*mini approve (api-base\/upload-[a-z0-9-]+)[[:space:]]*$/\1/p')
+   cub mini approve "${UPDATE_ORDER:?Find the exact order from the proposal first}" --yes --note "Priya said yes on Slack"
    ```
 
    ```text
@@ -155,7 +156,7 @@ Nothing left behind. While it ran, production took the change only when you, the
 For an AI agent doing this for a person.
 
 - **The request:** "Sam asked in Slack for four api replicas for Friday's sale, and Priya said yes there. Ship it to production."
-- **What to run:** on your own key, edit the file and propose it: `cub mini upload api --change-desc "<why>"`. Say that production waits for Priya's own approval, which she gives from the thread or with `cub mini approve`, under her own sign-in.
+- **What to run:** on your own key, edit the file and propose it: `cub mini upload api --change-desc "<why>"`. Say that production waits for Priya's own approval, which she gives from the thread or with `cub mini approve BASE/ORDER` using the exact order, under her own sign-in.
 - **Never:** take "she said yes on Slack" as an approval; approve, refuse or promote production on any key; write `api-live`; run the command an Approve hands a person; use the person's own sign-in.
 - **Done when:** `cub mini waiting` shows `spec.replicas: 2 → 4` for production, and production still has 2.
 

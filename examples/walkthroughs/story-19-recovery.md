@@ -28,9 +28,9 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
    export CUB_MINI_HALT_FILE="$HOME/.confighub-walkthrough-halt"
    unset CUB_CONTEXT
    "$MINI/bin/confighub-mini-app" mini install-plugin "$CUB_CONFIG" >/dev/null
-   cub mini install --name sam --use --arrival no >/dev/null
+   cub mini install --name sam --use >/dev/null
    ```
-   `--arrival no` answers the one question a first install asks: whether a hub may start by itself when an agent works in an app's folder.
+   The walkthrough starts this hub explicitly. It does not change your setting for starting hubs automatically.
 
 2. The payment service reads its settings from `pay/.env`:
    <!-- run: app files -->

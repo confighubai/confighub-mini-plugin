@@ -81,18 +81,15 @@ bash "${WALKTHROUGH_VERCEL_SCRIPT:?set to the path to examples/vercel-hobby.sh}"
    <!-- run: update vercel-fixture -->
    ```sh
    echo 'EDGE_CACHE_SECONDS=30' >> shop/.env
-   cub mini upload shop --component shop --change-desc "Prices must show within thirty seconds during the sale"
+   UPDATE_ORDER_REPORT=$(cub mini upload shop --component shop --change-desc "Prices must show within thirty seconds during the sale")
+   printf '%s\n' "$UPDATE_ORDER_REPORT"
+   UPDATE_ORDER=$(printf '%s\n' "$UPDATE_ORDER_REPORT" | sed -nE 's/^.*mini approve (shop-base\/upload-[a-z0-9-]+)[[:space:]]*$/\1/p')
    ```
-   ```text
-   Changed the shared settings (shop-base), with the reason: Prices must show within thirty seconds during the sale
-     EDGE_CACHE_SECONDS: 60 → 30
-   Staging has EDGE_CACHE_SECONDS=30 now, from .env.
-   …
-   ```
-6. Approve the update and deliver it. `cub mini waiting` lists what waits; with one change waiting, `cub mini approve` needs no name.
+6. Approve the update and deliver it. Read the exact update and its diff in `cub mini waiting` before you approve.
    <!-- run: update-ship vercel-fixture -->
    ```sh
-   cub mini approve --yes --note "Sale week" && sh deliver
+   cub mini waiting
+   cub mini approve "${UPDATE_ORDER:?Find the exact order from the proposal first}" --yes --note "Sale week" && sh deliver
    ```
    ```text
    Production runs with {'SHOP_CURRENCY': 'EUR', 'EDGE_REGION': 'fra1', 'EDGE_CACHE_SECONDS': '30', 'EDGE_MAX_DURATION': '10', 'LOG_LEVEL': 'warn'}
@@ -100,11 +97,13 @@ bash "${WALKTHROUGH_VERCEL_SCRIPT:?set to the path to examples/vercel-hobby.sh}"
 7. Propose a rollback with `cub mini rollback`. The shared base takes the restored value and production keeps its current value. As owner, approve that rollback before delivering it.
    <!-- run: undo vercel-fixture -->
    ```sh
-   ORDER=shop-base/$(cub changeorder list --space shop-base -o jq='.[-1].ChangeOrder.Slug')
-   cub mini rollback shop-live --change-order "$ORDER" --reason "The sale is over"
+   ROLLBACK_ORDER_REPORT=$(cub mini rollback shop-live --change-order "${UPDATE_ORDER:?Find the exact order from the proposal first}" --reason "The sale is over")
+   printf '%s\n' "$ROLLBACK_ORDER_REPORT"
+   ROLLBACK_ORDER=$(printf '%s\n' "$ROLLBACK_ORDER_REPORT" | sed -nE 's/^.*mini approve (shop-base\/upload-[a-z0-9-]+)[[:space:]]*$/\1/p')
    cub unit data app --space shop-base | grep -qx EDGE_CACHE_SECONDS=60 && cub unit data app --space shop-live | grep -qx EDGE_CACHE_SECONDS=30 || exit 1
    python3 -c 'import json; assert json.load(open("shop-project/state.json"))["deployments"]["production"]["EDGE_CACHE_SECONDS"] == "30"'
-   cub mini approve --yes --note "Back to a minute" && sh deliver
+   cub mini waiting
+   cub mini approve "${ROLLBACK_ORDER:?Find the exact order from the proposal first}" --yes --note "Back to a minute" && sh deliver
    ```
    ```text
    Set back in the shared settings (shop-base), with the reason: The sale is over
@@ -160,12 +159,12 @@ For trials use the fixture. **Deploy** with step 3 or `cub mini adopt shop --liv
 <!-- agent-check-a deploy: python3 -c "import json,sys; p=json.load(open('shop-project/state.json'))['deployments']['production']; sys.exit(not (p.get('EDGE_REGION')=='fra1' and len(p)>2))" -->
 <!-- agent-task: update -->
 > Make prices show within thirty seconds; I'll approve production myself.
-<!-- agent-person update: cub mini approve --yes && sh deliver -->
+<!-- agent-person update: ORDER=$(cub mini waiting | sed -nE 's/^.*mini approve (shop-base\/upload-[a-z0-9-]+)[[:space:]]*$/\1/p') && cub mini approve "${ORDER:?No exact order to approve}" --yes && sh deliver -->
 <!-- agent-check update: cub unit data app --space shop-staging | grep -qx EDGE_CACHE_SECONDS=30 && cub unit data app --space shop-live | grep -qx EDGE_CACHE_SECONDS=30 && grep -q '"EDGE_CACHE_SECONDS": "30"' shop-project/state.json -->
 <!-- agent-check-a update: grep -rqs 'EDGE_CACHE_SECONDS=30' shop -->
 <!-- agent-task: undo -->
 > Propose restoring the previous cache setting. I’ll approve delivery.
-<!-- agent-person undo: cub mini approve --yes && sh deliver -->
+<!-- agent-person undo: ORDER=$(cub mini waiting | sed -nE 's/^.*mini approve (shop-base\/upload-[a-z0-9-]+)[[:space:]]*$/\1/p') && cub mini approve "${ORDER:?No exact order to approve}" --yes && sh deliver -->
 <!-- agent-check undo: cub unit data app --space shop-live | grep -qx EDGE_CACHE_SECONDS=60 && grep -q '"EDGE_CACHE_SECONDS": "60"' shop-project/state.json -->
 <!-- agent-check-a undo: python3 -c "import json,sys; sys.exit(json.load(open('shop-project/state.json'))['deployments']['production'].get('EDGE_CACHE_SECONDS')!='60')" -->
 <!-- agent-task: move -->

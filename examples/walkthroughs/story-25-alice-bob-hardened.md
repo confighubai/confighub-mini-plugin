@@ -27,7 +27,7 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
    export CUB_CONFIG="$HOME/.confighub-walkthrough"
    unset CUB_CONTEXT
    "$MINI/bin/confighub-mini-app" mini install-plugin "$CUB_CONFIG" >/dev/null
-   cub mini install --name alice --use --arrival no >/dev/null
+   cub mini install --name alice --use >/dev/null
    export CUB_MINI_STARTERS=on
    ```
 
