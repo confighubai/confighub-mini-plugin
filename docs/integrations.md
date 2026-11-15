@@ -17,7 +17,7 @@ This page is for someone who wants to know what the ConfigHub plugin does with a
 | SPIFFE | The record signed with the agent's own workload identity | [Signed records](signed-records.md#signing-with-the-agents-own-identity) | Works |
 | Argo CD and Flux | Clusters deploy what a hub approved | [GitOps over OCI](gitops-over-oci.md) | Works, on a local cluster and on hosted ConfigHub |
 
-**Recording and delivery are separate.** The plugin records supported Vercel and AWS changes. Applying approved hub settings to Vercel has run against a real Hobby project on the published package. The Parameter Store add-on can deliver to a real AWS account; that path has been run with a pre-release build of the add-on. Delivery works to files, VM services through file pull, and clusters through Argo CD or Flux; each needs its configured delivery path.
+**Recording and delivery are separate.** The plugin records supported Vercel and AWS changes. Applying approved hub settings to Vercel has run against a real Hobby project on the published package. The packaged Parameter Store add-on delivered an owner-approved revision from a shared hub to a real AWS test parameter. See the [Parameter Store walkthrough](../examples/walkthroughs/starter-parameter-store.md#testing). Delivery works to files, VM services through file pull, and clusters through Argo CD or Flux; each needs its configured delivery path.
 
 If you try one of these, we'd like to hear how it went: [open an issue](https://github.com/confighubai/confighub-mini-plugin/issues).
 
