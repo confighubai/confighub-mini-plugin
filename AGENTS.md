@@ -4,21 +4,15 @@ This page teaches an AI agent what this project is, so it can help a person use 
 
 ## What the project is
 
-ConfigHub keeps an app's settings in a small server called a **hub**. A coding agent can change the app's staging settings at once, but a change to its production settings waits until a person approves it. The hub records who made each change and the reason they gave. A running service changes only if it reads from the approved configuration.
+Start with the person's app. ConfigHub keeps its setup as durable config in a **hub**, with the reason for each change. The next session can use it, and the next app can start from it. Change staging as the person asks. Propose production changes for an owner to approve, and verify what the running service reads.
 
-There are three ways to run a hub. They are the same server, and `cub`, ConfigHub's command-line tool, works the same on all three:
+A local hub runs on the person's own computer with confighub mini. A shared hub runs on confighub.com or the organization's own servers. Use `cub` on either, and move an app to a shared hub when other people or agents need it. [From your laptop to a shared hub](docs/from-plugin-to-confighub.md).
 
-- **confighub mini** runs on the person's own computer. It is free and needs no account or Docker.
-- **Hosted ConfigHub** is run for the person's organization.
-- **The enterprise edition** runs on the organization's own servers.
-
-Hosted ConfigHub and the enterprise edition support many people in one organization. An app made on confighub mini can be copied to a shared hub ([from your laptop to a shared hub](docs/from-plugin-to-confighub.md)).
-
-Start with the walkthrough for the app: [Web](examples/walkthroughs/starter-web.md), [Argo CD](examples/walkthroughs/starter-kustomize-argocd.md), [AWS Parameter Store](examples/walkthroughs/starter-parameter-store.md), [Vercel](examples/walkthroughs/starter-vercel.md), [Flux](examples/walkthroughs/starter-kustomize-flux.md), [Daytona](examples/walkthroughs/starter-daytona.md), [Temporal worker](examples/walkthroughs/starter-temporal-worker.md), and [Unikraft](examples/walkthroughs/starter-unikraft.md). Read its Agent section before doing the job for a person.
+Start with the walkthrough for the app: [Web](examples/walkthroughs/starter-web.md), [Argo CD](examples/walkthroughs/starter-kustomize-argocd.md), [AWS Parameter Store](examples/walkthroughs/starter-parameter-store.md), [Vercel](examples/walkthroughs/starter-vercel.md), [Next.js on Vercel](docs/starters.md#nextjs-on-vercel), [Flux](examples/walkthroughs/starter-kustomize-flux.md), [Daytona](examples/walkthroughs/starter-daytona.md), [Temporal worker](examples/walkthroughs/starter-temporal-worker.md), and [Unikraft](examples/walkthroughs/starter-unikraft.md). Read its Agent section before doing the job for a person.
 
 Then use [the cub mini tour](examples/walkthroughs/tool-cub-mini.md), [your first hour](examples/walkthroughs/story-13-first-hour.md), [approve from Slack](examples/walkthroughs/story-22-priya-slack.md), [size a service from real use](examples/walkthroughs/story-21-ana-sized.md), [Git, the hub and what is running](examples/walkthroughs/story-09-git-hub-and-running.md), and [one base for ten apps](examples/walkthroughs/story-24-company-base.md). The [walkthrough index](examples/walkthroughs/README.md) has the remaining tools and stories.
 
-**The plugin** in this repository, for Claude Code and Codex, is the easy way to start. On its own, with no hub, it records supported settings changes and the reasons the agent gives. What the next agent is told and which actions can be held depend on the client and operation; read the [capability matrix](docs/how-it-works.md#client-capabilities). When the person asks for an app "using ConfigHub", it sets up confighub mini.
+The **Claude plugin** records settings without a hub. Codex has its own [setup](docs/codex.md). On its own, with no hub, it records supported settings changes and the reasons the agent gives. What the next agent is told and which actions can be held depend on the client and operation; read the [capability matrix](docs/how-it-works.md#client-capabilities). When the person asks for an app "using ConfigHub", it sets up confighub mini.
 
 ## How an app lives in a hub
 
@@ -57,7 +51,7 @@ In Claude Code, the plugin adds `/confighub:changes`, `/confighub:why NAME`, `/c
 
 ## Starters
 
-A starter gives apps of one kind the team's defaults, each with a reason. Use `CUB_MINI_STARTERS=on` to start with the packaged starters, or name a folder of your own. Once the owner approves a starter in the hub, the hub supplies it to new apps. An existing app can take an approved upgrade and keep its own values. The idea comes from Spring Boot's starters. See [starters](docs/starters.md).
+A starter gives apps of one kind the team's defaults, each with a reason. Use `CUB_MINI_STARTERS=on` to start with the packaged starters, or name a folder of your own. Once the owner approves a starter in the hub, the hub supplies it to new apps. An existing app can take an approved upgrade and keep its own values. To make a second app from the first app's setup, use `cub mini adopt FOLDER --pattern FIRST_APP`. See [starters](docs/starters.md).
 
 ## Which page answers which question
 

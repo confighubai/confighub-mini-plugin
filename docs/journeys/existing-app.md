@@ -1,6 +1,6 @@
 # An app you already have, in Claude Code: staging and production kept as they are
 
-Ask Claude Code to attach ConfigHub to your app, and keep working as before: your staging and production values stay exactly as they are, your files are not changed, and changes to production wait for your approval. This page is for someone whose app already keeps its settings in files, one set for staging and one for production, and who lets Claude Code change them; without this, an agent that can edit the staging file can edit the production file too.
+Connect the app you already run. ConfigHub reads the settings you gave staging and production, then keeps them with the reasons for subsequent changes. Your agent can propose production changes for your review. You can reuse the app's setup when you build the next one.
 
 This page explains what happens and what each kind of file becomes. To see every command and what it prints, follow a walkthrough:
 

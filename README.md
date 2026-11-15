@@ -4,10 +4,6 @@
 
 Ask a coding agent for an app and it writes the app, with a staging and a production setup. ConfigHub keeps that setup as durable config: every setting with its reason, kept through the next session, the next version and the next app. Kept that way, the setup of your apps is your platform. Your agent changes staging at once, and production changes when you say.
 
-| 75 seconds | 10 seconds | 0 |
-|---|---|---|
-| from "build me an app" to an app with staging and production | for a hub to start on your laptop | production changes an agent can approve by itself |
-
 Start with the plugin alone: it keeps a record of the settings your agent changes and the reason for each, and `/confighub:why` shows them. Add a free local hub when you want your agent to change staging while production waits for you. It runs on macOS or Linux with no ConfigHub account, Docker or Kubernetes.
 
 ## Install
@@ -36,19 +32,19 @@ Open a new session and [try the plugin without a hub](docs/try-the-plugin.md). U
 
 ## An example: two apps from one setup
 
-A web shop has two services: a storefront and an orders service.
+A developer builds a web shop with an agent. Their next app is a cart service.
 
-1. **The first app gets a setup.** `cub mini adopt storefront` gives the storefront a staging and a production copy, with the team's settings from a [starter](docs/starters.md), a small YAML file. Each setting has its reason.
-2. **A fix to the first app becomes part of the setup.** A colleague sets a request size limit and a rate limit on production, each with a reason, and adds both to the starter as version 2.
-3. **The second app starts with the fix, and the first keeps its own values.** The orders service connects with version 2 and gets the limits, with their reasons. The storefront takes version 2 too, and keeps the 30-second cache its developer set for sales. Production changes only with an approval.
+1. **The first app gets a setup.** `cub mini adopt shop` gives the shop a staging and a production copy, with the team's settings from a [starter](docs/starters.md), a small YAML file. Each setting has its reason.
+2. **A fix to the first app becomes part of the setup.** A teammate proposes warning-level logs and three instances for the next starter version, with a reason for each setting. The owner approves the version.
+3. **The second app starts with the fix, and the first keeps its own values.** The cart service starts with the new settings. The shop takes the update and keeps its production log level. Production changes still go through their own approval.
 
 The walkthrough [Alice ships it, Bob hardens it](examples/walkthroughs/story-25-alice-bob-hardened.md) runs this on your laptop.
 
 ## Works with the tools and services you use
 
-A [starter](docs/starters.md) wires an app into ConfigHub for you. It looks for what the app already uses, then sets up staging and production, puts production behind your approval, and connects delivery. It leaves alone what you set yourself. One command and one approval.
+A [starter](docs/starters.md) wires an app into ConfigHub for you. It looks for what the app already uses, then sets up staging and production, puts production behind your approval, and connects delivery. It leaves alone what you set yourself.
 
-- **Where your app runs:** [Web](examples/walkthroughs/starter-web.md), [Vercel](examples/walkthroughs/starter-vercel.md), [AWS Parameter Store](examples/walkthroughs/starter-parameter-store.md), [Argo CD](examples/walkthroughs/starter-kustomize-argocd.md), [Flux](examples/walkthroughs/starter-kustomize-flux.md), [Daytona](examples/walkthroughs/starter-daytona.md), [Temporal worker](examples/walkthroughs/starter-temporal-worker.md) and [Unikraft](examples/walkthroughs/starter-unikraft.md).
+- **Where your app runs:** [Web](examples/walkthroughs/starter-web.md), [Vercel](examples/walkthroughs/starter-vercel.md), [Next.js on Vercel](docs/starters.md#nextjs-on-vercel), [AWS Parameter Store](examples/walkthroughs/starter-parameter-store.md), [Argo CD](examples/walkthroughs/starter-kustomize-argocd.md), [Flux](examples/walkthroughs/starter-kustomize-flux.md), [Daytona](examples/walkthroughs/starter-daytona.md), [Temporal worker](examples/walkthroughs/starter-temporal-worker.md) and [Unikraft](examples/walkthroughs/starter-unikraft.md).
 - **Around the app:** Git and GitHub, Vault, Sigstore, SPIFFE, OpenTelemetry, Entire, MCP servers, sandboxes and containers, and Codex ([Integrations](docs/integrations.md) says what you get with each and how far along it is).
 - **No starter for your stack?** It is one YAML file, and your agent can write it ([write a starter](docs/write-a-starter.md)).
 
@@ -69,10 +65,10 @@ ConfigHub doesn't run your app. Your cluster, hosting service or VM still does, 
 
 ## Five ways it is better
 
-1. **Nothing to build first.** A platform team spends months before the first app benefits. Here the first app comes with staging and production, and nothing is set up beforehand.
-2. **Templates that keep working after day one.** A scaffolded app is a copy made once, so the template's next version never reaches it. Here a [starter](docs/starters.md)'s next version reaches every app made from it, and each app keeps its own values and reasons. We have run ten apps taking one change this way.
-3. **The reason travels with the value** (for agents). An agent can't ask the platform team why a limit is set as it is. Without the reason it "fixes" the value, and the next agent fixes it back. With [the record](docs/how-it-works.md), the next agent was told before undoing a value in 11 of 11 simulated weeks, and no value was undone silently.
-4. **Guardrails that hold against agents** (for agents). Golden paths work because people read the guide and follow it. Agents do what the request says. Told "Priya said yes", agents with ordinary tools changed production in every run of that test. Agents need three things a portal doesn't give:
+1. **Nothing to build first.** Start with an app. Its staging and production setup can become the starting point for the next app.
+2. **Templates that keep working after day one.** A scaffolded app is a copy made once, so the template's next version never reaches it. Here a [starter](docs/starters.md)'s next version reaches every app made from it, and each app keeps its own values and reasons.
+3. **The reason travels with the value** (for agents). An agent can't ask the platform team why a limit is set as it is. Without the reason it "fixes" the value, and the next agent fixes it back. With the record, the next agent can see why a value was chosen before changing it. [How the Claude plugin works](docs/how-it-works.md).
+4. **Guardrails that hold against agents** (for agents). Give agents a way to test changes and give the owner a separate decision about production:
    - a key of their own
    - a staging copy they can change at once
    - a line they cannot cross
@@ -80,7 +76,7 @@ ConfigHub doesn't run your app. Your cluster, hosting service or VM still does, 
    The hub refuses an agent's own approval, and it is small enough to sit in every sandbox ([agent keys](docs/agents-that-run-for-weeks.md#who-acted-give-the-agent-a-key-of-its-own)).
 5. **Configuration you can query and build on.** Platform stacks are a template language for each tool: Helm for clusters, Terraform for cloud, env files for hosting services. A change across the fleet is many pull requests. As data, "which version runs where" is one question, and one change is read across all apps, wherever they run. Tools are built on data, not on templates.
 
-## Three ways to start
+## Start from your app
 
 1. **A new app.** You want an app with a staging and a production setup. Ask Claude Code to build it "using ConfigHub" ([a new app](docs/journeys/new-app.md)).
 2. **An app you already have.** Its settings live in `.env` files, Terraform var files, Helm values, or a Kustomize repository that Argo CD or Flux deploys. Ask the agent to "attach ConfigHub to this app". It won't touch your files ([an app you already have](docs/journeys/existing-app.md)).

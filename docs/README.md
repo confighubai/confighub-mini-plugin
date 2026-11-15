@@ -1,6 +1,6 @@
 # Documentation
 
-Every page about the ConfigHub plugin and confighub mini, grouped by what you're doing. To see a job done from start to finish, with every command and what it prints, pick one of [the walkthroughs](../examples/walkthroughs/README.md): one for each tool, each starter and each user story. New here? Start with the overview: https://confighub.github.io/helm-expt/ai-agents/, or the [README](../README.md) for installing and a first try.
+Start with the app you want to build or connect. ConfigHub keeps its setup and the reasons for each setting, so the next session, version, or app can start from it. Choose a [walkthrough](../examples/walkthroughs/README.md) for your stack, or install the Claude plugin and try a first app. [README](../README.md) · [Product overview](https://confighub.github.io/helm-expt/ai-agents/)
 
 The words these pages use, such as *hub*, *base*, *change order* and *Space*, are explained in [Words](#words), at the end of this page.
 
