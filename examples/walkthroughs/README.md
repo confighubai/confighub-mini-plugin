@@ -1,6 +1,6 @@
 # Walkthroughs
 
-A walkthrough shows one job from start to finish, in one short page, with every command and what it prints. There is one for each tool and for most starters and user stories; the tables below list the ones not built yet.
+Each walkthrough shows one job, the commands to run, and what to expect. The tables say what you need to start.
 
 Each walkthrough has three parts:
 
@@ -8,7 +8,7 @@ Each walkthrough has three parts:
 - **Agent**, for an AI agent doing the job for you: what you would ask, what it runs, and what it must never do, such as approve a change to production.
 - **Testing**, for checking that the walkthrough still works: the request given to an agent, and the commands that show whether the job was done.
 
-To pick one: start with the starter for your kind of app, then read the six walkthroughs below the starters. After that, pick a tool to learn the commands, or a user story that sounds like your situation. "Starts with" says what you need first: the Claude plugin in Claude Code, the local hub on your computer ([installing the local hub](../../docs/install-mini.md)), or both.
+Start with your app’s starter or pick one of the six examples below. [Install the local hub](../../docs/install-mini.md) if the walkthrough calls for it.
 
 ## Start here: starters
 
@@ -16,14 +16,14 @@ A starter gives a new app of one kind its usual settings, each with a reason ([s
 
 | Starter | What you get | Starts with |
 |---|---|---|
-| [web: a small web service with a `.env`](starter-web.md) | Deploy, update, undo, move to a shared hub and delete, each with the commands it takes | the local hub |
-| [kustomize-argocd: a Kustomize app that Argo CD deploys](starter-kustomize-argocd.md) | Argo CD on a local kind cluster takes production from the hub with no pod restarted, and only what you approve | the local hub |
-| [parameter-store: an app that reads AWS Parameter Store](starter-parameter-store.md) | Production's parameters written only from the revision you approved; the encrypted value never leaves Parameter Store (local stand-in) | the local hub |
-| [vercel: an app on Vercel](starter-vercel.md) | The Vercel project's production settings written only from the revision you approved (Hobby project or local stand-in) | the local hub |
-| [kustomize-flux: a Kustomize app that Flux deploys](starter-kustomize-flux.md) | Flux on a local kind cluster takes production from the hub with no pod restarted, and only what you approve | the local hub |
-| [daytona: a sandbox experiment](starter-daytona.md) | Return a proposed change with its reason and leave production unchanged | the local hub |
-| [temporal-worker: Activity retries](starter-temporal-worker.md) | Observe the Temporal worker load an approved retry policy and roll it back | the local hub |
-| [unikraft: an incident banner](starter-unikraft.md) | Approve, roll back and move delivery of a banner on a disposable Unikraft Cloud service | the local hub |
+| [web: a small web service with a `.env`](starter-web.md) | Try a change in staging, approve it for production, then undo it | the local hub |
+| [kustomize-argocd: a Kustomize app that Argo CD deploys](starter-kustomize-argocd.md) | Try sending approved settings to Argo CD on a local cluster | the local hub |
+| [parameter-store: an app that reads AWS Parameter Store](starter-parameter-store.md) | Try the local example. Testing also records delivery to real AWS from a shared hub | the local hub |
+| [vercel: an app on Vercel](starter-vercel.md) | Send approved settings to a Hobby project, or try it locally without a Vercel account | the local hub |
+| [kustomize-flux: a Kustomize app that Flux deploys](starter-kustomize-flux.md) | Try sending approved settings to Flux on a local cluster | the local hub |
+| [daytona: a sandbox experiment](starter-daytona.md) | Bring a sandbox change back for review. The local example needs no Daytona account | the local hub |
+| [temporal-worker: Activity retries](starter-temporal-worker.md) | See a local Temporal worker use a new retry limit, then go back to the old one | the local hub |
+| [unikraft: an incident banner](starter-unikraft.md) | Change a banner on a test service and undo it. Try it locally or on Unikraft Cloud | the local hub |
 
 For framework-specific guides, see [Next.js on Vercel](../../docs/nextjs-on-vercel.md) and the [Rails on Fly build preview](../../docs/rails-on-fly.md). The Rails preview includes a local example and a record of what ran on Fly.
 
