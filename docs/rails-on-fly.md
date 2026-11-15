@@ -31,7 +31,18 @@ Start with two Rails folders with a `Gemfile`, `bin/rails`, `config/application.
 | `./shop/.env` | `APP_BANNER=coral` and `APP_SUPPORT_HOURS=Weekdays` |
 | `./cart/.env` | `APP_BANNER=indigo` and `RAILS_LOG_LEVEL=warn` |
 
-From the directory containing `shop` and `cart`, use the `cub` from your candidate build and an empty test hub:
+Use an empty test hub. From a fresh terminal, set `MINI` to the absolute path of the unpacked candidate package and run:
+
+```sh
+unset CUB_CONTEXT
+export CUB_CONFIG="$(mktemp -d "$HOME/.confighub-rails-example.XXXXXX")"
+"$MINI/bin/confighub-mini-app" mini install-plugin "$CUB_CONFIG"
+cub() { "$MINI/bin/cub" "$@"; }
+cub mini install --name rails-fly-example --use
+```
+
+Then move to the directory containing `shop` and `cart`:
+
 
 ```sh
 export CUB_MINI_STARTERS=on
@@ -63,8 +74,12 @@ Look for `Daily` in both staging copies, `coral` and `info` in the shop, and `in
 
 `cub mini waiting` shows the exact ConfigHub orders and the commands the owner can use to review each. Leave them pending for this exercise. ConfigHub does not block a direct Fly deploy by someone with Fly credentials. A hub approval changes the hub's production copy; it does not deploy a Fly Machine.
 
+When done, remove the disposable hub with `cub mini uninstall --name rails-fly-example --delete-data`.
+
 ## Testing
 
 On an unreleased mini build, a disposable local hub stored the two apps' settings. One change moved both staging copies from revision 2 to 3. Two Rails processes running locally read the staging settings and served `Daily`, with their own banners and log levels. Both hub production copies stayed at revision 2 and orders still waited for the owner. The starter check also caught three planted faults.
 
-**What did not run:** a Fly.io deploy, a Fly rollback, production approval, or a shared-hub move. The runtime test was local; this guide does not list Rails on Fly as released.
+In a separate Fly.io run with the same candidate package, two staging Machines served the daily hours from revision 3. The shop kept `coral` and `info`, and the cart kept `indigo` and `warn`. The test's delivery check refused both pending orders, and both production Machines still served `Weekdays`. The test used Fly's CLI and a separate revision check; the starter does not ship a Fly delivery add-on.
+
+**What did not run yet:** owner-approved production delivery, rollback on Fly, or a shared-hub move. The starter is still a build preview.
