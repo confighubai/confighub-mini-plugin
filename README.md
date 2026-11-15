@@ -6,9 +6,9 @@ Ask a coding agent for an app and it writes the app, with a staging and a produc
 
 | 75 seconds | 10 seconds | 0 |
 |---|---|---|
-| from "build me an app" to an app with staging and production | for a hub to start on your laptop, with no Docker and no account | production changes an agent can approve by itself |
+| from "build me an app" to an app with staging and production | for a hub to start on your laptop | production changes an agent can approve by itself |
 
-Start with the plugin alone. Add a free local hub when you want staging and production. It runs on macOS or Linux.
+Start with the plugin alone: it keeps a record of the settings your agent changes and the reason for each, and `/confighub:why` shows them. Add a free local hub when you want your agent to change staging while production waits for you. It runs on macOS or Linux with no ConfigHub account, Docker or Kubernetes.
 
 ## Install
 
@@ -46,15 +46,15 @@ The walkthrough [Alice ships it, Bob hardens it](examples/walkthroughs/story-25-
 
 ## Works with the tools and services you use
 
-A [starter](docs/starters.md) wires an app into ConfigHub for you. It looks for what the app already uses, such as a Vercel project or a repository that Argo CD deploys, then sets up staging and production, puts production behind your approval, and connects delivery. It leaves alone anything you set yourself. That takes one command and one approval.
+A [starter](docs/starters.md) wires an app into ConfigHub for you. It looks for what the app already uses, then sets up staging and production, puts production behind your approval, and connects delivery. It leaves alone anything you set yourself. That takes one command and one approval.
 
 - **Where your app runs:** [Web](examples/walkthroughs/starter-web.md), [Vercel](examples/walkthroughs/starter-vercel.md), [AWS Parameter Store](examples/walkthroughs/starter-parameter-store.md), [Argo CD](examples/walkthroughs/starter-kustomize-argocd.md), [Flux](examples/walkthroughs/starter-kustomize-flux.md), [Daytona](examples/walkthroughs/starter-daytona.md), [Temporal worker](examples/walkthroughs/starter-temporal-worker.md) and [Unikraft](examples/walkthroughs/starter-unikraft.md).
-- **Around the app:** Git and GitHub, Vault, Sigstore, SPIFFE, OpenTelemetry, Entire, MCP servers, sandboxes and containers, and Codex ([what you get with each](docs/integrations.md)).
+- **Around the app:** Git and GitHub, Vault, Sigstore, SPIFFE, OpenTelemetry, Entire, MCP servers, sandboxes and containers, and Codex ([Integrations](docs/integrations.md) says what you get with each and how far along it is).
 - **No starter for your stack?** It is one YAML file, and your agent can write it ([write a starter](docs/write-a-starter.md)).
 
 ## Platforms were built before the apps. Agents build the app first.
 
-Platform engineering builds a platform and fits apps to it. Durable config starts with the app and keeps what the agent set up for it, so the platform grows out of the apps.
+Platform engineering builds a platform and fits apps to it. Durable config starts with the app, so the platform grows out of the apps.
 
 | | Platform engineering as we know it | Durable config |
 |---|---|---|
@@ -69,7 +69,7 @@ ConfigHub doesn't run your app. Your cluster, hosting service or VM still does, 
 
 ## Five ways it is better
 
-1. **Nothing to build first.** A platform team spends months before the first app benefits. Here an agent asked for an app left it with staging and production in 75 seconds, in 16 of 16 of our runs.
+1. **Nothing to build first.** A platform team spends months before the first app benefits. Here the first app comes with staging and production, and nothing is set up beforehand.
 2. **Templates that keep working after day one.** A scaffolded app is a copy made once, so the template's next version never reaches it. Here a [starter](docs/starters.md)'s next version reaches every app made from it, and each app keeps its own values and reasons. We have run ten apps taking one change this way.
 3. **The reason travels with the value** (for agents). An agent can't ask the platform team why a limit is set as it is. Without the reason it "fixes" the value, and the next agent fixes it back. With [the record](docs/how-it-works.md), the next agent was told before undoing a value in 11 of 11 simulated weeks, and no value was undone silently.
 4. **Guardrails that hold against agents** (for agents). Golden paths work because people read the guide and follow it. Agents do what the request says. Told "Priya said yes", agents with ordinary tools changed production in every run of that test. Agents need three things a portal doesn't give:
