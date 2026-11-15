@@ -42,7 +42,15 @@ A web shop has two services, a storefront and an orders service. A developer bui
 2. **A fix to the first app becomes part of the setup.** The colleague sets a request size limit and a rate limit on production, each with his reason, and adds both to the starter as version 2.
 3. **The second app starts with the fix, and the first keeps its own values.** The orders service connects with version 2 and gets the limits, with their reasons. The storefront takes version 2 too, and keeps the 30-second cache its developer set for sales. Production changes only with an approval.
 
-The walkthrough [Alice ships it, Bob hardens it](examples/walkthroughs/story-25-alice-bob-hardened.md) runs this on your laptop. No starter for your stack? It is one YAML file, and your agent can write it ([write a starter](docs/write-a-starter.md)).
+The walkthrough [Alice ships it, Bob hardens it](examples/walkthroughs/story-25-alice-bob-hardened.md) runs this on your laptop.
+
+## Works with the tools and services you use
+
+A [starter](docs/starters.md) wires an app into ConfigHub for you. It looks for what the app already uses, such as a Vercel project or a repository that Argo CD deploys. Then it sets up the staging and production copies, puts production behind your approval, and connects delivery. It leaves alone anything you set yourself. Connecting takes one command and one approval.
+
+- **Where your app runs:** [Web](examples/walkthroughs/starter-web.md), [Vercel](examples/walkthroughs/starter-vercel.md), [AWS Parameter Store](examples/walkthroughs/starter-parameter-store.md), [Argo CD](examples/walkthroughs/starter-kustomize-argocd.md), [Flux](examples/walkthroughs/starter-kustomize-flux.md), [Daytona](examples/walkthroughs/starter-daytona.md), [Temporal worker](examples/walkthroughs/starter-temporal-worker.md) and [Unikraft](examples/walkthroughs/starter-unikraft.md).
+- **Around the app:** Git and GitHub, Vault, Sigstore, SPIFFE, OpenTelemetry, Entire, MCP servers, sandboxes and containers, and Codex. [Integrations](docs/integrations.md) says what you get with each one and how far along it is.
+- **No starter for your stack?** It is one YAML file, and your agent can write it ([write a starter](docs/write-a-starter.md)).
 
 ## Platforms were built before the apps. Agents build the app first.
 
@@ -117,10 +125,6 @@ A starter gives every new app of one kind your team's default settings, such as 
 Start with the walkthrough for your app: [Web](examples/walkthroughs/starter-web.md), [Argo CD](examples/walkthroughs/starter-kustomize-argocd.md), [AWS Parameter Store](examples/walkthroughs/starter-parameter-store.md), [Vercel](examples/walkthroughs/starter-vercel.md), [Flux](examples/walkthroughs/starter-kustomize-flux.md), [Daytona](examples/walkthroughs/starter-daytona.md), [Temporal worker](examples/walkthroughs/starter-temporal-worker.md), and [Unikraft](examples/walkthroughs/starter-unikraft.md). The Vercel, AWS Parameter Store and Daytona walkthroughs include a local rehearsal that needs no provider account. Starters are off until you switch them on. See [how to turn them on and write your own](docs/starters.md).
 
 Then try [the cub mini tour](examples/walkthroughs/tool-cub-mini.md), [your first hour](examples/walkthroughs/story-13-first-hour.md), [approve from Slack](examples/walkthroughs/story-22-priya-slack.md), [size a service from real use](examples/walkthroughs/story-21-ana-sized.md), [Git, the hub and what is running](examples/walkthroughs/story-09-git-hub-and-running.md), and [one base for ten apps](examples/walkthroughs/story-24-company-base.md). Find more tools and user stories in the [walkthrough index](examples/walkthroughs/README.md).
-
-## Works with your tools
-
-Git and GitHub, Argo CD and Flux, Vault, Sigstore, OpenTelemetry, Entire, Codex, and sandboxes and containers. [Integrations](docs/integrations.md) says what you get with each one and how far along it is.
 
 ## Commands in Claude Code
 
