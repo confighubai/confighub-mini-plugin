@@ -1,6 +1,6 @@
 # A new app in Claude Code, with a staging copy and a live copy
 
-Ask Claude Code for an app in one sentence, and end with the app, staging configuration that takes your agent's changes at once, and live configuration that changes only when you approve. A second app can start from the first. This page is for someone who makes apps with Claude Code and wants production to change only with their say: an agent can change production settings as easily as staging ones, and a rule in `CLAUDE.md` is only a request.
+Ask Claude Code for an app using ConfigHub. Your agent builds it and a local hub keeps its staging and production setup, with the reason for each change. Try changes in staging, review them before production delivery, and start the next app from the setup you already have.
 
 This page explains what happens and why. To see every command and what it prints, follow a walkthrough:
 

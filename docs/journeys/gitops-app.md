@@ -1,6 +1,6 @@
 # An app that Argo CD or Flux deploys from Git: a hub beside it, as its source, and back
 
-Let your agents propose changes to an app that Argo CD or Flux deploys, keep your values, and have production take only what you approve, with the same controller and the same pods. This page is for a team whose app is deployed from a Git repository. It helps you choose one of three ways to set it up, from the hub beside Git to the hub as the app's source, and says where each is shown step by step. Until you move an app, Argo CD or Flux still deploys whatever reaches the branch it watches.
+Start with the app that Argo CD or Flux deploys from Git. Connect a hub to keep the app's settings and their reasons, then choose how GitOps should deliver. When the hub is the source, the controller receives the revision you approve for production.
 
 The steps, with every command and what it prints, are in the walkthroughs [a Kustomize app that Argo CD deploys](../../examples/walkthroughs/starter-kustomize-argocd.md) and [a Kustomize app that Flux deploys](../../examples/walkthroughs/starter-kustomize-flux.md): each connects the app, moves its delivery to the hub with no pod restarted, changes it, undoes the change, moves it to a shared hub and deletes it. How deploying from the hub works, self-heal and your own cluster are in [GitOps over OCI](../gitops-over-oci.md).
 

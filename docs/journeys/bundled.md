@@ -1,6 +1,6 @@
 # Software that comes with ConfigHub inside it
 
-This page is for someone who was given an app, a Helm chart or a platform by someone else, a vendor, a platform team or a colleague, and wants to change it to suit them without losing those changes at the next version. The way in is for that software to come with a hub inside it, so that each change you make is kept with its reason and the next version arrives with your changes kept. This page says plainly what of that exists today, and what does not.
+When an app or Helm chart comes with a hub, you can change its settings to suit how you run it. ConfigHub keeps each of your values with its reason, so the next version can take the vendor's updates and keep what you set yourself.
 
 The words on this page, such as *hub*, *base* and *change order*, are explained in [the glossary](../README.md#words). confighub mini, a hub on one machine, is small enough to travel inside an app's download ([its size](../install-mini.md#the-current-release)).
 

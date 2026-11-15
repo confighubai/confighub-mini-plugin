@@ -80,7 +80,7 @@ Two things are different. Spring Boot applies its auto-configuration every time 
 
 `cub mini adopt` uses starters only when you switch them on, with the environment variable `CUB_MINI_STARTERS=on`, or when your hub already keeps starters in a Space named `starters`. Otherwise it connects an app as [an app you already have](journeys/existing-app.md) shows.
 
-The package has eight starters: `web`, for a small web service with a `.env`, `app.env` or compose file; `vercel`, for an app on Vercel; `parameter-store`, for an app that reads AWS Parameter Store; `daytona`, for an experiment run in a disposable Daytona sandbox and brought back for review; `kustomize-argocd` and `kustomize-flux`, for a Kustomize repository that Argo CD or Flux deploys; `temporal-worker`, for a Temporal worker, which uses a stand-in by default and the real service with `--live`; and `unikraft`, for an app on Unikraft, which likewise uses a stand-in by default and the real service with `--live`. The `vercel` and `parameter-store` starters can deliver to a real Vercel project or AWS account you sign in to, chosen with `cub mini adopt APP --live`, or, with no account, to a stand-in: a small program in the package that answers as Vercel or AWS would and keeps the settings in a local file. Published packages have delivered to a real Vercel Hobby project and delivered an approved shared-hub revision to a real AWS Parameter Store test parameter. The `daytona` starter can be rehearsed on your computer with no Daytona account. Each one's walkthrough says which path it shows.
+The package includes these starters: `web`, for a small web service with a `.env`, `app.env` or compose file; `vercel`, for an app on Vercel; [`nextjs-vercel`](#nextjs-on-vercel), for a Next.js app on Vercel; `parameter-store`, for an app that reads AWS Parameter Store; `daytona`, for an experiment run in a disposable Daytona sandbox and brought back for review; `kustomize-argocd` and `kustomize-flux`, for a Kustomize repository that Argo CD or Flux deploys; `temporal-worker`, for a Temporal worker, which uses a stand-in by default and the real service with `--live`; and `unikraft`, for an app on Unikraft, which likewise uses a stand-in by default and the real service with `--live`. The `vercel` and `parameter-store` starters can deliver to a real Vercel project or AWS account you sign in to, chosen with `cub mini adopt APP --live`, or, with no account, to a stand-in: a small program in the package that answers as Vercel or AWS would and keeps the settings in a local file. Published packages have delivered to a real Vercel Hobby project and delivered an approved shared-hub revision to a real AWS Parameter Store test parameter. The `daytona` starter can be rehearsed on your computer with no Daytona account. Each one's walkthrough says which path it shows.
 
 In a terminal, with `MINI` the folder of the unpacked package, such as `~/.confighub/mini/confighub-mini-VERSION-OS-ARCH`:
 
@@ -90,6 +90,12 @@ export CUB_MINI_STARTERS=on
 ```
 
 The steps below also need a hub. If none is running, start one with `cub mini install` ([install confighub mini](install-mini.md)). The first `cub mini adopt` with starters on puts the package's starters into your hub, as version 1, and prints the one line that approves them, which is yours to run, not an agent's, even when an agent ran the adopt; until you run it, adopt uses the package's own files. After that the hub is where adopt reads starters from, and no folder is needed. To switch starters off again, `unset CUB_MINI_STARTERS`, and delete the Component's two Spaces and the Component with `cub space delete starters-approved --recursive`, `cub space delete starters-base --recursive` and `cub component delete starters`; apps you connected keep the settings they have.
+
+## Next.js on Vercel
+
+Start with a Next.js app that has `next` in its package dependencies, a `.env.production` file for the settings you want ConfigHub to manage, and a linked Vercel project. Export `CUB_MINI_STARTERS=on`, then run `cub mini adopt APP --live`. Check that the plan selects `nextjs-vercel` after `vercel`. The starter adds the telemetry setting and its reason wherever you left that setting open.
+
+Use the [Next.js guide](nextjs-on-vercel.md) to run a Vercel Preview and leave `APP-live/connect` for owner approval.
 
 ## What connecting an app shows
 
