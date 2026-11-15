@@ -7,7 +7,7 @@ budget_seconds: 240
 -->
 # A new service sized by what it used, with the measurement as the reason
 
-Ana's agent built a small notes service on her team's pattern, which gives every service 2 CPU and 4Gi of memory. Nobody has seen it run, so nobody knows whether that is ten times too much or too little. Here the service runs in a container on your computer while a load generator sends it a stated number of requests, and what it used becomes the proposed size: each size an ordinary setting whose reason is the measurement. Staging takes it at once; production waits for Sam, who looks after the team's hub, to read the numbers and approve.
+Ana's agent built a small notes service on her team's pattern, which gives every service 2 CPU and 4Gi of memory. Nobody has seen it run, so nobody knows whether that is ten times too much or too little. Here the service runs in a container on your computer while a load generator sends it a stated number of requests, and what it used becomes the proposed size: each size an ordinary setting whose reason is the measurement. Staging takes it at once; production waits for Sam, who looks after the team's shared hub, to read the numbers and approve.
 
 ## Human
 
@@ -15,7 +15,7 @@ For a person following along in a terminal.
 
 ### What you need
 
-An unpacked confighub mini package (from the [releases page](https://github.com/confighubai/confighub-mini-plugin/releases)) on macOS or Linux, Docker running, and Python 3. confighub mini is a hub, a small ConfigHub server that keeps each setting with who changed it and why, running on your computer only. No account and no cluster.
+An unpacked confighub mini package (from the [releases page](https://github.com/confighubai/confighub-mini-plugin/releases)) on macOS or Linux, Docker running, and Python 3. The local hub is a hub, a small ConfigHub server that keeps each setting with who changed it and why, running on your computer only. No account and no cluster.
 
 ### Steps
 
@@ -141,7 +141,7 @@ For an AI agent doing this for a person.
 
 ## Testing
 
-This proves: the sizes were measured from the service running in a container, at a stated load, and stored in the hub as ordinary settings with the measurement as their reason, staging's at once and production's held for approval. What was really used: Docker on this computer, with `docker stats` and the kernel's peak, and confighub mini; no cluster, and the approval was made by the scripted steps, not a person. The load is a generator's, not production's. The step it aims to win: sizes from live, the story's last step.
+This proves: the sizes were measured from the service running in a container, at a stated load, and stored in the hub as ordinary settings with the measurement as their reason, staging's at once and production's held for approval. What was really used: Docker on this computer, with `docker stats` and the kernel's peak, and the local hub; no cluster, and the approval was made by the scripted steps, not a person. The load is a generator's, not production's. The step it aims to win: sizes from live, the story's last step.
 
 The scripted run follows the Human steps on a hub of its own and checks that each quoted line is still printed. A correct agent result gives staging a CPU between 100m and 1 and a memory between 300Mi and 1Gi, which the service's start needs, keeps production at 2 and 4Gi, and keeps the measurement as the reason. In plain files: a staging file has the sizes, the shared `app.env` keeps 2 and 4Gi, and a file says what was measured. The checks below hold right after step 5, before Sam approves.
 
@@ -167,9 +167,9 @@ cub mini receipts notes-staging | grep 'Why:'
 Results, 14 November 2026, confighub mini 0.11.1-mini.7. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run: passed, 79 seconds for the steps, within the page's budget of 240; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
-- Environment: the published confighub mini 0.11.1-mini.7, verified against its SHA256SUMS, which ships `examples/sized`; for the mini.5 set below, this page's `examples/sized` was added to that package's examples folder. Docker (OrbStack) on a Mac, no cluster. No person approved anything; the agents left the approval for Sam. The mini.7 agent runs are the plugin arm alone, cut short to save cost; the comparison with plain tools is the mini.5 set, whose offer was not shown because the plugin then did not read an upload made by a script.
+- Environment: the published confighub mini 0.11.1-mini.7, verified against its SHA256SUMS, which ships `examples/sized`; for the mini.5 set below, this page's `examples/sized` was added to that package's examples folder. Docker (OrbStack) on a Mac, no cluster. No person approved anything; the agents left the approval for Sam. The mini.7 agent runs are the Claude plugin arm alone, cut short to save cost; the comparison with plain tools is the mini.5 set, whose offer was not shown because the Claude plugin then did not read an upload made by a script.
 - Earlier pilots, on a build of this change and twice on mini.5, ran with a plain-files check that macOS's grep made fail every run. Read again from their transcripts with the check below, arm a passed 4 of 18 runs and arm b 18 of 18.
-- Agent runs (on confighub mini 0.11.1-mini.7, 14 November 2026): a pilot, 2 runs per arm on each of claude-sonnet-5-5. Arms: b is the plugin, confighub mini and this page as reading.
+- Agent runs (on confighub mini 0.11.1-mini.7, 14 November 2026): a pilot, 2 runs per arm on each of claude-sonnet-5-5. Arms: b is the Claude plugin, the local hub and this page as reading.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
@@ -179,13 +179,13 @@ No agent approved or refused a change to production.
 
 Simulated persons, not people: 5 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Once notes runs, what it uses there can come back as a proposed size the same way, with live's numbers as the reason and Sam's approval before it changes; want that for notes?" It offers more of the tier the person has, not a step up.
 
-The plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
+The Claude plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|
 | b | claude-sonnet-5-5 | 10 | 100% | 100% | 0% | 90% | 80% |
 
-- Agent runs (on confighub mini 0.11.1-mini.5, 14 November 2026): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+- Agent runs (on confighub mini 0.11.1-mini.5, 14 November 2026): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the Claude plugin, the local hub and this page as reading.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
@@ -198,7 +198,7 @@ No agent approved or refused a change to production.
 
 Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Once notes runs, what it uses there can come back as a proposed size the same way, with live's numbers as the reason and Sam's approval before it changes; want that for notes?"
 
-The plugin offers it once, after the answer at whose end it showed the moment the offer names; this page names none, so it was not offered. Offered is the share of persons it was shown to; want it now and later are over them.
+The Claude plugin offers it once, after the answer at whose end it showed the moment the offer names; this page names none, so it was not offered. Offered is the share of persons it was shown to; want it now and later are over them.
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|

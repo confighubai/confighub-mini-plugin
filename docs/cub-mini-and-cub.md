@@ -1,6 +1,6 @@
 # `cub mini` and plain `cub`
 
-What you do with confighub mini on your laptop works the same on your organization's ConfigHub, because it is the same ConfigHub server and the same `cub`, ConfigHub's command-line tool. Each `cub mini` command runs `cub`'s own commands and fills in the rest of the request for you. So, except where the table says "Nothing yet", you can do everything shown with `cub mini` in plain `cub`, on any ConfigHub. The table lists which `cub` commands each `cub mini` command stands for.
+What you do with the local hub on your laptop works the same on your organization's shared hub, because it is the same ConfigHub server and the same `cub`, ConfigHub's command-line tool. Each `cub mini` command runs `cub`'s own commands and fills in the rest of the request for you. So, except where the table says "Nothing yet", you can do everything shown with `cub mini` in plain `cub`, on any ConfigHub. The table lists which `cub` commands each `cub mini` command stands for.
 
 The walkthrough [the `cub mini` commands](../examples/walkthroughs/tool-cub-mini.md) uses each command on one small app, with what it prints and the plain `cub` commands next to it.
 
@@ -26,8 +26,8 @@ The walkthrough [the `cub mini` commands](../examples/walkthroughs/tool-cub-mini
 | `cub mini approve [BASE/ORDER or SPACE]` | `cub variant approve BASE --change-order BASE/ORDER --note WHY` with what you read kept as claims, then `cub mini promote SPACE --change-order BASE/ORDER` | Shows the change first and asks; one command where `cub` needs two |
 | `cub mini refuse [BASE/ORDER or SPACE] --reason WHY` | `cub changeorder update ORDER --space BASE --aborted-reason WHY` | Names the change the way `cub mini waiting` does |
 | `cub mini copy --to-dir`, `--from-git`, `--to-file`, `--from-file [--name NAME]` | Nothing yet | Writes the work out as plain files, with a `CHANGES.md` that says why each value is set. Reads it back in from Git, with each commit's reason. Moves it between hubs, as a file that carries every kept value's reason whole; a copy that fails leaves nothing behind. `--from-file FILE --name NAME` takes in a setup someone shared under a name of its own, `NAME-base`, `NAME-staging`, ..., and prints the next step, `cub mini adopt FOLDER --pattern NAME`, which makes your own app from it |
-| `cub mini connect`, `offer`, `offers` | Nothing yet | Makes the organization's ConfigHub the parent of a confighub mini's work, and offers changes up to it |
+| `cub mini connect`, `offer`, `offers` | Nothing yet | Makes the organization's shared hub the parent of a local hub's work, and offers changes up to it |
 
-Where the table says "Nothing yet", plain `cub` has no equivalent, and only `cub mini` does it for now. These are the commands that carry work between hubs: out to files and Git, and up from a hub of your own to your organization's ConfigHub.
+Where the table says "Nothing yet", plain `cub` has no equivalent, and only `cub mini` does it for now. These are the commands that carry work between hubs: out to files and Git, and up from a hub of your own to your organization's shared hub.
 
 The words on this page, such as *hub*, *base* and *change order*, are explained in [the glossary](README.md#words).

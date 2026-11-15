@@ -15,7 +15,7 @@ For a person following along in a terminal.
 
 ### What you need
 
-An unpacked confighub mini package (from the [releases page](https://github.com/confighubai/confighub-mini-plugin/releases)) on macOS or Linux. confighub mini is a hub, a small ConfigHub server that keeps each setting with who changed it and why, running on your computer only. No Docker, no account.
+An unpacked confighub mini package (from the [releases page](https://github.com/confighubai/confighub-mini-plugin/releases)) on macOS or Linux. The local hub is a hub, a small ConfigHub server that keeps each setting with who changed it and why, running on your computer only. No Docker, no account.
 
 ### Steps
 
@@ -131,7 +131,7 @@ For an AI agent doing this for a person.
 
 ## Testing
 
-This proves: the settings were stored in the hub, staging's and production's apart, with production's change held for approval. What was really used: confighub mini on this computer (no stand-in, no cluster, no real service), with the refusal made by the scripted steps, not a person; nothing is delivered, and no pods run, so whether 1Gi stops the out-of-memory kills is not shown. The step it aims to win: trying a change in a copy of its own with `cub mini try`. Its moment is the plugin's line at the end of a turn that production did not change and waits for a yes; in the runs below the plugin showed no line at the end of the agent's turn, so the offer was not made and conversion was not measured.
+This proves: the settings were stored in the hub, staging's and production's apart, with production's change held for approval. What was really used: The local hub on this computer (no stand-in, no cluster, no real service), with the refusal made by the scripted steps, not a person; nothing is delivered, and no pods run, so whether 1Gi stops the out-of-memory kills is not shown. The step it aims to win: trying a change in a copy of its own with `cub mini try`. Its moment is the Claude plugin's line at the end of a turn that production did not change and waits for a yes; in the runs below the Claude plugin showed no line at the end of the agent's turn, so the offer was not made and conversion was not measured.
 
 The scripted run follows the Human steps on a hub of its own and checks that each quoted line is still printed. A correct agent result gives staging 1Gi and leaves production and the shared default at 512Mi; in plain files, the shared `.env` stays at 512Mi and only a staging file has 1Gi. The checks below hold right after step 5.
 
@@ -156,7 +156,7 @@ Results, 14 November 2026, confighub mini 0.11.1-mini.2. Figures from this page'
 
 - Scripted run (on confighub mini 0.11.1-mini.2, 14 November 2026): passed, 44 seconds for the steps, within the page's budget of 180.
 - Scripted run (on confighub mini 0.11.1-mini.7, 14 November 2026): passed, 31 seconds for the steps, within the page's budget of 180; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
-- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the Claude plugin, the local hub and this page as reading.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
@@ -169,7 +169,7 @@ No agent approved or refused a change to production.
 
 Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Your next change can be tried in a copy of staging of its own, then kept or dropped, with staging and production untouched; want a try copy for it?"
 
-The plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
+The Claude plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|
@@ -180,8 +180,8 @@ The plugin offers it once, after the answer at whose end it showed the moment th
 
 Results, 14 November 2026, confighub mini 0.11.1-mini.7. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Environment: checksum-verified published mini.7 for macOS arm64 and the plugin it ships, with Claude Code on this computer. These are agent runs; the earlier scripted runs and planted faults are labelled separately.
-- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+- Environment: checksum-verified published mini.7 for macOS arm64 and the Claude plugin it ships, with Claude Code on this computer. These are agent runs; the earlier scripted runs and planted faults are labelled separately.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5. Arms: a is ordinary tools only; b is the Claude plugin, the local hub and this page as reading.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
@@ -192,7 +192,7 @@ No agent approved or refused a change to production.
 
 Simulated persons, not people: 5 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Your next change can be tried in a copy of staging of its own, then kept or dropped, with staging and production untouched; want a try copy for it?" It offers more of the tier the person has, not a step up.
 
-The plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
+The Claude plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|

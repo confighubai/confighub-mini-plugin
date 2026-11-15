@@ -15,7 +15,7 @@ For a person following along in a terminal.
 
 ### What you need
 
-An unpacked confighub mini package (from the [releases page](https://github.com/confighubai/confighub-mini-plugin/releases)) on macOS or Linux. confighub mini is a hub, a small ConfigHub server that keeps each setting with who changed it and why, running on your computer only. No Docker, no account.
+An unpacked confighub mini package (from the [releases page](https://github.com/confighubai/confighub-mini-plugin/releases)) on macOS or Linux. The local hub is a hub, a small ConfigHub server that keeps each setting with who changed it and why, running on your computer only. No Docker, no account.
 
 ### Steps
 
@@ -114,7 +114,7 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
 
 Two apps on the team's pattern, each with staging and a production copy that changes only with Ana's approval; rules that kept a value over the limit from ever reaching a service; and a second app made from the first.
 
-The full story asks for all of this in one request to an agent, which can also run in a sandbox of its own, and lets a reviewer read why the agent chose each value (`/confighub:why` in Claude Code). [A new app](../../docs/journeys/new-app.md) shows the one-request version with the plugin.
+The full story asks for all of this in one request to an agent, which can also run in a sandbox of its own, and lets a reviewer read why the agent chose each value (`/confighub:why` in Claude Code). [A new app](../../docs/journeys/new-app.md) shows the one-request version with the Claude plugin.
 
 ## Agent
 
@@ -128,7 +128,7 @@ For an AI agent doing this for a person.
 
 ## Testing
 
-This proves: the settings were stored in the hub on the team's pattern, and a value that breaks a rule was refused by `cub mini pull` while a valid one was written to a local folder. What was really used: confighub mini on this computer; no service runs. This story has no offer moment in its agent task: the plugin shows the person no line at the end of the turn, so the next step below is not offered and conversion is not measured; the simulated persons still say whether they noticed the result and whether anything was in the way.
+This proves: the settings were stored in the hub on the team's pattern, and a value that breaks a rule was refused by `cub mini pull` while a valid one was written to a local folder. What was really used: The local hub on this computer; no service runs. This story has no offer moment in its agent task: the Claude plugin shows the person no line at the end of the turn, so the next step below is not offered and conversion is not measured; the simulated persons still say whether they noticed the result and whether anything was in the way.
 
 A correct agent result has the notes app on `pattern-web`, with staging and a live copy behind approval. The checks below hold right after step 3. The checks below can be run by hand, in bash, in the walkthrough's folder:
 
@@ -150,8 +150,8 @@ find ~/walkthrough/notes -name .git -prune -o -print | grep -qi staging && find 
 Results, 14 November 2026, confighub mini 0.11.1-mini.5. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run: passed, 35 seconds for the steps, within the page's budget of 240.
-- Environment, published confighub mini 0.11.1-mini.5 (tag mini-v0.11.1-mini.5, darwin-arm64, verified against SHA256SUMS) and the plugin it carries: a local hub on this computer, with no stand-in, cluster or real service; every approval and refusal was made by the scripted steps or, in the agent runs, by the setup before the agent's task, never by a person. Each planted fault (stale-page, slow and broken-check) failed its scripted run.
-- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
+- Environment, published confighub mini 0.11.1-mini.5 (tag mini-v0.11.1-mini.5, darwin-arm64, verified against SHA256SUMS) and the Claude plugin it carries: a local hub on this computer, with no stand-in, cluster or real service; every approval and refusal was made by the scripted steps or, in the agent runs, by the setup before the agent's task, never by a person. Each planted fault (stale-page, slow and broken-check) failed its scripted run.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the Claude plugin, the local hub and this page as reading; c is the Claude plugin and the local hub, without this page.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
@@ -166,7 +166,7 @@ No agent approved or refused a change to production.
 
 Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Your next app can start from this one, with its rules, staging and production already in place; want the next one made from notes?" It offers more of the tier the person has, not a step up.
 
-The plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
+The Claude plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|
@@ -179,8 +179,8 @@ The plugin offers it once, after the answer at whose end it showed the moment th
 
 Results, 14 November 2026, confighub mini 0.11.1-mini.7. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Environment: checksum-verified published mini.7 for macOS arm64 and the plugin it ships, with Claude Code on this computer. These are agent runs; the earlier scripted runs and planted faults are labelled separately.
-- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+- Environment: checksum-verified published mini.7 for macOS arm64 and the Claude plugin it ships, with Claude Code on this computer. These are agent runs; the earlier scripted runs and planted faults are labelled separately.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5. Arms: a is ordinary tools only; b is the Claude plugin, the local hub and this page as reading.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
@@ -191,7 +191,7 @@ No agent approved or refused a change to production.
 
 Simulated persons, not people: 5 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Your next app can start from this one, with its rules, staging and production already in place; want the next one made from notes?" It offers more of the tier the person has, not a step up.
 
-The plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
+The Claude plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|

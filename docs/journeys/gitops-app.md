@@ -26,7 +26,7 @@ The agent then says what this does not cover: Argo CD or Flux still syncs produc
 
 The person who approves a change writes the approved copy out for Git, as plain files and a `CHANGES.md` that says why each value is set. A GitHub workflow compares each pull request's files with the hub's approved copy, value by value, and sets a status that branch protection requires. A pull request with a value nobody approved fails, and names it, for example "Deployment/api/spec.replicas: 5 here, 2 in the hub".
 
-GitHub's runners cannot reach a confighub mini on a laptop. Use hosted ConfigHub or a server of your own for the workflow, or run the same check from your laptop. The steps: [when a cluster deploys from Git](../approvals.md#when-a-cluster-deploys-from-git-a-check-on-each-pull-request).
+GitHub's runners cannot reach a local hub on a laptop. Use a shared hub on confighub.com or a server of your own for the workflow, or run the same check from your laptop. The steps: [when a cluster deploys from Git](../approvals.md#when-a-cluster-deploys-from-git-a-check-on-each-pull-request).
 
 ## 3. Make the hub the source for one app
 
@@ -35,7 +35,7 @@ Here the app moves from Git to the hub under the same controller, with no pod re
 - `cub mini deploy-from-hub APP --variant live --repo DIR` finds the one Argo CD Application or Flux Kustomization that deploys the copy, and points it at the hub. It refuses, and says what it found, when none or several deploy it, when the copy holds other objects than Git deploys, or when its pod templates differ from what runs. It checks that the same pods run before and after. `--dry-run` says what it would change. A person runs it: on an agent's key it refuses.
 - From then on, the agent proposes on its key and you approve. Only an approved change is released to the cluster, and a change made on the cluster by hand is put back. What runs keeps running when the hub is down: the controller holds the last release it pulled.
 
-To try it on your laptop, the starter walkthroughs make a kind cluster with `cub cluster up`. For your own cluster, use hosted ConfigHub or a server of your own, with `cub cluster attach` ([your own cluster](../gitops-over-oci.md#your-own-cluster-with-hosted-confighub)).
+To try it on your laptop, the starter walkthroughs make a kind cluster with `cub cluster up`. For your own cluster, use a shared hub on confighub.com or a server of your own, with `cub cluster attach` ([your own cluster](../gitops-over-oci.md#your-own-cluster-with-hosted-confighub)).
 
 **By hand, under Flux.** For a Kustomization `shop` that syncs the folder `./api` from Git, the same move is three commands. Pause the Kustomization, which changes nothing on the cluster: `kubectl -n flux-system patch kustomization shop -p '{"spec":{"suspend":true}}'`. Put the folder in the hub as its live copy, with a reason: `cub mini upload shop/api --variant live --namespace shop --change-desc "WHY"`; Flux then applies the same Deployment from the hub's registry, and no pod is recreated. Then put live behind your approval: `cub mini require-approval api --variant live --agent shop-agent`.
 
@@ -51,12 +51,12 @@ It waits for the Git source on purpose: a Flux Kustomization resumed on the comm
 
 - **You want pods to restart when a ConfigMap changes.** `cub mini upload` keeps pod templates as your files have them, so taking a running app over restarts nothing; it takes out the hash annotation ConfigHub would add, and says so. `cub mini upload --roll-on-configmap` keeps that annotation instead, so a ConfigMap change restarts the pods that use it. Check `kubectl get pods` before and after, on a kind cluster first.
 - **The hand-back set old values for a moment.** The Kustomization was resumed before its GitRepository had the new commit. Wait until `flux get sources git` shows the hand-back commit; `cub mini back-to-git` waits for it.
-- **The cluster cannot reach a hub on your laptop.** confighub mini listens on your machine only. A cluster elsewhere needs hosted ConfigHub or a server of your own.
+- **The cluster cannot reach a hub on your laptop.** the local hub listens on your machine only. A cluster elsewhere needs a shared hub on confighub.com or a server of your own.
 - **A merge to Git still changed production.** In way 1, Git still deploys. Use way 2 or way 3.
 
 ## What it takes
 
-- **Way 1:** what [attaching the app](existing-app.md#what-it-takes) takes, including the confighub mini download ([its size](../install-mini.md#the-current-release)).
+- **Way 1:** what [attaching the app](existing-app.md#what-it-takes) takes, including the local hub download ([its size](../install-mini.md#the-current-release)).
 - **Way 2:** a GitHub workflow, a service account that may only view, and branch protection. A hub GitHub's runners can reach, or the check run from your laptop.
 - **Way 3, on your laptop:** Docker, `kind`, `kubectl`, and a kind cluster with Flux or Argo CD.
 

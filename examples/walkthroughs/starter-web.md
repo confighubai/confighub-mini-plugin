@@ -13,7 +13,7 @@ You run a small service from a `.env` file. Try a settings change in staging, ch
 For a person following along in a terminal.
 
 ### What you need
-confighub mini, unpacked as [installing confighub mini](../../docs/install-mini.md) shows (steps 1 to 5). confighub mini runs a hub, which is a ConfigHub server that keeps your app's settings, on your own computer. `cub` is ConfigHub's command-line tool, and the package includes it. For step 7 you also need an organization on hosted ConfigHub, the shared hub your team signs in to.
+The local hub, unpacked as [installing the local hub](../../docs/install-mini.md) shows (steps 1 to 5). The local hub runs a hub, which is a ConfigHub server that keeps your app's settings, on your own computer. `cub` is ConfigHub's command-line tool, and the package includes it. For step 7 you also need an organization on a shared hub on confighub.com, the shared hub your team signs in to.
 
 ### Steps
 1. Start a hub, with the starters switched on. `MINI` is the folder of the unpacked package. A starter gives a new app of one kind its usual settings, each with a reason ([starters](../../docs/starters.md)).
@@ -169,7 +169,7 @@ Each task below is given to an agent in the folder that holds `menu`, after the 
 <!-- agent-check-a undo: ! grep -rqsE '^[ -]*"?LOG_LEVEL"?[=:] *"?info' --exclude-dir='.*' --exclude-dir=Library * .env* && grep -rlsE '^[ -]*"?LOG_LEVEL"?[=:] *"?warn' --exclude-dir='.*' --exclude-dir=Library * .env* | grep -q . -->
 <!-- next-step boundary=same-tier when "did not change": keep the web starter on | Production waited for your yes because the web starter set this app up that way, with a reason for each setting. Your next web service can start the same way; want the web starter kept on for it? -->
 <!-- arms: a,b,c -->
-This proves: the settings were stored in the hub, on confighub mini and on hosted ConfigHub, with production there waiting for approval, and production's approved revision was written to the file a service reads, with `cub mini pull`. No service is started, and no controller is used. The page aims to win one next step: that the person keeps the starter on for their next app.
+This proves: the settings were stored in the hub, on the local hub and on a shared hub on confighub.com, with production there waiting for approval, and production's approved revision was written to the file a service reads, with `cub mini pull`. No service is started, and no controller is used. The page aims to win one next step: that the person keeps the starter on for their next app.
 
 The checks can be run by hand, from the folder that holds `menu`:
 
@@ -184,8 +184,8 @@ Results, 14 November 2026, confighub mini 0.11.1-mini.3. Figures from this page'
 
 - Scripted run (on confighub mini 0.11.1-mini.3, 14 November 2026): passed, 64 seconds for the steps, within the page's budget of 200; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
 - Scripted run (on confighub mini 0.11.1-mini.7, 14 November 2026): passed, 62 seconds for the steps, within the page's budget of 200; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
-- Environment, published confighub mini 0.11.1-mini.3 with its own plugin (0.86.0): A local confighub mini hub on this computer, with hosted ConfigHub (the Kubara organization) for the move to a shared hub; no cluster or service. Approvals were scripted: the test script ran the person's approve commands. After each run the runner removed the hubs it started and everything it made in the shared hub.
-- Agent runs (on confighub mini 0.11.1-mini.3, 14 November 2026): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
+- Environment, published confighub mini 0.11.1-mini.3 with its own plugin (0.86.0): A local hub on this computer, with a shared hub on confighub.com (the Kubara organization) for the move to a shared hub; no cluster or service. Approvals were scripted: the test script ran the person's approve commands. After each run the runner removed the hubs it started and everything it made in the shared hub.
+- Agent runs (on confighub mini 0.11.1-mini.3, 14 November 2026): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the Claude plugin, the local hub and this page as reading; c is the Claude plugin and the local hub, without this page.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
@@ -200,7 +200,7 @@ No agent approved or refused a change to production.
 
 Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Production waited for your yes because the web starter set this app up that way, with a reason for each setting. Your next web service can start the same way; want the web starter kept on for it?"
 
-The plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
+The Claude plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|
@@ -211,7 +211,7 @@ The plugin offers it once, after the answer at whose end it showed the moment th
 | b | claude-sonnet-5-5 | 30 | 100% | 100% | 27% | 70% | 90% |
 | c | claude-sonnet-5-5 | 30 | 67% | 100% | 25% | 75% | 97% |
 
-- Agent runs (on confighub mini 0.11.1-mini.2, 13 November 2026): 20 runs per arm on each of claude-opus-5-5, claude-sonnet-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+- Agent runs (on confighub mini 0.11.1-mini.2, 13 November 2026): 20 runs per arm on each of claude-opus-5-5, claude-sonnet-5-5. Arms: a is ordinary tools only; b is the Claude plugin, the local hub and this page as reading.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
@@ -224,7 +224,7 @@ No agent approved or refused a change to production.
 
 Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Production waited for your yes because the web starter set this app up that way, with a reason for each setting. Your next web service can start the same way; want the web starter kept on for it?"
 
-The plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
+The Claude plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|
@@ -235,8 +235,8 @@ The plugin offers it once, after the answer at whose end it showed the moment th
 
 Results, 14 November 2026, confighub mini 0.11.1-mini.7. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Environment: checksum-verified published mini.7 for macOS arm64 and the plugin it ships, with Claude Code on this computer. These are agent runs; the earlier scripted runs and planted faults are labelled separately.
-- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+- Environment: checksum-verified published mini.7 for macOS arm64 and the Claude plugin it ships, with Claude Code on this computer. These are agent runs; the earlier scripted runs and planted faults are labelled separately.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5. Arms: a is ordinary tools only; b is the Claude plugin, the local hub and this page as reading.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
@@ -247,7 +247,7 @@ No agent approved or refused a change to production.
 
 Simulated persons, not people: 5 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Production waited for your yes because the web starter set this app up that way, with a reason for each setting. Your next web service can start the same way; want the web starter kept on for it?" It offers more of the tier the person has, not a step up.
 
-The plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
+The Claude plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|

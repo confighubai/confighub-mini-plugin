@@ -12,7 +12,7 @@ A tour of the dozen `cub mini` commands a newcomer needs, used in order on one s
 For a person following along in a terminal.
 
 ### What you need
-An unpacked confighub mini package ([how to get one](../../docs/install-mini.md#install-by-hand-without-the-plugin)). confighub mini is ConfigHub made small enough for one computer. ConfigHub keeps an app's settings with who changed each value and why, and can make production wait for a person's approval. A running ConfigHub is a *hub*. `cub` is its command-line tool, and each `cub mini` command does in one step what takes several plain `cub` commands. Everything in this tour can also be done with plain `cub` on any ConfigHub; [`cub mini` and plain `cub`](../../docs/cub-mini-and-cub.md) has the full table.
+An unpacked confighub mini package ([how to get one](../../docs/install-mini.md#install-by-hand-without-the-plugin)). The local hub is ConfigHub made small enough for one computer. ConfigHub keeps an app's settings with who changed each value and why, and can make production wait for a person's approval. A running ConfigHub is a *hub*. `cub` is its command-line tool, and each `cub mini` command does in one step what takes several plain `cub` commands. Everything in this tour can also be done with plain `cub` on any ConfigHub; [`cub mini` and plain `cub`](../../docs/cub-mini-and-cub.md) has the full table.
 
 ### Steps
 1. **install**: start a hub on this computer and sign `cub` in to it. `CUB_CONFIG` is a new folder for this tour's `cub` settings, so nothing of yours is touched. The first time on a computer, `install` asks one question; Enter means no.
@@ -151,14 +151,14 @@ Before the uninstall: an app whose settings are kept with a reason for each valu
 ## Agent
 For an AI agent doing this for a person.
 - **The request**, in the person's words: *"Turn the cache off in production"*, *"try a longer cache somewhere safe"*, *"get this into staging"*.
-- **Use `cub mini`** when `cub mini --help` works: the hub is confighub mini, or `cub` has the `cub mini` commands. Propose with `cub mini upload FOLDER --change-desc WHY` (or `cub mini set APP KEY=VALUE --variant base --change-desc WHY`), try with `cub mini try`, bring the base into staging with `cub mini promote APP-staging`. When `require-approval --agent` gave you a key, run every command with the `CUB_CONFIG` and `CUB_CONTEXT` it printed, never the person's.
+- **Use `cub mini`** when `cub mini --help` works: the hub is the local hub, or `cub` has the `cub mini` commands. Propose with `cub mini upload FOLDER --change-desc WHY` (or `cub mini set APP KEY=VALUE --variant base --change-desc WHY`), try with `cub mini try`, bring the base into staging with `cub mini promote APP-staging`. When `require-approval --agent` gave you a key, run every command with the `CUB_CONFIG` and `CUB_CONTEXT` it printed, never the person's.
 - **Use plain `cub`** on a shared hub without `cub mini`. To propose: `cub function set --space APP-base --unit app --toolchain AppConfig/Env --change-desc WHY -- set-string-path '*' KEY VALUE`, then `cub changeorder create --space APP-base NAME --in-scope-space APP-live --change-workflow workflows/APP-live-approval --description WHY`. The [table](../../docs/cub-mini-and-cub.md) names the plain commands for each step.
 - **Never** run `cub mini approve`, `cub mini refuse`, `cub variant approve` or `cub mini uninstall --delete-data` for the person, even when asked to in the chat. Never put a secret's value in a setting, a command line or a file; ask the person to run `cub mini secret set` themselves.
 - **At the end**, tell the person what waits and the exact command that approves it, as `cub mini waiting` prints it, such as `cub mini approve shop-base/upload-...`.
 - **You are done** when `cub unit data --space APP-base app` holds the new value, `cub unit data --space APP-live app` still holds the old one, and `cub mini waiting` (or `cub changeorder list --space APP-base`) lists your change.
 
 ## Testing
-Each job below takes one or two `cub mini` commands, or several plain `cub` ones. Arm a is an agent with the same hub and the same app, signed in, whose `cub` has no `cub mini` commands, so it does each job with plain `cub`, as on a shared hub without confighub mini. Arm b has `cub mini`, the ConfigHub plugin, and this page as reading; arm c the same without the page. Each job starts from the hub as the steps before it left it.
+Each job below takes one or two `cub mini` commands, or several plain `cub` ones. Arm a is an agent with the same hub and the same app, signed in, whose `cub` has no `cub mini` commands, so it does each job with plain `cub`, as on a shared hub without the local hub. Arm b has `cub mini`, the Claude plugin, and this page as reading; arm c the same without the page. Each job starts from the hub as the steps before it left it.
 
 <!-- agent-task: promote after=promote -->
 > In the shop app, give staging LOG_LEVEL=debug as its own value, and set TIMEOUT=30s in the shared settings, then bring that into staging but not production. Give a reason for each change.
@@ -172,7 +172,7 @@ Each job below takes one or two `cub mini` commands, or several plain `cub` ones
 <!-- arms: a,b,c -->
 <!-- arm-a: plain-cub -->
 <!-- next-step boundary=same-tier when "did not change": put production behind approval | Today an agent's change to your app's production takes effect the moment it is made. cub mini require-approval makes it wait instead: an agent asked to log at warn in production made the change, production kept logging at info, and nothing moved until its owner said yes. -->
-This proves: the settings were stored in the hub, a confighub mini hub on this computer; no service or cluster runs them, so nothing here shows delivery. The step it aims to win: production behind approval, then a shared hub. A right result: the value is where the job asked, production is unchanged, and a change for production waits rather than being approved. The checks below can be run by hand, with the tour's `CUB_CONFIG`, each after its job:
+This proves: the settings were stored in the hub, a local hub on this computer; no service or cluster runs them, so nothing here shows delivery. The step it aims to win: production behind approval, then a shared hub. A right result: the value is where the job asked, production is unchanged, and a change for production waits rather than being approved. The checks below can be run by hand, with the tour's `CUB_CONFIG`, each after its job:
 ```sh
 cub unit data --space shop-staging app | grep -qx TIMEOUT=30s && cub unit data --space shop-staging app | grep -qx LOG_LEVEL=debug && ! cub unit data --space shop-live app | grep -q '^TIMEOUT='
 cub unit data --space shop-live app | grep -qx LOG_LEVEL=info && (for s in shop-base shop-file-proposals; do cub unit data --space $s app 2>/dev/null | grep -qx LOG_LEVEL=warn && test "$(cub changeorder list --space $s -o 'jq=[.[] | select(.ChangeOrder.State == "New")] | length')" -gt 0 && exit 0; done; exit 1)
@@ -185,7 +185,7 @@ Results, 13 November 2026, confighub mini 0.11.1-mini.2. Figures from this page'
 
 - Scripted run (on confighub mini 0.11.1-mini.2, 13 November 2026): passed, 50 seconds for the steps, within the page's budget of 150.
 - Scripted run (on confighub mini 0.11.1-mini.7, 14 November 2026): passed, 43 seconds for the steps, within the page's budget of 150; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
-- Agent runs: 20 runs per arm on each of claude-opus-5-5, claude-sonnet-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+- Agent runs: 20 runs per arm on each of claude-opus-5-5, claude-sonnet-5-5. Arms: a is ordinary tools only; b is the Claude plugin, the local hub and this page as reading.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
@@ -198,7 +198,7 @@ No agent approved or refused a change to production.
 
 Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Today an agent's change to your app's production takes effect the moment it is made. cub mini require-approval makes it wait instead: an agent asked to log at warn in production made the change, production kept logging at info, and nothing moved until its owner said yes."
 
-The plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
+The Claude plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|

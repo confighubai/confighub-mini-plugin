@@ -2,13 +2,13 @@
 
 A starter gives any kind of app a good starting setup, much like Spring Boot's starters. It is one short file, written for one kind of app, that lists the settings an app of that kind should start with, a value for each, and the reason for that value. When you connect an app of that kind to a hub, the app gets those settings, except where you have set a value yourself. A starter is easy to make: you can read one in a minute, there is no program to write, and one command checks it before anyone uses it. When your team fixes a setting, the fix becomes the starter's next version, so every new app starts with it.
 
-ConfigHub keeps your apps' settings, with every change, who made it and why, and holds a change to production until a person approves it. A hub is one running ConfigHub server. It can run on your own computer, as confighub mini, or be shared by a team on a network; this page uses confighub mini. This page is for someone who gives each new app of one kind the same settings by hand: a time limit, a cache time, two instances, nothing public.
+ConfigHub keeps your apps' settings, with every change, who made it and why, and holds a change to production until a person approves it. A hub is one running ConfigHub server. It can run on your own computer, as the local hub, or be shared by a team on a network; this page uses the local hub. This page is for someone who gives each new app of one kind the same settings by hand: a time limit, a cache time, two instances, nothing public.
 
 To run the whole loop in a few minutes, a reviewer's fixes becoming the starter's next version, follow the walkthrough [each fix becomes where the next app starts](../examples/walkthroughs/story-25-alice-bob-hardened.md).
 
-Starters are an option, switched off unless you switch them on. They come with confighub mini ([the current release](install-mini.md#the-current-release)).
+Starters are an option, switched off unless you switch them on. They come with the local hub ([the current release](install-mini.md#the-current-release)).
 
-You need an unpacked confighub mini package ([install confighub mini](install-mini.md)), a terminal, and Python 3 for the author's kit. Everything runs on your machine; no account is used and nothing is sent anywhere.
+You need an unpacked confighub mini package ([install the local hub](install-mini.md)), a terminal, and Python 3 for the author's kit. Everything runs on your machine; no account is used and nothing is sent anywhere.
 
 The words on this page, such as *hub*, *base* and *change order*, are explained in [the glossary](README.md#words).
 
@@ -45,18 +45,18 @@ wires:
 
 `owns` lists the settings the starter may set: here, every setting whose name starts with `API_`. `wires` says what else to set up; `approval: live` is in every starter and means that the live copy gets a change only when a person approves it. `after: [web]` is explained in [two starters on one app](#two-starters-on-one-app).
 
-A starter holds no program, no template and no expression: what it sets is written in it. A starter for a provider names a separate program, an add-on, which does the delivering ([a new provider](#a-new-provider-an-add-on-and-a-starter)). Its fields:
+A starter holds no program, no template and no expression: what it sets is written in it. A starter for a provider names a separate program, a cub plugin, which does the delivering ([a new provider](#a-new-provider-an-add-on-and-a-starter)). Its fields:
 
 | Field | What it holds |
 |---|---|
 | `starter` | Its name: lowercase letters, digits and dashes. |
 | `version` | A whole number. Raise it when you change the file. |
 | `about` | One line: the kind of app it is for. |
-| `looks_for` | What must be in the app's folder for the starter to fit: `files` (all of these), `any_file` (one of these), `files_matching` (a name pattern such as `*.tfvars`), `absent` (none of these), `keys` (a key a settings or JSON file must set), `provider` (an add-on's name, below), or `gitops` (`argocd` or `flux`). |
+| `looks_for` | What must be in the app's folder for the starter to fit: `files` (all of these), `any_file` (one of these), `files_matching` (a name pattern such as `*.tfvars`), `absent` (none of these), `keys` (a key a settings or JSON file must set), `provider` (a cub plugin's name, below), or `gitops` (`argocd` or `flux`). |
 | `owns` | The settings it may set: the start of their names, ending in `_`, `/`, `.` or `-`, such as `API_`, or whole names, such as `PORT`. |
 | `defaults` | Each setting it sets: `key`, `value` (in quotes when it is a number or `true`), and `reason`. |
 | `describes` | One line for each setting it owns and gives no default, such as `SITE_URL`, which each site sets for itself. |
-| `wires` | `approval: live`, always. A starter for a provider adds `reader: live`, a key that can only read production, and `delivery: {addon: NAME, target: TARGET}`, the add-on that delivers and the provider's environment it delivers to, such as `production`. |
+| `wires` | `approval: live`, always. A starter for a provider adds `reader: live`, a key that can only read production, and `delivery: {addon: NAME, target: TARGET}`, the cub plugin that delivers and the provider's environment it delivers to, such as `production`. |
 | `after` | Optional: one starter, written as a list of one, such as `[web]`, whose settings this one's go on top of. Where both set a value, this one's wins. |
 
 `cub mini adopt` refuses a file that breaks a rule before it writes anything, and names the rule it breaks: a setting without a reason, a setting it does not own, or a default that looks like a password, for example.
@@ -89,7 +89,7 @@ export PATH="$MINI/bin:$PATH"
 export CUB_MINI_STARTERS=on
 ```
 
-The steps below also need a hub. If none is running, start one with `cub mini install` ([install confighub mini](install-mini.md)). The first `cub mini adopt` with starters on puts the package's starters into your hub, as version 1, and prints the one line that approves them, which is yours to run, not an agent's, even when an agent ran the adopt; until you run it, adopt uses the package's own files. After that the hub is where adopt reads starters from, and no folder is needed. To switch starters off again, `unset CUB_MINI_STARTERS`, and delete the Component's two Spaces and the Component with `cub space delete starters-approved --recursive`, `cub space delete starters-base --recursive` and `cub component delete starters`; apps you connected keep the settings they have.
+The steps below also need a hub. If none is running, start one with `cub mini install` ([install the local hub](install-mini.md)). The first `cub mini adopt` with starters on puts the package's starters into your hub, as version 1, and prints the one line that approves them, which is yours to run, not an agent's, even when an agent ran the adopt; until you run it, adopt uses the package's own files. After that the hub is where adopt reads starters from, and no folder is needed. To switch starters off again, `unset CUB_MINI_STARTERS`, and delete the Component's two Spaces and the Component with `cub space delete starters-approved --recursive`, `cub space delete starters-base --recursive` and `cub component delete starters`; apps you connected keep the settings they have.
 
 ## Next.js on Vercel
 
@@ -127,7 +127,7 @@ Starter: web (version 1, web.yaml): A small web service whose settings are in a 
 - `Leaves ... alone` is a value you set already, with who set it and where. The starter never replaces it.
 - `Wires` is what else it sets up. Production is always behind your approval. `delivery is left to you` means it sets up nothing that sends production's settings anywhere; you run the app from them as you do now.
 
-For an app that a provider runs, such as Vercel, the `Wires` lines also say how production is delivered: a change order, such as `shop-live/connect`, that you approve before anything is delivered; a reader key that can read production and nothing else; and the add-on that delivers the revision you approved with that key, and writes a receipt naming it.
+For an app that a provider runs, such as Vercel, the `Wires` lines also say how production is delivered: a change order, such as `shop-live/connect`, that you approve before anything is delivered; a reader key that can read production and nothing else; and the cub plugin that delivers the revision you approved with that key, and writes a receipt naming it.
 
 The `web` starter is the one `cub mini adopt` has always used, written as a starter file. The hub keeps its settings in the Unit `pattern-web/web-service`, which the output calls a starter pattern, and the app's copies are made from it.
 
@@ -280,12 +280,12 @@ When two starters fit and neither names the other, adopt uses one: a starter tha
 
 ## A new provider: an add-on and a starter
 
-To connect apps that a provider the package does not know runs, you write two things, and confighub mini needs no change:
+To connect apps that a provider the package does not know runs, you write two things, and the local hub needs no change:
 
-- **An add-on**: a program, in any language, that reads the provider's settings into an app's folder (`import`), delivers one approved revision to the provider (`apply`), and says whether the provider still has the approved settings (`compare`). Beside it is a short declaration, `addon.yaml`: the add-on's name, the file that shows an app's folder is linked to the provider, the file that marks the provider's stand-in, and where it can deliver.
-- **A starter** that names the add-on, in `looks_for.provider` and `wires.delivery.addon`, and adds the settings, each with its reason.
+- **A cub plugin**: a program, in any language, that reads the provider's settings into an app's folder (`import`), delivers one approved revision to the provider (`apply`), and says whether the provider still has the approved settings (`compare`). Beside it is a short declaration, `addon.yaml`: the cub plugin's name, the file that shows an app's folder is linked to the provider, the file that marks the provider's stand-in, and where it can deliver.
+- **A starter** that names the cub plugin, in `looks_for.provider` and `wires.delivery.addon`, and adds the settings, each with its reason.
 
-Both go in the folder `CUB_MINI_STARTERS` names. Each add-on is a folder in its `addons` folder:
+Both go in the folder `CUB_MINI_STARTERS` names. Each cub plugin is a folder in its `addons` folder, where the starter finds it; a cub plugin of this kind is not installed into `cub` the way `cub mini` is:
 
 ```
 my-starters/
@@ -296,13 +296,13 @@ my-starters/
       netlify                its program: import, apply and compare
 ```
 
-The package's own Vercel and Parameter Store add-ons are built the same way, in `$MINI/starters/addons`. An add-on takes the provider's credential from the environment of the person who runs it; its declaration names none.
+The package's own Vercel and Parameter Store cub plugins are built the same way, in `$MINI/starters/addons`. A cub plugin takes the provider's credential from the environment of the person who runs it; its declaration names none.
 
 ### Check a starter before anyone uses it
 
 For a short guide from the first YAML to a runnable check, see [write and check a starter](write-a-starter.md).
 
-The package has a kit for a starter's author, `$MINI/examples/starter-check`, which needs Python 3, with a worked example for Netlify in `example-provider`: a starter and an add-on written in POSIX shell, run against a stand-in. The check reads a starter file as `cub mini adopt` does, tries it on made-up app folders with and without each thing it looks for, and then, on a hub of its own, checks the promises above: it keeps every value a person set, writes once, and changes no value when a newer version arrives. For a starter with an add-on beside it, it also runs the add-on's three commands. Last, it breaks each promise on purpose and checks that it notices.
+The package has a kit for a starter's author, `$MINI/examples/starter-check`, which needs Python 3, with a worked example for Netlify in `example-provider`: a starter and a cub plugin written in POSIX shell, run against a stand-in. The check reads a starter file as `cub mini adopt` does, tries it on made-up app folders with and without each thing it looks for, and then, on a hub of its own, checks the promises above: it keeps every value a person set, writes once, and changes no value when a newer version arrives. For a starter with a cub plugin beside it, it also runs the cub plugin's three commands. Last, it breaks each promise on purpose and checks that it notices.
 
 ```bash
 cd "$MINI"
@@ -334,14 +334,14 @@ examples/starter-check/check examples/starter-check/example-provider/netlify.yam
 PASS: netlify is accepted, fits its stand-in app and no other, and keeps the contract, and its add-on keeps the delivery contract.
 ```
 
-It starts a hub of its own and removes it at the end. "The contract" in its output is the list of promises above; "the delivery contract" is the rules for an add-on's three commands. To check only the file, with no hub, add `--no-hub`. The kit's `README.md` lists what each part checks. The rules for an add-on's three commands are in [the delivery add-on contract](../examples/extensions/delivery/README.md).
+It starts a hub of its own and removes it at the end. "The contract" in its output is the list of promises above; "the delivery contract" is the rules for a cub plugin's three commands. To check only the file, with no hub, add `--no-hub`. The kit's `README.md` lists what each part checks. The rules for a cub plugin's three commands are in [the delivery cub plugin contract](../examples/extensions/delivery/README.md).
 
 ## What this does not do yet
 
 - Starters are an experiment. They are off by default, and the format may change in a later release.
-- A starter looks for files, file name patterns, keys in a file, a provider's link, or an Argo CD or Flux source. A new kind of thing to look for, or a way of delivering other than an add-on, Argo CD or Flux, needs a change in confighub mini.
+- A starter looks for files, file name patterns, keys in a file, a provider's link, or an Argo CD or Flux source. A new kind of thing to look for, or a way of delivering other than a cub plugin, Argo CD or Flux, needs a change in the local hub.
 - A starter reads an app's settings only from the files `cub mini adopt` reads: `.env` and its staging and production files, `app.env`, a compose file's environment, `.env.example`, and Terraform var files.
-- The Vercel and Parameter Store add-ons deliver to a real account only when you choose `--live`, with your own sign-in taken from your environment. The walkthroughs show the stand-in path, which needs no account, and the Vercel walkthrough also shows a real Hobby project. The [Parameter Store walkthrough](../examples/walkthroughs/starter-parameter-store.md#testing) records the packaged shared-hub delivery and AWS readback.
+- The Vercel and Parameter Store cub plugins deliver to a real account only when you choose `--live`, with your own sign-in taken from your environment. The walkthroughs show the stand-in path, which needs no account, and the Vercel walkthrough also shows a real Hobby project. The [Parameter Store walkthrough](../examples/walkthroughs/starter-parameter-store.md#testing) records the packaged shared-hub delivery and AWS readback.
 
 ## Undo it
 

@@ -1,25 +1,25 @@
 # Install confighub mini
 
-confighub mini is ConfigHub made small enough to run on one machine: a hub on your laptop, free, with no account, no Docker and no cluster. It keeps your app's settings with the reason for each value, and can make changes to production wait for your approval.
+The local hub is ConfigHub made small enough to run on one machine: a hub on your laptop, free, with no account, no Docker and no cluster. It keeps your app's settings with the reason for each value, and can make changes to production wait for your approval.
 
-This page shows how to install it: in one step from Claude Code, on its own without the plugin, and in a container or CI job. It is also the one page that says which versions are current; other pages link here rather than name a version.
+This page shows how to install it: in one step from Claude Code, on its own without the Claude plugin, and in a container or CI job. It is also the one page that says which versions are current; other pages link here rather than name a version.
 
 ## The current release
 
 | What | Version |
 |---|---|
-| confighub mini | 0.11.1-mini.10 |
-| The ConfigHub server inside it | v0.11.1, the same version hosted ConfigHub runs |
+| the local hub | 0.11.1-mini.10 |
+| The ConfigHub server inside it | v0.11.1, the same version a shared hub on confighub.com runs |
 | `cub`, ConfigHub's command-line tool, inside it | v0.11.1 |
 | The download | 49 to 74 MB, depending on the platform |
 
-The ConfigHub plugin's own version is on the [releases page](https://github.com/confighubai/confighub-mini-plugin/releases). `/confighub:install-mini` always gets the newest confighub mini.
+The Claude plugin's own version is on the [releases page](https://github.com/confighubai/confighub-mini-plugin/releases). `/confighub:install-mini` always gets the newest the local hub.
 
 ## What you are installing
 
 [ConfigHub](https://docs.confighub.com) keeps your configuration, such as Kubernetes manifests and Helm values, with the reason each value is set. It also controls how a change reaches your clusters, for example by requiring a person's approval.
 
-A *hub* is one running ConfigHub server, with the database that holds your configuration. *confighub mini* is ConfigHub made small enough to run a hub on one machine. The ConfigHub server and its PostgreSQL database run as ordinary processes. You need no Docker, no cluster and no account.
+A *hub* is one running ConfigHub server, with the database that holds your configuration. *the local hub* is ConfigHub made small enough to run a hub on one machine. The ConfigHub server and its PostgreSQL database run as ordinary processes. You need no Docker, no cluster and no account.
 
 You work with a hub through `cub`, ConfigHub's command-line tool. The package includes `cub`.
 
@@ -27,7 +27,7 @@ There is a package for macOS and one for Linux, each for ARM and for Intel, on t
 
 ## Install in one step, from Claude Code
 
-With [the ConfigHub plugin](../README.md) installed, type this in a Claude Code session:
+With [the Claude plugin](../README.md) installed, type this in a Claude Code session:
 
 ```
 /confighub:install-mini
@@ -47,7 +47,7 @@ If you run it again, it starts the hub if the hub is stopped, and moves it onto 
 
 When it is done, it prints the full path of the package's `cub`, which runs in a terminal of your own with nothing added to your `PATH`, and what to do next: put a repository's record into the hub with `cub mini copy --from-record` ([how](try-confighub-mini.md#put-your-agents-record-into-the-hub)), or follow [a first run](try-confighub-mini.md).
 
-In a terminal, or in Codex, run `bin/confighub mini get` from the plugin. It does the same, and in a terminal, the first time on a machine, it asks that setting as a question before it starts the hub. Enter means no. The plugin on its own carries no server, so any `cub mini` command run as `bin/confighub mini COMMAND`, such as `bin/confighub mini install` or `bin/confighub mini need`, says it needs confighub mini when none is downloaded, and names `confighub mini get`.
+In a terminal, or in Codex, run `bin/confighub mini get` from the plugin. It does the same, and in a terminal, the first time on a machine, it asks that setting as a question before it starts the hub. Enter means no. The plugin on its own carries no server, so any `cub mini` command run as `bin/confighub mini COMMAND`, such as `bin/confighub mini install` or `bin/confighub mini need`, says it needs the local hub when none is downloaded, and names `confighub mini get`.
 
 The one-step install needs nothing else on the machine: no `tar`, `xz` or `curl`, and no system certificates. It works on Linux distributions that use glibc, such as Debian, Ubuntu, Fedora, Rocky and Amazon Linux, including their slim images. Alpine uses musl, and the bundled PostgreSQL does not run on it, so the install stops before it downloads anything and says so. Use a glibc image instead. In a container, run it as a user that has an account, since PostgreSQL will not start for a user ID without one.
 
@@ -120,15 +120,15 @@ On Linux you need `curl` and `xz`. On Debian or Ubuntu, install them with `apt-g
 
    This lists the hub's Spaces. A *Space* is where ConfigHub keeps a set of configuration. If you kept your earlier context, use the line `cub mini install` printed instead.
 
-The package's `START-HERE.txt` lists ten stories you can run on the hub. For a guided first run, see [Try confighub mini](try-confighub-mini.md); to learn the commands, the walkthrough [the `cub mini` commands](../examples/walkthroughs/tool-cub-mini.md).
+The package's `START-HERE.txt` lists ten stories you can run on the hub. For a guided first run, see [Try the local hub](try-confighub-mini.md); to learn the commands, the walkthrough [the `cub mini` commands](../examples/walkthroughs/tool-cub-mini.md).
 
 ## Move to a newer confighub mini
 
-Type `/confighub:install-mini` again in Claude Code, or run `bin/confighub mini get` from the plugin in a terminal. It downloads the newest release, checks it against `SHA256SUMS`, and moves the hub onto it. Every Space, revision, change order still waiting and secret is kept. Each agent that `cub mini require-approval --agent` set up runs `cub mini` from the new package from then on, and its Claude Code settings may read it. In a terminal, the command's last lines print the new `export PATH=...` line for its `cub`; in Claude Code, they print its full path. `--version VERSION` gets one release in particular.
+Type `/confighub:install-mini` again in Claude Code, or run `bin/confighub mini get` from the Claude plugin in a terminal. It downloads the newest release, checks it against `SHA256SUMS`, and moves the hub onto it. Every Space, revision, change order still waiting and secret is kept. Each agent that `cub mini require-approval --agent` set up runs `cub mini` from the new package from then on, and its Claude Code settings may read it. In a terminal, the command's last lines print the new `export PATH=...` line for its `cub`; in Claude Code, they print its full path. `--version VERSION` gets one release in particular.
 
 A repository's `.claude/settings.local.json` is not changed for you. When one runs its sessions as an agent, the move prints the new package's folder to add to that file's `sandbox.filesystem.allowRead`.
 
-When the confighub mini installed is older than the one the plugin was released with, the plugin says so, at most once a day.
+When the local hub installed is older than the one the Claude plugin was released with, the Claude plugin says so, at most once a day.
 
 To move by hand, do steps 1 to 5 above with the new version. Then, in the new package's folder, swap the `cub mini` commands for its own, and put its `cub` first on your path:
 
@@ -139,7 +139,7 @@ To move by hand, do steps 1 to 5 above with the new version. Then, in the new pa
 export PATH="$PWD/bin:$PATH"
 ```
 
-Use the plugin name `cub plugin list` shows. The next `cub mini` command moves your hub onto the new package's server. Your work, its history and your approvals are kept. A copy of the hub's data from before the move is kept in the hub's folder, as `pgdata-before-...`.
+Use the Claude plugin name `cub plugin list` shows. The next `cub mini` command moves your hub onto the new package's server. Your work, its history and your approvals are kept. A copy of the hub's data from before the move is kept in the hub's folder, as `pgdata-before-...`.
 
 ## Remove the hub
 
@@ -151,11 +151,11 @@ cub mini uninstall --delete-data
 
 ## In a container or a CI job
 
-PostgreSQL will not run as root. It also will not run as a user ID that has no account. So run confighub mini as an ordinary user.
+PostgreSQL will not run as root. It also will not run as a user ID that has no account. So run the local hub as an ordinary user.
 
 On a machine or CI runner that runs as an ordinary user, the steps above work as written.
 
-In a container, this Dockerfile makes a plain Debian image with confighub mini in it. It checks the package against `SHA256SUMS`, and runs as an ordinary user, `agent`:
+In a container, this Dockerfile makes a plain Debian image with the local hub in it. It checks the package against `SHA256SUMS`, and runs as an ordinary user, `agent`:
 
 ```dockerfile
 FROM debian:bookworm-slim
@@ -194,7 +194,7 @@ Things to know:
 
 Each package has a `provenance.json` file. It names the ConfigHub release the package was built from, and the PostgreSQL build inside it, with that build's SHA-256.
 
-The package includes its own `cub` ([which version](#the-current-release)), and every `cub mini` command runs that one, whichever `cub` comes first on your `PATH`. If you type plain `cub` commands with a `cub` of your own, use the same version. The commands on these pages use the flag names of ConfigHub v0.11, such as `--require-change-workflow`, which an older `cub` does not know, and hosted ConfigHub refuses a `cub` older than v0.11 as too old.
+The package includes its own `cub` ([which version](#the-current-release)), and every `cub mini` command runs that one, whichever `cub` comes first on your `PATH`. If you type plain `cub` commands with a `cub` of your own, use the same version. The commands on these pages use the flag names of ConfigHub v0.11, such as `--require-change-workflow`, which an older `cub` does not know, and a shared hub on confighub.com refuses a `cub` older than v0.11 as too old.
 
 The features of a hub are ConfigHub's own, not a separate version of them. That includes approvals, and ChangeWorkflows, which say what a change needs before it goes ahead, such as a person's approval. The steps for approvals are in [approvals.md](approvals.md).
 

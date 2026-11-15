@@ -13,7 +13,7 @@ For a platform engineer whose customers each run a changed copy of the platform 
 
 ### What you need
 
-An unpacked confighub mini package, 0.11.1-mini.2 or later ([installing confighub mini](../../docs/install-mini.md#install-by-hand-without-the-plugin)), `helm`, `python3`, and internet access to render NVIDIA's published GPU Operator chart. No cluster, no Docker and no account. A *hub* is ConfigHub running on your computer; `cub` is ConfigHub's command-line tool, and `cub mini` the commands confighub mini adds to it.
+An unpacked confighub mini package, 0.11.1-mini.2 or later ([installing the local hub](../../docs/install-mini.md#install-by-hand-without-the-plugin)), `helm`, `python3`, and internet access to render NVIDIA's published GPU Operator chart. No cluster, no Docker and no account. A *hub* is ConfigHub running on your computer; `cub` is ConfigHub's command-line tool, and `cub mini` the commands the local hub adds to it.
 
 ### Steps
 
@@ -142,7 +142,7 @@ For an AI agent doing this for a person.
 
 The scripted run follows the Human steps on a hub of its own and compares the quoted output. A correct agent result is an `answer.md` with the three findings, and, where there is a hub, Birch's image left as it was. The checks below can be run by hand after the steps and an answer:
 
-This proves: stored. The answers are read from what a hub on this computer holds; no customer's cluster is read, and nothing is delivered. The next step this aims to win: seeing who changed each unexplained value. Tested on the checksum-verified published confighub mini 0.11.1-mini.4 with the plugin 0.87.0, 14 November 2026: environment, local hub, no cluster; approval, no approval step. The plugin says one line at this moment, such as "ConfigHub plugin: inventory/CHANGES.md lists what each copy changed, with the reason where one was given; nothing in the hub changed." The next-step line names words from that line.
+This proves: stored. The answers are read from what a hub on this computer holds; no customer's cluster is read, and nothing is delivered. The next step this aims to win: seeing who changed each unexplained value. Tested on the checksum-verified published confighub mini 0.11.1-mini.4 with the Claude plugin 0.87.0, 14 November 2026: environment, local hub, no cluster; approval, no approval step. The Claude plugin says one line at this moment, such as "ConfigHub plugin: inventory/CHANGES.md lists what each copy changed, with the reason where one was given; nothing in the hub changed." The next-step line names words from that line.
 
 <!-- agent-task: inventory -->
 > Our GPU platform is rendered in this folder (given/), and ./customers loads our three customers' copies, Birch, Cedar and Elm, into a hub. Which customers differ from the platform we gave them, how, do we know why, and does any break our rule that images come only from nvcr.io or registry.k8s.io? Do not change anything. Write the answer to answer.md.
@@ -165,7 +165,7 @@ cub function get --space gpu-operator-birch --unit gpu-operator --show values \
 Results, 14 November 2026, confighub mini 0.11.1-mini.4. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run: passed, 41 seconds for the steps, within the page's budget of 150.
-- Agent runs (on confighub mini 0.11.1-mini.4, 14 November 2026): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: b is the plugin, confighub mini and this page as reading.
+- Agent runs (on confighub mini 0.11.1-mini.4, 14 November 2026): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: b is the Claude plugin, the local hub and this page as reading.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
@@ -176,14 +176,14 @@ No agent approved or refused a change to production.
 
 Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Ask Birch and Elm why they changed what they did, and record it beside the change?"
 
-The plugin offers it once, after the answer at whose end it showed the moment the offer names ("lists what each copy changed"). Offered is the share of persons it was shown to; want it now and later are over them.
+The Claude plugin offers it once, after the answer at whose end it showed the moment the offer names ("lists what each copy changed"). Offered is the share of persons it was shown to; want it now and later are over them.
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|
 | b | claude-opus-5-5 | 30 | 100% | 100% | 17% | 83% | 30% |
 | b | claude-sonnet-5-5 | 30 | 100% | 100% | 7% | 93% | 53% |
 
-- Agent runs (on confighub mini 0.11.1-mini.2, 14 November 2026): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+- Agent runs (on confighub mini 0.11.1-mini.2, 14 November 2026): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the Claude plugin, the local hub and this page as reading.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
@@ -196,7 +196,7 @@ No agent approved or refused a change to production.
 
 Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Ask the same three questions again next week, across every customer, and see what changed since?"
 
-The plugin offers it once, after the answer at whose end it showed the moment the offer names ("what your agents changed"). Offered is the share of persons it was shown to; want it now and later are over them.
+The Claude plugin offers it once, after the answer at whose end it showed the moment the offer names ("what your agents changed"). Offered is the share of persons it was shown to; want it now and later are over them.
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|

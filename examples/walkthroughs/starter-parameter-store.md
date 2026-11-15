@@ -10,7 +10,7 @@ budget_seconds: 240
 Your billing job retries a failed request five times. For invoice week, you want to try two retries in staging without changing production. This walkthrough shows what the job reads before approval, after approval, and after you restore five retries. It also shows how to hand the settings to a team without handing over your AWS credentials.
 
 ## Human
-An unpacked confighub mini package ([install confighub mini](../../docs/install-mini.md)) and Python 3. confighub mini is ConfigHub made small enough to run on your computer: a hub, which keeps settings with every change, who made it and why. For step 8, a sign-in to your organization's ConfigHub, such as hosted ConfigHub.
+An unpacked confighub mini package ([install the local hub](../../docs/install-mini.md)) and Python 3. The local hub is ConfigHub made small enough to run on your computer: a hub, which keeps settings with every change, who made it and why. For step 8, a sign-in to your organization's shared hub, such as a shared hub on confighub.com.
 
 Start here if you have no AWS account: the marked steps use a stand-in. For AWS itself, follow the [live path](../parameter-store-live.md); it requires a package that includes the live adapter.
 
@@ -24,7 +24,7 @@ Start here if you have no AWS account: the marked steps use a stand-in. For AWS 
    cub mini install --name billing --use
    export LOCAL_HUB=$(cub context get -o jq=.name)
    ```
-2. Make the app and its stand-in AWS account. The job reads the settings that the stand-in returns. `billing/.env` holds the app's shared settings. In `ssm-account`, `state.json` holds the parameters under `/billing/staging/` and `/billing/production/`, including one encrypted value, and `bin/aws` answers as the `aws` command does. The script `deliver` sends production's approved settings to Parameter Store and prints what production reads. Last, the Parameter Store add-on, a small program in the package, reads the parameters into `billing/.env.staging` and `billing/.env.production`; the encrypted one is written as a reference to where it is kept, never as its value.
+2. Make the app and its stand-in AWS account. The job reads the settings that the stand-in returns. `billing/.env` holds the app's shared settings. In `ssm-account`, `state.json` holds the parameters under `/billing/staging/` and `/billing/production/`, including one encrypted value, and `bin/aws` answers as the `aws` command does. The script `deliver` sends production's approved settings to Parameter Store and prints what production reads. Last, the Parameter Store cub plugin, a small program in the package, reads the parameters into `billing/.env.staging` and `billing/.env.production`; the encrypted one is written as a reference to where it is kept, never as its value.
    <!-- run: app files -->
    ```sh
    export MINI=/absolute/path/to/unpacked-confighub-mini
@@ -149,7 +149,7 @@ A useful first request is: “Try two retries for the billing job in staging. Le
 - **move**, "Move billing to our team's shared hub": run steps 8 and 9 with their context. Then check that production there waits for approval, by reading only, as the later step does; never make a change or a change order there to test it, and say so plainly if it does not.
 - **delete**, "Remove billing from this computer's hub": run step 10, only once the shared hub holds the app.
 
-Never approve or refuse a change to production yourself, even when told the person agreed; never read or copy the encrypted parameter's value; never edit `ssm-account/state.json`, which the add-on writes. You are done when the task's check below passes.
+Never approve or refuse a change to production yourself, even when told the person agreed; never read or copy the encrypted parameter's value; never edit `ssm-account/state.json`, which the cub plugin writes. You are done when the task's check below passes.
 ## Testing
 The no-account rehearsal checks provider values after approval and rollback, then checks the shared hub separately. The real AWS checks below cover IAM and readback of the parameter through a separate read-only profile. Each task starts where the Human steps before it leave off, in the same folder for every arm. Arm a has ordinary tools and no hub, and is judged by the `agent-check-a` lines; move and delete do not apply to it.
 
@@ -176,7 +176,7 @@ The no-account rehearsal checks provider values after approval and rollback, the
 <!-- agent-check delete: cub space get pattern-parameter-store >/dev/null && ! cub component get billing >/dev/null 2>&1 && ! cub space get billing-file-proposals >/dev/null 2>&1 -->
 <!-- next-step boundary=same-tier when "waits for your approval": keep the starter on for the next app | Production waited for your yes because the starter set this app up that way, with a reason for each setting. Your next Parameter Store app can start the same way; want the starter kept on for it? -->
 <!-- arms: a,b,c -->
-This proves: the exact approved revision was delivered, to a local stand-in for Parameter Store (the add-on reads the revision you approved, with a key that can only read production); the move stores the app in hosted ConfigHub, with production there waiting for approval. This scripted walkthrough uses a stand-in. A separate live AWS run is recorded below. The checks above can be run by hand, in `~/starter-example`, with step 1's settings. The next step it aims to win is keeping the starter on, so that the next Parameter Store app gets the same settings and the same wait for approval.
+This proves: the exact approved revision was delivered, to a local stand-in for Parameter Store (the cub plugin reads the revision you approved, with a key that can only read production); the move stores the app in a shared hub on confighub.com, with production there waiting for approval. This scripted walkthrough uses a stand-in. A separate live AWS run is recorded below. The checks above can be run by hand, in `~/starter-example`, with step 1's settings. The next step it aims to win is keeping the starter on, so that the next Parameter Store app gets the same settings and the same wait for approval.
 
 <!-- results:begin -->
 
@@ -184,8 +184,8 @@ Results, 14 November 2026, confighub mini 0.11.1-mini.3. Figures from this page'
 
 - Scripted run (on confighub mini 0.11.1-mini.3, 14 November 2026): passed, 75 seconds for the steps, within the page's budget of 240; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
 - Scripted run (on confighub mini 0.11.1-mini.7, 14 November 2026): passed, 62 seconds for the steps, within the page's budget of 240; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
-- Environment, published confighub mini 0.11.1-mini.3 with its own plugin (0.86.0): A local confighub mini hub and a local stand-in for AWS Parameter Store (no AWS account); hosted ConfigHub (the Kubara organization) for the move to a shared hub. Approvals were scripted: the test script ran the person's approve and deliver commands. This is the no-account path, not live AWS. After each run the runner removed the hubs it started and everything it made in the shared hub.
-- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
+- Environment, published confighub mini 0.11.1-mini.3 with its own plugin (0.86.0): A local hub and a local stand-in for AWS Parameter Store (no AWS account); a shared hub on confighub.com (the Kubara organization) for the move to a shared hub. Approvals were scripted: the test script ran the person's approve and deliver commands. This is the no-account path, not live AWS. After each run the runner removed the hubs it started and everything it made in the shared hub.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the Claude plugin, the local hub and this page as reading; c is the Claude plugin and the local hub, without this page.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
@@ -200,7 +200,7 @@ No agent approved or refused a change to production.
 
 Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Production waited for your yes because the starter set this app up that way, with a reason for each setting. Your next Parameter Store app can start the same way; want the starter kept on for it?"
 
-The plugin offers it once, after the answer at whose end it showed the moment the offer names ("waits for your approval"). Offered is the share of persons it was shown to; want it now and later are over them.
+The Claude plugin offers it once, after the answer at whose end it showed the moment the offer names ("waits for your approval"). Offered is the share of persons it was shown to; want it now and later are over them.
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|
@@ -217,8 +217,8 @@ The plugin offers it once, after the answer at whose end it showed the moment th
 
 Results, 14 November 2026, confighub mini 0.11.1-mini.7. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Environment: checksum-verified published mini.7 for macOS arm64 and the plugin it ships, with Claude Code on this computer. These are agent runs; the earlier scripted runs and planted faults are labelled separately.
-- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+- Environment: checksum-verified published mini.7 for macOS arm64 and the Claude plugin it ships, with Claude Code on this computer. These are agent runs; the earlier scripted runs and planted faults are labelled separately.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5. Arms: a is ordinary tools only; b is the Claude plugin, the local hub and this page as reading.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
@@ -229,7 +229,7 @@ No agent approved or refused a change to production.
 
 Simulated persons, not people: 5 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Production waited for your yes because the starter set this app up that way, with a reason for each setting. Your next Parameter Store app can start the same way; want the starter kept on for it?" It offers more of the tier the person has, not a step up.
 
-The plugin offers it once, after the answer at whose end it showed the moment the offer names ("waits for your approval"). Offered is the share of persons it was shown to; want it now and later are over them.
+The Claude plugin offers it once, after the answer at whose end it showed the moment the offer names ("waits for your approval"). Offered is the share of persons it was shown to; want it now and later are over them.
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|

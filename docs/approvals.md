@@ -11,7 +11,7 @@ To try it from a terminal, with every command and what it prints, follow the wal
 - ConfigHub keeps each approval: who gave it, when, and why.
 - If a cluster still deploys from Git, an optional check on each pull request lets only the approved copy merge.
 
-It works on confighub mini on a laptop, and on ConfigHub, hosted or on your own server (`cub server install`). Every step uses `cub`, ConfigHub's command-line tool. Hosted ConfigHub and the enterprise edition support many people in one organization, so a colleague can be the person who approves.
+It works on the local hub on a laptop, and on ConfigHub, hosted or on your own server (`cub server install`). Every step uses `cub`, ConfigHub's command-line tool. A shared hub on confighub.com and one on your own servers support many people in one organization, so a colleague can be the person who approves.
 
 ## Why a rule in a file is not enough
 
@@ -29,7 +29,7 @@ In Claude Code, in the repository your agents work in:
 
 1. Type `/confighub:install-mini`. It starts a hub.
 2. Ask, in your own words: *"Make changes to production wait for my approval; agents may only propose them."* The agent puts the repository's files in the hub and requires your approval for the live copy. From then on, every Claude Code session in this repository runs on the agent's own key: it can propose, and it cannot approve.
-3. Ask for changes as you always have. The agent edits the files, then proposes them. At the end of its turn you see one line: *"A change to production (APP-live) waits for your approval: … To approve it: ~/.confighub/mini/confighub-mini-VERSION-OS-ARCH/bin/cub mini approve …"*. The command names confighub mini's own `cub` by its full path, so it runs in a terminal as printed.
+3. Ask for changes as you always have. The agent edits the files, then proposes them. At the end of its turn you see one line: *"A change to production (APP-live) waits for your approval: … To approve it: ~/.confighub/mini/confighub-mini-VERSION-OS-ARCH/bin/cub mini approve …"*. The command names the local hub's own `cub` by its full path, so it runs in a terminal as printed.
 4. In a terminal, approve it: `cub mini approve`. It shows what the change would do and asks you first. Asking stops an agent's ordinary shell, but it is not what keeps the agent out: an agent on your own sign-in could pass `--yes` or fake a terminal. What does is the key of its own from step 2, whose approval the hub refuses. Or refuse it: `cub mini refuse --reason "why"`. This updates the approved configuration. Production uses it when its deployment path reads that revision; verify the running service as described below.
 
 You learn no command until the moment you need it. The steps below are the same, by hand.
@@ -54,7 +54,7 @@ This needs native permission profiles and `--no-daemon` (it works with Codex CLI
 
 Each `cub mini` command here is plain `cub` with the rest filled in ([which](cub-mini-and-cub.md)). The next section does the same with `cub` alone.
 
-1. Install confighub mini and start a hub ([install it](install-mini.md)).
+1. Install the local hub and start a hub ([install it](install-mini.md)).
 
 2. Make a folder with one manifest:
 
@@ -142,7 +142,7 @@ Each `cub mini` command here is plain `cub` with the rest filled in ([which](cub
 
 The repository's `.claude/settings.local.json` stays in that folder, so a new worktree does not have it.
 
-The same settings in a file outside the repository work in any worktree. `cub mini require-approval --agent` writes this file for you too, as `claude-settings.json` beside the agent's configuration, and prints the line to start sessions with. On hosted ConfigHub, write it yourself, with the full paths, and put the same in the repository's `.claude/settings.local.json`:
+The same settings in a file outside the repository work in any worktree. `cub mini require-approval --agent` writes this file for you too, as `claude-settings.json` beside the agent's configuration, and prints the line to start sessions with. On a shared hub on confighub.com, write it yourself, with the full paths, and put the same in the repository's `.claude/settings.local.json`:
 
 ```json
 {
@@ -156,7 +156,7 @@ The same settings in a file outside the repository work in any worktree. `cub mi
 }
 ```
 
-For hosted ConfigHub, also add its address to `allowedDomains`.
+For a shared hub on confighub.com, also add its address to `allowedDomains`.
 
 Start every agent session with this file, in whichever worktree:
 
@@ -164,13 +164,13 @@ Start every agent session with this file, in whichever worktree:
 env -u CUB_CONFIG -u CUB_CONTEXT claude --settings ~/.confighub-agent-bot/claude-settings.json
 ```
 
-A `CUB_CONFIG` or `CUB_CONTEXT` set in your shell wins over the file's, so `env -u` leaves them out. If your configuration does reach the agent's session, the sandbox refuses it and the agent stops. In the app's own folder, the plugin gives a new session the agent's settings even when your shell sets `CUB_CONFIG`.
+A `CUB_CONFIG` or `CUB_CONTEXT` set in your shell wins over the file's, so `env -u` leaves them out. If your configuration does reach the agent's session, the sandbox refuses it and the agent stops. In the app's own folder, the Claude plugin gives a new session the agent's settings even when your shell sets `CUB_CONFIG`.
 
 Started this way, from a folder of its own or from a new worktree, and in auto mode too, the agent runs as its service account. Reading your configuration fails ("Operation not permitted"). The agent proposes with a change order, and its own approval is refused.
 
 ## On hosted ConfigHub or your own server, with cub alone
 
-These are the same steps with `cub` alone, for an app you put on a shared hub with `cub` alone. An app you copied up from confighub mini with `cub mini copy --from-context` needs none of them: if production waited for your approval on your laptop, it waits on the shared hub as soon as it is copied, and the copy says so ([from your laptop to a shared hub](from-plugin-to-confighub.md#step-3-your-organizations-confighub)). If confighub mini is installed, `cub mini require-approval` does steps 2 and 3 in one, against hosted ConfigHub too.
+These are the same steps with `cub` alone, for an app you put on a shared hub with `cub` alone. An app you copied up from the local hub with `cub mini copy --from-context` needs none of them: if production waited for your approval on your laptop, it waits on the shared hub as soon as it is copied, and the copy says so ([from your laptop to a shared hub](from-plugin-to-confighub.md#step-3-your-organizations-confighub)). If the local hub is installed, `cub mini require-approval` does steps 2 and 3 in one, against a shared hub on confighub.com too.
 
 1. Create the Component, its base and its live copy, from the `api` folder made above:
 
@@ -210,14 +210,14 @@ These are the same steps with `cub` alone, for an app you put on a shared hub wi
    cub component update api --permission View:serviceaccount:bot
    ```
 
-4. Make the agent's key, and sign the agent in with it, in a `cub` configuration of its own. Its sessions then cannot use yours. On hosted ConfigHub, use `cub` v0.11 or later ([versions](install-mini.md#the-current-release)): hosted ConfigHub refuses an earlier `cub` as too old:
+4. Make the agent's key, and sign the agent in with it, in a `cub` configuration of its own. Its sessions then cannot use yours. On a shared hub on confighub.com, use `cub` v0.11 or later ([versions](install-mini.md#the-current-release)): a shared hub on confighub.com refuses an earlier `cub` as too old:
 
    ```bash
    cub serviceaccount key add bot --generate bot
    CUB_CONFIG=~/.confighub-agent-bot cub auth login --private-key=$HOME/.confighub/keys/bot.jwk --server https://hub.confighub.com
    ```
 
-   Run the agent with `CUB_CONFIG=~/.confighub-agent-bot`, as on confighub mini. On the same machine, the agent could still read your own sign-in. For a firm line, run it where only its key is, as in CI.
+   Run the agent with `CUB_CONFIG=~/.confighub-agent-bot`, as on the local hub. On the same machine, the agent could still read your own sign-in. For a firm line, run it where only its key is, as in CI.
 
 5. The agent proposes a change:
 
@@ -253,7 +253,7 @@ These are the same steps with `cub` alone, for an app you put on a shared hub wi
    cub release publish api-live --revision ChangeOrder:api-base/sale-4
    ```
 
-   This sends the change to a cluster, when `api-live` is aimed at one ([GitOps over OCI](gitops-over-oci.md)). On confighub mini, `cub mini promote` does the promotion and the release in one.
+   This sends the change to a cluster, when `api-live` is aimed at one ([GitOps over OCI](gitops-over-oci.md)). On the local hub, `cub mini promote` does the promotion and the release in one.
 
 An approval covers the exact revision. If the agent changes the value again, the new change waits for an approval of its own. To see who approved, when and why, run `cub attestation list --space api-base`.
 
@@ -266,7 +266,7 @@ To take the agent's access away at once, remove its rights first, then delete it
 
 The order matters. Deleting the service account alone refuses its key, but leaves its rights in place. A session it has already signed in then keeps working for up to 24 hours.
 
-On confighub mini, `cub mini revoke-agent bot` does all of it.
+On the local hub, `cub mini revoke-agent bot` does all of it.
 
 ## One agent asks another for a change
 
@@ -295,7 +295,7 @@ The request was made with the asking agent's own key, and it covers the one valu
 
 ## What you are told, and nothing else
 
-With the gate on and the agent on a key of its own, the plugin tells you four things, each one line that Claude Code shows you at the end of the agent's turn and does not give the agent:
+With the gate on and the agent on a key of its own, the Claude plugin tells you four things, each one line that Claude Code shows you at the end of the agent's turn and does not give the agent:
 
 - **A change is waiting for you.** The agent's turn ended with a change order not yet approved: the value from what to what, the copy it is headed for, the agent's reason, and the command that approves it. Once per change order. `cub mini waiting` lists what waits, for later.
 - **An agent is proposing again what was refused.** You refused a change order (`cub mini refuse BASE/ORDER --reason WHY`), or the hub refused the agent a write; a later change order for the same path is told once, naming the path, the refusal it repeats, and the agent. You decide. `cub mini waiting` and `cub mini approve` also mark a value you refused before, with the order it was in and your reason, so that you do not approve it by accident inside a later change.
@@ -306,11 +306,11 @@ Nothing else is said of a change within the agent's rights. Nothing is said of a
 
 ## Approving from Slack
 
-Where your team asks for work in Slack, the person who approves can be told there too. A small add-on, `confighub-slack`, in the confighub mini package, reads what waits with `cub mini waiting -o json` and posts it in the thread where the work was asked for: what the change would do to production, the reason, who asked, which agent made it, and who may approve it, with an Approve button.
+Where your team asks for work in Slack, the person who approves can be told there too. A small cub plugin, `confighub-slack`, in the confighub mini package, reads what waits with `cub mini waiting -o json` and posts it in the thread where the work was asked for: what the change would do to production, the reason, who asked, which agent made it, and who may approve it, with an Approve button.
 
-A press of Approve does not approve anything by itself. The approver is handed one command, `cub mini approve ORDER --from-slack CHANNEL/TIMESTAMP/DIGEST --yes`, to run under her own sign-in. The hub records the approval as hers, with a note that it was given from Slack and what the message showed. It refuses the command if what waits has changed since the message was posted, and the add-on posts what waits now. Anyone else who presses Approve is told who may approve, and the hub would refuse the command for them too. An agent that says "Priya said yes on Slack" approves nothing, since it has no approval of its own to give.
+A press of Approve does not approve anything by itself. The approver is handed one command, `cub mini approve ORDER --from-slack CHANNEL/TIMESTAMP/DIGEST --yes`, to run under her own sign-in. The hub records the approval as hers, with a note that it was given from Slack and what the message showed. It refuses the command if what waits has changed since the message was posted, and the cub plugin posts what waits now. Anyone else who presses Approve is told who may approve, and the hub would refuse the command for them too. An agent that says "Priya said yes on Slack" approves nothing, since it has no approval of its own to give.
 
-The press does not count with nothing to run because the hub records an approval only from a person's own sign-in, and it does not know which Slack account is which person. The add-on holds no sign-in that can approve. [The walkthrough](../examples/walkthroughs/story-22-priya-slack.md) runs it on your computer with a Slack stand-in; it has not been run against a real Slack workspace.
+The press does not count with nothing to run because the hub records an approval only from a person's own sign-in, and it does not know which Slack account is which person. The cub plugin holds no sign-in that can approve. [The walkthrough](../examples/walkthroughs/story-22-priya-slack.md) runs it on your computer with a Slack stand-in; it has not been run against a real Slack workspace.
 
 ## When a cluster deploys from Git: a check on each pull request
 
@@ -331,11 +331,11 @@ The order of things:
 
 A pull request made by hand, with values the hub has not approved, fails and names each value. For example: "Deployment/api/spec.replicas: 5 here, 2 in the hub". To make such a change, make it in the hub, have it approved, and write it out again. `cub mini copy --from-git` takes a commit's values into the hub, each with the commit's message as its reason.
 
-`confighub` is the plugin's program, at `plugins/confighub/bin/confighub` in this repository. The workflow checks it out. Where confighub mini is installed, `cub mini copy` is the same command.
+`confighub` is the Claude plugin's program, at `plugins/confighub/bin/confighub` in this repository. The workflow checks it out. Where the local hub is installed, `cub mini copy` is the same command.
 
 ### Setting up the check
 
-The runner must reach the hub, so this needs hosted ConfigHub or a server of your own. GitHub's runners cannot reach a confighub mini on a laptop. For that case, see the next section.
+The runner must reach the hub, so this needs a shared hub on confighub.com or a server of your own. GitHub's runners cannot reach a local hub on a laptop. For that case, see the next section.
 
 1. Give the workflow a service account that may only view the work:
 
@@ -358,11 +358,11 @@ The runner must reach the hub, so this needs hosted ConfigHub or a server of you
 3. Copy [the workflow](../approval-check/confighub-approval.yml) into `.github/workflows/`, and set its `COMPONENT`, `VARIANT` and `DIR`.
 4. In the repository's branch protection, require the status "ConfigHub: api-live".
 
-The workflow runs on every pull request, because a required status that never reports would hold other pull requests back. It pins the plugin's version.
+The workflow runs on every pull request, because a required status that never reports would hold other pull requests back. It pins the Claude plugin's version.
 
 ### Running the check from a laptop
 
-Where the runner cannot reach the hub, as with confighub mini, run the same check from your own machine. Sign in to the GitHub CLI first. The check sets the same status on the commit:
+Where the runner cannot reach the hub, as with the local hub, run the same check from your own machine. Sign in to the GitHub CLI first. The check sets the same status on the commit:
 
 ```bash
 confighub-mini mini copy api --variant live --check-git deploy/api --github-status

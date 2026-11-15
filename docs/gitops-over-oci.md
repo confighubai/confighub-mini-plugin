@@ -25,7 +25,7 @@ You do not have to move delivery off Git to get anything on this page. Each step
 
 | Step | What changes | What you get | To go back |
 |---|---|---|---|
-| 1. The plugin | the record in agent sessions; [the review](../review/README.md) on pull requests | every configuration value a pull request changes, per cluster, and why; the next agent told before it undoes an earlier change; Git still delivers | uninstall the plugin |
+| 1. The Claude plugin | the record in agent sessions; [the review](../review/README.md) on pull requests | every configuration value a pull request changes, per cluster, and why; the next agent told before it undoes an earlier change; Git still delivers | uninstall the Claude plugin |
 | 2. A hub beside Git | `cub mini copy --from-git` takes the repository's rendered configuration into a hub, which keeps each value's reason and protects the ones you choose; the hub's approval appears on each pull request as a status, and your branch rule requires that status | approvals of exact values; values kept through a chart's next version; Git still delivers. The branch rule requiring the status is what makes the approval one that Git cannot bypass | stop the hub; Git is untouched |
 | 3. The hub as the source for one app | that app's Flux source or Argo CD Application is pointed at the hub's OCI gateway instead of the Git path; Git keeps everything else | the hub's approval is the only way a change reaches that app; an agent's `kubectl` change is set back by the next sync, and the hub says what differed | `cub mini copy --to-dir` writes plain files and a `CHANGES.md`; commit them, point the source back at Git, stop the hub |
 | 4. The hub as the source for everything | the clusters deploy from the hub; Git holds rendered files written back for people to read and diff | one source, with Git still legible | as step 3, app by app |
@@ -36,13 +36,13 @@ The words on this page, such as *hub*, *base* and *change order*, are explained 
 
 ## What you need
 
-- confighub mini ([install it](install-mini.md)).
+- The local hub ([install it](install-mini.md)).
 - Docker, `kind` (Kubernetes in Docker) and `kubectl`.
 - For Flux, the `flux` CLI.
 
-The steps below set this up on confighub mini and a local kind cluster. Then they show the four things a GitOps team asks about: a change that waits for a person's approval, self-heal, going back, and the cluster's status in ConfigHub.
+The steps below set this up on the local hub and a local kind cluster. Then they show the four things a GitOps team asks about: a change that waits for a person's approval, self-heal, going back, and the cluster's status in ConfigHub.
 
-The `cub mini` commands on this page are plain `cub` with the rest of the request filled in ([which commands](cub-mini-and-cub.md)). For your own cluster with hosted ConfigHub, [further down](#your-own-cluster-with-hosted-confighub), the same is shown with `cub` alone.
+The `cub mini` commands on this page are plain `cub` with the rest of the request filled in ([which commands](cub-mini-and-cub.md)). For your own cluster with a shared hub on confighub.com, [further down](#your-own-cluster-with-hosted-confighub), the same is shown with `cub` alone.
 
 The example follows Dan's platform team, which runs Flux and Argo CD with self-heal on.
 
@@ -247,7 +247,7 @@ With Argo CD, the approved change runs a few seconds after the promotion, and so
 
 ## Your own cluster, with hosted ConfigHub
 
-The same works with a cluster you already have and hosted ConfigHub, or a ConfigHub server of your own.
+The same works with a cluster you already have and a shared hub on confighub.com, or a ConfigHub server of your own.
 
 1. Sign in to ConfigHub with `cub auth login`, and point `kubectl` at your cluster.
 

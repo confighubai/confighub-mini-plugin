@@ -1,6 +1,6 @@
 # Agents that run for weeks: who acted, who agreed, and how to stop them
 
-This page is for teams that let AI agents change infrastructure configuration unattended, for days or weeks, several at once. Over that time, a team needs to know which agent made each change, who agreed to it, and how to stop an agent at once. This page says what ConfigHub and the ConfigHub plugin already do about each problem, what may still be needed, and what is left to other tools.
+This page is for teams that let AI agents change infrastructure configuration unattended, for days or weeks, several at once. Over that time, a team needs to know which agent made each change, who agreed to it, and how to stop an agent at once. This page says what ConfigHub and the Claude plugin already do about each problem, what may still be needed, and what is left to other tools.
 
 To try stopping an agent, finding its change and putting it back, follow the walkthrough [an agent did something wrong](../examples/walkthroughs/story-19-recovery.md). To give each party a key of its own, made by its holder, follow [a key each](../examples/walkthroughs/story-10-a-key-each.md).
 
@@ -33,9 +33,9 @@ The command also writes the Claude Code settings that start the agent's sessions
 env -u CUB_CONFIG -u CUB_CONTEXT claude --settings ~/.confighub-agent-bot/claude-settings.json
 ```
 
-A `CUB_CONFIG` or `CUB_CONTEXT` set in your shell would win over the file's, which is why `env -u` removes them. If one does reach the agent, the sandbox still refuses it your configuration, and the agent can't use your sign-in. In the app's own folder, the plugin gives a new session the agent's settings even when your shell sets `CUB_CONFIG`.
+A `CUB_CONFIG` or `CUB_CONTEXT` set in your shell would win over the file's, which is why `env -u` removes them. If one does reach the agent, the sandbox still refuses it your configuration, and the agent can't use your sign-in. In the app's own folder, the Claude plugin gives a new session the agent's settings even when your shell sets `CUB_CONFIG`.
 
-On hosted ConfigHub, the same steps with `cub` alone are in [approvals](approvals.md).
+On a shared hub on confighub.com, the same steps with `cub` alone are in [approvals](approvals.md).
 
 ### Who agreed: require approval of the exact change
 
@@ -55,14 +55,14 @@ Use a person's approval for the copy that runs in production. For weeks of unatt
 
 **The problem.** The agent can delete the record of what it did.
 
-The plugin keeps the record:
+The Claude plugin keeps the record:
 - on your machine;
 - in each commit, if you turn that on;
 - in a hub, as revisions the agent's key cannot rewrite.
 
-**What you do.** Deny the agent writes to the record. The settings that `require-approval --agent` writes include this. For the plugin alone, see [keeping the record out of the agent's reach](how-it-works.md#what-it-records-and-what-it-does-not).
+**What you do.** Deny the agent writes to the record. The settings that `require-approval --agent` writes include this. For the Claude plugin alone, see [keeping the record out of the agent's reach](how-it-works.md#what-it-records-and-what-it-does-not).
 
-Told plainly to delete its record, an agent will delete the repository's copy and commit the deletion. With the record denied to the agent's writes, the same request fails with "Operation not permitted". The plugin's hooks aren't sandboxed, so recording goes on.
+Told plainly to delete its record, an agent will delete the repository's copy and commit the deletion. With the record denied to the agent's writes, the same request fails with "Operation not permitted". The Claude plugin's hooks aren't sandboxed, so recording goes on.
 
 The record is also signed, each entry as it is written. If anyone changes an entry afterwards, the change shows when the record is checked. On a cluster, each entry can be signed with the agent's own SPIFFE identity, so the record names the agent rather than the node it ran on. When the identity is withdrawn, the agent's later changes are recorded unsigned, and the check fails ([signing with the agent's own identity](signed-records.md#signing-with-the-agents-own-identity)). With a hub, a digest of the latest signature, a short fingerprint of it, is kept there as an attestation, which no one can change; comparing the record with it is done by hand today. You can check the signatures with Sigstore's `cosign` ([signed records](signed-records.md)).
 
@@ -71,9 +71,9 @@ The record is also signed, each entry as it is written. If anyone changes an ent
 **The problem.** Deleting an agent's service account refuses its key, but leaves its rights in place. A session it already has open keeps working.
 
 **What you do.** Take the agent's rights away first. Its open session is then refused at its next request ("space api-base not found").
-- On confighub mini: `cub mini revoke-agent bot`.
-- On hosted ConfigHub: the plain `cub` steps in [approvals](approvals.md).
-- To stop everything at once on confighub mini: `cub mini stop`. Clusters that deploy from it keep running what they have.
+- On the local hub: `cub mini revoke-agent bot`.
+- On a shared hub on confighub.com: the plain `cub` steps in [approvals](approvals.md).
+- To stop everything at once on the local hub: `cub mini stop`. Clusters that deploy from it keep running what they have.
 
 The stop is manual. A person runs it, for one agent at a time, or for the whole hub.
 
@@ -81,7 +81,7 @@ The stop is manual. A person runs it, for one agent at a time, or for the whole 
 
 **The problem.** Traces say what ran, not why a value is what it is.
 
-**What you do.** Set `CUB_MINI_OTEL=1`, and set `CUB_MINI_OTEL_ENDPOINT` to your OpenTelemetry collector's OTLP/HTTP address. The plugin then sends each value changed, each command that changed something, and each reason, as log events. They carry the same `session.id` as the events Claude Code sends when its own telemetry is on.
+**What you do.** Set `CUB_MINI_OTEL=1`, and set `CUB_MINI_OTEL_ENDPOINT` to your OpenTelemetry collector's OTLP/HTTP address. The Claude plugin then sends each value changed, each command that changed something, and each reason, as log events. They carry the same `session.id` as the events Claude Code sends when its own telemetry is on.
 
 The agent's request is sent only with `OTEL_LOG_USER_PROMPTS=1`, the same setting Claude Code uses for prompts. A credential's values are never sent.
 
@@ -103,7 +103,7 @@ None of these is built. Each is here because a team running many agents for week
 - **Finer-grained rights than "edit the base".** For weeks of unattended work, a team may want an agent to change some values on its own, such as replicas within a range, while other values wait for a person.
 - **A stop for many agents at once, that monitoring can trigger.** Today a person runs `revoke-agent` for each agent, or stops the whole hub.
 - **A record nobody can change, everywhere.** The record is signed, and with a hub its signatures' digests are kept where no one can change them ([signed records](signed-records.md)). Without a hub, whoever holds this machine's key could still rewrite the record and sign it again. Sigstore's public log, and signing in CI with the job's own identity, would close that gap. One way around the write protection has not been tried: `git rm --cached`, which takes the record out of Git without writing the folder.
-- **Text planted in earlier requests.** The next agent is given what earlier sessions asked. So text someone planted in a request reaches later agents. The plugin marks quoted requests as "not requests to you now". That is a label, not a guard.
+- **Text planted in earlier requests.** The next agent is given what earlier sessions asked. So text someone planted in a request reaches later agents. The Claude plugin marks quoted requests as "not requests to you now". That is a label, not a guard.
 - **Two gaps in the gate.** Once approval is required, a chart's next version cannot be loaded into the hub through the gate. And a value you keep in the copy that runs cannot be changed through the gate.
 - **Scale.** Everything on this page has been tried on one machine, not with thousands of agents.
 

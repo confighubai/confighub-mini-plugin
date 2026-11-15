@@ -1,14 +1,14 @@
 # What we do not claim
 
-This page lists where the ConfigHub plugin and confighub mini do no more than a careful team could do without them, and what has not been shown to work. Read it before you decide whether to use them.
+This page lists where the Claude plugin and the local hub do no more than a careful team could do without them, and what has not been shown to work. Read it before you decide whether to use them.
 
-The **plugin** runs in your Claude Code or Codex sessions and keeps a **record** of each value an agent changes, with the request and the reason. **ConfigHub** is a server that holds your configuration and keeps each change to it. A **hub** is one running ConfigHub, and **confighub mini** is ConfigHub made small enough to run on one machine.
+The **plugin** runs in your Claude Code or Codex sessions and keeps a **record** of each value an agent changes, with the request and the reason. **ConfigHub** is a server that holds your configuration and keeps each change to it. A **hub** is one running ConfigHub, and **the local hub** is ConfigHub made small enough to run on one machine.
 
 ## Limits
 
 The [client capability matrix](how-it-works.md#client-capabilities) distinguishes recording, warnings, refusal and human approval for each client and operation.
 
-- **A reason for each value in Git is not unique to the plugin.** One line in `CLAUDE.md` that asks the agent to give a reason for each value in its commit messages does that. What the plugin adds: its reasons are kept by value, across sessions, and you can ask for them with `/confighub:why`, with no rule written beforehand.
+- **A reason for each value in Git is not unique to the Claude plugin.** One line in `CLAUDE.md` that asks the agent to give a reason for each value in its commit messages does that. What the Claude plugin adds: its reasons are kept by value, across sessions, and you can ask for them with `/confighub:why`, with no rule written beforehand.
 
 - **You do not need a hub to keep a value through a chart's next version, when the chart exposes it.** A Helm values file or a Kustomize patch does that. The hub's preview helps when a new version changes what a setting does, or stops using it.
 
@@ -16,15 +16,15 @@ The [client capability matrix](how-it-works.md#client-capabilities) distinguishe
 
 - **Codex needs its own hook setup.** Run `plugins/confighub/bin/confighub mini codex-setup` from the plugin checkout, then review the hooks with `/hooks` in a fresh session. Repeat setup after an update. Completed MCP calls are recorded; at `ask`, changing MCP calls are refused before reaching the server. Codex does not show a human approval prompt for that refusal. `apply_patch` edits are recorded afterwards but are not held at `ask`. A call that ends in a server error can be missing from the record. All of this holds for Codex 0.163.0 on macOS, with a local MCP server. It hasn't been shown with a hosted payments or database server.
 
-- **Claude Code and confighub mini have not been run together inside one Linux container.** They have run together on GitHub's Linux runner, where the agent worked in a hub of its own ([ci/](../ci/README.md)). Claude Code with the plugin alone has run in a Linux CI job, and an agent on a Mac has used a confighub mini inside a fresh Linux container.
+- **Claude Code and the local hub have not been run together inside one Linux container.** They have run together on GitHub's Linux runner, where the agent worked in a hub of its own ([ci/](../ci/README.md)). Claude Code with the Claude plugin alone has run in a Linux CI job, and an agent on a Mac has used a local hub inside a fresh Linux container.
 
 - **What the next agent is given goes to the model provider.** The record stays on your machine. But the history given to the next agent, earlier requests included, becomes part of that session's context, and is sent to the model with the rest of it.
 
-- **A recorded request can carry instructions to later agents.** A request recorded in one session is shown to later ones, so treat it like any other text in the repository. It can carry instructions someone did not mean the agent to follow. The plugin marks the requests it quotes as not requests to the agent now.
+- **A recorded request can carry instructions to later agents.** A request recorded in one session is shown to later ones, so treat it like any other text in the repository. It can carry instructions someone did not mean the agent to follow. The Claude plugin marks the requests it quotes as not requests to the agent now.
 
 - **The approval gate holds against the agent, not against a person who agrees to remove it.** It holds in auto mode too, and when the agent hands the task to a background agent: the agent can't get past it or read the owner's key. But an agent that isn't told how to ask may ask you for the right to write production, which would remove the gate, or offer to use your own sign-in. `cub mini require-approval --agent` gives the agent a configuration of its own, and the lines that tell it how to ask.
 
-- **A signed record proves it was not changed afterwards, not that it is complete.** The signatures show that nobody without the key changed the record since each entry was written, and which key signed it. They cannot show that the plugin's hooks saw everything the agent did: an agent that acts through something the plugin does not watch leaves nothing to sign.
+- **A signed record proves it was not changed afterwards, not that it is complete.** The signatures show that nobody without the key changed the record since each entry was written, and which key signed it. They cannot show that the Claude plugin's hooks saw everything the agent did: an agent that acts through something the Claude plugin does not watch leaves nothing to sign.
 
 - **Three alterations are not caught on the machine.** The folder's whole record removed, its latest turn taken out with its signatures, and a record made again and signed by whoever holds the key each show only against a copy kept elsewhere: the hub's attestations, the record committed to the repository, or an OpenTelemetry collector. No command compares them today. A record made by plugin 0.80.0 or earlier cannot show a session removed or cut back ([signed records](signed-records.md#what-it-proves-and-what-it-does-not)).
 
@@ -32,7 +32,7 @@ The [client capability matrix](how-it-works.md#client-capabilities) distinguishe
 
 - **A hub that starts by itself is for Claude Code, at a Git project's root.** It starts only after a yes at setup, and in the second session in a folder, never the first. Codex, and subfolders of a monorepo, are not covered. An agent's session is told apart by what its client sets, which is not a lock: an agent running with your own file rights and no sandbox could write the answer by hand ([a hub that starts by itself](agent-workflow.md#a-hub-that-starts-by-itself-only-if-you-say-yes)).
 
-- **Starting values an agent wrote are held on `cub mini`'s delivery paths, not on two paths with plain `cub`.** `cub mini pull`, `pull-key`, `deploy-from-hub` and a release made by `cub mini promote` or `cub mini approve` refuse them until you approve. A reader key made with plain `cub`, and a release published with plain `cub` of a later approved change, are not held. Who wrote a file is read from the plugin's record on this machine; with no record, the files are taken as yours. From plugin 0.82.0 both a hub that started by itself and `cub mini adopt`, whoever runs it, mark starting values when an agent wrote the files; approving `APP-base/adopt`, which the steps already ask of you, approves them. Not marked: an app adopted by an earlier version, a Kustomize repository, and the defaults an app takes from its pattern.
+- **Starting values an agent wrote are held on `cub mini`'s delivery paths, not on two paths with plain `cub`.** `cub mini pull`, `pull-key`, `deploy-from-hub` and a release made by `cub mini promote` or `cub mini approve` refuse them until you approve. A reader key made with plain `cub`, and a release published with plain `cub` of a later approved change, are not held. Who wrote a file is read from the Claude plugin's record on this machine; with no record, the files are taken as yours. From plugin 0.82.0 both a hub that started by itself and `cub mini adopt`, whoever runs it, mark starting values when an agent wrote the files; approving `APP-base/adopt`, which the steps already ask of you, approves them. Not marked: an app adopted by an earlier version, a Kustomize repository, and the defaults an app takes from its pattern.
 
 - **A request between agents works on one hub, and only `cub mini` checks it.** Requests across hubs or teams are not made. The ConfigHub server does not itself refuse a change order that names a request it cannot back: approved with plain `cub` instead of `cub mini approve`, it is not checked. An agent that also holds a person's sign-in goes around it ([one agent asks another](approvals.md#one-agent-asks-another-for-a-change)).
 
@@ -40,7 +40,7 @@ The [client capability matrix](how-it-works.md#client-capabilities) distinguishe
 
 - **`cub mini adopt` refuses some Kustomize overlays.** A copy in the hub holds the base's resources with the overlay's values, so an overlay that adds or leaves out a resource, takes a field out, or changes a list's length is refused by name, and nothing is written ([what adopt refuses](journeys/existing-app.md#what-adopt-refuses-in-a-kustomize-repository)).
 
-- **Parameter Store readback checks the AWS parameter.** The packaged add-on delivered an approved shared-hub revision to a real AWS test parameter. A service must reload the parameter and report the value to verify what the service is running. The [walkthrough](../examples/walkthroughs/starter-parameter-store.md#testing) describes the tested path.
+- **Parameter Store readback checks the AWS parameter.** The packaged cub plugin delivered an approved shared-hub revision to a real AWS test parameter. A service must reload the parameter and report the value to verify what the service is running. The [walkthrough](../examples/walkthroughs/starter-parameter-store.md#testing) describes the tested path.
 
 - **The inventory reads one repository's files.** A folder deployed from another repository shows as deployed by nothing, and the inventory says what the files ask for, not what is running. Some ApplicationSet generators are listed but not followed ([what it does not do](inventory.md#what-it-does-not-do)).
 
@@ -58,16 +58,16 @@ The [client capability matrix](how-it-works.md#client-capabilities) distinguishe
   - Why each value is set is kept by value, across sessions.
   - An approval is given in the hub by a named person, of the exact revision. It gates what the hub delivers. Written out for Git, it can be required on the pull request with `cub mini copy --check-git --github-status`. Where Git is what deploys, CODEOWNERS gives an approval of an exact commit too.
 
-- **`CUB_MINI_ASK_REASONS=1` can show a message that reads like an error.** When an agent leaves out its reasons, the plugin's Stop hook asks for them, and Claude Code shows that as "Stop hook error". Nothing has gone wrong, and the reasons are kept.
+- **`CUB_MINI_ASK_REASONS=1` can show a message that reads like an error.** When an agent leaves out its reasons, the Claude plugin's Stop hook asks for them, and Claude Code shows that as "Stop hook error". Nothing has gone wrong, and the reasons are kept.
 
 - **A shared workflow does not give a restricted agent creation rights.** It can edit assigned open copies and propose for live. Creating another app or a new try variant needs owner setup. The workflow gives that step rather than asking for owner credentials. Hook activity metadata is not consistently shown in Codex CLI plain text; agent commentary supplies the attribution ([ordinary app requests](agent-workflow.md)).
 
 ## What the plugin does not see
 
-**A change on the cluster that no agent session made.** That includes a person's `kubectl edit` or `kubectl scale`, a controller's write, Argo CD's self-heal, and a change made through an MCP server outside a watched agent session. By default, the plugin learns of cluster changes only from the commands it records. It does not read the cluster.
+**A change on the cluster that no agent session made.** That includes a person's `kubectl edit` or `kubectl scale`, a controller's write, Argo CD's self-heal, and a change made through an MCP server outside a watched agent session. By default, the Claude plugin learns of cluster changes only from the commands it records. It does not read the cluster.
 
-Say a person or a controller has scaled the api to 4. The plugin's stop before a deploy says nothing. An agent that checks with `kubectl diff` may find the 4 and keep it; one that doesn't puts it back to 2, with the plugin or without.
+Say a person or a controller has scaled the api to 4. The Claude plugin's stop before a deploy says nothing. An agent that checks with `kubectl diff` may find the 4 and keep it; one that doesn't puts it back to 2, with the Claude plugin or without.
 
-**What you can do.** Set `CUB_MINI_READ_CLUSTER=1`. The plugin then reads the live objects before an apply, and holds the command back once on a value no agent session recorded.
+**What you can do.** Set `CUB_MINI_READ_CLUSTER=1`. The Claude plugin then reads the live objects before an apply, and holds the command back once on a value no agent session recorded.
 
 To list what was set on the cluster outside Git, and who set it, run `bin/confighub mini drift --dir DIR`. It reads the cluster and changes nothing.

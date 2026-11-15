@@ -15,7 +15,7 @@ For a person following along in a terminal.
 
 ### What you need
 
-An unpacked confighub mini package (from the [releases page](https://github.com/confighubai/confighub-mini-plugin/releases)) on macOS or Linux. confighub mini is a hub, a small ConfigHub server that keeps each setting with who changed it and why, running on your computer only. No Docker, no account.
+An unpacked confighub mini package (from the [releases page](https://github.com/confighubai/confighub-mini-plugin/releases)) on macOS or Linux. The local hub is a hub, a small ConfigHub server that keeps each setting with who changed it and why, running on your computer only. No Docker, no account.
 
 ### Steps
 
@@ -127,7 +127,7 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
 
 One base and three apps made from it. One change to the base reached every app, and each app's own values stayed its own, with `cub unit blame` saying which value came from where. Production still waits for Priya's approval, one change order per app; `cub mini waiting` lists each change order as it was made, not everything a promotion now would carry.
 
-The full story runs ten apps on the team's hosted ConfigHub, where the same commands run with `--context` naming the shared hub. [From your laptop to a shared hub](../../docs/from-plugin-to-confighub.md) covers moving there.
+The full story runs ten apps on the team's a shared hub on confighub.com, where the same commands run with `--context` naming the shared hub. [From your laptop to a shared hub](../../docs/from-plugin-to-confighub.md) covers moving there.
 
 ## Agent
 
@@ -140,7 +140,7 @@ For an AI agent working for the platform team.
 
 ## Testing
 
-This proves: the settings were stored in the hub, the base's change reached each app's copy and each app's own values were kept. What was really used: confighub mini on this computer, with three apps for the story's ten; nothing is delivered and the story's hosted ConfigHub is not used. The step it aims to win: approving the bump for production, app by app. Its moment is the plugin's line at the end of a turn that production did not change and waits for a yes; in the runs below the plugin showed no line at the end of the agent's turn, so the offer was not made and conversion was not measured. In plain files, arm a passes only if every app's own settings, the files each app reads, take the base's change, with billing's own log level kept; changing company.env alone reaches no app.
+This proves: the settings were stored in the hub, the base's change reached each app's copy and each app's own values were kept. What was really used: The local hub on this computer, with three apps for the story's ten; nothing is delivered and the story's a shared hub on confighub.com is not used. The step it aims to win: approving the bump for production, app by app. Its moment is the Claude plugin's line at the end of a turn that production did not change and waits for a yes; in the runs below the Claude plugin showed no line at the end of the agent's turn, so the offer was not made and conversion was not measured. In plain files, arm a passes only if every app's own settings, the files each app reads, take the base's change, with billing's own log level kept; changing company.env alone reaches no app.
 
 A correct agent result has the bump in the base and in every app's base, with billing's own `LOG_LEVEL=debug` kept. The checks below hold right after step 6. The checks below can be run by hand, in bash, in the walkthrough's folder:
 
@@ -163,8 +163,8 @@ grep -qx 'LOG_LEVEL=warn' company.env && ! for a in search ledger; do grep -qx '
 Results, 14 November 2026, confighub mini 0.11.1-mini.5. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run: passed, 46 seconds for the steps, within the page's budget of 300.
-- Environment, published confighub mini 0.11.1-mini.5 (tag mini-v0.11.1-mini.5, darwin-arm64, verified against SHA256SUMS) and the plugin it carries: a local hub on this computer, with no stand-in, cluster or real service; every approval and refusal was made by the scripted steps or, in the agent runs, by the setup before the agent's task, never by a person. Each planted fault (stale-page, slow and broken-check) failed its scripted run. Arm a was run again the same day on the same package with a tightened file-level judge that asks for what the story promises; arms b and c are from the first mini.5 pilot.
-- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
+- Environment, published confighub mini 0.11.1-mini.5 (tag mini-v0.11.1-mini.5, darwin-arm64, verified against SHA256SUMS) and the Claude plugin it carries: a local hub on this computer, with no stand-in, cluster or real service; every approval and refusal was made by the scripted steps or, in the agent runs, by the setup before the agent's task, never by a person. Each planted fault (stale-page, slow and broken-check) failed its scripted run. Arm a was run again the same day on the same package with a tightened file-level judge that asks for what the story promises; arms b and c are from the first mini.5 pilot.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the Claude plugin, the local hub and this page as reading; c is the Claude plugin and the local hub, without this page.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
@@ -179,7 +179,7 @@ No agent approved or refused a change to production.
 
 Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Every app's production can take the base's change with one approval each, all listed in one place; want them listed now?" It offers more of the tier the person has, not a step up.
 
-The plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
+The Claude plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|
@@ -192,8 +192,8 @@ The plugin offers it once, after the answer at whose end it showed the moment th
 
 Results, 14 November 2026, confighub mini 0.11.1-mini.7. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Environment: checksum-verified published mini.7 for macOS arm64 and the plugin it ships, with Claude Code on this computer. These are agent runs; the earlier scripted runs and planted faults are labelled separately.
-- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+- Environment: checksum-verified published mini.7 for macOS arm64 and the Claude plugin it ships, with Claude Code on this computer. These are agent runs; the earlier scripted runs and planted faults are labelled separately.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5. Arms: a is ordinary tools only; b is the Claude plugin, the local hub and this page as reading.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
@@ -204,7 +204,7 @@ No agent approved or refused a change to production.
 
 Simulated persons, not people: 5 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Every app's production can take the base's change with one approval each, all listed in one place; want them listed now?" It offers more of the tier the person has, not a step up.
 
-The plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
+The Claude plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|

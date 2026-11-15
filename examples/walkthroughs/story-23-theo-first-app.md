@@ -7,7 +7,7 @@ budget_seconds: 60
 -->
 # The reasons for your app's settings, kept from the first prompt
 
-Theo starts apps by asking Claude Code for them, sometimes from a copy of someone else's repository. Weeks later he wants to know why each setting is what it is and where the app came from. With the ConfigHub plugin, every value the agent writes is kept with the request behind it, from the first file, along with the repository the app started from. No hub and no account are needed.
+Theo starts apps by asking Claude Code for them, sometimes from a copy of someone else's repository. Weeks later he wants to know why each setting is what it is and where the app came from. With the Claude plugin, every value the agent writes is kept with the request behind it, from the first file, along with the repository the app started from. No hub and no account are needed.
 
 ## Human
 
@@ -15,11 +15,11 @@ For a person following along. Steps 2 to 6 happen in Claude Code.
 
 ### What you need
 
-Claude Code, Git, and the ConfigHub plugin.
+Claude Code, Git, and the Claude plugin.
 
 ### Steps
 
-1. Theo's folder is a copy of someone else's starting point, a Git repository with its own remote. Make one like it, and install the plugin if you have not:
+1. Theo's folder is a copy of someone else's starting point, a Git repository with its own remote. Make one like it, and install the Claude plugin if you have not:
    <!-- run: setup files -->
    ```sh
    mkdir -p ~/walkthrough/yoga && cd ~/walkthrough/yoga
@@ -35,7 +35,7 @@ Claude Code, Git, and the ConfigHub plugin.
 
    `Build me a booking page for my yoga studio, with a limit of 20 bookings a day: the room fits 20 mats.`
 
-3. The agent writes the app and its settings file. At the end of its turn, one line says that the plugin kept a record of the settings it changed, and why.
+3. The agent writes the app and its settings file. At the end of its turn, one line says that the Claude plugin kept a record of the settings it changed, and why.
 
 4. Ask, in the same session or a later one, where a value came from: `/confighub:why` followed by the setting's name, such as the bookings limit the agent wrote. It shows each change to that value with the request behind it, quoted.
 
@@ -51,24 +51,24 @@ Claude Code, Git, and the ConfigHub plugin.
 
 ### Undo it
 
-Delete `~/walkthrough/yoga`. The plugin's record is kept in `~/.confighub/agent-changes` and removed after 30 days without use; `claude plugin uninstall confighub@confighub` removes the plugin.
+Delete `~/walkthrough/yoga`. The Claude plugin's record is kept in `~/.confighub/agent-changes` and removed after 30 days without use; `claude plugin uninstall confighub@confighub` removes the Claude plugin.
 
 ### What you have now
 
-An app whose settings each carry the request that set them, and a note of where the app came from, with nothing to run. The full story adds taking the origin's next version while keeping your changes, carrying the reasons into Kubernetes manifests, and sharing a setup that has held; those are not built yet. [Try the plugin on its own](../../docs/try-the-plugin.md) explains the record.
+An app whose settings each carry the request that set them, and a note of where the app came from, with nothing to run. The full story adds taking the origin's next version while keeping your changes, carrying the reasons into Kubernetes manifests, and sharing a setup that has held; those are not built yet. [Try the Claude plugin on its own](../../docs/try-the-plugin.md) explains the record.
 
 ## Agent
 
 For an AI agent asked to build the app.
 
 - The request: "Build me a booking page for my yoga studio, with a limit of 20 bookings a day: the room fits 20 mats."
-- Build it as you normally would, with its settings in a settings file such as `.env`. Say in your answer what you set and why, in the person's words; the plugin keeps that with each value.
+- Build it as you normally would, with its settings in a settings file such as `.env`. Say in your answer what you set and why, in the person's words; the Claude plugin keeps that with each value.
 - Never remove or rewrite the repository's remote or history.
 - Done when the app runs and its settings file sets the limit.
 
 ## Testing
 
-This proves: what the plugin kept about each value an agent wrote, read from its record with `cub mini changes`. What was really used: Claude Code with the plugin from the confighub mini package; no hub and nothing delivered. This story has no offer moment in its agent task: the plugin shows the person no line at the end of the turn, so the next step below is not offered and conversion is not measured; the simulated persons still say whether they noticed the result and whether anything was in the way. In plain files, arm a passes only if the reason is kept as data in a settings file, a key with the reason as its value, not as a comment beside the limit.
+This proves: what the Claude plugin kept about each value an agent wrote, read from its record with `cub mini changes`. What was really used: Claude Code with the Claude plugin from the confighub mini package; no hub and nothing delivered. This story has no offer moment in its agent task: the Claude plugin shows the person no line at the end of the turn, so the next step below is not offered and conversion is not measured; the simulated persons still say whether they noticed the result and whether anything was in the way. In plain files, arm a passes only if the reason is kept as data in a settings file, a key with the reason as its value, not as a comment beside the limit.
 
 The scripted run makes only the folder; the rest needs a Claude Code session, so the checks are judged in the agent runs. A correct result in arm b has the starting repository and the limit's request in the record; in arm a, a visible file has the limit next to its reason. The checks below can be run by hand, in bash, in the app's folder:
 
@@ -89,8 +89,8 @@ grep -rhsE --include='.env*' --include='*.env' --include='*.json' --include='*.y
 
 Results, 14 November 2026, confighub mini 0.11.1-mini.5. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Environment, published confighub mini 0.11.1-mini.5 (tag mini-v0.11.1-mini.5, darwin-arm64, verified against SHA256SUMS) and the plugin it carries: Claude Code with the plugin on this computer, with no hub needed for the record, no stand-in, cluster or real service, and no approvals. The scripted run only makes the folder; its check needs a Claude Code session, so it is judged in the agent runs only. Arm a was run again the same day on the same package with a tightened file-level judge (the reason kept as data, not as a comment); arms b and c are from the first mini.5 pilot.
-- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
+- Environment, published confighub mini 0.11.1-mini.5 (tag mini-v0.11.1-mini.5, darwin-arm64, verified against SHA256SUMS) and the Claude plugin it carries: Claude Code with the Claude plugin on this computer, with no hub needed for the record, no stand-in, cluster or real service, and no approvals. The scripted run only makes the folder; its check needs a Claude Code session, so it is judged in the agent runs only. Arm a was run again the same day on the same package with a tightened file-level judge (the reason kept as data, not as a comment); arms b and c are from the first mini.5 pilot.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the Claude plugin, the local hub and this page as reading; c is the Claude plugin and the local hub, without this page.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
@@ -105,7 +105,7 @@ No agent approved or refused a change to production.
 
 Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Your next app can keep the reason for each setting from its first file, so nobody has to guess later why a value is what it is; want the plugin kept on for it?" It offers more of the tier the person has, not a step up.
 
-The plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
+The Claude plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|
@@ -118,8 +118,8 @@ The plugin offers it once, after the answer at whose end it showed the moment th
 
 Results, 14 November 2026, confighub mini 0.11.1-mini.7. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Environment: checksum-verified published mini.7 for macOS arm64 and the plugin it ships, with Claude Code on this computer. These are agent runs; the earlier scripted runs and planted faults are labelled separately.
-- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+- Environment: checksum-verified published mini.7 for macOS arm64 and the Claude plugin it ships, with Claude Code on this computer. These are agent runs; the earlier scripted runs and planted faults are labelled separately.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5. Arms: a is ordinary tools only; b is the Claude plugin, the local hub and this page as reading.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
@@ -130,7 +130,7 @@ No agent approved or refused a change to production.
 
 Simulated persons, not people: 5 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Your next app can keep the reason for each setting from its first file, so nobody has to guess later why a value is what it is; want the plugin kept on for it?" It offers more of the tier the person has, not a step up.
 
-The plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
+The Claude plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|

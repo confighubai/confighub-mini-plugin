@@ -2,7 +2,7 @@
 
 This page is for anyone who opens a GitOps repository they did not write, or have not looked at in a while, and needs to know what it deploys before they or an agent change it.
 
-The walkthrough [the plugin](../examples/walkthroughs/tool-plugin.md) runs `/confighub:inventory` with the plugin's other commands.
+The walkthrough [the Claude plugin](../examples/walkthroughs/tool-plugin.md) runs `/confighub:inventory` with the Claude plugin's other commands.
 
 A GitOps repository is a Git repository that a tool such as Flux or Argo CD reads to decide what runs on your clusters. Its folders do not say which of them reach a cluster. A folder can look deployed and be deployed by nothing. Two environments can differ in values nobody wrote down. And an agent's change to production can sit in a file nobody opens.
 
@@ -66,8 +66,8 @@ In one screen she learns four things she did not know:
 
 ## How to run it
 
-- In Claude Code, with the plugin installed: type `/confighub:inventory` in the repository.
-- In a terminal: from the plugin's folder, run `bin/confighub mini inventory DIR`, where `DIR` is the repository. Without `DIR`, it reads the current folder.
+- In Claude Code, with the Claude plugin installed: type `/confighub:inventory` in the repository.
+- In a terminal: from the Claude plugin's folder, run `bin/confighub mini inventory DIR`, where `DIR` is the repository. Without `DIR`, it reads the current folder.
 
 To compare environments, it builds each Kustomize overlay with `kubectl kustomize` or `kustomize`. If neither is installed, it lists everything else and says that the comparison needs one of them.
 
@@ -94,7 +94,7 @@ When nothing in the repository deploys a folder, it says so. That is not always 
 
 **Values that differ between environments.** For each base with more than one overlay, the overlays are built and compared value by value. Only values that differ are shown, up to twelve for each base. Values that look like passwords, keys or tokens are shown as `(not shown)`.
 
-**Values agents changed.** The latest changes from the plugin's record in this repository: the value, from what to what, when, and the request or reason behind it. `/confighub:why VALUE` shows every recorded change to one value.
+**Values agents changed.** The latest changes from the Claude plugin's record in this repository: the value, from what to what, when, and the request or reason behind it. `/confighub:why VALUE` shows every recorded change to one value.
 
 ## On Flux's and Argo CD's own examples
 
@@ -114,7 +114,7 @@ Here's what the inventory finds in the two example repositories most teams copy:
 
 The inventory tells you what the repository deploys today. It does not keep anything.
 
-- **To keep each environment's values with the reason for each change**, add confighub mini, which is ConfigHub made small enough to run on your laptop. Type `/confighub:install-mini`, then follow [a first run](try-confighub-mini.md).
-- **For the whole team to see the same inventory, and for agents to propose changes that a person approves**, use your organization's ConfigHub. [From the plugin to ConfigHub](from-plugin-to-confighub.md) walks through each step.
+- **To keep each environment's values with the reason for each change**, add the local hub, which is ConfigHub made small enough to run on your laptop. Type `/confighub:install-mini`, then follow [a first run](try-confighub-mini.md).
+- **For the whole team to see the same inventory, and for agents to propose changes that a person approves**, use your organization's shared hub. [From the Claude plugin to ConfigHub](from-plugin-to-confighub.md) walks through each step.
 
 The last line of the inventory names the first of these steps. `CUB_MINI_TIPS=0` turns that line off.

@@ -10,7 +10,7 @@ live_budget_seconds: 1200
 Connect a Vercel app and keep a reason for every approved production setting. Try a personal Hobby project or use the local stand-in without a Vercel account.
 ## Human
 ### What you need
-An unpacked [confighub mini package](../../docs/install-mini.md) and Python 3. Step 8 needs a sign-in to your organization's ConfigHub.
+An unpacked [confighub mini package](../../docs/install-mini.md) and Python 3. Step 8 needs a sign-in to your organization's shared hub.
 ### Steps
 1. Start a hub of your own; it becomes `cub`'s current context. `MINI` is the unpacked package. `CUB_MINI_STARTERS` switches starters on: a starter is a short file that gives one kind of app its usual settings, each with a reason.
    <!-- run: setup -->
@@ -24,7 +24,7 @@ An unpacked [confighub mini package](../../docs/install-mini.md) and Python 3. S
 **Real Hobby project.** For a new Next.js app, use [Next.js on Vercel](../../docs/nextjs-on-vercel.md). For a personal, noncommercial test app, [sign in with the Vercel CLI](https://vercel.com/docs/cli/login), use `vercel teams ls` to find the Hobby scope and set `WALKTHROUGH_VERCEL_SCOPE` to its slug and choose a unique disposable project name. A Pro team can use a disposable project in its own scope. Use a package whose adoption help lists `--live`. Keep the Vercel sign-in with the person or delivery service. A user with direct production access in Vercel can still write there.
 - Create a test app with an `/api/settings` route that returns its `EDGE_CACHE_SECONDS` value (or `baseline` if absent), and write `EDGE_REGION=fra1` in `shop/.env.production`. Run `vercel link --cwd shop --scope "$WALKTHROUGH_VERCEL_SCOPE" --project "$PROJECT"` and `vercel deploy --cwd shop --scope "$WALKTHROUGH_VERCEL_SCOPE" --prod`. Copy the production URL into `URL`; `curl -fsS "$URL/api/settings"` should report the baseline.
 - Run `cub mini adopt shop --live` and read `cub mini receipts shop --setup`. Before the first delivery, run `cub mini approve shop-live/connect` in the owner's context. Set `READER=$(CUB_CONFIG="$PWD/reader" cub context get -o jq=.name)` after the separate reader sign-in in step 4. Grant `shop-delivery` read access to the base order and its attestations using `cub space update shop-base --permission View:serviceaccount:shop-delivery --permission ViewChildren:serviceaccount:shop-delivery`, then use the reader sign-in in step 4.
-- To deliver each approved order, use its exact name as `ORDER`, read `REV=$(cub unit get app --space shop-live -o jq=.Unit.HeadRevisionNum)` as owner, then run the add-on from the separate reader context. Check the production alias with `vercel inspect "$URL" --scope "$WALKTHROUGH_VERCEL_SCOPE" --json` and match its deployment ID to the receipt. Read it with `curl -fsS "$URL/api/settings"`.
+- To deliver each approved order, use its exact name as `ORDER`, read `REV=$(cub unit get app --space shop-live -o jq=.Unit.HeadRevisionNum)` as owner, then run the cub plugin from the separate reader context. Check the production alias with `vercel inspect "$URL" --scope "$WALKTHROUGH_VERCEL_SCOPE" --json` and match its deployment ID to the receipt. Read it with `curl -fsS "$URL/api/settings"`.
   ```sh
   CUB_CONFIG="$PWD/reader" "$MINI/starters/addons/vercel/run" --live --dir "$PWD/shop" \
     --scope "$WALKTHROUGH_VERCEL_SCOPE" --project "$PROJECT" --space shop-live \
@@ -35,7 +35,7 @@ An unpacked [confighub mini package](../../docs/install-mini.md) and Python 3. S
 ```sh
 bash "${WALKTHROUGH_VERCEL_SCRIPT:?set to the path to examples/vercel-hobby.sh}"
 ```
-2. For the no-account path, make the app and its stand-in Vercel project. `shop/.vercel/project.json` links the app to the project, as `vercel link` does. In `shop-project`, `state.json` holds the project's settings, with production in Frankfurt (`fra1`), and `bin/vercel` answers as the `vercel` command does. The script `deliver` sends production's approved settings to the project and prints them. Last, the Vercel add-on, a small program in the package, reads the project's settings into `shop/.env.staging` and `shop/.env.production`.
+2. For the no-account path, make the app and its stand-in Vercel project. `shop/.vercel/project.json` links the app to the project, as `vercel link` does. In `shop-project`, `state.json` holds the project's settings, with production in Frankfurt (`fra1`), and `bin/vercel` answers as the `vercel` command does. The script `deliver` sends production's approved settings to the project and prints them. Last, the Vercel cub plugin, a small program in the package, reads the project's settings into `shop/.env.staging` and `shop/.env.production`.
    <!-- run: app files vercel-fixture -->
    ```sh
    export MINI=/absolute/path/to/unpacked-confighub-mini
@@ -183,8 +183,8 @@ This proves: the real Hobby run checks what the production endpoint serves befor
 Results, 14 November 2026, confighub mini 0.11.1-mini.5. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run: passed, 64 seconds for the steps, within the page's budget of 200; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
-- Environment, Published confighub mini 0.11.1-mini.5 with its own plugin (0.88.0), on this computer, with no Vercel account: a local stand-in for the Vercel project, and hosted ConfigHub (the Kubara organization) for the shared hub. Approvals were scripted: the test script ran the person's approve and deliver commands. This is the no-account path, not a real Vercel deployment. After each run the runner removed the hubs it started and everything it made in the shared hub.
-- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
+- Environment, Published confighub mini 0.11.1-mini.5 with its own plugin (0.88.0), on this computer, with no Vercel account: a local stand-in for the Vercel project, and a shared hub on confighub.com (the Kubara organization) for the shared hub. Approvals were scripted: the test script ran the person's approve and deliver commands. This is the no-account path, not a real Vercel deployment. After each run the runner removed the hubs it started and everything it made in the shared hub.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the Claude plugin, the local hub and this page as reading; c is the Claude plugin and the local hub, without this page.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
@@ -201,7 +201,7 @@ Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing
 
 The real-project offer stays at the "did not change" moment. The backup-approver offer waits for a second reviewer to be needed for production on the shared hub. The saved mini.5 pilot below tested the old backup-approver wording at "did not change"; it did not test this wording or the second-reviewer moment, In a rejudge on two of those saved sessions, four of ten simulated readers wanted to try real Vercel delivery now. None saw the new backup-approver offer because no second reviewer was needed.
 
-The plugin offers each step once after the matching line. Offered is the share of persons shown that step; want it now and later are over them.
+The Claude plugin offers each step once after the matching line. Offered is the share of persons shown that step; want it now and later are over them.
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|
