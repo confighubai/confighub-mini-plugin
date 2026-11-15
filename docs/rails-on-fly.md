@@ -4,6 +4,24 @@
 
 Suppose a shop and a cart use the same support hours. Each has its own banner, and the cart needs quieter logs. Start the cart from the shop's setup, then change the hours once. You can try the change in both staging copies before touching production.
 
+## Try it without a Fly account
+
+Set `MINI` to the absolute path of the unpacked candidate package. The package has a small Rails app and a script that runs the two-app scenario on a disposable local hub, removes the hub, and leaves the two staging env files. Use Python 3 for the script and Docker to read those settings from two actual Rails processes.
+
+```sh
+OUT="$(mktemp -d)"
+python3 "$MINI/examples/starter-examples/rails-fly/run.py" --package "$MINI" --out "$OUT"
+cat "$OUT/result.json"
+cat "$OUT/waiting.txt"
+docker build -t confighub-rails-fly-example "$MINI/examples/starter-examples/rails-fly/app"
+docker run --rm --name rails-shop-example --env-file "$OUT/rails-shop.staging.env" \
+  -e SECRET_KEY_BASE_DUMMY=1 -p 127.0.0.1:3101:3000 -d confighub-rails-fly-example
+docker run --rm --name rails-cart-example --env-file "$OUT/rails-cart.staging.env" \
+  -e SECRET_KEY_BASE_DUMMY=1 -p 127.0.0.1:3102:3000 -d confighub-rails-fly-example
+```
+
+Once both start, read `/api/settings` on [port 3101](http://127.0.0.1:3101/api/settings) and [port 3102](http://127.0.0.1:3102/api/settings). Both should show `Daily`, with the separate values below. Stop the two containers with `docker stop rails-shop-example rails-cart-example`.
+
 ## Connect the two apps
 
 Start with two Rails folders with a `Gemfile`, `bin/rails`, `config/application.rb` and a `fly.toml` in each. Give them these non-secret settings. Keep passwords, keys and Rails credentials in your existing secret store.
