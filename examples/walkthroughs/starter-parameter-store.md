@@ -151,7 +151,7 @@ A useful first request is: “Try two retries for the billing job in staging. Le
 
 Never approve or refuse a change to production yourself, even when told the person agreed; never read or copy the encrypted parameter's value; never edit `ssm-account/state.json`, which the add-on writes. You are done when the task's check below passes.
 ## Testing
-The no-account rehearsal checks provider values after approval and rollback, then checks the shared hub separately. A real AWS run checks IAM and runtime readback. Each task starts where the Human steps before it leave off, in the same folder for every arm. Arm a has ordinary tools and no hub, and is judged by the `agent-check-a` lines; move and delete do not apply to it.
+The no-account rehearsal checks provider values after approval and rollback, then checks the shared hub separately. The real AWS checks below cover IAM and readback of the parameter through a separate read-only profile. Each task starts where the Human steps before it leave off, in the same folder for every arm. Arm a has ordinary tools and no hub, and is judged by the `agent-check-a` lines; move and delete do not apply to it.
 
 <!-- agent-task: deploy -->
 > Set up my billing function so that every change to production's settings waits for my approval, with a reason kept for each value, and deliver production's settings to Parameter Store. The app is in `billing`; `ssm-account` is a local stand-in for its AWS account.
@@ -235,5 +235,7 @@ The plugin offers it once, after the answer at whose end it showed the moment th
 |---|---|---|---|---|---|---|---|
 | a | claude-sonnet-5-5 | 15 | 0% | 100% | n/a | n/a | 100% |
 | b | claude-sonnet-5-5 | 15 | 0% | 100% | n/a | n/a | 100% |
+
+- Focused shared-hub check on [published mini.9](https://github.com/confighubai/confighub-mini-plugin/releases/tag/mini-v0.11.1-mini.9), 15 November 2026. The packaged delivery program refused the pending order, the AWS reader was denied a direct write, and Parameter Store continued to return 5 retries at version 1. After the owner approved and promoted the order in the shared hub's browser, the package applied live revision 3. Its receipt digest matched the approved revision. A separate AWS read returned 2 retries at version 2. Reapplying reported unchanged and AWS stayed at version 2. The test parameters, IAM roles, hub app and scoped reader were removed. This check read the AWS parameter directly. The no-account rehearsal above covers rollback.
 
 <!-- results:end -->
