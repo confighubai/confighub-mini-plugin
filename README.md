@@ -1,27 +1,21 @@
 # ConfigHub for AI agents
 
-**Your coding agent changes staging. You approve production.**
+**See what your coding agent changed and why. Add approval when production is at stake.**
 
-ConfigHub is a small server, called a hub, that keeps a staging copy and a production copy of your app's settings. Each change shows who made it and why. The hub runs on your laptop as confighub mini, or as hosted ConfigHub.
-
-- **Staging moves fast.** Your agents change the staging settings whenever they like.
-- **Production waits for you.** A change to production takes effect only after a person approves it.
-- **Every change has a reason.** The next agent is told what was changed, and why, before it undoes it.
-
-This repository holds the ConfigHub plugin for Claude Code, the easiest way in. It works with Codex too. The plugin records what your agents change and why from the first session, with no hub. When you ask for an app "using ConfigHub", it sets up confighub mini, which is free and needs no account.
-
-New here? Read the [overview](https://confighub.github.io/helm-expt/ai-agents/). Are you an AI agent, or asking one about this project? Have it read [AGENTS.md](AGENTS.md) first.
+Install the ConfigHub plugin to keep a record of settings your agent changes and the reasons it gives. Try it on its own first. When you want your agent to change staging but need to approve changes to production, add a **hub**. The free local hub runs on macOS or Linux with no ConfigHub account, Docker or Kubernetes.
 
 ## Install
 
-You need Claude Code and Git. In a terminal:
+For Claude Code, run these two commands in a terminal:
 
 ```
 claude plugin marketplace add confighubai/confighub-mini-plugin
 claude plugin install confighub@confighub
 ```
 
-It works on macOS and Linux, and needs no Docker. Codex needs [one more command](docs/codex.md). The first time you ask for a hub, the agent downloads confighub mini ([its size](docs/install-mini.md#the-current-release)). You can also install confighub mini without the plugin ([installing confighub mini](docs/install-mini.md)).
+Open a new session and [try the plugin without a hub](docs/try-the-plugin.md). Using Codex? Follow [the Codex setup](docs/codex.md), including its separate hook approval. You can also [install the local hub without a coding agent](docs/install-mini.md).
+
+[Product overview](https://confighub.github.io/helm-expt/ai-agents/) · [Walkthroughs by stack](examples/walkthroughs/README.md) · [Instructions for AI agents](AGENTS.md)
 
 ## Three ways to start
 
@@ -57,9 +51,9 @@ Once agents run for hours, or several of them share an app, you'll want more con
 - **A key for each agent,** with only the rights it needs. It can suggest a production change, but it can't approve one ([agent keys](docs/agents-that-run-for-weeks.md#who-acted-give-the-agent-a-key-of-its-own)).
 - **Approval of the exact change.** Anything that comes after it needs its own approval ([approvals](docs/approvals.md)).
 - **A way to stop them.** Take away one agent's access, or shut the hub down. The agent is cut off at its next request ([stopping an agent](docs/agents-that-run-for-weeks.md#stopping-an-agent)).
-- **A record nobody can quietly edit.** Every change is signed when it's recorded, and one command tells you if anything was edited, added or deleted later ([signed records](docs/signed-records.md)).
-- **Agents asking each other.** When one agent asks another for a change, the hub records who asked ([requests between agents](docs/approvals.md#one-agent-asks-another-for-a-change)).
-- **What it cost.** Every change shows how many tokens the agent spent making it ([model use](docs/how-it-works.md#model-use)).
+- **Signed records.** Verify whether signed entries were altered; some deletions need a copy kept elsewhere ([signed records](docs/signed-records.md)).
+- **Agents asking each other.** On the same hub, `cub mini` can check and record a request from one agent to another ([requests between agents](docs/approvals.md#one-agent-asks-another-for-a-change)).
+- **What it cost.** See token counts for supported sessions in which the client reports usage ([model use](docs/how-it-works.md#model-use)).
 
 ## Starters
 
@@ -112,6 +106,6 @@ The [documentation index](docs/README.md) lists every page, with a line on each.
 
 ## Help and contributing
 
-If something doesn't work, open an [issue](https://github.com/confighubai/confighub-mini-plugin/issues) with the command you ran and what it printed. Fixes to the docs and examples are welcome as pull requests. Changes to `plugins/` belong in an issue.
+If something doesn't work, [report an issue](https://github.com/confighubai/confighub-mini-plugin/issues/new). See [contributing](CONTRIBUTING.md) to fix a guide, share an example or propose a starter.
 
 The plugin is MIT-licensed ([LICENSE](LICENSE)). Third-party licenses are in [`plugins/confighub/THIRD_PARTY_LICENSES.txt`](plugins/confighub/THIRD_PARTY_LICENSES.txt).

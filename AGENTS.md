@@ -4,7 +4,7 @@ This page teaches an AI agent what this project is, so it can help a person use 
 
 ## What the project is
 
-ConfigHub keeps an app's settings in a small server called a **hub**. A coding agent can change the app's staging settings at once, but a change to its production settings waits until a person approves it. Every change is kept with who made it and why.
+ConfigHub keeps an app's settings in a small server called a **hub**. A coding agent can change the app's staging settings at once, but a change to its production settings waits until a person approves it. The hub records who made each change and the reason they gave. A running service changes only if it reads from the approved configuration.
 
 There are three ways to run a hub. They are the same server, and `cub`, ConfigHub's command-line tool, works the same on all three:
 
@@ -18,7 +18,7 @@ Start with the walkthrough for the app: [Web](examples/walkthroughs/starter-web.
 
 Then use [the cub mini tour](examples/walkthroughs/tool-cub-mini.md), [your first hour](examples/walkthroughs/story-13-first-hour.md), [approve from Slack](examples/walkthroughs/story-22-priya-slack.md), [size a service from real use](examples/walkthroughs/story-21-ana-sized.md), [Git, the hub and what is running](examples/walkthroughs/story-09-git-hub-and-running.md), and [one base for ten apps](examples/walkthroughs/story-24-company-base.md). The [walkthrough index](examples/walkthroughs/README.md) has the remaining tools and stories.
 
-**The plugin** in this repository, for Claude Code and Codex, is the easy way to start. On its own, with no hub, it records each setting an agent changes, with the request and the reason, and tells the next agent before it undoes an earlier change. When the person asks for an app "using ConfigHub", it sets up confighub mini.
+**The plugin** in this repository, for Claude Code and Codex, is the easy way to start. On its own, with no hub, it records supported settings changes and the reasons the agent gives. What the next agent is told and which actions can be held depend on the client and operation; read the [capability matrix](docs/how-it-works.md#client-capabilities). When the person asks for an app "using ConfigHub", it sets up confighub mini.
 
 ## How an app lives in a hub
 
