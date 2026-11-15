@@ -24,6 +24,7 @@ The words these pages use, such as *hub*, *base*, *change order* and *Space*, ar
 | [How the plugin works](how-it-works.md) | What agents are told and when, what's recorded and what never is, every setting, and the tokens each change cost |
 | [Approvals](approvals.md) | An agent proposes a change to production and only the person you name approves it, including when one agent asks another for a change |
 | [Starters](starters.md) | Your team's default settings for every new app. Your own values always win. Off unless you switch them on |
+| [Write and check a starter](write-a-starter.md) | Write your first YAML, run the packaged author kit and share the result |
 | [From your laptop to a shared hub](from-plugin-to-confighub.md) | Each step from the plugin to confighub mini to your organization's ConfigHub, and what it adds |
 | [Agents that run for weeks](agents-that-run-for-weeks.md) | A key for each agent, approval of the exact change, stopping an agent, and limiting what it can reach |
 | [Signed records](signed-records.md) | Checking that nobody tampered with the record, and having each agent sign its own changes |
