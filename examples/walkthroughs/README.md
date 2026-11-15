@@ -25,7 +25,7 @@ A starter gives a new app of one kind its usual settings, each with a reason ([s
 | [temporal-worker: Activity retries](starter-temporal-worker.md) | Observe the Temporal worker load an approved retry policy and roll it back | the local hub |
 | [unikraft: an incident banner](starter-unikraft.md) | Approve, roll back and move delivery of a banner on a disposable Unikraft Cloud service | the local hub |
 
-For framework-specific guides, see [Next.js on Vercel](../../docs/nextjs-on-vercel.md) and the [Rails on Fly build preview](../../docs/rails-on-fly.md). The Rails preview runs two apps locally and leaves Fly delivery to you.
+For framework-specific guides, see [Next.js on Vercel](../../docs/nextjs-on-vercel.md) and the [Rails on Fly build preview](../../docs/rails-on-fly.md). The Rails preview includes a local example and a record of what ran on Fly.
 
 ## Then these six
 

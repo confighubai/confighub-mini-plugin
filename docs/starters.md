@@ -1,14 +1,10 @@
 # Starters: the settings a kind of app starts with
 
-A starter gives any kind of app a good starting setup, much like Spring Boot's starters. It is one short file, written for one kind of app, that lists the settings an app of that kind should start with, a value for each, and the reason for that value. When you connect an app of that kind to a hub, the app gets those settings, except where you have set a value yourself. A starter is easy to make: you can read one in a minute, there is no program to write, and one command checks it before anyone uses it. When your team fixes a setting, the fix becomes the starter's next version, so every new app starts with it.
+A starter gives an app its first settings. It’s a short YAML file that tells ConfigHub how to recognize the app, which settings to fill in, and why. Any value you’ve already set stays yours.
 
-ConfigHub keeps your apps' settings, with every change, who made it and why, and holds a change to production until a person approves it. A hub is one running ConfigHub server. It can run on your own computer, as the local hub, or be shared by a team on a network; this page uses the local hub. This page is for someone who gives each new app of one kind the same settings by hand: a time limit, a cache time, two instances, nothing public.
+For example, a team might start every API with a ten-second request limit. If that limit needs to change, the team can put the new value and the reason in the next starter version. New apps get it; existing apps can try it in staging before anyone approves it for production.
 
-To run the whole loop in a few minutes, a reviewer's fixes becoming the starter's next version, follow the walkthrough [each fix becomes where the next app starts](../examples/walkthroughs/story-25-alice-bob-hardened.md).
-
-Starters are an option, switched off unless you switch them on. They come with the local hub ([the current release](install-mini.md#the-current-release)).
-
-You need an unpacked confighub mini package ([install the local hub](install-mini.md)), a terminal, and Python 3 for the author's kit. Everything runs on your machine; no account is used and nothing is sent anywhere.
+[Choose a walkthrough](../examples/walkthroughs/README.md) for your stack, or [try the two-app example](../examples/walkthroughs/story-25-alice-bob-hardened.md) to see one team’s fix reach another app. Starters are off until you switch them on. You’ll need an [unpacked local hub package](install-mini.md). You only need Python 3 to run the author’s checks, and a hosting account only if your walkthrough uses one.
 
 The words on this page, such as *hub*, *base* and *change order*, are explained in [the glossary](README.md#words).
 
@@ -20,7 +16,7 @@ A starter is one short YAML file for one kind of app. It says three things:
 
 - how to recognize that kind of app from the files in its folder, such as `package.json` and `.env`;
 - the settings an app of that kind should have, with a value and a reason for each;
-- what else to set up: production behind your approval, always; and, for an app that a hosting service such as Vercel runs, what delivers production's settings there. On this page such a service is called a **provider**.
+- what else to set up: production behind your approval, always; and, for an app that a hosting service such as Vercel runs, what delivers production's settings there. A hosting service is also called a **provider**.
 
 Here is a starter for a team's Node APIs:
 
@@ -97,7 +93,7 @@ Start with a Next.js app that has `next` in its package dependencies, a `.env.pr
 
 Use the [Next.js guide](nextjs-on-vercel.md) to run a Vercel Preview and leave `APP-live/connect` for owner approval.
 
-The [Rails on Fly build preview](rails-on-fly.md) shows two Rails apps taking one shared change in staging. It requires a build with the new starter and has only run locally.
+The [Rails on Fly preview](rails-on-fly.md) uses one change to update two staging apps. The guide says what we checked on Fly and which build you need.
 
 ## What connecting an app shows
 
