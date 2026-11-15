@@ -25,7 +25,7 @@ Open a new session and [try the plugin without a hub](docs/try-the-plugin.md). U
 
 ## Why this, and why now
 
-1. **People make and run apps by asking agents.** An agent changes settings many times a day, across staging, production and every customer's copy. That is faster than anyone reads a diff.
+1. **People make and run apps by asking agents.** An agent changes settings many times a day, across staging, production and every customer's copy. No one reads diffs that fast.
 2. **So the platform has to come from somewhere else.** Staging, production, promotion, rollback and limits used to come from a platform team or a hosting service. An agent can now write them with the app. But they land in scattered files, the next session overwrites them, and every new app starts from nothing.
 3. **ConfigHub keeps the setup, its changes and their context.** It keeps the setup itself, wherever the app runs, with every change to it and the context for each change: what was asked, and why. That is what durable means. What you and your agents decided is still there for:
    - **the next session**, which starts from what was set and why
@@ -36,7 +36,7 @@ Open a new session and [try the plugin without a hub](docs/try-the-plugin.md). U
 
 ## An example: two apps from one setup
 
-A web shop has two services, a storefront and an orders service.
+A web shop has two services: a storefront and an orders service.
 
 1. **The first app gets a setup.** `cub mini adopt storefront` gives the storefront a staging and a production copy, with the team's settings from a [starter](docs/starters.md), a small YAML file. Each setting has its reason.
 2. **A fix to the first app becomes part of the setup.** A colleague sets a request size limit and a rate limit on production, each with a reason, and adds both to the starter as version 2.
@@ -46,7 +46,7 @@ The walkthrough [Alice ships it, Bob hardens it](examples/walkthroughs/story-25-
 
 ## Works with the tools and services you use
 
-A [starter](docs/starters.md) wires an app into ConfigHub for you. It looks for what the app already uses, then sets up staging and production, puts production behind your approval, and connects delivery. It leaves alone anything you set yourself. That takes one command and one approval.
+A [starter](docs/starters.md) wires an app into ConfigHub for you. It looks for what the app already uses, then sets up staging and production, puts production behind your approval, and connects delivery. It leaves alone what you set yourself. One command and one approval.
 
 - **Where your app runs:** [Web](examples/walkthroughs/starter-web.md), [Vercel](examples/walkthroughs/starter-vercel.md), [AWS Parameter Store](examples/walkthroughs/starter-parameter-store.md), [Argo CD](examples/walkthroughs/starter-kustomize-argocd.md), [Flux](examples/walkthroughs/starter-kustomize-flux.md), [Daytona](examples/walkthroughs/starter-daytona.md), [Temporal worker](examples/walkthroughs/starter-temporal-worker.md) and [Unikraft](examples/walkthroughs/starter-unikraft.md).
 - **Around the app:** Git and GitHub, Vault, Sigstore, SPIFFE, OpenTelemetry, Entire, MCP servers, sandboxes and containers, and Codex ([Integrations](docs/integrations.md) says what you get with each and how far along it is).
