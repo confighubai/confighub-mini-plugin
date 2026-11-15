@@ -105,7 +105,7 @@ You ask your agent to turn on debug logging, and staging and production both rea
 
 `cub` is ConfigHub's command-line tool, and it works with every hub. `cub mini` adds commands that each do a whole job in one step, such as `cub mini adopt` to connect an app and `cub mini approve` to approve a change after showing it to you. Underneath, it runs the same `cub` commands. [`cub mini` and plain `cub`](docs/cub-mini-and-cub.md) lists each one next to the `cub` commands it stands for.
 
-## When agents do real work
+## Upgrade to get more advanced operations and features
 
 Once agents run for hours, or several of them share an app, you'll want more control. A hub gives you:
 
