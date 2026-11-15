@@ -40,15 +40,15 @@ A developer builds a web shop with an agent. Their next app is a cart service.
 
 The walkthrough [Alice ships it, Bob hardens it](examples/walkthroughs/story-25-alice-bob-hardened.md) runs this on your laptop.
 
-## Works with the tools and services you use
+## Starters autowire your app to the tools you use
 
-A [starter](docs/starters.md) wires an app into ConfigHub for you. It looks for what the app already uses, then sets up staging and production, puts production behind your approval, and connects delivery. It leaves alone what you set yourself.
+Use a "[starter](docs/starters.md)" to autowire an app into ConfigHub. A starter looks for what the app already uses, then sets up staging and production, puts production behind your approval, and connects delivery. It leaves alone what you set yourself.
 
 - **Where your app runs:** [Web](examples/walkthroughs/starter-web.md), [Vercel](examples/walkthroughs/starter-vercel.md), [Next.js on Vercel](docs/starters.md#nextjs-on-vercel), [AWS Parameter Store](examples/walkthroughs/starter-parameter-store.md), [Argo CD](examples/walkthroughs/starter-kustomize-argocd.md), [Flux](examples/walkthroughs/starter-kustomize-flux.md), [Daytona](examples/walkthroughs/starter-daytona.md), [Temporal worker](examples/walkthroughs/starter-temporal-worker.md) and [Unikraft](examples/walkthroughs/starter-unikraft.md).
 - **Around the app:** Git and GitHub, Vault, Sigstore, SPIFFE, OpenTelemetry, Entire, MCP servers, sandboxes and containers, and Codex ([Integrations](docs/integrations.md) says what you get with each and how far along it is).
 - **No starter for your stack?** It is one YAML file, and your agent can write it ([write a starter](docs/write-a-starter.md)).
 
-## Platforms were built before the apps. Agents build the app first.
+## Agents + Durable Config = app platform without the pain
 
 Platform engineering builds a platform and fits apps to it. Durable config starts with the app, so the platform grows out of the apps.
 
@@ -76,11 +76,13 @@ ConfigHub doesn't run your app. Your cluster, hosting service or VM still does, 
    The hub refuses an agent's own approval, and it is small enough to sit in every sandbox ([agent keys](docs/agents-that-run-for-weeks.md#who-acted-give-the-agent-a-key-of-its-own)).
 5. **Configuration you can query and build on.** Platform stacks are a template language for each tool: Helm for clusters, Terraform for cloud, env files for hosting services. A change across the fleet is many pull requests. As data, "which version runs where" is one question, and one change is read across all apps, wherever they run. Tools are built on data, not on templates.
 
-## Start from your app
+## Three ways to start
 
-1. **A new app.** You want an app with a staging and a production setup. Ask Claude Code to build it "using ConfigHub" ([a new app](docs/journeys/new-app.md)).
-2. **An app you already have.** Its settings live in `.env` files, Terraform var files, Helm values, or a Kustomize repository that Argo CD or Flux deploys. Ask the agent to "attach ConfigHub to this app". It won't touch your files ([an app you already have](docs/journeys/existing-app.md)).
-3. **Software that comes with ConfigHub inside.** You change it to suit you and keep your changes when the next version arrives ([software with ConfigHub inside](docs/journeys/bundled.md)).
+1. **Make a new app.** Ask Claude Code to build it "using ConfigHub". It writes the app and gives it a staging and a production setup ([a new app](docs/journeys/new-app.md)).
+2. **Attach an app you already have.** Its settings live in `.env` files, Terraform var files, Helm values, or a Kustomize repository that Argo CD or Flux deploys. Ask the agent to "attach ConfigHub to this app". It won't touch your files ([an app you already have](docs/journeys/existing-app.md)).
+3. **Use a starter.** A starter is a ready setup for one kind of app or service, such as a project on Vercel or a repository that Argo CD deploys. It gives your app sensible settings, each with its reason, and connects staging, production and delivery for you ([starters](docs/starters.md)).
+
+Some software comes with a hub inside. You change it to suit you, and keep your changes when its next version arrives ([software with ConfigHub inside](docs/journeys/bundled.md)).
 
 ## A shared hub for your team
 
