@@ -12,7 +12,7 @@ To pick one: start with the starter for your kind of app, then read the six walk
 
 ## Start here: starters
 
-A starter gives a new app of one kind its usual settings, each with a reason ([starters](../../docs/starters.md)). Each starter's walkthrough deploys an app, updates it, undoes the update, moves it to a shared hub, and deletes it; for Daytona, the move is your own step. The Temporal worker and Unikraft walkthroughs include their delivery and rollback checks.
+A starter gives a new app of one kind its usual settings, each with a reason ([starters](../../docs/starters.md)). Start with the walkthrough for your stack. Its Testing section says which steps ran on a real service, which ran locally and what still needs to be tried.
 
 | Starter | What you get | Starts with |
 |---|---|---|
@@ -24,6 +24,8 @@ A starter gives a new app of one kind its usual settings, each with a reason ([s
 | [daytona: a sandbox experiment](starter-daytona.md) | Return a proposed change with its reason and leave production unchanged | the local hub |
 | [temporal-worker: Activity retries](starter-temporal-worker.md) | Observe the Temporal worker load an approved retry policy and roll it back | the local hub |
 | [unikraft: an incident banner](starter-unikraft.md) | Approve, roll back and move delivery of a banner on a disposable Unikraft Cloud service | the local hub |
+
+For framework-specific guides, see [Next.js on Vercel](../../docs/nextjs-on-vercel.md) and the [Rails on Fly build preview](../../docs/rails-on-fly.md). The Rails preview runs two apps locally and leaves Fly delivery to you.
 
 ## Then these six
 
