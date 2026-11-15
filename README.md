@@ -68,7 +68,7 @@ ConfigHub doesn't run your app. Your cluster, hosting service or VM still does, 
 1. **Nothing to build first.** Start with an app. Its staging and production setup can become the starting point for the next app.
 2. **Templates that keep working after day one.** A scaffolded app is a copy made once, so the template's next version never reaches it. Here a [starter](docs/starters.md)'s next version reaches every app made from it, and each app keeps its own values and reasons.
 3. **The reason travels with the value** (for agents). An agent can't ask the platform team why a limit is set as it is. Without the reason it "fixes" the value, and the next agent fixes it back. With the record, the next agent can see why a value was chosen before changing it. [How the Claude plugin works](docs/how-it-works.md).
-4. **Guardrails that hold against agents** (for agents). Give agents a way to test changes and give the owner a separate decision about production:
+4. **Auto-staging and agentic guardrails** (for agents). Give agents a way to test changes and give the owner a separate decision about production:
    - a key of their own
    - a staging copy they can change at once
    - a line they cannot cross
