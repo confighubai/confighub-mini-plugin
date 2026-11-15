@@ -95,7 +95,7 @@ The steps below also need a hub. If none is running, start one with `cub mini in
 
 Start with a Next.js app that has `next` in its package dependencies, a `.env.production` file for the settings you want ConfigHub to manage, and a linked Vercel project. Export `CUB_MINI_STARTERS=on`, then run `cub mini adopt APP --live`. Check that the plan selects `nextjs-vercel` after `vercel`. The starter adds the telemetry setting and its reason wherever you left that setting open.
 
-Use the [Vercel walkthrough](../examples/walkthroughs/starter-vercel.md) for project setup and the review of `APP-live/connect`. A Vercel Preview can run separately from the first production delivery.
+Use the [Next.js guide](nextjs-on-vercel.md) to run a Vercel Preview and leave `APP-live/connect` for owner approval.
 
 ## What connecting an app shows
 
