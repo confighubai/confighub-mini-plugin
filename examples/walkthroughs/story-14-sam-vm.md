@@ -27,9 +27,9 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
    export CUB_CONFIG="$HOME/.confighub-walkthrough"
    unset CUB_CONTEXT
    "$MINI/bin/confighub-mini-app" mini install-plugin "$CUB_CONFIG" >/dev/null
-   cub mini install --name sam --use --arrival no >/dev/null
+   cub mini install --name sam --use >/dev/null
    ```
-   `--arrival no` answers the one question a first install asks: whether a hub may start by itself when an agent works in an app's folder.
+   The walkthrough starts this hub explicitly. It does not change your setting for starting hubs automatically.
 
 2. Sam's service reads its settings from `api/.env`:
    <!-- run: app files -->
@@ -84,8 +84,10 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
    <!-- run: propose -->
    ```sh
    sed -i.bak 's/TIMEOUT_SECONDS=30/TIMEOUT_SECONDS=120/' api/.env && rm api/.env.bak
-   cub --context bot mini upload api --component api --change-desc "Longer timeout for the large model"
-   cub --context bot mini approve api-live --yes || true
+   UPDATE_ORDER_REPORT=$(cub --context bot mini upload api --component api --change-desc "Longer timeout for the large model")
+   printf '%s\n' "$UPDATE_ORDER_REPORT"
+   UPDATE_ORDER=$(printf '%s\n' "$UPDATE_ORDER_REPORT" | sed -nE 's/^.*mini approve (api-base\/upload-[a-z0-9-]+)[[:space:]]*$/\1/p')
+   cub --context bot mini approve "${UPDATE_ORDER:?Find the exact order from the proposal first}" --yes || true
    cub --context bot function set --space api-live --unit app --toolchain AppConfig/Env --change-desc "straight to live" -- set-string-path '*' TIMEOUT_SECONDS 120 || true
    ```
    ```text
@@ -110,7 +112,7 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
    <!-- run: approve -->
    ```sh
    cub mini waiting
-   cub mini approve api-live --note "The large model needs it" --yes >/dev/null
+   cub mini approve "${UPDATE_ORDER:?Find the exact order from the proposal first}" --note "The large model needs it" --yes >/dev/null
    CUB_CONFIG=$VM_CONFIG cub mini pull api --variant live --dir ~/walkthrough/service --restart "echo restarting the api"
    ```
    ```text

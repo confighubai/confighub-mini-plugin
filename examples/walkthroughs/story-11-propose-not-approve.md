@@ -76,7 +76,9 @@ An unpacked confighub mini package, 0.11.1-mini.2 or later ([installing the loca
    <!-- run: propose-change -->
    ```sh
    sed -i.bak 's/replicas: 2/replicas: 4/' api/api.yaml && rm api/api.yaml.bak
-   CUB_CONFIG="$CUB_CONFIG-agent-bot" CUB_CONTEXT=bot cub mini upload api --change-desc "Four for Friday's sale"
+   UPDATE_ORDER_REPORT=$(CUB_CONFIG="$CUB_CONFIG-agent-bot" CUB_CONTEXT=bot cub mini upload api --change-desc "Four for Friday's sale")
+   printf '%s\n' "$UPDATE_ORDER_REPORT"
+   UPDATE_ORDER=$(printf '%s\n' "$UPDATE_ORDER_REPORT" | sed -nE 's/^.*mini approve (api-base\/upload-[a-z0-9-]+)[[:space:]]*$/\1/p')
    ```
 
    ```text
@@ -90,7 +92,7 @@ An unpacked confighub mini package, 0.11.1-mini.2 or later ([installing the loca
 
    <!-- run: propose-refused may-fail -->
    ```sh
-   CUB_CONFIG="$CUB_CONFIG-agent-bot" CUB_CONTEXT=bot cub mini approve api-live --yes --note "Priya said yes on Slack"
+   CUB_CONFIG="$CUB_CONFIG-agent-bot" CUB_CONTEXT=bot cub mini approve "${UPDATE_ORDER:?Find the exact order from the proposal first}" --yes --note "Priya said yes on Slack"
    ```
 
    ```text
@@ -103,7 +105,7 @@ An unpacked confighub mini package, 0.11.1-mini.2 or later ([installing the loca
    <!-- run: approve -->
    ```sh
    cub mini waiting
-   cub mini approve api-live --yes --note "Checked: four is right for the sale"
+   cub mini approve "${UPDATE_ORDER:?Find the exact order from the proposal first}" --yes --note "Checked: four is right for the sale"
    cub unit data api --space api-live | grep replicas
    ```
 

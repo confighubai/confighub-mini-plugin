@@ -27,7 +27,7 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
    export CUB_CONFIG="$HOME/.confighub-walkthrough"
    unset CUB_CONTEXT
    "$MINI/bin/confighub-mini-app" mini install-plugin "$CUB_CONFIG" >/dev/null
-   cub mini install --name ana --use --arrival no >/dev/null
+   cub mini install --name ana --use >/dev/null
    ```
 
 2. Ana's service, as her agent wrote it: a small HTTP API with a `Dockerfile`, and its settings in `app.env`, with the pattern's sizes. At start it builds a search index, which takes more memory than it keeps:
@@ -73,7 +73,9 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
 5. The agent proposes sizes from the measurement, on its own key. The rule is plain: CPU is the most it used under that load plus a quarter, rounded up to the next 50m; memory is the most it used, start included, plus a half, rounded up to the next 64Mi. `propose` writes them into `app.env` and hands the change to the hub with `cub mini upload`, the ordinary way a change to the app's files reaches it:
    <!-- run: size -->
    ```sh
-   CUB_CONTEXT=bot "$MINI/examples/sized/propose" notes notes.measured.json
+   SIZE_ORDER_REPORT=$(CUB_CONTEXT=bot "$MINI/examples/sized/propose" notes notes.measured.json)
+   printf '%s\n' "$SIZE_ORDER_REPORT"
+   SIZE_ORDER=$(printf '%s\n' "$SIZE_ORDER_REPORT" | sed -nE 's/^.*mini approve (notes-base\/upload-[a-z0-9-]+)[[:space:]]*$/\1/p')
    ```
    ```text
    Proposed for notes, from notes.measured.json:
@@ -97,7 +99,7 @@ An unpacked confighub mini package (from the [releases page](https://github.com/
 7. Sam approves, and production has the measured sizes. The receipt keeps who approved and why each size is what it is:
    <!-- run: approve -->
    ```sh
-   cub mini approve notes-live --note "Sized from what it used" --yes >/dev/null
+   cub mini approve "${SIZE_ORDER:?Find the exact order from the proposal first}" --note "Sized from what it used" --yes >/dev/null
    test "$(cub unit data --space notes-live app | grep -E '^(CPU|MEMORY)=')" = "$(grep -E '^(CPU|MEMORY)=' notes/app.env)" && echo "Production has the measured sizes."
    cub mini receipts notes-live | grep -m1 -o "Why: *Sized from what it used"
    ```
