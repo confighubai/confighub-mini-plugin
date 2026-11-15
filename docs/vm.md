@@ -6,7 +6,7 @@ The steps, with every command and what it prints, are in the walkthrough [a serv
 
 ## On a real VM
 
-On the laptop, `cub mini pull-key vm-live api --variant live` makes a service account for the VM, with the right to read `api-live` and nothing else, and prints the commands for the VM. Copy its private key there. Then, on the VM, with confighub mini unpacked:
+On the laptop, `cub mini pull-key vm-live api --variant live` makes a service account for the VM, with the right to read `api-live` and nothing else, and prints the commands for the VM. Copy its private key there. Then, on the VM, with the local hub unpacked:
 
 ```
 cub auth login --new-context --private-key=vm-live.jwk --server http://HUB
@@ -15,7 +15,7 @@ CUB_CONTEXT=vm-live cub mini pull api --variant live --dir /etc/api --restart "s
 
 `--timer 30s` makes the pull a systemd timer: every 30 seconds it writes the copy's files into the service's directory, and restarts the service only when a file changed. A file edited by hand on the VM is named, with what differed, and written over at the next pull.
 
-A hub on a laptop listens on that machine only. The VM reaches it through a tunnel you open, or through your organization's ConfigHub once the work is copied up ([from your laptop to a shared hub](from-plugin-to-confighub.md)); `pull-key` says so when that is the case.
+A hub on a laptop listens on that machine only. The VM reaches it through a tunnel you open, or through your organization's shared hub once the work is copied up ([from your laptop to a shared hub](from-plugin-to-confighub.md)); `pull-key` says so when that is the case.
 
 The package's [VM service example](../examples/vm-service/README.md) runs the same on an existing Linux VM with user systemd, as a check: real HTTP requests to a staging and a production copy, a failed restart retried, and a rollback that waits for a fresh approval.
 

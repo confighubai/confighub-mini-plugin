@@ -1,6 +1,6 @@
 # Working with the tools you already have
 
-This page is for someone who wants to know what the ConfigHub plugin does with a tool they already use, and how far along each one is. The plugin hands each job to the tool made for it, and does not try to replace it.
+This page is for someone who wants to know what the Claude plugin does with a tool they already use, and how far along each one is. The Claude plugin hands each job to the tool made for it, and does not try to replace it.
 
 | Your tool | What you get | How to set it up | Status |
 |---|---|---|---|
@@ -15,9 +15,9 @@ This page is for someone who wants to know what the ConfigHub plugin does with a
 | A monitor or alert | Agents stopped when it fires | Have it run `touch ~/.confighub/halt` on the machine | Works when your monitor runs that command |
 | Sigstore | Checking the record with `cosign` | [Signed records](signed-records.md) | Works |
 | SPIFFE | The record signed with the agent's own workload identity | [Signed records](signed-records.md#signing-with-the-agents-own-identity) | Works |
-| Argo CD and Flux | Clusters deploy what a hub approved | [GitOps over OCI](gitops-over-oci.md) | Works, on a local cluster and on hosted ConfigHub |
+| Argo CD and Flux | Clusters deploy what a hub approved | [GitOps over OCI](gitops-over-oci.md) | Works, on a local cluster and on a shared hub on confighub.com |
 
-**Recording and delivery are separate.** The plugin records supported Vercel and AWS changes. Applying approved hub settings to Vercel has run against a real Hobby project on the published package. The packaged Parameter Store add-on delivered an owner-approved revision from a shared hub to a real AWS test parameter. See the [Parameter Store walkthrough](../examples/walkthroughs/starter-parameter-store.md#testing). Delivery works to files, VM services through file pull, and clusters through Argo CD or Flux; each needs its configured delivery path.
+**Recording and delivery are separate.** The Claude plugin records supported Vercel and AWS changes. Applying approved hub settings to Vercel has run against a real Hobby project on the published package. The packaged Parameter Store cub plugin delivered an owner-approved revision from a shared hub to a real AWS test parameter. See the [Parameter Store walkthrough](../examples/walkthroughs/starter-parameter-store.md#testing). Delivery works to files, VM services through file pull, and clusters through Argo CD or Flux; each needs its configured delivery path.
 
 If you try one of these, we'd like to hear how it went: [open an issue](https://github.com/confighubai/confighub-mini-plugin/issues).
 

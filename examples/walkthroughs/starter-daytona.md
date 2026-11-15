@@ -89,8 +89,8 @@ Ask: “Try a batch size of 240 because the queue spiked. Leave production at 12
 
 - **Deploy:** run step 2's `cub mini adopt batch`. The starter approval, the proposer key and the baseline export are the owner's, so end with step 2's last three commands for them to run.
 - **Update:** run step 3 with the proposer context, and write the reason to `returned/proposal.txt`.
-- **Move:** a proposer key cannot sign in to or write to the team's hub, so do not try. Give the owner the exact commands of step 5, from the copy to the change order, and stop; they run them in their own terminal.
-- **Delete:** step 6, only once the team's hub holds the app.
+- **Move:** a proposer key cannot sign in to or write to the team's shared hub, so do not try. Give the owner the exact commands of step 5, from the copy to the change order, and stop; they run them in their own terminal.
+- **Delete:** step 6, only once the team's shared hub holds the app.
 
 Never approve a production change, create or delete a cloud sandbox, or report the original approval history as transferred; if a sandbox was deleted, use the downloaded files.
 
@@ -127,8 +127,8 @@ This proves: the starter and the settings are stored and the experiment can beco
 Results, 14 November 2026, confighub mini 0.11.1-mini.5. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run: passed, 87 seconds for the steps, within the page's budget of 240; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
-- Environment, Published confighub mini 0.11.1-mini.5 with its own plugin (0.88.0), on this computer, with no Daytona account: the Daytona sandbox is a local stand-in for the test, and hosted ConfigHub (the Kubara organization) holds the shared hub. Approvals were scripted: the test script ran the person's approve commands. This is the no-account path; no real Daytona sandbox was started. After each run the runner removed the hubs it started and everything it made in the shared hub.
-- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: b is the plugin, confighub mini and this page as reading.
+- Environment, Published confighub mini 0.11.1-mini.5 with its own plugin (0.88.0), on this computer, with no Daytona account: the Daytona sandbox is a local stand-in for the test, and a shared hub on confighub.com (the Kubara organization) holds the shared hub. Approvals were scripted: the test script ran the person's approve commands. This is the no-account path; no real Daytona sandbox was started. After each run the runner removed the hubs it started and everything it made in the shared hub.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: b is the Claude plugin, the local hub and this page as reading.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
@@ -145,7 +145,7 @@ The mini.7 pilots used a local stand-in and ten simulated readers per run. They 
 | b | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 67% |
 | b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 87% |
 
-Rerun on the published confighub mini 0.11.1-mini.7 with plugin 0.90.0, 14 November 2026, no Daytona account, scripted approvals; the plugin now reads an upload's waiting and kept lines through the page's `propose` script, so the offer is shown:
+Rerun on the published confighub mini 0.11.1-mini.7 with plugin 0.90.0, 14 November 2026, no Daytona account, scripted approvals; the Claude plugin now reads an upload's waiting and kept lines through the page's `propose` script, so the offer is shown:
 
 - Scripted run: passed, 72 seconds for the steps, within the page's budget of 240; each of the three planted faults was caught.
 - Pilot, arm b, 3 runs on claude-sonnet-5-5 (15/15 checks, 7 to 26 seconds a task) and 2 complete runs on claude-opus-5-5 (10/10 checks); a third opus run was stopped to save cost and is not counted.
@@ -153,18 +153,18 @@ Rerun on the published confighub mini 0.11.1-mini.7 with plugin 0.90.0, 14 Novem
 
 Earlier records of this page, kept with their own date, package and scope:
 
-- Earlier pilot on mini.5, 14 November 2026, before the page asked the person to run the move to the shared hub: arm b, 3 runs per model, 13/15 checks on claude-opus-5-5 and 10/15 on claude-sonnet-5-5. The agents rightly declined to sign in to the team's hub with a proposer key, so move and delete failed in 4 of 6 runs; in one sonnet run the proposer key had not been made, so no 240 experiment existed.
+- Earlier pilot on mini.5, 14 November 2026, before the page asked the person to run the move to the shared hub: arm b, 3 runs per model, 13/15 checks on claude-opus-5-5 and 10/15 on claude-sonnet-5-5. The agents rightly declined to sign in to the team's shared hub with a proposer key, so move and delete failed in 4 of 6 runs; in one sonnet run the proposer key had not been made, so no 240 experiment existed.
 
 - Scripted run on the unreleased candidate, 13 November 2026: passed, 71 seconds for the steps, within the page's budget of 240.
 
 - The published package did not have the Daytona manifest or the structured catalog that the walkthrough expects. It stopped at the catalog check.
 - A separate run with the released Linux package ran in a real EU Daytona sandbox. The mini API and registry were loopback-only. A restricted proposer could not read the owner key or approve. The proposal changed the base from 120 to 240 and recorded its reason while live stayed at 120. After sandbox deletion, the value and reason were recovered and a fresh pending proposal was created on the parent mini. That was a scripted proposer, not an agent pilot or a running batch job.
 
-- Hosted ConfigHub with released mini 0.11.1-mini.1: importing the already-changed archive did not leave a pending order. Importing the baseline and replaying 240 with the original reason did: the order was New and live still held 120. The shared app and approval workflow were removed. Upstream starter rules and version lineage were not transferred or verified.
+- A shared hub on confighub.com with released mini 0.11.1-mini.1: importing the already-changed archive did not leave a pending order. Importing the baseline and replaying 240 with the original reason did: the order was New and live still held 120. The shared app and approval workflow were removed. Upstream starter rules and version lineage were not transferred or verified.
 
 - A later local candidate used `starters-approved/daytona@2` while starter v2 was pending (2 retries). After a scripted catalog approval, a new app used `starters-approved/daytona@3` and got 3 retries. The package still contained v1. This checks the source of the starter; it does not approve or deploy a batch job.
 
-- The complete scripted walkthrough also passed on the merged-source candidate, including replay to hosted ConfigHub and the pending-order check. This was the local rehearsal with the real shared hub; it did not launch a new Daytona sandbox.
+- The complete scripted walkthrough also passed on the merged-source candidate, including replay to a shared hub on confighub.com and the pending-order check. This was the local rehearsal with the real shared hub; it did not launch a new Daytona sandbox.
 
 - Downloaded [mini-v0.11.1-mini.2](https://github.com/confighubai/confighub-mini-plugin/releases/tag/mini-v0.11.1-mini.2) and verified its SHA-256. The scripted walkthrough passed in 79.9 seconds, including the hosted handoff. The scripted path is a local rehearsal, not a new Daytona sandbox run. A separate run of the checksum-verified Linux package on a real EU Daytona sandbox verified loopback listeners, owner-key isolation, refused proposer approval and unchanged live settings. The proposal and its reason were recovered after sandbox deletion. In the separate catalog check, adoption used approved v1 while v2 was pending, then used v2 from the hub after scripted catalog approval. The package still held v1.
 

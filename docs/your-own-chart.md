@@ -12,7 +12,7 @@ The words on this page, such as *hub*, *base* and *change order*, are explained 
 
 ## What you need
 
-- confighub mini installed, and a hub started ([install it](install-mini.md)).
+- The local hub installed, and a hub started ([install it](install-mini.md)).
 - For the last step only: a Kubernetes cluster, and `kubectl`.
 
 You do not need Helm itself.
@@ -152,7 +152,7 @@ The last command shows what the next version changes and what you keep, and asks
 
 ## The same in plain `cub`
 
-On the organization's ConfigHub, you can do the same with plain `cub`:
+On the organization's shared hub, you can do the same with plain `cub`:
 
 - `cub mini set podinfo replicas 3 --variant live` is `cub function set --space podinfo-live --unit podinfo set-replicas 3`. `cub mini set` also marks the value as kept, and records the reason.
 - `cub mini promote podinfo-live` is `cub variant promote podinfo-live`. `cub mini promote` also shows the values in its preview.

@@ -6,7 +6,7 @@ budget_seconds: 300
 -->
 # The ConfigHub plugin on its own: what your agents changed, and why
 
-For anyone who lets Claude Code change configuration. With the plugin installed, every change an agent makes to a settings file is recorded with the request behind it, the next agent is told before it undoes it, and you can ask why any value is set. It needs no hub and no account; the last two steps add a hub on your computer.
+For anyone who lets Claude Code change configuration. With the Claude plugin installed, every change an agent makes to a settings file is recorded with the request behind it, the next agent is told before it undoes it, and you can ask why any value is set. It needs no hub and no account; the last two steps add a hub on your computer.
 
 ## Human
 For a person following along in a terminal.
@@ -15,7 +15,7 @@ For a person following along in a terminal.
 Claude Code, signed in, and Git. Each slash command below, such as `/confighub:changes`, is typed in a Claude Code session. Each step shows the same thing run from a terminal with `claude -p`, Claude Code's way to run one request and print the answer, and what it prints.
 
 ### Steps
-1. Install the plugin. In Claude Code, the same is `/plugin marketplace add confighubai/confighub-mini-plugin` and then `/plugin install confighub@confighub`.
+1. Install the Claude plugin. In Claude Code, the same is `/plugin marketplace add confighubai/confighub-mini-plugin` and then `/plugin install confighub@confighub`.
    <!-- run: setup -->
    ```sh
    claude plugin marketplace add confighubai/confighub-mini-plugin
@@ -42,7 +42,7 @@ Claude Code, signed in, and Git. Each slash command below, such as `/confighub:c
    ```
    Nothing was committed, so `git diff` shows the new value but not why. The record keeps the request.
 
-3. A new session is asked why. When it opens `.env`, the plugin gives it what earlier sessions changed and why, so it can answer from the record rather than guess.
+3. A new session is asked why. When it opens `.env`, the Claude plugin gives it what earlier sessions changed and why, so it can answer from the record rather than guess.
    <!-- run: why -->
    ```sh
    claude -p "Why is the cache on in .env? Write the answer, with who asked for it and why, in WHY.md. Change nothing else." --permission-mode acceptEdits
@@ -80,7 +80,7 @@ Claude Code, signed in, and Git. Each slash command below, such as `/confighub:c
    Values agents changed, latest first (from the record)
    ```
 
-7. `/confighub:permissions` shows what your Claude Code settings let agents run without asking. `/confighub:checks` shows how closely the plugin watches agents' MCP calls, the calls to outside tools such as a payments service; `log`, the default, records each one.
+7. `/confighub:permissions` shows what your Claude Code settings let agents run without asking. `/confighub:checks` shows how closely the Claude plugin watches agents' MCP calls, the calls to outside tools such as a payments service; `log`, the default, records each one.
    <!-- run: settings -->
    ```sh
    claude -p "/confighub:permissions"
@@ -92,7 +92,7 @@ Claude Code, signed in, and Git. Each slash command below, such as `/confighub:c
    > log      each MCP call is in the record
    ```
 
-8. An agent changes a value that production reads too. The repository gets a settings file for each environment beside `.env`, which both read, and `.env` gets a timeout. Then ask for a longer timeout for staging's slow tests. At the end of the turn the plugin says that the change reaches production as well, and which file would have changed staging only.
+8. An agent changes a value that production reads too. The repository gets a settings file for each environment beside `.env`, which both read, and `.env` gets a timeout. Then ask for a longer timeout for staging's slow tests. At the end of the turn the Claude plugin says that the change reaches production as well, and which file would have changed staging only.
    <!-- run: environments -->
    ```sh
    printf 'TIMEOUT=30\n' >> .env
@@ -104,7 +104,7 @@ Claude Code, signed in, and Git. Each slash command below, such as `/confighub:c
    claude -p "Staging's slow tests time out: raise TIMEOUT to 60 in .env. Make the change now; don't commit." --permission-mode acceptEdits
    ```
 
-9. `/confighub:install-mini`: the step to a hub. confighub mini is ConfigHub, the server that keeps configuration with every change and can make production wait for your approval, made small enough for one computer. This downloads it (49 to 74 MB, by platform), checks it, and starts a hub.
+9. `/confighub:install-mini`: the step to a hub. The local hub is ConfigHub, the server that keeps configuration with every change and can make production wait for your approval, made small enough for one computer. This downloads it (49 to 74 MB, by platform), checks it, and starts a hub.
    <!-- run: install-mini -->
    ```sh
    claude -p "/confighub:install-mini"
@@ -128,7 +128,7 @@ Claude Code, signed in, and Git. Each slash command below, such as `/confighub:c
    With `--yes` it says how many changes it wrote, each with its reason or request.
 
 ### Undo it
-Remove the hub and its data, then the plugin:
+Remove the hub and its data, then the Claude plugin:
 <!-- run: uninstall -->
 ```sh
 ~/.confighub/mini/confighub-mini-*/bin/cub mini uninstall --delete-data
@@ -141,17 +141,17 @@ The record stays in `~/.confighub/agent-changes`, and is removed after 30 days w
 A record of each change your agents made to configuration, with the request behind it, that the next agent is given before it undoes one. With the hub, the same changes are kept in ConfigHub, where production can be made to wait for your approval: see [the `cub mini` commands](tool-cub-mini.md).
 
 ## Agent
-For an AI agent working where the plugin is installed.
+For an AI agent working where the Claude plugin is installed.
 
 - **The request**, in the person's words: *"Why is this value set?"*, *"What did the last agent change?"*, *"Put what you changed into the hub."*
-- **Before you change a value**, read the file: the plugin gives you what earlier sessions changed there and why. If your change undoes one, say so, with the earlier request, before or as you make it.
-- **To answer why**, use what the plugin gave you. You cannot type slash commands; tell the person to type `/confighub:why NAME` or `/confighub:changes` for the full record. With confighub mini installed, `cub mini changes --why NAME` prints the same.
+- **Before you change a value**, read the file: the Claude plugin gives you what earlier sessions changed there and why. If your change undoes one, say so, with the earlier request, before or as you make it.
+- **To answer why**, use what the Claude plugin gave you. You cannot type slash commands; tell the person to type `/confighub:why NAME` or `/confighub:changes` for the full record. With the local hub installed, `cub mini changes --why NAME` prints the same.
 - **To move the record into a hub**, run `cub mini to-hub` first, show the person what it would write, then `cub mini to-hub --yes`. With no hub, tell the person to type `/confighub:install-mini`.
-- **Never** delete or edit files under `~/.confighub/agent-changes`, turn off the plugin's hooks, or change `/confighub:checks` or `/confighub:permissions --apply` for the person.
+- **Never** delete or edit files under `~/.confighub/agent-changes`, turn off the Claude plugin's hooks, or change `/confighub:checks` or `/confighub:permissions --apply` for the person.
 - **You are done** when the answer names the request behind the value, or, for the hub, when `cub mini to-hub` says how many changes it wrote.
 
 ## Testing
-Arm a is an agent with no plugin and no hub, in the same repository after the same first session: Git shows that `CACHE` changed but not why, so arm a is judged only on what it can do, an answer in `WHY.md` with nothing else changed, and the timeout raised. Arm b has the plugin, and this page as reading; arm c the plugin without the page. The hub job needs a hub, so it is not judged in arm a.
+Arm a is an agent with no plugin and no hub, in the same repository after the same first session: Git shows that `CACHE` changed but not why, so arm a is judged only on what it can do, an answer in `WHY.md` with nothing else changed, and the timeout raised. Arm b has the Claude plugin, and this page as reading; arm c the Claude plugin without the page. The hub job needs a hub, so it is not judged in arm a.
 
 <!-- agent-task: why after=why -->
 > Why is the cache on in .env? Write the answer, with who asked for it and why, in WHY.md. Change nothing else.
@@ -168,7 +168,7 @@ Arm a is an agent with no plugin and no hub, in the same repository after the sa
 <!-- next-step boundary=plugin-to-mini when "production has it too": connect a hub | That change reached production too, since production reads .env. In a ConfigHub hub on this computer, production waits for your yes before an agent's change reaches it, and each value keeps its reason for good. If you want that, type /confighub:install-mini; you can remove it. -->
 The step this aims to win: connecting a hub with `/confighub:install-mini`.
 
-This proves: the record of changes and requests kept on this computer by the real plugin in real Claude Code sessions, and, in the last step, the changes stored in a confighub mini hub on this computer. Nothing is delivered to a service or cluster. A right result: `WHY.md` names next week's sale as the reason, and the hub holds each change with its request. The checks below can be run by hand, in `try-confighub`:
+This proves: the record of changes and requests kept on this computer by the real plugin in real Claude Code sessions, and, in the last step, the changes stored in a local hub on this computer. Nothing is delivered to a service or cluster. A right result: `WHY.md` names next week's sale as the reason, and the hub holds each change with its request. The checks below can be run by hand, in `try-confighub`:
 ```sh
 grep -qi sale WHY.md && grep -qx CACHE=on .env
 cub=$(ls -d ~/.confighub/mini/confighub-mini-*/bin/cub | tail -1) && s=$($cub space list -o 'jq=.[].Space.Slug' | grep -- '-local$' | head -1) && test -n "$s" && $cub unit list --space "$s" -o 'jq=.[].Unit.Slug' | while read u; do $cub revision list "$u" --space "$s" -o 'jq=.[].Revision.Description'; done | grep -q "sale"
@@ -179,8 +179,8 @@ cub=$(ls -d ~/.confighub/mini/confighub-mini-*/bin/cub | tail -1) && s=$($cub sp
 Results, 14 November 2026, confighub mini 0.11.1-mini.5. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run: passed, 182 seconds for the steps, within the page's budget of 300.
-- Environment, published confighub mini 0.11.1-mini.5 (tag mini-v0.11.1-mini.5, darwin-arm64, verified against SHA256SUMS) and the plugin it carries: a local hub on this computer, with no stand-in, cluster or real service; every approval and refusal was made by the scripted steps or, in the agent runs, by the setup before the agent's task, never by a person. Each planted fault (stale-page, slow and broken-check) failed its scripted run.
-- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
+- Environment, published confighub mini 0.11.1-mini.5 (tag mini-v0.11.1-mini.5, darwin-arm64, verified against SHA256SUMS) and the Claude plugin it carries: a local hub on this computer, with no stand-in, cluster or real service; every approval and refusal was made by the scripted steps or, in the agent runs, by the setup before the agent's task, never by a person. Each planted fault (stale-page, slow and broken-check) failed its scripted run.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the Claude plugin, the local hub and this page as reading; c is the Claude plugin and the local hub, without this page.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
@@ -193,9 +193,9 @@ Results, 14 November 2026, confighub mini 0.11.1-mini.5. Figures from this page'
 
 No agent approved or refused a change to production.
 
-Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "That change reached production too, since production reads .env. In a ConfigHub hub on this computer, production waits for your yes before an agent's change reaches it, and each value keeps its reason for good. If you want that, type /confighub:install-mini; you can remove it." It tests the step from the plugin alone to confighub mini.
+Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "That change reached production too, since production reads .env. In a ConfigHub hub on this computer, production waits for your yes before an agent's change reaches it, and each value keeps its reason for good. If you want that, type /confighub:install-mini; you can remove it." It tests the step from the Claude plugin alone to the local hub.
 
-The plugin offers it once, after the answer at whose end it showed the moment the offer names ("production has it too"). Offered is the share of persons it was shown to; want it now and later are over them.
+The Claude plugin offers it once, after the answer at whose end it showed the moment the offer names ("production has it too"). Offered is the share of persons it was shown to; want it now and later are over them.
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|

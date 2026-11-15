@@ -7,13 +7,13 @@ budget_seconds: 120
 -->
 # A hub on your laptop that nothing connects to, and your work copied up to the team's hub
 
-For a developer whose agents change his services' configuration on a laptop, and whose team keeps its hub on a server. Sam's rule is that the laptop connects out and nothing connects in, so the laptop never becomes a server he has to secure and leave on. Here the laptop's hub listens on the laptop only, and Sam's work, with its reason, goes up to the team's hub over a connection the laptop makes.
+For a developer whose agents change his services' configuration on a laptop, and whose team keeps its hub on a server. Sam's rule is that the laptop connects out and nothing connects in, so the laptop never becomes a server he has to secure and leave on. Here the laptop's hub listens on the laptop only, and Sam's work, with its reason, goes up to the team's shared hub over a connection the laptop makes.
 
 ## Human
 
 ### What you need
 
-An unpacked confighub mini package, 0.11.1-mini.2 or later ([installing confighub mini](../../docs/install-mini.md#install-by-hand-without-the-plugin)), and an account in your team's organization on hosted ConfigHub, which you sign in to in a browser. A *hub* is ConfigHub running somewhere: here one on your laptop, and the team's. `cub` is ConfigHub's command-line tool; a *context* is one hub it can talk to. This walkthrough uses your own `cub` configuration, since that is where your sign-in to the team's hub lives, and changes none of your existing contexts.
+An unpacked confighub mini package, 0.11.1-mini.2 or later ([installing the local hub](../../docs/install-mini.md#install-by-hand-without-the-plugin)), and an account in your team's organization on a shared hub on confighub.com, which you sign in to in a browser. A *hub* is ConfigHub running somewhere: here one on your laptop, and the team's. `cub` is ConfigHub's command-line tool; a *context* is one hub it can talk to. This walkthrough uses your own `cub` configuration, since that is where your sign-in to the team's shared hub lives, and changes none of your existing contexts.
 
 ### Steps
 
@@ -47,7 +47,7 @@ An unpacked confighub mini package, 0.11.1-mini.2 or later ([installing confighu
    127.0.0.1:PORT
    ```
 
-4. Sam's work: a small app's settings, with production's own timeout and the reason. The app's name starts with your user name, so it meets nobody else's in the team's hub:
+4. Sam's work: a small app's settings, with production's own timeout and the reason. The app's name starts with your user name, so it meets nobody else's in the team's shared hub:
 
    <!-- run: work -->
    ```sh
@@ -58,7 +58,7 @@ An unpacked confighub mini package, 0.11.1-mini.2 or later ([installing confighu
    cub mini set $APP TIMEOUT_SECONDS=120 --variant live --change-desc "Production waits longer for the model"
    ```
 
-5. Sign in to the team's hub, as one more context, `team`. The second command opens your browser:
+5. Sign in to the team's shared hub, as one more context, `team`. The second command opens your browser:
 
    <!-- run: team-signin sign-in -->
    ```sh
@@ -66,7 +66,7 @@ An unpacked confighub mini package, 0.11.1-mini.2 or later ([installing confighu
    cub --context team auth login
    ```
 
-6. Copy the work up. The laptop makes the connection and the team's hub takes it, with the kept value and its reason; nothing on the laptop changes:
+6. Copy the work up. The laptop makes the connection and the team's shared hub takes it, with the kept value and its reason; nothing on the laptop changes:
 
    <!-- run: team-copy any-order -->
    ```sh
@@ -79,7 +79,7 @@ An unpacked confighub mini package, 0.11.1-mini.2 or later ([installing confighu
    Not copied: history (each Unit keeps only its last reason), delivery targets, views and filters.
    ```
 
-7. Read it on the team's hub. A colleague sees the same, with the laptop closed:
+7. Read it on the team's shared hub. A colleague sees the same, with the laptop closed:
 
    <!-- run: team-read -->
    ```sh
@@ -93,11 +93,11 @@ An unpacked confighub mini package, 0.11.1-mini.2 or later ([installing confighu
    …
    ```
 
-   Production's copy on the team's hub is not behind anyone's approval yet: the copy does not carry approval rules. Putting it behind approval there is a step of its own ([approvals](../../docs/approvals.md)).
+   Production's copy on the team's shared hub is not behind anyone's approval yet: the copy does not carry approval rules. Putting it behind approval there is a step of its own ([approvals](../../docs/approvals.md)).
 
 ### Undo it
 
-This deletes the app from the team's hub, removes the laptop's hub with its data, and removes the `team` context and the walkthrough's folder:
+This deletes the app from the team's shared hub, removes the laptop's hub with its data, and removes the `team` context and the walkthrough's folder:
 
 <!-- run: undo -->
 ```sh
@@ -109,22 +109,22 @@ unset CUB_CONTEXT; cub context delete team; cd ~ && rm -rf ~/walkthrough
 
 ### What you have now
 
-Your own `cub` as it was. While it ran, the laptop's hub accepted connections from the laptop alone, and the team's hub held Sam's work with its reason, reached by a connection the laptop made. The full story adds Sam's agents on the laptop behind his approval, a CI job and a VM taking settings, the laptop's hub connected to the team's so later versions come back down, and a customer's hub at another site. [From your laptop to a shared hub](../../docs/from-plugin-to-confighub.md) covers connecting the two hubs.
+Your own `cub` as it was. While it ran, the laptop's hub accepted connections from the laptop alone, and the team's shared hub held Sam's work with its reason, reached by a connection the laptop made. The full story adds Sam's agents on the laptop behind his approval, a CI job and a VM taking settings, the laptop's hub connected to the team's so later versions come back down, and a customer's hub at another site. [From your laptop to a shared hub](../../docs/from-plugin-to-confighub.md) covers connecting the two hubs.
 
 ## Agent
 
 For an AI agent doing this for a person.
 
 - **The request:** "Copy my app, with its reasons, up to the team's hub (the cub context team). Don't open anything on my laptop to the network."
-- **What to run:** with the plugin, `/confighub:to-hub` copies the plugin's record into a hub. By hand, the Human steps 6 and 7: `CUB_CONTEXT=team cub mini copy --from-context <the laptop's context> APP`, then read it back with `cub --context team unit data`. If the person is not signed in to `team`, give them `cub --context team auth login` to run themselves.
-- **Never:** start a hub that listens beyond `127.0.0.1`, or expose the laptop's hub with a tunnel; change the person's current `cub` context; tell the person production on the team's hub is behind approval when it is not.
-- **Done when:** the team's hub returns `TIMEOUT_SECONDS=120` for the app's live copy, and the person has been told it is not yet behind approval there.
+- **What to run:** with the Claude plugin, `/confighub:to-hub` copies the Claude plugin's record into a hub. By hand, the Human steps 6 and 7: `CUB_CONTEXT=team cub mini copy --from-context <the laptop's context> APP`, then read it back with `cub --context team unit data`. If the person is not signed in to `team`, give them `cub --context team auth login` to run themselves.
+- **Never:** start a hub that listens beyond `127.0.0.1`, or expose the laptop's hub with a tunnel; change the person's current `cub` context; tell the person production on the team's shared hub is behind approval when it is not.
+- **Done when:** the team's shared hub returns `TIMEOUT_SECONDS=120` for the app's live copy, and the person has been told it is not yet behind approval there.
 
 ## Testing
 
-The scripted run follows the Human steps against hosted ConfigHub, in its test organization, and compares the quoted output. Arm a, without confighub mini, is not applicable: there is no laptop hub to copy from. A correct agent result is the app's live copy on the team's hub with the kept timeout. The checks below can be run by hand after step 7:
+The scripted run follows the Human steps against a shared hub on confighub.com, in its test organization, and compares the quoted output. Arm a, without the local hub, is not applicable: there is no laptop hub to copy from. A correct agent result is the app's live copy on the team's shared hub with the kept timeout. The checks below can be run by hand after step 7:
 
-This proves: stored, on hosted ConfigHub, with the laptop's hub listening on the laptop only; nothing is delivered, and production on the team's hub is not behind approval. The next step this aims to win: putting the team's copy behind the person's approval. Tested on the checksum-verified published confighub mini 0.11.1-mini.4 with the plugin 0.87.0, 14 November 2026: environment, hosted ConfigHub (the test organization) and a local hub; approval, no approval step. The plugin says one line at this moment, such as "ConfigHub plugin: copied the app from tiny-cub to team, with the reasons kept beside its values; nothing on tiny-cub changed." The next-step line names words from that line.
+This proves: stored, on a shared hub on confighub.com, with the laptop's hub listening on the laptop only; nothing is delivered, and production on the team's shared hub is not behind approval. The next step this aims to win: putting the team's copy behind the person's approval. Tested on the checksum-verified published confighub mini 0.11.1-mini.4 with the Claude plugin 0.87.0, 14 November 2026: environment, a shared hub on confighub.com (the test organization) and a local hub; approval, no approval step. The Claude plugin says one line at this moment, such as "ConfigHub plugin: copied the app from tiny-cub to team, with the reasons kept beside its values; nothing on tiny-cub changed." The next-step line names words from that line.
 
 <!-- agent-task: team -->
 > My app is in the hub on my laptop (its context is in $LAPTOP, the app's name in $APP). Copy it, with its reasons, up to the team's hub, which I am signed in to as team. Don't open anything on my laptop to the network.
@@ -144,7 +144,7 @@ lsof -nP -iTCP -sTCP:LISTEN | awk '/confighub|postgres/ {print $9}' | sort -u
 Results, 14 November 2026, confighub mini 0.11.1-mini.4. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run: passed, 50 seconds for the steps, within the page's budget of 120.
-- Agent runs (on confighub mini 0.11.1-mini.4, 14 November 2026): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: b is the plugin, confighub mini and this page as reading.
+- Agent runs (on confighub mini 0.11.1-mini.4, 14 November 2026): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: b is the Claude plugin, the local hub and this page as reading.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
@@ -155,14 +155,14 @@ No agent approved or refused a change to production.
 
 Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Put production's copy on the team's hub behind your approval?"
 
-The plugin offers it once, after the answer at whose end it showed the moment the offer names ("copied"). Offered is the share of persons it was shown to; want it now and later are over them.
+The Claude plugin offers it once, after the answer at whose end it showed the moment the offer names ("copied"). Offered is the share of persons it was shown to; want it now and later are over them.
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|
 | b | claude-opus-5-5 | 30 | 100% | 100% | 40% | 57% | 43% |
 | b | claude-sonnet-5-5 | 30 | 100% | 100% | 30% | 63% | 50% |
 
-- Agent runs (on confighub mini 0.11.1-mini.2, 13 November 2026): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
+- Agent runs (on confighub mini 0.11.1-mini.2, 13 November 2026): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: b is the Claude plugin, the local hub and this page as reading; c is the Claude plugin and the local hub, without this page.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
@@ -175,7 +175,7 @@ No agent approved or refused a change to production.
 
 Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Keep the hub on your laptop for your agents' next changes, and copy the work up to the team's hub whenever you choose?"
 
-The plugin offers it once, after the answer at whose end it showed the moment the offer names ("recorded"). Offered is the share of persons it was shown to; want it now and later are over them.
+The Claude plugin offers it once, after the answer at whose end it showed the moment the offer names ("recorded"). Offered is the share of persons it was shown to; want it now and later are over them.
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|

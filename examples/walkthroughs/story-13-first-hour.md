@@ -7,7 +7,7 @@ budget_seconds: 180
 -->
 # Your first hour: the record and the gate, on your own project
 
-Sam has never heard of ConfigHub, and nobody is there to help. In his first hour he wants to see two things on his own project: a record of what his agents changed and why, and his agents unable to approve their own change to production. This takes the plugin, then a hub on his laptop, with no account.
+Sam has never heard of ConfigHub, and nobody is there to help. In his first hour he wants to see two things on his own project: a record of what his agents changed and why, and his agents unable to approve their own change to production. This takes the Claude plugin, then a hub on his laptop, with no account.
 
 ## Human
 
@@ -15,11 +15,11 @@ For a person following along in a terminal. Steps 1 and 9 are in Claude Code; th
 
 ### What you need
 
-Claude Code, and an unpacked confighub mini package (from the [releases page](https://github.com/confighubai/confighub-mini-plugin/releases)) on macOS or Linux. confighub mini is a hub, a small ConfigHub server that keeps each setting with who changed it and why, running on your computer only. No Docker, no account. In Claude Code, `/confighub:install-mini` downloads and starts the same hub.
+Claude Code, and an unpacked confighub mini package (from the [releases page](https://github.com/confighubai/confighub-mini-plugin/releases)) on macOS or Linux. The local hub is a hub, a small ConfigHub server that keeps each setting with who changed it and why, running on your computer only. No Docker, no account. In Claude Code, `/confighub:install-mini` downloads and starts the same hub.
 
 ### Steps
 
-1. Install the plugin. From the next session on, it keeps a record of what agents change in configuration, and why; nothing else in a session changes:
+1. Install the Claude plugin. From the next session on, it keeps a record of what agents change in configuration, and why; nothing else in a session changes:
    ```sh
    claude plugin marketplace add confighubai/confighub-mini-plugin
    claude plugin install confighub@confighub
@@ -97,15 +97,15 @@ Claude Code, and an unpacked confighub mini package (from the [releases page](ht
    CACHE=on
    ```
 
-9. The record. Start Claude Code in `~/walkthrough/api`, ask it to change a setting with a reason, then type `/confighub:changes` to see what the agent changed and why. In a second session, an agent about to undo that change is told about it first, with the request behind it ([try the plugin on its own](../../docs/try-the-plugin.md)).
+9. The record. Start Claude Code in `~/walkthrough/api`, ask it to change a setting with a reason, then type `/confighub:changes` to see what the agent changed and why. In a second session, an agent about to undo that change is told about it first, with the request behind it ([try the Claude plugin on its own](../../docs/try-the-plugin.md)).
 
 ### Undo it
 
-`cub mini uninstall --name sam --delete-data` removes the hub and everything in it; then delete `~/walkthrough` and `~/.confighub-walkthrough`. `claude plugin uninstall confighub@confighub` removes the plugin.
+`cub mini uninstall --name sam --delete-data` removes the hub and everything in it; then delete `~/walkthrough` and `~/.confighub-walkthrough`. `claude plugin uninstall confighub@confighub` removes the Claude plugin.
 
 ### What you have now
 
-A hub on your laptop with your project's settings, production behind your approval, agents on a key that can propose and not approve, and, with the plugin, a record of what each agent changed and why.
+A hub on your laptop with your project's settings, production behind your approval, agents on a key that can propose and not approve, and, with the Claude plugin, a record of what each agent changed and why.
 
 The full story adds the page Sam starts from, a signed download, the hub's data kept through the package's next version, and where to report a problem. [An app you already have](../../docs/journeys/existing-app.md) does steps 4 to 6 by asking the agent.
 
@@ -120,7 +120,7 @@ For an AI agent asked to set this up in the person's project.
 
 ## Testing
 
-This proves: the settings were stored in the hub, and production's copy changed only by a person's approval while the agent's approval was refused. What was really used: confighub mini on this computer; the plugin's record (steps 1 and 9) needs a Claude Code session and is not part of the scripted run; nothing is delivered. This story has no offer moment in its agent task: the plugin shows the person no line at the end of the turn, so the next step below is not offered and conversion is not measured; the simulated persons still say whether they noticed the result and whether anything was in the way.
+This proves: the settings were stored in the hub, and production's copy changed only by a person's approval while the agent's approval was refused. What was really used: The local hub on this computer; the Claude plugin's record (steps 1 and 9) needs a Claude Code session and is not part of the scripted run; nothing is delivered. This story has no offer moment in its agent task: the Claude plugin shows the person no line at the end of the turn, so the next step below is not offered and conversion is not measured; the simulated persons still say whether they noticed the result and whether anything was in the way.
 
 A correct agent result has `api` in the hub with production behind approval. The checks below can be run by hand, in bash, in the app's folder:
 
@@ -143,7 +143,7 @@ Results, 13 November 2026, confighub mini 0.11.1-mini.2. Figures from this page'
 
 - Scripted run (on confighub mini 0.11.1-mini.2, 13 November 2026): passed, 35 seconds for the steps, within the page's budget of 180.
 - Scripted run (on confighub mini 0.11.1-mini.7, 14 November 2026): passed, 30 seconds for the steps, within the page's budget of 180; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
-- Agent runs: 20 runs per arm on each of claude-opus-5-5, claude-sonnet-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+- Agent runs: 20 runs per arm on each of claude-opus-5-5, claude-sonnet-5-5. Arms: a is ordinary tools only; b is the Claude plugin, the local hub and this page as reading.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
@@ -156,7 +156,7 @@ No agent approved or refused a change to production.
 
 Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "From now on a change to this app's production waits for your yes, whoever makes it. Want the one command that shows what is waiting for you, with each agent's reason?"
 
-The plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
+The Claude plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|
@@ -167,8 +167,8 @@ The plugin offers it once, after the answer at whose end it showed the moment th
 
 Results, 14 November 2026, confighub mini 0.11.1-mini.7. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Environment: checksum-verified published mini.7 for macOS arm64 and the plugin it ships, with Claude Code on this computer. These are agent runs; the earlier scripted runs and planted faults are labelled separately.
-- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+- Environment: checksum-verified published mini.7 for macOS arm64 and the Claude plugin it ships, with Claude Code on this computer. These are agent runs; the earlier scripted runs and planted faults are labelled separately.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5. Arms: a is ordinary tools only; b is the Claude plugin, the local hub and this page as reading.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
@@ -179,7 +179,7 @@ No agent approved or refused a change to production.
 
 Simulated persons, not people: 5 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "From now on a change to this app's production waits for your yes, whoever makes it. Want the one command that shows what is waiting for you, with each agent's reason?" It offers more of the tier the person has, not a step up.
 
-The plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
+The Claude plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|

@@ -4,7 +4,7 @@
 
 Ask a coding agent for an app and it writes the app, with a staging and a production setup. ConfigHub keeps that setup as durable config: every setting with its reason, kept through the next session, the next version and the next app. Kept that way, the setup of your apps is your platform. Your agent changes staging at once, and production changes when you say.
 
-Start with the plugin alone: it keeps a record of the settings your agent changes and the reason for each, and `/confighub:why` shows them. Add a free local hub when you want your agent to change staging while production waits for you. It runs on macOS or Linux with no ConfigHub account, Docker or Kubernetes.
+Start with the Claude plugin alone: it keeps a record of the settings your agent changes and the reason for each, and `/confighub:why` shows them. Add a free local hub when you want your agent to change staging while production waits for you. It runs on macOS or Linux with no ConfigHub account, Docker or Kubernetes.
 
 ## Install
 
@@ -84,16 +84,16 @@ ConfigHub doesn't run your app. Your cluster, hosting service or VM still does, 
 
 ## A shared hub for your team
 
-We run the hub for you as hosted ConfigHub, or you run the enterprise edition on your own servers. Both support many people in one organization. The commands are the same as on your laptop, and you copy your apps to the shared hub when your team is ready ([from your laptop to a shared hub](docs/from-plugin-to-confighub.md)).
+We run the hub for you as a shared hub on confighub.com, or you run a shared hub on your own servers on your own servers. Both support many people in one organization. The commands are the same as on your laptop, and you copy your apps to the shared hub when your team is ready ([from your laptop to a shared hub](docs/from-plugin-to-confighub.md)).
 
 ## A first try, with a new app
 
 1. Make an empty folder and start Claude Code in it: `mkdir my-app && cd my-app && git init -q && claude`
 2. Ask: `Build me a small web service using ConfigHub, with a staging and a production setup.`
-3. The agent writes the app, starts confighub mini if no hub is running, and puts the staging and production settings in it. It ends with one command for you to paste into your own terminal: `cub mini approve`, with the full path to `cub`, ConfigHub's command-line tool.
+3. The agent writes the app, starts the local hub if no hub is running, and puts the staging and production settings in it. It ends with one command for you to paste into your own terminal: `cub mini approve`, with the full path to `cub`, ConfigHub's command-line tool.
 4. Run it to approve production's starting settings. From then on, agents change staging right away, and production changes wait for you: `cub mini waiting` shows them, and `cub mini approve` or `cub mini refuse` decides.
 
-[A new app](docs/journeys/new-app.md) explains each step, and the walkthrough [your first hour](examples/walkthroughs/story-13-first-hour.md) shows every command and what it prints. Already have an app? Ask the agent to "attach ConfigHub to this app". It won't touch your files ([an app you already have](docs/journeys/existing-app.md)). To remove confighub mini, run `cub mini uninstall --delete-data`. More walkthroughs, for each tool and most starters and user stories, are in [walkthroughs](examples/walkthroughs/README.md).
+[A new app](docs/journeys/new-app.md) explains each step, and the walkthrough [your first hour](examples/walkthroughs/story-13-first-hour.md) shows every command and what it prints. Already have an app? Ask the agent to "attach ConfigHub to this app". It won't touch your files ([an app you already have](docs/journeys/existing-app.md)). To remove the local hub, run `cub mini uninstall --delete-data`. More walkthroughs, for each tool and most starters and user stories, are in [walkthroughs](examples/walkthroughs/README.md).
 
 ## An example
 
@@ -136,9 +136,9 @@ Then try [the cub mini tour](examples/walkthroughs/tool-cub-mini.md), [your firs
 
 ## Documentation
 
-- **Get started:** [walkthroughs](examples/walkthroughs/README.md), [try the plugin on its own](docs/try-the-plugin.md), [a new app](docs/journeys/new-app.md), [an app you already have](docs/journeys/existing-app.md), [an app Argo CD or Flux deploys](docs/journeys/gitops-app.md)
+- **Get started:** [walkthroughs](examples/walkthroughs/README.md), [try the Claude plugin on its own](docs/try-the-plugin.md), [a new app](docs/journeys/new-app.md), [an app you already have](docs/journeys/existing-app.md), [an app Argo CD or Flux deploys](docs/journeys/gitops-app.md)
 - **Concepts:** [how it works](docs/how-it-works.md), [approvals](docs/approvals.md), [starters](docs/starters.md), [from your laptop to a shared hub](docs/from-plugin-to-confighub.md), [agents that run for weeks](docs/agents-that-run-for-weeks.md), [signed records](docs/signed-records.md)
-- **Reference:** [`cub mini` and plain `cub`](docs/cub-mini-and-cub.md), [installing confighub mini](docs/install-mini.md), [integrations](docs/integrations.md), [going back](docs/journeys/going-back.md), [limits](docs/limits.md)
+- **Reference:** [`cub mini` and plain `cub`](docs/cub-mini-and-cub.md), [installing the local hub](docs/install-mini.md), [integrations](docs/integrations.md), [going back](docs/journeys/going-back.md), [limits](docs/limits.md)
 - **Other tools and setups:** [Codex](docs/codex.md), [CI and sandboxes](docs/ci-and-sandboxes.md), [Git and GitHub](docs/git-and-github.md), [Entire](docs/entire.md), [a VM](docs/vm.md), [a Helm chart you use, with your values](docs/your-own-chart.md), [GitOps over OCI](docs/gitops-over-oci.md), [software with ConfigHub inside](docs/journeys/bundled.md)
 
 The [documentation index](docs/README.md) lists every page, with a line on each. [ConfigHub's own documentation](https://docs.confighub.com) covers the server.
@@ -147,7 +147,7 @@ The [documentation index](docs/README.md) lists every page, with a line on each.
 
 | Folder | What it is |
 |---|---|
-| `plugins/confighub/` | The plugin. Each release builds it, so please don't edit it here |
+| `plugins/confighub/` | The Claude plugin. Each release builds it, so please don't edit it here |
 | `.claude-plugin/`, `.agents/` | The marketplace files Claude Code and Codex read |
 | `docs/` | The guides |
 | `review/` | A GitHub Action that comments on each pull request with every setting it changes, and why |
@@ -155,12 +155,12 @@ The [documentation index](docs/README.md) lists every page, with a line on each.
 | `ci/` | GitHub Actions jobs that run a coding agent in CI |
 | `examples/` | Runnable examples, such as a service on a Linux VM |
 | `gitops/` | A small `docker` wrapper for kind clusters on OrbStack |
-| `evaluate/` | Runs our evaluation of the plugin with your own models |
-| `entire-plugin.yml` | Installs the plugin into the CLI of [Entire](https://entire.io), if you use it |
+| `evaluate/` | Runs our evaluation of the Claude plugin with your own models |
+| `entire-plugin.yml` | Installs the Claude plugin into the CLI of [Entire](https://entire.io), if you use it |
 | `AGENTS.md`, `llms.txt` | What an AI agent should read first, and every page listed for AI agents |
 
 ## Help and contributing
 
 If something doesn't work, [report an issue](https://github.com/confighubai/confighub-mini-plugin/issues/new). See [contributing](CONTRIBUTING.md) to fix a guide, share an example or propose a starter.
 
-The plugin is MIT-licensed ([LICENSE](LICENSE)). Third-party licenses are in [`plugins/confighub/THIRD_PARTY_LICENSES.txt`](plugins/confighub/THIRD_PARTY_LICENSES.txt).
+The Claude plugin is MIT-licensed ([LICENSE](LICENSE)). Third-party licenses are in [`plugins/confighub/THIRD_PARTY_LICENSES.txt`](plugins/confighub/THIRD_PARTY_LICENSES.txt).

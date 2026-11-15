@@ -13,7 +13,7 @@ For someone who looks after an app that Argo CD deploys from Git, where support 
 
 ### What you need
 
-An unpacked confighub mini package, 0.11.1-mini.2 or later ([installing confighub mini](../../docs/install-mini.md#install-by-hand-without-the-plugin)), Docker (or OrbStack), `kind`, `kubectl`, `git`, `python3`, and internet access for Argo CD and the container images. The kind cluster is named `wsa-live-state` and is deleted at the end. No account. A *hub* is ConfigHub running on your computer; *Argo CD* deploys to a cluster what it is pointed at; *argobot* is ConfigHub's small program on the cluster that tells the hub what is running.
+An unpacked confighub mini package, 0.11.1-mini.2 or later ([installing the local hub](../../docs/install-mini.md#install-by-hand-without-the-plugin)), Docker (or OrbStack), `kind`, `kubectl`, `git`, `python3`, and internet access for Argo CD and the container images. The kind cluster is named `wsa-live-state` and is deleted at the end. No account. A *hub* is ConfigHub running on your computer; *Argo CD* deploys to a cluster what it is pointed at; *argobot* is ConfigHub's small program on the cluster that tells the hub what is running.
 
 ### Steps
 
@@ -121,9 +121,9 @@ For an AI agent doing this for a person.
 
 ## Testing
 
-The scripted run follows the Human steps and compares the quoted output. Arm a, without confighub mini, is not applicable: the takeover and the three columns need the hub. A correct agent result is ACME's cluster as in step 5, before the cleanup. The checks below can be run by hand after step 5:
+The scripted run follows the Human steps and compares the quoted output. Arm a, without the local hub, is not applicable: the takeover and the three columns need the hub. A correct agent result is ACME's cluster as in step 5, before the cleanup. The checks below can be run by hand after step 5:
 
-This proves: a service is running. The real Argo CD on a local kind cluster runs ACME's app from Git, with each kept value and the declared image, after the hub took it over and handed it back. The next step this aims to win: using the takeover for a second app. Tested on the checksum-verified published confighub mini 0.11.1-mini.4 with the plugin 0.87.0, 14 November 2026: environment, the real Argo CD on a local kind cluster, with a local Git server; approval, no approval step. The plugin stays quiet at this page's moment by design, so no offer is made and conversion is not measured. The plugin says one line at the end of a turn in which the hub kept a value with its reason. In this story the hub's work happens inside `./run`, which writes its own report, so the plugin says nothing unless the agent runs `cub` itself. The next-step line names words from that line.
+This proves: a service is running. The real Argo CD on a local kind cluster runs ACME's app from Git, with each kept value and the declared image, after the hub took it over and handed it back. The next step this aims to win: using the takeover for a second app. Tested on the checksum-verified published confighub mini 0.11.1-mini.4 with the Claude plugin 0.87.0, 14 November 2026: environment, the real Argo CD on a local kind cluster, with a local Git server; approval, no approval step. The Claude plugin stays quiet at this page's moment by design, so no offer is made and conversion is not measured. The Claude plugin says one line at the end of a turn in which the hub kept a value with its reason. In this story the hub's work happens inside `./run`, which writes its own report, so the Claude plugin says nothing unless the agent runs `cub` itself. The next-step line names words from that line.
 
 <!-- agent-task: dan -->
 > ACME's app runs from their Git under Argo CD, and support changed things on the cluster with no record. This folder's ./run plays it on a local kind cluster, wsa-live-state (LIVESTATE_CLUSTER is set). Show me what Git says, what the hub holds and what is running, sort each difference into deliberate, drift or Git out of date, and give ACME back their Git with the hub stopped. Leave the cluster running for me to look at.
@@ -145,7 +145,7 @@ kubectl --kubeconfig "$k" -n argocd get applications.argoproj.io web-from-git -o
 Results, 14 November 2026, confighub mini 0.11.1-mini.4. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run: passed, 344 seconds for the steps, within the page's budget of 600.
-- Agent runs (on confighub mini 0.11.1-mini.2, 14 November 2026): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: b is the plugin, confighub mini and this page as reading.
+- Agent runs (on confighub mini 0.11.1-mini.2, 14 November 2026): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: b is the Claude plugin, the local hub and this page as reading.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
@@ -156,7 +156,7 @@ No agent approved or refused a change to production.
 
 Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Take over your next app that Argo CD deploys from Git, and see Git, the hub and the cluster side by side, without restarting it?"
 
-The plugin offers it once, after the answer at whose end it showed the moment the offer names ("recorded"). Offered is the share of persons it was shown to; want it now and later are over them.
+The Claude plugin offers it once, after the answer at whose end it showed the moment the offer names ("recorded"). Offered is the share of persons it was shown to; want it now and later are over them.
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|

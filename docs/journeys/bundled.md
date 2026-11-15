@@ -2,7 +2,7 @@
 
 When an app or Helm chart comes with a hub, you can change its settings to suit how you run it. ConfigHub keeps each of your values with its reason, so the next version can take the vendor's updates and keep what you set yourself.
 
-The words on this page, such as *hub*, *base* and *change order*, are explained in [the glossary](../README.md#words). confighub mini, a hub on one machine, is small enough to travel inside an app's download ([its size](../install-mini.md#the-current-release)).
+The words on this page, such as *hub*, *base* and *change order*, are explained in [the glossary](../README.md#words). The local hub, a hub on one machine, is small enough to travel inside an app's download ([its size](../install-mini.md#the-current-release)).
 
 ## What exists today
 
@@ -22,9 +22,9 @@ If your vendor's software has none of this, the second and third ways in still w
 
 ## An app that starts its own hub
 
-George made a start page for his team. You run your own copy. The example carries no setup of its own: it uses the confighub mini it came in, and starts a hub the first time you run it. You never type a `cub` command.
+George made a start page for his team. You run your own copy. The example carries no setup of its own: it uses the local hub it came in, and starts a hub the first time you run it. You never type a `cub` command.
 
-1. Install confighub mini, if you have not: type `/confighub:install-mini` in Claude Code ([install](../install-mini.md)).
+1. Install the local hub, if you have not: type `/confighub:install-mini` in Claude Code ([install](../install-mini.md)).
 
 2. From the package's folder, `~/.confighub/mini/confighub-mini-VERSION-PLATFORM`, go to the example and open your page:
 

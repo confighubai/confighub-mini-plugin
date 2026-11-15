@@ -1,6 +1,6 @@
 # A first run of confighub mini
 
-This page is for someone trying confighub mini for the first time, on their own machine. confighub mini is a hub, ConfigHub made small enough to run on one machine, with no Docker, no cluster and no account. You install it, try one short story, put your agents' record into the hub if you have one, and tell us how it went.
+This page is for someone trying the local hub for the first time, on their own machine. The local hub is a hub, ConfigHub made small enough to run on one machine, with no Docker, no cluster and no account. You install it, try one short story, put your agents' record into the hub if you have one, and tell us how it went.
 
 The words on this page are explained in [the glossary](README.md#words).
 
@@ -16,11 +16,11 @@ Each walkthrough shows every command and what it prints, and removes what it mad
 - [The `cub mini` commands](../examples/walkthroughs/tool-cub-mini.md): the dozen commands a newcomer needs, on one small app.
 - [Your first hour](../examples/walkthroughs/story-13-first-hour.md): production behind your approval, and an agent's own approval refused.
 
-The package's `START-HERE.txt` lists more stories, and its `./verify` checks, on your machine, the size and speed claimed for confighub mini.
+The package's `START-HERE.txt` lists more stories, and its `./verify` checks, on your machine, the size and speed claimed for the local hub.
 
 ## Put your agents' record into the hub
 
-If you have used the ConfigHub plugin in a repository, its record of what agents changed can go into the hub. Each recorded change becomes a revision, with the request or reason behind it.
+If you have used the Claude plugin in a repository, its record of what agents changed can go into the hub. Each recorded change becomes a revision, with the request or reason behind it.
 
 1. Go to the repository, and see what would be written, without writing it:
 

@@ -25,13 +25,13 @@ The words on this page, such as *hub*, *base* and *change order*, are explained 
 
 ## What it takes
 
-- **The download.** confighub mini ([its size](../install-mini.md#the-current-release)), the first time, into `~/.confighub/mini`. It runs as two processes on this machine. No account and no sign-in.
+- **The download.** the local hub ([its size](../install-mini.md#the-current-release)), the first time, into `~/.confighub/mini`. It runs as two processes on this machine. No account and no sign-in.
 - **Your files.** Not changed. One new file, `.confighub-app`, a note of what the files match in the hub, which you commit. The agent's setup also writes `.claude/settings.local.json`, so that later Claude Code sessions in the repository run on the agent's key, and adds it to `.git/info/exclude`, so Git leaves it out.
 - **For a Kustomize repository,** `kubectl` or `kustomize` on the machine, to render it.
 
 ## What you do
 
-1. Install the plugin ([the README](../../README.md#install)).
+1. Install the Claude plugin ([the README](../../README.md#install)).
 2. Start Claude Code in the app's repository, and ask: *"Attach ConfigHub to this existing app: keep my staging and production values exactly as they are, and make sure an agent cannot change production without my say."*
 3. When the agent is done, run the one command it gives you, in a terminal of your own: `cub mini approve APP-base/adopt`, with `cub`'s full path. It shows what production would take from the shared values and asks you first. For a Kustomize repository, production already holds everything its overlay renders, so adopt may say that nothing waits for your approval; then there is nothing to approve.
 4. Commit `.confighub-app` with the app.
@@ -90,7 +90,7 @@ Your files were never changed, so there is nothing to undo in them. Each way out
 - Your app and its files, unchanged, with `.confighub-app` committed beside them.
 - A hub on this machine with three copies of its settings: the base, with what every environment shares; staging, with its own values, taking each change at once; and live, with its own values, taking a change only when you approve it.
 - A key of the agent's own, `APP-agent`. Claude Code sessions in the repository run on it: they can propose a change to live, and cannot approve it.
-- The plugin's record of what each agent changed, with the request and, where the agent said it, what it chose and why. `CUB_MINI_DECISIONS=0` in Claude Code's settings stops keeping what the agent said.
+- The Claude plugin's record of what each agent changed, with the request and, where the agent said it, what it chose and why. `CUB_MINI_DECISIONS=0` in Claude Code's settings stops keeping what the agent said.
 
 If Argo CD or Flux deploys the app from Git, Git still decides what runs: see [an app that Argo CD or Flux deploys](gitops-app.md). Otherwise, a running service reads live's values only once its [deployment path](../agent-workflow.md#where-the-app-runs) is connected; then check that what it loaded matches the approved live revision ([verification](../approvals.md#verify-the-result)).
 

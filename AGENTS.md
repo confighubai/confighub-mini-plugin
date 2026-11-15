@@ -6,13 +6,13 @@ This page teaches an AI agent what this project is, so it can help a person use 
 
 Start with the person's app. ConfigHub keeps its setup as durable config in a **hub**, with the reason for each change. The next session can use it, and the next app can start from it. Change staging as the person asks. Propose production changes for an owner to approve, and verify what the running service reads.
 
-A local hub runs on the person's own computer with confighub mini. A shared hub runs on confighub.com or the organization's own servers. Use `cub` on either, and move an app to a shared hub when other people or agents need it. [From your laptop to a shared hub](docs/from-plugin-to-confighub.md).
+A local hub runs on the person's own computer. A shared hub runs on confighub.com or the organization's own servers. Use `cub` on either, and move an app to a shared hub when other people or agents need it. [From your laptop to a shared hub](docs/from-plugin-to-confighub.md).
 
 Start with the walkthrough for the app: [Web](examples/walkthroughs/starter-web.md), [Argo CD](examples/walkthroughs/starter-kustomize-argocd.md), [AWS Parameter Store](examples/walkthroughs/starter-parameter-store.md), [Vercel](examples/walkthroughs/starter-vercel.md), [Next.js on Vercel](docs/starters.md#nextjs-on-vercel), [Flux](examples/walkthroughs/starter-kustomize-flux.md), [Daytona](examples/walkthroughs/starter-daytona.md), [Temporal worker](examples/walkthroughs/starter-temporal-worker.md), and [Unikraft](examples/walkthroughs/starter-unikraft.md). Read its Agent section before doing the job for a person.
 
 Then use [the cub mini tour](examples/walkthroughs/tool-cub-mini.md), [your first hour](examples/walkthroughs/story-13-first-hour.md), [approve from Slack](examples/walkthroughs/story-22-priya-slack.md), [size a service from real use](examples/walkthroughs/story-21-ana-sized.md), [Git, the hub and what is running](examples/walkthroughs/story-09-git-hub-and-running.md), and [one base for ten apps](examples/walkthroughs/story-24-company-base.md). The [walkthrough index](examples/walkthroughs/README.md) has the remaining tools and stories.
 
-The **Claude plugin** records settings without a hub. Codex has its own [setup](docs/codex.md). On its own, with no hub, it records supported settings changes and the reasons the agent gives. What the next agent is told and which actions can be held depend on the client and operation; read the [capability matrix](docs/how-it-works.md#client-capabilities). When the person asks for an app "using ConfigHub", it sets up confighub mini.
+The **Claude plugin** records settings without a hub. Codex has its own [setup](docs/codex.md). On its own, with no hub, it records supported settings changes and the reasons the agent gives. What the next agent is told and which actions can be held depend on the client and operation; read the [capability matrix](docs/how-it-works.md#client-capabilities). When the person asks for an app "using ConfigHub", it sets up the local hub.
 
 ## How an app lives in a hub
 
@@ -38,7 +38,7 @@ A value one copy keeps as its own, such as production's database address, is nev
 
 | Command | What it does |
 |---|---|
-| `cub mini install` | Starts confighub mini on this computer |
+| `cub mini install` | Starts the local hub on this computer |
 | `cub mini adopt FOLDER` | Connects an app from its settings files and makes its three copies. The files are not changed |
 | `cub mini upload FOLDER --variant V` | Brings changed files into the hub: staging at once, production as a change order |
 | `cub mini set` | Sets one value in one copy, with the reason |
@@ -47,7 +47,7 @@ A value one copy keeps as its own, such as production's database address, is nev
 | `cub mini try`, `tries` | A copy of the app for one try, kept or dropped |
 | `cub mini secret set` | A secret the app reads and no agent's key can |
 
-In Claude Code, the plugin adds `/confighub:changes`, `/confighub:why NAME`, `/confighub:inventory`, `/confighub:permissions`, `/confighub:checks`, `/confighub:install-mini` and `/confighub:to-hub`.
+In Claude Code, the Claude plugin adds `/confighub:changes`, `/confighub:why NAME`, `/confighub:inventory`, `/confighub:permissions`, `/confighub:checks`, `/confighub:install-mini` and `/confighub:to-hub`.
 
 ## Starters
 
@@ -61,13 +61,13 @@ A starter gives apps of one kind the team's defaults, each with a reason. Use `C
 | How do I start? | [README](README.md), then [a new app](docs/journeys/new-app.md) or [an app you already have](docs/journeys/existing-app.md) |
 | My app is deployed by Argo CD or Flux | [an app Argo CD or Flux deploys](docs/journeys/gitops-app.md) |
 | How do approvals work? | [approvals](docs/approvals.md) |
-| What does the plugin record, and where? | [how it works](docs/how-it-works.md) |
+| What does the Claude plugin record, and where? | [how it works](docs/how-it-works.md) |
 | How do I stop or limit an agent? | [agents that run for weeks](docs/agents-that-run-for-weeks.md) |
 | How do I undo something, or remove it all? | [going back](docs/journeys/going-back.md) |
 | Does it work with my tools? | [integrations](docs/integrations.md) |
 | What doesn't it do? | [limits](docs/limits.md) |
 
-The plugin's own instructions for an agent at work are the skill [app-with-confighub](plugins/confighub/skills/app-with-confighub/SKILL.md).
+The Claude plugin's own instructions for an agent at work are the skill [app-with-confighub](plugins/confighub/skills/app-with-confighub/SKILL.md).
 
 ## If you are changing this repository
 

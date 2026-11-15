@@ -1,8 +1,8 @@
 # Signed records: check that nobody changed them
 
-This page is for a team that relies on the plugin's record of what its agents changed: in a review, an audit or an incident. The record is a file. Anyone who can write to its folder, including an agent told to tidy up, can change a value or a reason afterwards, and nothing would show it. Signing lets anyone check that the record is still as it was written.
+This page is for a team that relies on the Claude plugin's record of what its agents changed: in a review, an audit or an incident. The record is a file. Anyone who can write to its folder, including an agent told to tidy up, can change a value or a reason afterwards, and nothing would show it. Signing lets anyone check that the record is still as it was written.
 
-The plugin signs each **entry** of the record as it writes it: each thing it notes, such as a value changed or a command run. Each signature is linked to the one before, and has a line in the folder's list of signatures, `signatures.jsonl`, beside the folder's **sessions** (one session is one Claude Code conversation; a **turn** is one request in it and the agent's work on it). If an entry is changed, added or taken out after it was signed, or a session is removed or cut back, a check names it.
+The Claude plugin signs each **entry** of the record as it writes it: each thing it notes, such as a value changed or a command run. Each signature is linked to the one before, and has a line in the folder's list of signatures, `signatures.jsonl`, beside the folder's **sessions** (one session is one Claude Code conversation; a **turn** is one request in it and the agent's work on it). If an entry is changed, added or taken out after it was signed, or a session is removed or cut back, a check names it.
 
 Nothing is asked of you or the agent. `CUB_MINI_SIGN=0` turns it off.
 
@@ -37,7 +37,7 @@ Two cases are marked `--` and do not fail the check. An entry from the last minu
 
 ## Checking with standard tools
 
-The signatures use open formats, so you can check them without the plugin:
+The signatures use open formats, so you can check them without the Claude plugin:
 
 - Each signature is an in-toto statement, a standard format for a signed claim about a file.
 - The statement is wrapped in a DSSE envelope, a standard wrapper for a signed payload.
@@ -60,7 +60,7 @@ On a record that hasn't changed, cosign prints `Verified OK`.
 
 ## With a hub: a copy to compare against
 
-ConfigHub is a hub: a place where your configuration is kept, with every change, who made it and why ([ConfigHub docs](https://docs.confighub.com)). A hub is a ConfigHub server. confighub mini is ConfigHub, small, for one machine ([install confighub mini](install-mini.md)). With confighub mini, `CUB_MINI_KEEP_IN_HUB=1` keeps changes in the hub.
+ConfigHub is a hub: a place where your configuration is kept, with every change, who made it and why ([ConfigHub docs](https://docs.confighub.com)). A hub is a ConfigHub server. The local hub is ConfigHub, small, for one machine ([install the local hub](install-mini.md)). With the local hub, `CUB_MINI_KEEP_IN_HUB=1` keeps changes in the hub.
 
 Each change kept in the hub then has an attestation beside its revisions in ConfigHub. An attestation is a statement that ConfigHub stores; this one is of type `AgentRecord`. It holds:
 
@@ -74,7 +74,7 @@ ConfigHub records the attestation with its own time, and never changes it. `--ve
 
 On a laptop, the machine's key is enough: one person, one machine. An agent that runs unattended on a cluster is different. Several agents may share a node, and the platform team, not the agent, decides which of them may act. For that case, the record can be signed with the agent's own workload identity instead of the machine's key.
 
-**Priya's story.** Priya runs the platform team for a GPU training cluster. Every night an agent, `nightly-tuner`, adjusts the batch workers. The cluster gives each workload an identity with SPIRE, and Priya points the plugin at the agent's.
+**Priya's story.** Priya runs the platform team for a GPU training cluster. Every night an agent, `nightly-tuner`, adjusts the batch workers. The cluster gives each workload an identity with SPIRE, and Priya points the Claude plugin at the agent's.
 
 1. **Which agent made this change?** One night the agent raises the workers from 4 to 6. In the morning Marco, who is on call, runs `--verify`. It names the agent, and checks that the cluster's own authority issued its identity:
 
@@ -89,7 +89,7 @@ On a laptop, the machine's key is enough: one person, one machine. An agent that
    NOT  session night-2: not signed since 27 October 10:41: the workload identity expired at 2026-10-27T10:38:26Z
    ```
 
-   The first night's turn still passes: a certificate is checked as of the time it signed, not as of today. The plugin never falls back to the machine's key, because a record signed by the machine would hide that the agent had lost its identity.
+   The first night's turn still passes: a certificate is checked as of the time it signed, not as of today. The Claude plugin never falls back to the machine's key, because a record signed by the machine would hide that the agent had lost its identity.
 
 3. **Someone edits the record.** Marco changes the first night's 6 to a 5 in the file. The check names the turn that no longer matches, and fails.
 
@@ -109,7 +109,7 @@ Each entry is then signed with the identity's key, and the signature carries the
 
 - **It does not sign the agent in to ConfigHub.** An agent that keeps its changes in a hub still signs in with its own ConfigHub key ([agents that run for weeks](agents-that-run-for-weeks.md)).
 - **Withdrawing an identity is not instant.** It takes effect when the agent's current certificate expires.
-- **The agent can read its own key.** The certificate's key is a file in the agent's pod. A program in the agent's container could sign anything with the agent's identity. So the signature shows which identity signed the record, not that the plugin saw everything the agent did.
+- **The agent can read its own key.** The certificate's key is a file in the agent's pod. A program in the agent's container could sign anything with the agent's identity. So the signature shows which identity signed the record, not that the Claude plugin saw everything the agent did.
 - **Only certificates written to files are supported.** Reading them straight from SPIRE's Workload API, and JWT identities, are not.
 
 It works with SPIRE 1.15.5 and spiffe-helper 0.10.1.
@@ -117,7 +117,7 @@ It works with SPIRE 1.15.5 and spiffe-helper 0.10.1.
 ## What it proves, and what it does not
 
 - **It proves** that the record has not changed since each entry was written, by anyone without the key, and which key signed it.
-- **It does not prove** that the hook saw everything the agent did. An agent that acts through something the plugin does not watch leaves nothing to sign.
+- **It does not prove** that the hook saw everything the agent did. An agent that acts through something the Claude plugin does not watch leaves nothing to sign.
 - **The key** is made on your machine, in `~/.confighub/agent-changes/signing/`, the first time it is needed. Whoever can read the key, or run the hook, can make a record again and sign it. The settings that `cub mini require-approval --agent` writes keep the key, with the record, out of the agent's reach.
 - **What a check on this machine cannot show.** Three alterations leave nothing on the machine to compare with, so `--verify` cannot name them:
   - the folder's whole record removed, with its list of signatures;
@@ -125,7 +125,7 @@ It works with SPIRE 1.15.5 and spiffe-helper 0.10.1.
   - a record made again and signed by whoever holds the key.
 
   Each shows only against a copy kept elsewhere at the time: the hub's attestations, for changes kept in a hub; the record committed to the repository; or the changes sent to an OpenTelemetry collector. No command compares them today.
-- **The plugin's own clean-up.** The plugin removes a session 30 days after its last write. A session whose last signature is more than 30 days old can be removed unseen in the same way.
+- **The Claude plugin's own clean-up.** The Claude plugin removes a session 30 days after its last write. A session whose last signature is more than 30 days old can be removed unseen in the same way.
 - **A record made by plugin 0.80.0 or earlier** was signed at the end of each turn, and has no list of signatures. Its signed turns are checked as before. It cannot show a session removed, or cut back to an earlier turn. Entries after its last signature may be a turn that never ended: they are marked `--` for an hour, then `NOT`, and such a record cannot tell which.
 - **Not yet:**
   - putting the digest in Sigstore's public log, for open-source repositories;

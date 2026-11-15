@@ -5,7 +5,7 @@ words. Recording does not need a hub or account. In Codex, run the existing
 [setup command](codex.md) again after updating so fresh sessions get the app workflow
 as well as the recording hooks.
 
-The walkthrough [Theo's first app](../examples/walkthroughs/story-23-theo-first-app.md) shows the plugin keeping the reason for each setting an agent writes, from the first prompt, with no hub; [a new app that fits the team's pattern](../examples/walkthroughs/story-18-dev-intent.md) shows an app asked for with ConfigHub.
+The walkthrough [Theo's first app](../examples/walkthroughs/story-23-theo-first-app.md) shows the Claude plugin keeping the reason for each setting an agent writes, from the first prompt, with no hub; [a new app that fits the team's pattern](../examples/walkthroughs/story-18-dev-intent.md) shows an app asked for with ConfigHub.
 
 ## Start with the app
 
@@ -25,7 +25,7 @@ The shared app workflow helps the agent choose the next step:
 | “Ship this change.” | Propose the exact settings revision and show the owner's approval command. A chat “yes” does not approve it. After approval, delivery and service checks still depend on the connected deployment path. |
 | “Make another app like this, on port 3002.” | Prepare the new app with its own values and offer the first app's base as its pattern. A restricted key cannot create a new app: owner adoption and a new scoped session remain explicit setup steps. Credentials are kept out of the shared setup. |
 | “Have CI use these settings.” | Check reachability and choose read access for a consumer or proposal access for changes. Neither can approve. A local-only hub needs a reachable path before a remote job can use it. |
-| “Let my colleague use this setup.” | Prepare a secret-free export, or copy the app to a shared hub: hosted ConfigHub or the enterprise edition, where many people share one organization. Sharing access or sending the export needs your instruction. |
+| “Let my colleague use this setup.” | Prepare a secret-free export, or copy the app to a shared hub, on confighub.com or on your own servers, where many people share one organization. Sharing access or sending the export needs your instruction. |
 
 When you explicitly ask to use or attach ConfigHub, that is already your setup choice: the agent completes it, using the bundled installer if cub is absent. It does not ask you to choose ConfigHub again. A restricted key still needs the owner setup steps above.
 
@@ -55,7 +55,7 @@ Say this as a direct instruction:
 
 > Don't suggest ConfigHub here.
 
-The plugin acknowledges it and remembers it for this project on this machine, across new
+The Claude plugin acknowledges it and remembers it for this project on this machine, across new
 sessions. Recording, history, safety notices and explicitly requested ConfigHub actions
 continue. A generic “no”, quoted example or “don't install yet” is not saved as a project
 preference. To enable relevant suggestions again, say:
@@ -73,8 +73,8 @@ A hub can also start without your asking, to keep the settings files of an app a
 works on (`.env`, `.env.staging`, `.env.production`) as a staging and a production copy.
 This is off until you say yes to one question at setup.
 
-**The question.** The first time you set up confighub mini in a terminal, with
-`bin/confighub mini get` from the plugin, `cub mini install` or
+**The question.** The first time you set up the local hub in a terminal, with
+`bin/confighub mini get` from the Claude plugin, `cub mini install` or
 `cub mini require-approval --agent`, it asks:
 
 ```
@@ -129,7 +129,7 @@ the hub and every app it holds, not this folder's alone. What this does not cove
 An app can run on your own machine, on another machine, in a CI job, on one sandbox node or
 across many, in a shared development cluster, and onward through staging to production. Each
 is a useful place to start or stay. A CI test or a temporary sandbox doesn't need to become a
-production service. The plugin and a hub can help before you use Kubernetes
+production service. The Claude plugin and a hub can help before you use Kubernetes
 ([before you use Kubernetes](from-plugin-to-confighub.md#before-you-use-kubernetes)).
 
 An app can have several running copies, each with its own settings and lifetime. Several

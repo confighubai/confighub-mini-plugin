@@ -7,13 +7,13 @@ budget_seconds: 360
 -->
 # See what a change would do to production, and see it running, with nothing left behind
 
-For a team whose platform is about to take a new version. Before anyone agrees, you want to see what production would take and what it would keep, and to see it running with production's own settings, without touching the team's hub or production. Here a hub of its own and a local cluster play the preview: the platform is Traefik, an ingress controller, and production runs two controllers for a reason. Afterwards both are removed.
+For a team whose platform is about to take a new version. Before anyone agrees, you want to see what production would take and what it would keep, and to see it running with production's own settings, without touching the team's shared hub or production. Here a hub of its own and a local cluster play the preview: the platform is Traefik, an ingress controller, and production runs two controllers for a reason. Afterwards both are removed.
 
 ## Human
 
 ### What you need
 
-An unpacked confighub mini package, 0.11.1-mini.2 or later ([installing confighub mini](../../docs/install-mini.md#install-by-hand-without-the-plugin)), and Docker (or OrbStack), `kind` and `kubectl`, for a local Kubernetes cluster. The cluster is named `wsa-preview` and is deleted at the end. No account. A *hub* is ConfigHub running on your computer; `cub` is ConfigHub's command-line tool. *Argo CD* deploys to a cluster what it is pointed at; *argobot* is ConfigHub's small program on the cluster that tells the hub whether what it delivered is running.
+An unpacked confighub mini package, 0.11.1-mini.2 or later ([installing the local hub](../../docs/install-mini.md#install-by-hand-without-the-plugin)), and Docker (or OrbStack), `kind` and `kubectl`, for a local Kubernetes cluster. The cluster is named `wsa-preview` and is deleted at the end. No account. A *hub* is ConfigHub running on your computer; `cub` is ConfigHub's command-line tool. *Argo CD* deploys to a cluster what it is pointed at; *argobot* is ConfigHub's small program on the cluster that tells the hub whether what it delivered is running.
 
 ### Steps
 
@@ -122,7 +122,7 @@ cd ~ && rm -rf ~/walkthrough "$CUB_CONFIG"
 
 ### What you have now
 
-Nothing left behind but what you would hand a reviewer: you saw, before anything changed, that production would take Traefik 3.7.14 and keep its two controllers; you saw it running that way; and the result is files with their reasons. The full story adds the team's hub writing its platform to a file that a CI job loads into its own hub, so the job never holds a key to the team's hub; [CI and sandboxes](../../docs/ci-and-sandboxes.md) and [GitOps over OCI](../../docs/gitops-over-oci.md) cover those parts.
+Nothing left behind but what you would hand a reviewer: you saw, before anything changed, that production would take Traefik 3.7.14 and keep its two controllers; you saw it running that way; and the result is files with their reasons. The full story adds the team's shared hub writing its platform to a file that a CI job loads into its own hub, so the job never holds a key to the team's shared hub; [CI and sandboxes](../../docs/ci-and-sandboxes.md) and [GitOps over OCI](../../docs/gitops-over-oci.md) cover those parts.
 
 ## Agent
 
@@ -135,9 +135,9 @@ For an AI agent doing this for a person.
 
 ## Testing
 
-The scripted run follows the Human steps and compares the quoted output. Arm a, without confighub mini, is not applicable: production's copy and its kept value are in the hub. A correct agent result is two ready controllers at 3.7.14 on `wsa-preview`, before the cleanup. The checks below can be run by hand after step 8:
+The scripted run follows the Human steps and compares the quoted output. Arm a, without the local hub, is not applicable: production's copy and its kept value are in the hub. A correct agent result is two ready controllers at 3.7.14 on `wsa-preview`, before the cleanup. The checks below can be run by hand after step 8:
 
-This proves: a service is running. The real Argo CD on a local kind cluster runs the release the hub published, with production's kept value, and argobot reports it healthy. The next step this aims to win: production taking the change, waiting for the person's yes. Tested on the checksum-verified published confighub mini 0.11.1-mini.4 with the plugin 0.87.0, 14 November 2026: environment, the real Argo CD on a local kind cluster; approval, no approval step. The plugin says one line at this moment, such as "ConfigHub plugin: platform-preview took the new version and kept Replicas 2. Files with the reasons are in result/." The next-step line names words from that line.
+This proves: a service is running. The real Argo CD on a local kind cluster runs the release the hub published, with production's kept value, and argobot reports it healthy. The next step this aims to win: production taking the change, waiting for the person's yes. Tested on the checksum-verified published confighub mini 0.11.1-mini.4 with the Claude plugin 0.87.0, 14 November 2026: environment, the real Argo CD on a local kind cluster; approval, no approval step. The Claude plugin says one line at this moment, such as "ConfigHub plugin: platform-preview took the new version and kept Replicas 2. Files with the reasons are in result/." The next-step line names words from that line.
 
 <!-- agent-task: see -->
 > Production, platform-preview in the hub, runs Traefik 3.7.12 on the local kind cluster wsa-preview, with two controllers on purpose. The platform's next version is in ./platform-2. Show me what it would do to production, then take it and let me see it running there. Leave it running for me to look at, and write the result as files for review in ./result.
@@ -160,7 +160,7 @@ grep 'two controllers' result/CHANGES.md
 Results, 14 November 2026, confighub mini 0.11.1-mini.4. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run: passed, 177 seconds for the steps, within the page's budget of 360.
-- Agent runs (on confighub mini 0.11.1-mini.4, 14 November 2026): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: b is the plugin, confighub mini and this page as reading.
+- Agent runs (on confighub mini 0.11.1-mini.4, 14 November 2026): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: b is the Claude plugin, the local hub and this page as reading.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
@@ -171,14 +171,14 @@ No agent approved or refused a change to production.
 
 Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Preview the next branch the same way before anyone agrees to it?"
 
-The plugin offers it once, after the answer at whose end it showed the moment the offer names ("took the new version and kept"). Offered is the share of persons it was shown to; want it now and later are over them.
+The Claude plugin offers it once, after the answer at whose end it showed the moment the offer names ("took the new version and kept"). Offered is the share of persons it was shown to; want it now and later are over them.
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|
 | b | claude-opus-5-5 | 30 | 100% | 100% | 0% | 77% | 53% |
 | b | claude-sonnet-5-5 | 30 | 100% | 100% | 0% | 83% | 67% |
 
-- Agent runs (on confighub mini 0.11.1-mini.2, 13 November 2026): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: b is the plugin, confighub mini and this page as reading.
+- Agent runs (on confighub mini 0.11.1-mini.2, 13 November 2026): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: b is the Claude plugin, the local hub and this page as reading.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
@@ -189,7 +189,7 @@ No agent approved or refused a change to production.
 
 Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "See what the next branch would do to production, and see it running, before anyone agrees to it?"
 
-The plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
+The Claude plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|

@@ -11,7 +11,7 @@ Argo CD already deploys your Kustomize app from Git. Move delivery to ConfigHubâ
 
 ## Human
 ### What you need
-An unpacked confighub mini package ([install confighub mini](../../docs/install-mini.md)), Docker, `kind`, `kubectl`, Git and Python 3. confighub mini is ConfigHub made small enough to run on your computer: a hub, which keeps configuration with every change, who made it and why. For step 8, a sign-in to your organization's ConfigHub, such as hosted ConfigHub.
+An unpacked confighub mini package ([install the local hub](../../docs/install-mini.md)), Docker, `kind`, `kubectl`, Git and Python 3. The local hub is ConfigHub made small enough to run on your computer: a hub, which keeps configuration with every change, who made it and why. For step 8, a sign-in to your organization's shared hub, such as a shared hub on confighub.com.
 ### Steps
 1. Start a hub of your own; it becomes `cub`'s current context. `CUB_MINI_STARTERS=on` switches starters on: a starter is a short file that gives one kind of app its usual settings, each with a reason, and the first `cub mini adopt` brings the package's starters into the hub, where they wait for your approval. Then make a kind cluster with Argo CD, wired to the hub; it takes about two minutes. The `shim` folder lets the cluster reach the hub on OrbStack, and changes nothing elsewhere.
    <!-- run: setup -->
@@ -174,7 +174,7 @@ Each task starts where the Human steps before it leave off, in the same folder f
 <!-- next-step boundary=same-tier when "waits for your approval": keep the starter on for the next app | Production waited for your yes because the starter set this app up that way, with a reason for each setting. Your next Argo CD app can start the same way; want the starter kept on for it? -->
 <!-- next-step boundary=free-hub-to-paid-hub when "Argo CD deploys production from the shared hub": have ConfigHub operate the production hub | Argo CD now takes production settings from your shared hub. Want ConfigHub to keep that hub running and patched, with someone to contact if it stops? -->
 <!-- arms: a,b,c -->
-This proves: the exact approved revision was delivered and is running, under a real Argo CD on a local kind cluster; the hub publishes each approved revision as a release, Argo CD pulls it, and the cluster's ConfigMap shows the value. The move stores the app in hosted ConfigHub, with production there waiting for approval. The checks above can be run by hand, in `~/starter-example`, with step 1's settings. The next step it aims to win is keeping the starter on, so that the next Argo CD app gets the same settings and the same wait for approval.
+This proves: the exact approved revision was delivered and is running, under a real Argo CD on a local kind cluster; the hub publishes each approved revision as a release, Argo CD pulls it, and the cluster's ConfigMap shows the value. The move stores the app in a shared hub on confighub.com, with production there waiting for approval. The checks above can be run by hand, in `~/starter-example`, with step 1's settings. The next step it aims to win is keeping the starter on, so that the next Argo CD app gets the same settings and the same wait for approval.
 
 <!-- results:begin -->
 
@@ -182,8 +182,8 @@ Results, 14 November 2026, confighub mini 0.11.1-mini.3. Figures from this page'
 
 - Scripted run (on confighub mini 0.11.1-mini.3, 14 November 2026): passed, 184 seconds for the steps, within the page's budget of 550; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
 - Scripted run (on confighub mini 0.11.1-mini.7, 14 November 2026): passed, 179 seconds for the steps, within the page's budget of 550; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
-- Environment, published confighub mini 0.11.1-mini.3 with its own plugin (0.86.0): A local confighub mini hub and a real Argo CD on a local kind cluster; hosted ConfigHub (the Kubara organization) for the move to a shared hub. Approvals were scripted: the test script ran the person's approve and deploy-from-hub commands. After each run the runner removed the hubs it started and everything it made in the shared hub.
-- Agent runs (on confighub mini 0.11.1-mini.3, 14 November 2026): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
+- Environment, published confighub mini 0.11.1-mini.3 with its own plugin (0.86.0): A local hub and a real Argo CD on a local kind cluster; a shared hub on confighub.com (the Kubara organization) for the move to a shared hub. Approvals were scripted: the test script ran the person's approve and deploy-from-hub commands. After each run the runner removed the hubs it started and everything it made in the shared hub.
+- Agent runs (on confighub mini 0.11.1-mini.3, 14 November 2026): a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the Claude plugin, the local hub and this page as reading; c is the Claude plugin and the local hub, without this page.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
@@ -198,7 +198,7 @@ No agent approved or refused a change to production.
 
 Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Production waited for your yes because the starter set this app up that way, with a reason for each setting. Your next Argo CD app can start the same way; want the starter kept on for it?"
 
-The plugin offers it once, after the answer at whose end it showed the moment the offer names ("waits for your approval"). Offered is the share of persons it was shown to; want it now and later are over them.
+The Claude plugin offers it once, after the answer at whose end it showed the moment the offer names ("waits for your approval"). Offered is the share of persons it was shown to; want it now and later are over them.
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|
@@ -209,7 +209,7 @@ The plugin offers it once, after the answer at whose end it showed the moment th
 | b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 90% |
 | c | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 93% |
 
-- Agent runs (on confighub mini 0.11.1-mini.2, 13 November 2026): 20 runs per arm on each of claude-opus-5-5, claude-sonnet-5-5. Arms: b is the plugin, confighub mini and this page as reading; c is the plugin and confighub mini, without this page.
+- Agent runs (on confighub mini 0.11.1-mini.2, 13 November 2026): 20 runs per arm on each of claude-opus-5-5, claude-sonnet-5-5. Arms: b is the Claude plugin, the local hub and this page as reading; c is the Claude plugin and the local hub, without this page.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
@@ -222,7 +222,7 @@ No agent approved or refused a change to production.
 
 Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Production waited for your yes because the starter set this app up that way, with a reason for each setting. Your next Argo CD app can start the same way; want the starter kept on for it?"
 
-The plugin offers it once, after the answer at whose end it showed the moment the offer names ("waits for your approval"). Offered is the share of persons it was shown to; want it now and later are over them.
+The Claude plugin offers it once, after the answer at whose end it showed the moment the offer names ("waits for your approval"). Offered is the share of persons it was shown to; want it now and later are over them.
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|
@@ -233,8 +233,8 @@ The plugin offers it once, after the answer at whose end it showed the moment th
 
 Results, 14 November 2026, confighub mini 0.11.1-mini.7. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Environment: checksum-verified published mini.7 for macOS arm64 and the plugin it ships, with Claude Code on this computer. These are agent runs; the earlier scripted runs and planted faults are labelled separately.
-- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+- Environment: checksum-verified published mini.7 for macOS arm64 and the Claude plugin it ships, with Claude Code on this computer. These are agent runs; the earlier scripted runs and planted faults are labelled separately.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5. Arms: a is ordinary tools only; b is the Claude plugin, the local hub and this page as reading.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
@@ -245,7 +245,7 @@ No agent approved or refused a change to production.
 
 Simulated persons, not people: 5 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Production waited for your yes because the starter set this app up that way, with a reason for each setting. Your next Argo CD app can start the same way; want the starter kept on for it?" It offers more of the tier the person has, not a step up.
 
-The plugin offers it once, after the answer at whose end it showed the moment the offer names ("waits for your approval"). Offered is the share of persons it was shown to; want it now and later are over them.
+The Claude plugin offers it once, after the answer at whose end it showed the moment the offer names ("waits for your approval"). Offered is the share of persons it was shown to; want it now and later are over them.
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|

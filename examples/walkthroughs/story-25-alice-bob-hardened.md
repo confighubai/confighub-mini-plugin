@@ -15,7 +15,7 @@ For a person following along in a terminal. Alice is the hub's owner; Bob is a s
 
 ### What you need
 
-An unpacked confighub mini package (from the [releases page](https://github.com/confighubai/confighub-mini-plugin/releases)) on macOS or Linux. confighub mini is a hub, a small ConfigHub server that keeps each setting with who changed it and why, running on your computer only. No Docker, no account.
+An unpacked confighub mini package (from the [releases page](https://github.com/confighubai/confighub-mini-plugin/releases)) on macOS or Linux. The local hub is a hub, a small ConfigHub server that keeps each setting with who changed it and why, running on your computer only. No Docker, no account.
 
 ### Steps
 
@@ -151,7 +151,7 @@ For an AI agent working as Bob, on Bob's key: run `cub` as `cub --context bob`.
 
 ## Testing
 
-This proves: the settings and the starter's versions were stored in the hub, each value with who set it and why, and production's copy changed only by an approved change order. What was really used: confighub mini on this computer (no stand-in, no cluster, no real service), with Bob as a second key and Alice's approvals made by the scripted steps, not a person; nothing is delivered and no service runs. A correct agent result has Bob's three values on shop's base and a proposed version 2 of the starter with the two fixes for every app, and without shop's pool size. It leaves exactly one app order and a separate starter order, both pending; the production log level and pool size stay as they were. The next-app offer belongs after the owner has approved the starter and used it across both apps. The agent task here ends with proposals, so that later moment is outside its scope. The checks below can be run by hand, in bash, in the walkthrough's folder:
+This proves: the settings and the starter's versions were stored in the hub, each value with who set it and why, and production's copy changed only by an approved change order. What was really used: The local hub on this computer (no stand-in, no cluster, no real service), with Bob as a second key and Alice's approvals made by the scripted steps, not a person; nothing is delivered and no service runs. A correct agent result has Bob's three values on shop's base and a proposed version 2 of the starter with the two fixes for every app, and without shop's pool size. It leaves exactly one app order and a separate starter order, both pending; the production log level and pool size stay as they were. The next-app offer belongs after the owner has approved the starter and used it across both apps. The agent task here ends with proposals, so that later moment is outside its scope. The checks below can be run by hand, in bash, in the walkthrough's folder:
 
 <!-- agent-task: harden after=harden -->
 > Harden shop for production. Debug logs carry request bodies, so LOG_LEVEL should be warn; it needs 3 replicas so one can fail during a deploy; its database takes 20 connections (DB_POOL_SIZE). Then make the fixes that suit every web service version 2 of the team's web starter, each with its reason.
@@ -172,7 +172,7 @@ Results, 14 November 2026, confighub mini 0.11.1-mini.2. Figures from this page'
 
 - Scripted run (on confighub mini 0.11.1-mini.2, 14 November 2026): passed, 63 seconds for the steps, within the page's budget of 300.
 - Scripted run (on confighub mini 0.11.1-mini.7, 14 November 2026): passed, 56 seconds for the steps, within the page's budget of 300; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
-- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5, claude-opus-5-5. Arms: a is ordinary tools only; b is the Claude plugin, the local hub and this page as reading.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
@@ -185,7 +185,7 @@ No agent approved or refused a change to production.
 
 Simulated persons, not people: 10 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Your next app can start with Bob's fixes already in place, each with its reason; want the starter kept on for it?"
 
-The plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
+The Claude plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|
@@ -196,8 +196,8 @@ The plugin offers it once, after the answer at whose end it showed the moment th
 
 Results, 14 November 2026, confighub mini 0.11.1-mini.7. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
-- Environment: checksum-verified published mini.7 for macOS arm64 and the plugin it ships, with Claude Code on this computer. These are agent runs; the earlier scripted runs and planted faults are labelled separately.
-- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5. Arms: a is ordinary tools only; b is the plugin, confighub mini and this page as reading.
+- Environment: checksum-verified published mini.7 for macOS arm64 and the Claude plugin it ships, with Claude Code on this computer. These are agent runs; the earlier scripted runs and planted faults are labelled separately.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5. Arms: a is ordinary tools only; b is the Claude plugin, the local hub and this page as reading.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
@@ -208,7 +208,7 @@ No agent approved or refused a change to production.
 
 Simulated persons, not people: 5 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Your next app can start with Bob's fixes already in place, each with its reason; want the starter kept on for it?" It offers more of the tier the person has, not a step up.
 
-The plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
+The Claude plugin offers it once, after the answer at whose end it showed the moment the offer names ("did not change"). Offered is the share of persons it was shown to; want it now and later are over them.
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|
@@ -218,7 +218,7 @@ The plugin offers it once, after the answer at whose end it showed the moment th
 Results, 14 November 2026, confighub mini 0.11.1-mini.8. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Environment: checksum-verified published mini.8 for macOS arm64, with the revised walkthrough and Claude Code. This pilot used only the guided arm. The production copy was checked while both requests were pending. A restricted test key authored the proposals. No live service or outside account was used.
-- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5. Arms: b is the plugin, confighub mini and this page as reading.
+- Agent runs: a pilot, 3 runs per arm on each of claude-sonnet-5-5. Arms: b is the Claude plugin, the local hub and this page as reading.
 
 | Arm | Model | Checks passed | Median seconds | Median cost | Commands left for the person (median) |
 |---|---|---|---|---|---|
@@ -228,7 +228,7 @@ No agent approved or refused a change to production.
 
 Simulated persons, not people: 5 per run, each a claude-haiku-5-5 model playing one of ten fixed personas, reading only what a person would see. The next step they were offered: "Before your next web app goes live, you can check which approved defaults it inherited. Want to see those settings and their reasons?" It offers more of the tier the person has, not a step up.
 
-The plugin offers it once, after the answer at whose end it showed the moment the offer names ("Staging took it now: cart, shop"). Offered is the share of persons it was shown to; want it now and later are over them.
+The Claude plugin offers it once, after the answer at whose end it showed the moment the offer names ("Staging took it now: cart, shop"). Offered is the share of persons it was shown to; want it now and later are over them.
 
 | Arm | Model | Persons | Offered | Noticed | Want the next step now | Later | In the way |
 |---|---|---|---|---|---|---|---|
