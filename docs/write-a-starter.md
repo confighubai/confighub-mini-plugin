@@ -22,7 +22,7 @@ wires:
   approval: live
 ```
 
-Keep each match specific enough that an unrelated app will miss at least one check. Give each default a reason the next developer can act on. When an app already sets a value, its own value takes priority. See the [starter fields](starters.md#what-a-starter-is).
+Every starter requires `wires.approval: live`, including a starter without a hosting provider. Keep each match specific enough that an unrelated app will miss at least one check. Give each default a reason the next developer can act on. When an app already sets a value, its own value takes priority. See the [starter fields](starters.md#what-a-starter-is).
 
 ## Check it on a disposable hub
 
