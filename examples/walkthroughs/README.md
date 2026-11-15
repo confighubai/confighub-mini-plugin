@@ -12,7 +12,7 @@ To pick one: start with the starter for your kind of app, then read the six walk
 
 ## Start here: starters
 
-A starter gives a new app of one kind its usual settings, each with a reason ([starters](../../docs/starters.md)). Each starter's walkthrough deploys an app, updates it, undoes the update, moves it to a shared hub, and deletes it; for Daytona, the move is your own step. The temporal-worker and unikraft starters have no walkthrough yet.
+A starter gives a new app of one kind its usual settings, each with a reason ([starters](../../docs/starters.md)). Each starter's walkthrough deploys an app, updates it, undoes the update, moves it to a shared hub, and deletes it; for Daytona, the move is your own step. The Temporal worker and Unikraft walkthroughs include their delivery and rollback checks.
 
 | Starter | What you get | Starts with |
 |---|---|---|
@@ -50,7 +50,7 @@ The clearest place to see what a hub adds: in each, an agent with ordinary tools
 |---|---|---|
 | [1. Dan: "I don't know what's wrong. Please fix it."](story-01-find-the-fault.md) | Find the fault in a customer's platform, keep the two changes they meant with their reasons, and hand it back as files for their Git | confighub mini |
 | [2. George's colleague: "Run my app, and keep my changes when George updates it"](story-02-keep-your-changes.md) | Change an app someone else made, with a reason each time, and keep every change through their update | confighub mini |
-| 5. Steve's agent and Temporal: "Roll this out, and wait for me before production" | Not built yet: an agent rolls out a change through a Temporal workflow that waits for your approval before production | not built yet |
+| [5. Steve's agent and Temporal: "Roll this out, and wait for me before production"](starter-temporal-worker.md#testing) | The Temporal rollout rehearsal waits for approval and verifies the approved policy after the worker restarts | confighub mini |
 | [3. Ivan's agents: "Give each run a hub of its own, and throw it away afterwards"](story-03-a-hub-per-agent-run.md) | An agent run in a sandbox starts a hub of its own from a file, leaves its fix as files for review, and the hub is deleted; the team's hub never changes | confighub mini |
 | [4. A preview on a hub of its own: "Show me what this branch would do to production, and let me see it running"](story-04-preview-a-change.md) | What a new version would do to production, then seen running with Argo CD on a local cluster, with nothing left behind | confighub mini |
 | [6. Ivan: "Show me what is actually running, and who changed what"](story-06-what-runs-and-why.md) | Which customer changed what, whether anyone said why, and who breaks the image rule, one command each across every customer | confighub mini |
