@@ -1,8 +1,8 @@
 # ConfigHub: durable config for apps made with AI
 
-**Your agent makes the platform. Durable config keeps it.**
+**Your agent makes your apps. Durable config makes the platform.**
 
-Ask a coding agent for an app and it sets up everything around the app too: staging, production, limits and settings. ConfigHub keeps that setup, with the reason for each value. Your agent changes staging at once, production changes when you say, and your next app starts from the first.
+Ask a coding agent for an app and it writes the app, with a staging and a production setup. ConfigHub keeps that setup as durable config: every setting with its reason, kept through the next session, the next version and the next app. Kept that way, the setup of your apps is your platform. Your agent changes staging at once, and production changes when you say.
 
 Start with the plugin alone. Add a free local hub when you want staging and production: it runs on macOS or Linux with no ConfigHub account, Docker or Kubernetes.
 
