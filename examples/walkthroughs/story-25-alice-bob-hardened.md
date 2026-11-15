@@ -146,7 +146,7 @@ For an AI agent working as Bob, on Bob's key: run `cub` as `cub --context bob`.
 - The request: "Harden shop for production. Debug logs carry request bodies, so LOG_LEVEL should be warn; it needs 3 replicas so one can fail during a deploy; its database takes 20 connections (DB_POOL_SIZE). Then make the fixes that suit every web service version 2 of the team's web starter, each with its reason."
 - Edit all the shared settings together in `shop/.env`: set `LOG_LEVEL=warn`, `REPLICAS=3` and `DB_POOL_SIZE=20`. Leave `.env.production` alone. Run `cub mini upload shop/.env --component shop --change-desc "LOG_LEVEL: keep request bodies out of debug logs; REPLICAS: keep two serving during deploys; DB_POOL_SIZE: match this shop’s database capacity"` once on Bob's key. The app gets one production order whose reason names each setting. Calling `cub mini set` separately can open extra production orders.
 - Make version 2 of the starter: one `cub function set --space starters-base --unit web --toolchain AppConfig/YAML --change-desc WHY -- set-yq '...'` for each default that suits every app (not shop's own `DB_POOL_SIZE`), the first also setting `.version = 2`; then a change order in `starters-base` with `--in-scope-space starters-approved --change-workflow workflows/starters-approved-approval`.
-- Wait for Alice to review the app rollout and the reusable starter separately. Give her the two exact approval commands once: the single shop order named by upload and `cub mini approve starters-base/web-v2`. Use the full launcher path if ConfigHub printed one. Do not offer another app while those decisions are waiting.
+- Wait for Alice to review the app rollout and the reusable starter separately. Give her one command to run when she is ready: `cub mini review-orders SHOP-BASE/ORDER starters-base/web-v2`. Replace `SHOP-BASE/ORDER` with the exact shop order from upload and use the full owner launcher path it printed. This opens both orders in one terminal view. She can approve, refuse with a reason, or leave each for later. Give the review command once. If the installed package predates `review-orders`, give her the two exact `cub mini approve SPACE/ORDER` commands. Do not offer another app while those decisions are waiting.
 - Done when `cub unit data --space shop-base app` has the three values and the proposed starter has `version: 2` with `warn` and `"3"`.
 
 ## Testing
@@ -235,5 +235,15 @@ The plugin offers it once, after the answer at whose end it showed the moment th
 | b | claude-sonnet-5-5 | 15 | 0% | 100% | n/a | n/a | 87% |
 
 This follow-up left a median of 2 owner commands, compared with 3 in the earlier mini.7 guided arm. The new checks required one order for the app, one for the starter, and the old production settings while both waited. This compares two pilots on different packages. The next-app offer was not shown; its uptake was not measured.
+
+Results, 15 November 2026, source candidate for the owner review. Three guided sessions per walkthrough on the same package, with five simulated readers per session. The earlier guide left two approval commands. The revised guide left one review command with separate choices. All six sessions passed the checks for both pending orders and unchanged live settings.
+
+| Measure | Separate commands | Combined review |
+| --- | ---: | ---: |
+| Owner commands per session | 2 | 1 |
+| Median agent time | 37.7 seconds | 38.9 seconds |
+| Simulated readers who reported friction | 6/15 | 9/15 |
+
+The readers judged the handoff and did not operate the terminal. The local owner fixture exercised approve, refuse and later on the separate orders.
 
 <!-- results:end -->
