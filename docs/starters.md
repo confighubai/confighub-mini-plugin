@@ -97,6 +97,8 @@ Start with a Next.js app that has `next` in its package dependencies, a `.env.pr
 
 Use the [Next.js guide](nextjs-on-vercel.md) to run a Vercel Preview and leave `APP-live/connect` for owner approval.
 
+The [Rails on Fly build preview](rails-on-fly.md) shows two Rails apps taking one shared change in staging. It requires a build with the new starter and has only run locally.
+
 ## What connecting an app shows
 
 Pick the walkthrough for your app. Each shows the exact commands and its Testing section says what was verified, including which paths used a shared hub or reached a real service: [web](../examples/walkthroughs/starter-web.md), [vercel](../examples/walkthroughs/starter-vercel.md), [parameter-store](../examples/walkthroughs/starter-parameter-store.md), [kustomize-argocd](../examples/walkthroughs/starter-kustomize-argocd.md), [kustomize-flux](../examples/walkthroughs/starter-kustomize-flux.md) and [daytona](../examples/walkthroughs/starter-daytona.md); there are also walkthroughs for [Temporal worker](../examples/walkthroughs/starter-temporal-worker.md) and [Unikraft](../examples/walkthroughs/starter-unikraft.md). Daytona shows how to bring a sandbox proposal to a shared hub for review. The Temporal worker walkthrough verifies delivery locally. This section explains what `cub mini adopt` prints when starters are on.
