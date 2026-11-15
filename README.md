@@ -1,8 +1,10 @@
-# ConfigHub for AI agents
+# ConfigHub: durable config for apps made with AI
 
-**See what your coding agent changed and why. Add approval when production is at stake.**
+**Your agent makes the platform. Durable config keeps it.**
 
-Install the ConfigHub plugin to keep a record of settings your agent changes and the reasons it gives. Try it on its own first. When you want your agent to change staging but need to approve changes to production, add a **hub**. The free local hub runs on macOS or Linux with no ConfigHub account, Docker or Kubernetes.
+Ask a coding agent for an app and it sets up everything around the app too: staging, production, limits and settings. ConfigHub keeps that setup, with the reason for each value. Your agent changes staging at once, production changes when you say, and your next app starts from the first.
+
+Start with the plugin alone. Add a free local hub when you want staging and production: it runs on macOS or Linux with no ConfigHub account, Docker or Kubernetes.
 
 ## Install
 
@@ -16,6 +18,52 @@ claude plugin install confighub@confighub
 Open a new session and [try the plugin without a hub](docs/try-the-plugin.md). Using Codex? Follow [the Codex setup](docs/codex.md), including its separate hook approval. You can also [install the local hub without a coding agent](docs/install-mini.md).
 
 [Product overview](https://confighub.github.io/helm-expt/ai-agents/) · [Walkthroughs by stack](examples/walkthroughs/README.md) · [Instructions for AI agents](AGENTS.md)
+
+## Why this, and why now
+
+1. **People make and run apps by asking agents.** An agent changes settings many times a day, across staging, production and every customer's copy. That is faster than anyone reads a diff.
+2. **So the platform has to come from somewhere else.** Staging, production, promotion, rollback and limits used to come from a platform team or a hosting service. An agent can now write all of that in the same request as the app. But it lands in scattered files, the next session overwrites it, and every new app starts from nothing.
+3. **ConfigHub keeps it.** ConfigHub keeps what the agent set up as the app's platform, wherever the app runs. Each value has its reason. Staging changes at once, production changes when you say, and the next app starts from the first.
+
+## What durable means
+
+Durable config is configuration that survives change. What you and your agents decided is still there after each of these:
+
+- **The next session.** The agent starts from what was set, and why.
+- **The next agent.** It is told before it undoes a value another agent set.
+- **The next version.** Your own values are kept when the app, a chart or a starter is updated.
+- **The next environment.** Production takes exactly what you approved, after staging has run it.
+- **The next app.** It starts from the first app's setup, and a fix to that setup reaches both.
+
+## How this differs from platform engineering
+
+Platform engineering builds a platform first and fits apps to it. Durable config starts with the app and keeps what the agent set up for it, so the platform grows out of the apps.
+
+| | Platform engineering as we know it | Durable config |
+|---|---|---|
+| What comes first | The platform, built by a team ahead of the apps | The app. Its setup becomes the base for the next one |
+| How an app gets its setup | A template, copied once when the app is created | A starter the app stays linked to |
+| Where the knowledge lives | Docs, tickets and the platform team's heads | With each value, as its reason |
+| Who it is built for | People: portals, forms and golden-path guides | Agents and people |
+| How a change spreads | One pull request in each repository | One change, read across every app |
+| What it takes to start | A team and months | One yes at install |
+
+## Five ways it is better
+
+1. **Nothing to build first.** A platform team spends months before the first app benefits. In our runs, an agent asked for an app left it with staging and production in 75 seconds, in 16 of 16 sessions.
+2. **Templates that keep working after day one.** A scaffolded app is a copy made once, so the template's next version never reaches it. Here a [starter](docs/starters.md)'s next version reaches every app made from it, and each app keeps its own values and reasons. We have run ten apps taking one change this way.
+3. **The reason travels with the value** (for agents). An agent can't ask the platform team why a limit is set as it is. Without the reason it "fixes" the value, and the next agent fixes it back. With [the record](docs/how-it-works.md), the next agent was told before undoing a value in 11 of 11 simulated weeks, and no value was undone silently.
+4. **Guardrails that hold against agents** (for agents). Golden paths work because people read the guide and follow it. Agents do what the request says. Told "Priya said yes", agents with ordinary tools changed production in every run of that test. Agents need three things a portal doesn't give:
+   - a key of their own
+   - a staging copy they can change at once
+   - a line they cannot cross
+
+   The hub refuses an agent's own approval, and it is small enough to sit in every sandbox ([agent keys](docs/agents-that-run-for-weeks.md#who-acted-give-the-agent-a-key-of-its-own)).
+5. **Configuration you can query and build on.** Platform stacks are a template language for each tool: Helm for clusters, Terraform for cloud, env files for hosting services. A change across the fleet is many pull requests. As data, "which version runs where" is one question, and one change is read across all apps, wherever they run. Tools are built on data, not on templates.
+
+## What stays as it is
+
+ConfigHub doesn't run your app. Your cluster, hosting service or VM still does, and Argo CD and Flux still deliver to your clusters. ConfigHub replaces the templates, the portal and the scattered settings files above them.
 
 ## Three ways to start
 
