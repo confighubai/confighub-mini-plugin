@@ -44,7 +44,7 @@ The local hub, unpacked as [installing the local hub](../../docs/install-mini.md
    …
      Leaves PORT alone: it is set already, PORT=5000, by you, in .env.
    …
-     Production takes the shared settings only after you approve them. In your terminal, run `cub mini waiting` and review the production change and its exact `BASE/ORDER` ID. Approve only that order with `cub mini approve BASE/ORDER`; it records the approval and promotes only the reviewed change.
+     Production takes the shared settings only after you approve them. To see them and approve them, in a terminal of your own: ~/.confighub/mini/cub mini approve menu-live
    ```
 4. Deploy it, part two: approve production's first settings, and write them where the service reads them. `cub mini pull` writes live's settings as `menu-running/app.env`; start the service from that file as you do now.
    <!-- run: deploy-live -->
@@ -58,36 +58,36 @@ The local hub, unpacked as [installing the local hub](../../docs/install-mini.md
    …
    app.env written: revision 3: menu's settings, from .env, with .env.staging for staging
    ```
-5. Update it: production should log more. Change the file, then upload the change with your reason. Staging keeps its own `debug`; production waits for your approval, and you give it.
-   <!-- run: update -->
+5. Update it: production should log more. Change the file and upload it with your reason. The commands save the exact order printed by the upload. Staging keeps `debug`. Read the production diff in `cub mini waiting` before you proceed.
+   <!-- run: update-plan -->
    ```sh
    printf 'PORT=5000\nLOG_LEVEL=info\nMENU_SOURCE=kitchen.json\n' > menu/.env
-   cub mini upload menu --change-desc "Warnings alone hide what customers do"
-   cub mini waiting  # inspect the exact order ID and diff
-   cub mini approve menu-base/ORDER --yes --note "Info logs are fine in production"  # replace ORDER with the exact ID
+   UPDATE=$(cub mini upload menu --change-desc "Warnings alone hide what customers do")
+   printf '%s\n' "$UPDATE"
+   UPDATE_ORDER=$(printf '%s\n' "$UPDATE" | sed -nE 's/^.*mini approve (menu-base\/upload-[a-z0-9-]+)[[:space:]]*$/\1/p')
+   test -n "$UPDATE_ORDER"
+   cub mini waiting
+   ```
+   If the order shows `warn → info` and you want that change, approve it and pull the approved settings:
+   <!-- run: update -->
+   ```sh
+   cub mini approve "${UPDATE_ORDER:?Review the update first}" --yes --note "Info logs are fine in production"
    cub mini pull menu --variant live --dir menu-running
    ```
-   ```text
-   Changed the shared settings (menu-base), with the reason: Warnings alone hide what customers do
-     LOG_LEVEL: warn → info
-   Staging keeps its own LOG_LEVEL=debug, so this change does not reach it.
-   …
-   Approved menu-base/upload-TIME.
+6. Undo the update in production. `cub mini rollback` sets back only what the update changed and creates a **new** order. Read that order before you proceed.
+   <!-- run: undo-plan -->
+   ```sh
+   ROLLBACK=$(cub mini rollback menu-live --change-order "${UPDATE_ORDER:?Run the update first}" --reason "Info logs show customer emails")
+   printf '%s\n' "$ROLLBACK"
+   ROLLBACK_ORDER=$(printf '%s\n' "$ROLLBACK" | sed -nE 's/^.*mini approve (menu-base\/upload-[a-z0-9-]+)[[:space:]]*$/\1/p')
+   test -n "$ROLLBACK_ORDER"
+   cub mini waiting
    ```
-6. Undo the update in production. `cub mini rollback` sets back what that change order changed, and nothing else, in the shared settings; production takes it only once you approve it, as any change. The change order's name was printed by step 5; here it is read from the hub.
+   If the rollback shows `info → warn` and you want that change, approve it and pull the restored settings:
    <!-- run: undo -->
    ```sh
-   ORDER=$(cub changeorder list --space menu-base --where "Slug LIKE 'upload-%'" -o jq='.[-1].ChangeOrder.Slug')
-   cub mini rollback menu-live --change-order "menu-base/$ORDER" --reason "Info logs show customer emails"
-   cub mini waiting  # inspect the exact rollback order ID and diff
-   cub mini approve menu-base/ORDER --yes --note "Back to warnings"  # replace ORDER with the exact ID
+   cub mini approve "${ROLLBACK_ORDER:?Review the rollback first}" --yes --note "Back to warnings"
    cub mini pull menu --variant live --dir menu-running
-   ```
-   ```text
-   Set back in the shared settings (menu-base), with the reason: Info logs show customer emails
-     LOG_LEVEL: info → warn
-   …
-   Approved menu-base/upload-TIME.
    ```
 7. Move it to your team's shared hub. Sign in once (`auth login` opens a browser). The app's name there, `TEAM_APP`, starts with your user name, so it does not clash with a teammate's.
    <!-- run: sign-in sign-in -->
@@ -143,6 +143,7 @@ For an AI agent doing these jobs for a person: run the Human steps' commands, ad
 Approving production is the person's, so give them the one command and nothing beside it. Never put a password or token in a setting. You are done when `cub unit data app --space APP-live` shows what the person asked for, or, for a change that waits, when `cub mini waiting` shows it.
 
 ## Testing
+A fresh-profile run on the published local hub package on 15 November caught two breaks: a stale output quote and a literal `ORDER` placeholder. After the fix, all scripted steps passed in 71 seconds, including update and rollback. The shared-hub step used a second disposable local hub for this run.
 Each task below is given to an agent in the folder that holds `menu`, after the steps before it. When a change waits for production, the person approves it.
 
 <!-- agent-task: deploy -->
