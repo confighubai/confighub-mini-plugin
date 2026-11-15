@@ -96,7 +96,7 @@ Never approve a production change, create or delete a cloud sandbox, or report t
 
 ## Testing
 
-The checks read the structured starter, the staging and live Units, and the shared hub's new pending order. The local scripted path tests configuration and the approval boundary. A separate real Daytona run is needed to test loopback and separate OS users. Neither path proves that a batch job ran.
+The checks read the structured starter, the staging and live Units, and the shared hub's new pending order. The local scripted path tests configuration and the approval boundary. The separate real Daytona checks below test loopback, separate OS users and the returned archive. Neither path proves that a batch job ran.
 
 <!-- agent-task: deploy -->
 > Set up my batch job so I can try changes while keeping production at 120.
@@ -167,5 +167,7 @@ Earlier records of this page, kept with their own date, package and scope:
 - The complete scripted walkthrough also passed on the merged-source candidate, including replay to hosted ConfigHub and the pending-order check. This was the local rehearsal with the real shared hub; it did not launch a new Daytona sandbox.
 
 - Downloaded [mini-v0.11.1-mini.2](https://github.com/confighubai/confighub-mini-plugin/releases/tag/mini-v0.11.1-mini.2) and verified its SHA-256. The scripted walkthrough passed in 79.9 seconds, including the hosted handoff. The scripted path is a local rehearsal, not a new Daytona sandbox run. A separate run of the checksum-verified Linux package on a real EU Daytona sandbox verified loopback listeners, owner-key isolation, refused proposer approval and unchanged live settings. The proposal and its reason were recovered after sandbox deletion. In the separate catalog check, adoption used approved v1 while v2 was pending, then used v2 from the hub after scripted catalog approval. The package still held v1.
+
+- Focused real Daytona Cloud check on [published mini.9](https://github.com/confighubai/confighub-mini-plugin/releases/tag/mini-v0.11.1-mini.9), 15 November 2026: a disposable EU Linux amd64 sandbox downloaded and verified the release. The shipped helper created a proposal under a key that could not approve or read the owner's key. Staging held 240; live stayed at 120. The hub showed the Git commit, the dirty checkout and the SHA-256 of the returned `app.env` archive. Recomputing the digest on the Mac matched what the hub showed; the extracted file held 240. The hub was removed and Daytona reported the sandbox absent. This checks the archive of the submitted settings, not an immutable snapshot of the whole sandbox or a running batch job.
 
 <!-- results:end -->
