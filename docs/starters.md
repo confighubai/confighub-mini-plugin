@@ -294,6 +294,8 @@ The package's own Vercel and Parameter Store add-ons are built the same way, in 
 
 ### Check a starter before anyone uses it
 
+For a short guide from the first YAML to a runnable check, see [write and check a starter](write-a-starter.md).
+
 The package has a kit for a starter's author, `$MINI/examples/starter-check`, which needs Python 3, with a worked example for Netlify in `example-provider`: a starter and an add-on written in POSIX shell, run against a stand-in. The check reads a starter file as `cub mini adopt` does, tries it on made-up app folders with and without each thing it looks for, and then, on a hub of its own, checks the promises above: it keeps every value a person set, writes once, and changes no value when a newer version arrives. For a starter with an add-on beside it, it also runs the add-on's three commands. Last, it breaks each promise on purpose and checks that it notices.
 
 ```bash
