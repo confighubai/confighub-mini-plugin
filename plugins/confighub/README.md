@@ -22,8 +22,9 @@ In a Claude Code session:
 
 
 - `/confighub:inventory` shows what the repository deploys: each Kustomize overlay, Helm release and Argo CD Application, and what deploys it; the values that differ between environments; and the values agents changed. It reads only the repository's files.
-- `/confighub:install-mini` installs confighub mini, which is ConfigHub made small enough to run on your laptop, and starts it.
-- `/confighub:to-hub` copies what agents changed here, and why, into the ConfigHub your `cub` is signed in to: your organization's, with no confighub mini, or your own. It names the hub and lists what it would write; `/confighub:to-hub --yes` writes it.
+- `/confighub:staging`, typed in an app's folder, gives the app a staging and a production copy of its settings in a hub on this machine: staging takes your agent's changes at once, production only what you approve. The first time, it fetches confighub mini and starts the hub itself. Your agent's next sessions in the folder get a key of their own that can only propose changes to production. What the plugin recorded for the folder goes into the hub in the same step.
+- `/confighub:start-from APP`, typed in a new app's folder, starts that app from APP, an app already in the hub: it takes APP's shared settings and keeps the values its own files set. With no APP, it lists the apps it could start from.
+- `/confighub:to-hub` copies what agents changed here, and why, into the ConfigHub your `cub` is signed in to: your organization's, with no confighub mini, or your own. It names the hub and lists what it would write; `/confighub:to-hub --yes` writes it. With no hub at all, `--yes` first starts one on this machine, downloading confighub mini if it is not here, as `/confighub:staging` does.
 
 In a terminal, `bin/confighub mini changes`, run from this plugin's folder, shows the same record as `/confighub:changes`.
 
