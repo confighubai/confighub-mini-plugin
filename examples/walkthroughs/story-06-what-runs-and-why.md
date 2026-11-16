@@ -9,6 +9,28 @@ budget_seconds: 150
 
 For a platform engineer whose customers each run a changed copy of the platform he gave them. Before the next version ships, Ivan wants an inventory: which driver each customer runs, what each one changed and whether a reason was recorded, and whether anyone breaks the rule that images come only from NVIDIA's or Kubernetes' registry. Each answer is one command across every customer at once, with no script of his own.
 
+## Quick start
+
+You need: an unpacked confighub mini package ([installing the local hub](../../docs/install-mini.md#install-by-hand-without-the-plugin)), `helm`, `python3`, and internet access to render the chart. No cluster, no Docker and no account.
+
+| | By hand | Ask your agent |
+|---|---|---|
+| Load the customers | `./customers` | "Our GPU platform is rendered in this folder (given/), and ./customers loads our three customers' copies, Birch, Cedar and Elm, into a hub. Which customers differ from the platform we gave them, how, do we know why, and does any break our rule that images come only from nvcr.io or registry.k8s.io? Do not change anything. Write the answer to answer.md." |
+| Which driver each runs | `cub function get --space '*' --unit cluster-policy-clusterpolicy get-string-path nvidia.com/v1/ClusterPolicy spec.driver.version` | Your agent can run the same command. |
+| Who breaks the image rule | `cub function vet --space '*'` with the image rule (step 7) | Your agent can run the same command. |
+| What changed, and why | `cub mini copy gpu-operator --to-dir inventory`, then read `inventory/CHANGES.md` (step 8) | Your agent can run the same command. |
+
+Each answer covers every customer at once, and nothing in the hub changes.
+
+Without ConfigHub: your agent compares each customer's files with the platform one by one, with `diff` or a script, and a change made without a reason looks the same as one made on purpose.
+
+## Deeper dive
+
+The rest of this page is the full version: every step with what it prints, how to undo it, what an agent is asked to do and must never do, and how this was tested.
+
+<details>
+<summary>Show the full walkthrough</summary>
+
 ## Human
 
 ### What you need
@@ -162,6 +184,8 @@ cub function get --space gpu-operator-birch --unit gpu-operator --show values \
 
 <!-- results:begin -->
 
+<details><summary>Test results</summary>
+
 Results, 14 November 2026, confighub mini 0.11.1-mini.4. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run: passed, 41 seconds for the steps, within the page's budget of 150.
@@ -205,4 +229,8 @@ The Claude plugin offers it once, after the answer at whose end it showed the mo
 | a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 93% |
 | b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 47% |
 
+</details>
+
 <!-- results:end -->
+
+</details>

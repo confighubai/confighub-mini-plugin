@@ -9,6 +9,29 @@ budget_seconds: 180
 
 Sam's protections work without asking him anything, so he needs to hear from them only when there is something only he can do. He is told three things: a change waiting for him, an agent proposing again what he refused, and, when something elsewhere needs a hub it can reach, the one sentence that says so. With nothing waiting, he is told that too.
 
+## Quick start
+
+You need: an unpacked confighub mini package (from the [releases page](https://github.com/confighubai/confighub-mini-plugin/releases)) on macOS or Linux. No Docker, no account.
+
+| | By hand | Ask your agent |
+|---|---|---|
+| See what waits for you | `cub mini waiting` | Your agent can run the same command. |
+| Refuse it with a reason | `cub mini refuse api-live --reason "120 s hides the slow model; fix the model first"` | You refuse it yourself. |
+| The agent proposes again | `cub --context bot mini upload api --component api --change-desc "Raise the timeout to 180 s for the large model"` | "The large model still times out. Raise TIMEOUT_SECONDS to 180 for production." |
+| Ask for a key for a VM | `cub mini pull-key vm api --variant live` | Your agent can run the same command. |
+| Read everything else | `cub mini receipts api-live` | Your agent can run the same command. |
+
+You are told three things, and when nothing waits you are told that in one line.
+
+Without ConfigHub: your agent changes `.env` directly, production included, and an agent in the next session can make the change you refused without ever hearing your reason.
+
+## Deeper dive
+
+The rest of this page is the full version: every command, the exact words of each message, what the Claude plugin shows at the end of an agent's turn, and how this was tested.
+
+<details>
+<summary>Show the full walkthrough</summary>
+
 ## Human
 
 For a person following along in a terminal.
@@ -134,6 +157,8 @@ grep -qx 'TIMEOUT_SECONDS=30' api/.env && g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\
 
 <!-- results:begin -->
 
+<details><summary>Test results</summary>
+
 Results, 14 November 2026, confighub mini 0.11.1-mini.5. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run: passed, 45 seconds for the steps, within the page's budget of 180.
@@ -164,4 +189,8 @@ The Claude plugin offers it once, after the answer at whose end it showed the mo
 | b | claude-sonnet-5-5 | 30 | 100% | 100% | 70% | 23% | 70% |
 | c | claude-sonnet-5-5 | 30 | 33% | 100% | 80% | 20% | 43% |
 
+</details>
+
 <!-- results:end -->
+
+</details>

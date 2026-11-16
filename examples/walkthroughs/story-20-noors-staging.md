@@ -9,6 +9,28 @@ budget_seconds: 180
 
 Noor's image-processor keeps running out of memory in staging, and staging and production share a default. She wants staging fixed now and production left as it is, and if production is going to change too, she wants to know before it does. Here an agent edits plain files, one per copy, and the hub makes each edit that copy's change: staging's at once, production's only with her approval.
 
+## Quick start
+
+You need: an unpacked confighub mini package (from the [releases page](https://github.com/confighubai/confighub-mini-plugin/releases)) on macOS or Linux. No Docker, no account.
+
+| | By hand | Ask your agent |
+|---|---|---|
+| Write each copy's file | `cub mini copies image-processor --to deploy` | Your agent can run the same command. |
+| Change staging only | Edit `deploy/staging/app.env`, then `cub mini copies image-processor --from deploy --change-desc "WHY"` | "image-processor keeps getting OOMKilled in staging since we raised the batch size. Give it 1Gi of memory." |
+| Check production | `cub mini waiting` | Your agent can run the same command. |
+| Decide on production | `cub mini refuse BASE/ORDER --reason WHY` (step 8) | You approve it yourself. |
+
+Staging takes the edit at once. An edit to production's file waits for Noor's approval.
+
+Without ConfigHub: your agent raises the memory in the shared `.env` file that production reads too, and the next session has no record of why.
+
+## Deeper dive
+
+The rest of this page is the full version: every command with what it prints, what happens when production's file is edited, what an agent leaves to you, and how this was tested.
+
+<details>
+<summary>Show the full walkthrough</summary>
+
 ## Human
 
 For a person following along in a terminal.
@@ -152,6 +174,9 @@ g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Lib
 
 <!-- results:begin -->
 
+<details><summary>Test results</summary>
+
+
 Results, 14 November 2026, confighub mini 0.11.1-mini.2. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run (on confighub mini 0.11.1-mini.2, 14 November 2026): passed, 44 seconds for the steps, within the page's budget of 180.
@@ -199,4 +224,9 @@ The Claude plugin offers it once, after the answer at whose end it showed the mo
 | a | claude-sonnet-5-5 | 15 | 0% | 100% | n/a | n/a | 60% |
 | b | claude-sonnet-5-5 | 15 | 0% | 100% | n/a | n/a | 0% |
 
+
+</details>
+
 <!-- results:end -->
+
+</details>

@@ -9,6 +9,28 @@ budget_seconds: 300
 
 For a team that lets coding agents work on its platform but does not want an agent anywhere near the team's own hub. The team writes its work to one file. An agent's run gets that file and a sandbox, and its first command starts a hub of its own inside the sandbox. The agent makes its fix there, writes it out for a person to review, and the hub is deleted with the run. The team's shared hub never changes until a person takes the result.
 
+## Quick start
+
+You need: a Mac, for macOS's `sandbox-exec`, an unpacked confighub mini package ([installing the local hub](../../docs/install-mini.md#install-by-hand-without-the-plugin)), `helm`, `python3`, and internet access to render the chart. No Docker, no cluster and no account.
+
+| | By hand | Ask your agent |
+|---|---|---|
+| Write the work to a file | `cub mini copy gpu-operator --to-file platform.tar.gz` | Your agent can run the same command. |
+| Start the run's own hub | `./sandbox . sandbox-a cub mini copy --from-file platform.tar.gz gpu-operator` | "The team's GPU platform and its three customers are in ./platform.tar.gz. One customer's operator image breaks our rule that images come only from nvcr.io or registry.k8s.io. Find it and fix it in a hub of your own, running every command through ./sandbox with the sandbox configuration ./sandbox-a (./sandbox . sandbox-a COMMAND), and leave the fix as files in ./result for me to review. Don't touch the team's hub. When you are done, remove your hub from inside the sandbox as far as it lets you, and tell me the exact command I should run outside it to make sure nothing of it is left running." |
+| Fix it, with the reason | `./sandbox . sandbox-a cub mini set` on Birch's image, with the reason (step 6) | Your agent can run the same command. |
+| Leave files, remove the hub | `./sandbox . sandbox-a cub mini copy gpu-operator --variant birch --to-dir result`, then `CUB_CONFIG="$PWD/sandbox-a" cub mini uninstall --delete-data` | Your agent can run the same command. |
+
+The fix waits in `result/` with its reason for a person to review, and the team's shared hub has not changed.
+
+Without ConfigHub: your agent fixes the platform where the team keeps it, with the team's own access, and the next session has no record of why it changed what it did.
+
+## Deeper dive
+
+The rest of this page is the full version: every step with what it prints, how to undo it, what an agent is asked to do and must never do, and how this was tested.
+
+<details>
+<summary>Show the full walkthrough</summary>
+
 ## Human
 
 ### What you need
@@ -162,6 +184,8 @@ cub function get --space gpu-operator-birch --unit gpu-operator --show values \
 
 <!-- results:begin -->
 
+<details><summary>Test results</summary>
+
 Results, 14 November 2026, confighub mini 0.11.1-mini.4. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run: passed, 86 seconds for the steps, within the page's budget of 300.
@@ -205,4 +229,8 @@ The Claude plugin offers it once, after the answer at whose end it showed the mo
 | b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 27% |
 | c | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 67% |
 
+</details>
+
 <!-- results:end -->
+
+</details>

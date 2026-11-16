@@ -9,6 +9,28 @@ budget_seconds: 120
 
 For a team that runs a platform someone else gives them and changed one value in it. Here the platform is NVIDIA's GPU Operator. The customer pinned the GPU driver, because a driver change takes every GPU node out in turn. The next version changes about a hundred values and offers a newer driver. You see what you would take and what you keep before anything changes, then take it with the driver and its reason kept.
 
+## Quick start
+
+You need: an unpacked confighub mini package ([installing the local hub](../../docs/install-mini.md#install-by-hand-without-the-plugin)), `helm`, `python3`, and internet access to render NVIDIA's published chart. No GPU, no cluster, no Docker and no account.
+
+| | By hand | Ask your agent |
+|---|---|---|
+| Load the platform | `cub mini upload given/gpu-operator --namespace gpu-operator`, then `cub variant create customer gpu-operator-base --change-desc "The customer's installation"` | "We run NVIDIA's GPU Operator 25.10.1, in given/ in this folder; its next version, 26.3.3, is in next/. Our installation is called "customer", and we pinned the GPU driver to 580.105.08 because "A driver change drains every GPU node. We change it only in a maintenance window." Take the next version, but keep our driver." |
+| Keep the driver | `cub mini set` on the driver, with the reason (step 5) | Your agent can run the same command. |
+| See the next version | `cub mini upload next/gpu-operator --component gpu-operator --namespace gpu-operator` | Your agent can run the same command. |
+| Take it | `cub mini promote gpu-operator-customer --change-desc "GPU Operator 26.3.3"` | Your agent can run the same command. |
+
+The operator is at 26.3.3, and the driver is still 580.105.08, with the reason written beside it.
+
+Without ConfigHub: your agent renders the new version and puts the pinned driver back by hand, and the reason for the pin lives only in someone's memory or a commit message.
+
+## Deeper dive
+
+The rest of this page is the full version: every step with what it prints, how to undo it, what an agent is asked to do and must never do, and how this was tested.
+
+<details>
+<summary>Show the full walkthrough</summary>
+
 ## Human
 
 ### What you need
@@ -163,6 +185,8 @@ cub unit data cluster-policy-clusterpolicy --space gpu-operator-customer | grep 
 
 <!-- results:begin -->
 
+<details><summary>Test results</summary>
+
 Results, 14 November 2026, confighub mini 0.11.1-mini.4. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run: passed, 42 seconds for the steps, within the page's budget of 120.
@@ -206,4 +230,8 @@ The Claude plugin offers it once, after the answer at whose end it showed the mo
 | a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 100% |
 | b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 23% |
 
+</details>
+
 <!-- results:end -->
+
+</details>

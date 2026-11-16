@@ -9,6 +9,29 @@ budget_seconds: 90
 
 For a platform team that gives several teams the same AI assistant. The assistant's definition is a small settings file: its model, its prompt, its tools and its limits. Support and Research each make it their own, with a reason for each change. When the platform team ships a new version, each team takes it and keeps what it chose, and Research records the evaluation that explains why it stays on the older model.
 
+## Quick start
+
+You need: an unpacked confighub mini package ([installing the local hub](../../docs/install-mini.md#install-by-hand-without-the-plugin)). No Docker, no cluster and no account.
+
+| | By hand | Ask your agent |
+|---|---|---|
+| A copy for each team | `cub variant create support support-assistant-base`, then `cub variant create research support-assistant-base` | "Our support assistant's definition is support-assistant.yaml in this folder, and the platform team's next version is in next/. Give Support and Research their own copy, named support and research. Support may read customers' tickets because it answers from them. Research keeps model large-2026-09 because its evaluation of the newer model is not finished. Then take the next version for both, and record that Research's evaluation of large-2026-11 failed: 2 of 50 answers cite papers that do not exist." |
+| Each team's changes | `cub mini set` for each change, with the team's reason (step 6) | Your agent can run the same command. |
+| See the next version | `cub mini upload next/support-assistant.yaml --component support-assistant` | Your agent can run the same command. |
+| Both teams take it | `cub mini promote support-assistant-support support-assistant-research --change-desc "Take the platform team's new support assistant"` | Your agent can run the same command. |
+| Record the evaluation | `cub attestation create` with `--type Evaluation --reject` (step 9) | Your agent can run the same command. |
+
+Support runs the newer model, Research keeps its own with the reason beside it, and the failed evaluation sits next to the version it judged.
+
+Without ConfigHub: each team edits its own copy of the assistant's settings file, and when the platform team ships a new version, someone merges each team's choices back in by hand, with no record of why each was made.
+
+## Deeper dive
+
+The rest of this page is the full version: every step with what it prints, how to undo it, what an agent is asked to do and must never do, and how this was tested.
+
+<details>
+<summary>Show the full walkthrough</summary>
+
 ## Human
 
 ### What you need
@@ -178,6 +201,8 @@ cub attestation list --space support-assistant-research
 
 <!-- results:begin -->
 
+<details><summary>Test results</summary>
+
 Results, 14 November 2026, confighub mini 0.11.1-mini.4. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run: passed, 40 seconds for the steps, within the page's budget of 90.
@@ -221,4 +246,8 @@ The Claude plugin offers it once, after the answer at whose end it showed the mo
 | a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 100% |
 | b | claude-sonnet-5-5 | 30 | 100% | 100% | 0% | 23% | 57% |
 
+</details>
+
 <!-- results:end -->
+
+</details>

@@ -9,6 +9,29 @@ budget_seconds: 180
 
 For anyone who runs an app someone else made. George made a start page for his team. You run your own copy, change it with a reason each time, and then take George's next version: you get his improvements, and your changes stay. You never see Helm, Git or the hub that came with the app.
 
+## Quick start
+
+You need: an unpacked confighub mini package ([installing the local hub](../../docs/install-mini.md#install-by-hand-without-the-plugin)) and `python3`. No Docker, no cluster and no account.
+
+| | By hand | Ask your agent |
+|---|---|---|
+| Open the app | `./startpage` | "George's start page app is in this folder: run it. Make it dark because it's easier on my eyes, put "Support desk, floor 3" in the footer so people can find us, then take George's newest version (in its georges-next-version folder) without losing my changes." |
+| Make it yours | `./startpage set theme dark "Easier on my eyes"` | Your agent can run the same command. |
+| Look at George's update | `./startpage update` | Your agent can run the same command. |
+| Take it | `./startpage update --yes` | Your agent can run the same command. |
+| See why | `./startpage why` | Your agent can run the same command. |
+
+Your page has George's improvements and still your changes, each with its reason.
+
+Without ConfigHub: you edit your copy of George's files by hand, and when his next version arrives you work out from memory which differences were yours, and why.
+
+## Deeper dive
+
+The rest of this page is the full version: every step with what it prints, how to undo it, what an agent is asked to do and must never do, and how this was tested.
+
+<details>
+<summary>Show the full walkthrough</summary>
+
 ## Human
 
 ### What you need
@@ -158,6 +181,8 @@ grep -E '^(theme|footer|columns):' "$d"
 
 <!-- results:begin -->
 
+<details><summary>Test results</summary>
+
 Results, 14 November 2026, confighub mini 0.11.1-mini.4. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run: passed, 29 seconds for the steps, within the page's budget of 180.
@@ -201,4 +226,8 @@ The Claude plugin offers it once, after the answer at whose end it showed the mo
 | a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 100% |
 | b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 90% |
 
+</details>
+
 <!-- results:end -->
+
+</details>

@@ -8,6 +8,28 @@ budget_seconds: 300
 
 For anyone who lets Claude Code change configuration. With the Claude plugin installed, every change an agent makes to a settings file is recorded with the request behind it, the next agent is told before it undoes it, and you can ask why any value is set. It needs no hub and no account; the last two steps add a hub on your computer.
 
+## Quick start
+
+You need: Claude Code, signed in, and Git. The last row adds a hub on your computer.
+
+| | By hand | Ask your agent |
+|---|---|---|
+| Install the plugin | `claude plugin marketplace add confighubai/confighub-mini-plugin`, then `claude plugin install confighub@confighub` | In Claude Code: `/plugin marketplace add confighubai/confighub-mini-plugin`, then `/plugin install confighub@confighub` |
+| Ask why a value is set | `/confighub:why CACHE` | "Why is the cache on in .env? Write the answer, with who asked for it and why, in WHY.md. Change nothing else." |
+| Change a value | `claude -p "Staging's slow tests time out: raise TIMEOUT to 60 in .env. Make the change now; don't commit." --permission-mode acceptEdits` | "Staging's slow tests time out: raise TIMEOUT to 60 in .env. Don't commit." |
+| Keep it in a hub | `/confighub:install-mini`, then `/confighub:to-hub` (step 10) | "Put what the agents changed in this repository, with the requests behind each change, into the ConfigHub hub on this machine." |
+
+Every change an agent makes to a settings file is recorded with the request behind it, and the next agent is told before it undoes it.
+
+Without ConfigHub: your agent edits `.env` directly, and `git diff` shows the new value but not why.
+
+## Deeper dive
+
+The rest of this page is the full version: each slash command, what it prints, an agent being told before it undoes a change, the step to a local hub, and how this was tested.
+
+<details>
+<summary>Show the full walkthrough</summary>
+
 ## Human
 For a person following along in a terminal.
 
@@ -176,6 +198,8 @@ cub=$(ls -d ~/.confighub/mini/confighub-mini-*/bin/cub | tail -1) && s=$($cub sp
 
 <!-- results:begin -->
 
+<details><summary>Test results</summary>
+
 Results, 14 November 2026, confighub mini 0.11.1-mini.5. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run: passed, 182 seconds for the steps, within the page's budget of 300.
@@ -206,4 +230,8 @@ The Claude plugin offers it once, after the answer at whose end it showed the mo
 | b | claude-sonnet-5-5 | 90 | 33% | 100% | 17% | 70% | 57% |
 | c | claude-sonnet-5-5 | 90 | 33% | 100% | 27% | 60% | 54% |
 
+</details>
+
 <!-- results:end -->
+
+</details>

@@ -9,6 +9,29 @@ budget_seconds: 600
 
 For someone who looks after an app that Argo CD deploys from Git, where support staff change things on the cluster and nobody writes it down. Dan takes ACME's app over from their Git without restarting it, sees Git, the hub and the cluster side by side, sorts each difference into *deliberate* (the hub records why), *drift* (on the cluster, with no record) or *Git out of date*, keeps what was meant with a reason, and hands the app back to Git with the hub stopped. The package's `./run` plays the whole story, months of changes included, in about five minutes.
 
+## Quick start
+
+You need: an unpacked confighub mini package ([installing the local hub](../../docs/install-mini.md#install-by-hand-without-the-plugin)), Docker (or OrbStack), `kind`, `kubectl`, `git`, `python3`, the cub-scout plugin for `cub`, and internet access. Argo CD is installed for you. No account.
+
+| | By hand | Ask your agent |
+|---|---|---|
+| Add cub-scout | `cub plugin install confighub/cub-scout` | Your agent can run the same command. |
+| Play the story | `./run` | "ACME's app runs from their Git under Argo CD, and support changed things on the cluster with no record. This folder's ./run plays it on a local kind cluster, wsa-live-state (LIVESTATE_CLUSTER is set). Show me what Git says, what the hub holds and what is running, sort each difference into deliberate, drift or Git out of date, and give ACME back their Git with the hub stopped. Leave the cluster running for me to look at." |
+| Look at the cluster | `kubectl` with the cluster's kubeconfig (step 5) | Your agent can run the same command. |
+| Read the reasons in Git | Read `CHANGES.md` in ACME's Git (step 6) | Your agent can run the same command. |
+| Remove it all | `./run remove` | Your agent can run the same command. |
+
+`./run` takes ACME's app over from Git without a restart, sorts each difference, keeps what was meant with a reason, and hands the app back to Git with the hub stopped.
+
+Without ConfigHub: you compare Git with what runs, field by field, with `kubectl`, and a change support made on the cluster has no record of who made it or why.
+
+## Deeper dive
+
+The rest of this page is the full version: every step with what it prints, how to undo it, what an agent is asked to do and must never do, and how this was tested.
+
+<details>
+<summary>Show the full walkthrough</summary>
+
 ## Human
 
 ### What you need
@@ -142,6 +165,8 @@ kubectl --kubeconfig "$k" -n argocd get applications.argoproj.io web-from-git -o
 
 <!-- results:begin -->
 
+<details><summary>Test results</summary>
+
 Results, 14 November 2026, confighub mini 0.11.1-mini.4. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run: passed, 344 seconds for the steps, within the page's budget of 600.
@@ -163,4 +188,8 @@ The Claude plugin offers it once, after the answer at whose end it showed the mo
 | b | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 53% |
 | b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 60% |
 
+</details>
+
 <!-- results:end -->
+
+</details>

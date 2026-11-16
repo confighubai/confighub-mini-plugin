@@ -9,6 +9,27 @@ budget_seconds: 240
 
 A queue spikes and you want to try batches of 240 instead of 120. Use a disposable Daytona sandbox so the experiment cannot approve its own change. When you delete the sandbox, your team can still review the setting and the reason. Production stays at 120.
 
+## Quick start
+
+You need: an unpacked [mini package](../../docs/install-mini.md) that includes the Daytona starter. The local rehearsal needs no Daytona account.
+
+| | By hand | Ask your agent |
+|---|---|---|
+| Connect the batch job | `cub mini adopt batch`, then the owner's approvals in step 2 | "Set up my batch job so I can try changes while keeping production at 120." |
+| Try 240 | `"$MINI/examples/daytona-starter/propose" "$PWD/batch" "$PWD/returned"` with the proposer's key (step 3) | "Try 240 because the queue spiked, and leave production at 120." |
+| Put the file back | `cp batch/daytona.env batch/app.env` | "Put my local file back and keep the experiment for later." |
+
+Production stays at 120, and the proposal for 240 keeps its reason for your team to review.
+
+Without ConfigHub: your agent changes `DAYTONA_BATCH_LIMIT` directly in the sandbox's `app.env`, and the next session has no record of why.
+
+## Deeper dive
+
+The rest of this page is the full version: every command for the local rehearsal, how a real sandbox keeps the proposer apart, the move to a shared hub for review, what an agent leaves to the owner, and how this was tested.
+
+<details>
+<summary>Show the full walkthrough</summary>
+
 ## Human
 
 Use an unpacked [mini package](../../docs/install-mini.md) that includes the Daytona starter. Start with the local rehearsal: it needs no Daytona account and tests the proposal, export, and shared review. It does not run a batch job. Use an empty working directory and keep its keys and evidence private. The shared step needs a disposable app name in an organization where you can create and remove test resources.
@@ -124,6 +145,8 @@ This proves: the starter and the settings are stored and the experiment can beco
 
 <!-- results:begin -->
 
+<details><summary>Test results</summary>
+
 Results, 14 November 2026, confighub mini 0.11.1-mini.5. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run: passed, 87 seconds for the steps, within the page's budget of 240; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
@@ -170,4 +193,8 @@ Earlier records of this page, kept with their own date, package and scope:
 
 - Focused real Daytona Cloud check on [published mini.9](https://github.com/confighubai/confighub-mini-plugin/releases/tag/mini-v0.11.1-mini.9), 15 November 2026: a disposable EU Linux amd64 sandbox downloaded and verified the release. The shipped helper created a proposal under a key that could not approve or read the owner's key. Staging held 240; live stayed at 120. The hub showed the Git commit, the dirty checkout and the SHA-256 of the returned `app.env` archive. Recomputing the digest on the Mac matched what the hub showed; the extracted file held 240. The hub was removed and Daytona reported the sandbox absent. This checks the archive of the submitted settings, not an immutable snapshot of the whole sandbox or a running batch job.
 
+</details>
+
 <!-- results:end -->
+
+</details>

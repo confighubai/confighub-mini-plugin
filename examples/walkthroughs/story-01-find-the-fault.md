@@ -9,6 +9,28 @@ budget_seconds: 120
 
 For someone called in to fix a platform a customer has changed over the months, where nobody remembers every change. Dan finds three differences from the platform as it was given. The customer explains two; the third is the fault. He rebuilds their installation in a hub with the two changes they meant, each with its reason, leaves the fault out, and writes it back out as plain files for their Git.
 
+## Quick start
+
+You need: an unpacked confighub mini package ([installing the local hub](../../docs/install-mini.md#install-by-hand-without-the-plugin)), `helm`, `python3`, and internet access to render the chart. No GPU, no cluster, no Docker and no account.
+
+| | By hand | Ask your agent |
+|---|---|---|
+| Find the fault | `diff given/gpu-operator/gpu-operator.yaml as-found/gpu-operator/gpu-operator.yaml` | "The customer's GPU nodes stopped showing GPUs. In this folder, given/ is the GPU platform we gave them and as-found/ is what they run. Compare the two and fix it. They changed the driver to 580.95.05 because their nodes are certified with it, and switched our metrics exporter off because they use their own; keep both, with those reasons, in their installation, called "customer". Give me files for their Git." |
+| Load the platform | `cub mini upload given/gpu-operator --namespace gpu-operator`, then `cub variant create customer gpu-operator-base` (step 5) | Your agent can run the same command. |
+| Keep the two changes | `cub mini set` for each change, with the customer's reason (step 6) | Your agent can run the same command. |
+| Hand back files | `cub mini copy gpu-operator --variant customer --to-dir handback` | Your agent can run the same command. |
+
+The customer's two changes are kept with their reasons, the misspelled registry is gone, and `CHANGES.md` lists every change, who made it and why.
+
+Without ConfigHub: your agent fixes the customer's files directly with an editor, and the next person has no record of which changes were meant, or why.
+
+## Deeper dive
+
+The rest of this page is the full version: every step with what it prints, how to undo it, what an agent is asked to do and must never do, and how this was tested.
+
+<details>
+<summary>Show the full walkthrough</summary>
+
 ## Human
 
 ### What you need
@@ -169,6 +191,8 @@ grep -r 'certified with driver' --include=CHANGES.md .
 
 <!-- results:begin -->
 
+<details><summary>Test results</summary>
+
 Results, 14 November 2026, confighub mini 0.11.1-mini.4. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run: passed, 37 seconds for the steps, within the page's budget of 120.
@@ -212,4 +236,8 @@ The Claude plugin offers it once, after the answer at whose end it showed the mo
 | a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 60% |
 | b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 53% |
 
+</details>
+
 <!-- results:end -->
+
+</details>

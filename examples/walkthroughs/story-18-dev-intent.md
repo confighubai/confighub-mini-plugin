@@ -9,6 +9,28 @@ budget_seconds: 240
 
 Ana asks her agent for a small notes API and does not want to think about environments or limits. What comes back fits what her team allows: the app's settings in a hub, a staging and a production copy, and rules that hold. When an agent breaks a rule, the value never reaches the service, and her first app becomes the starting point for her next.
 
+## Quick start
+
+You need: an unpacked confighub mini package (from the [releases page](https://github.com/confighubai/confighub-mini-plugin/releases)) on macOS or Linux. No Docker, no account.
+
+| | By hand | Ask your agent |
+|---|---|---|
+| Put the app on the pattern | `cub mini adopt notes` | "Build me a small notes API, with its settings in an env file, that fits the team's pattern, pattern-web, with a staging and a live copy." |
+| Approve production | `cub mini approve notes-base/adopt` | You approve it yourself. |
+| A rule holds a bad value | `cub mini pull notes --variant staging --dir ~/walkthrough/service` | Your agent can run the same command. |
+| Start the next app | `cub mini adopt blog --pattern notes` | Your agent can run the same command. |
+
+A value that breaks a rule stays in the hub and never reaches the service, and the second app starts from the first.
+
+Without ConfigHub: your agent writes the app's limits directly into its `.env` file, production included, and the next session has no record of why.
+
+## Deeper dive
+
+The rest of this page is the full version: every command with what it prints, what an agent leaves to you, and how this was tested.
+
+<details>
+<summary>Show the full walkthrough</summary>
+
 ## Human
 
 For a person following along in a terminal.
@@ -147,6 +169,9 @@ find ~/walkthrough/notes -name .git -prune -o -print | grep -qi staging && find 
 
 <!-- results:begin -->
 
+<details><summary>Test results</summary>
+
+
 Results, 14 November 2026, confighub mini 0.11.1-mini.5. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run: passed, 35 seconds for the steps, within the page's budget of 240.
@@ -198,4 +223,9 @@ The Claude plugin offers it once, after the answer at whose end it showed the mo
 | a | claude-sonnet-5-5 | 15 | 0% | 100% | n/a | n/a | 93% |
 | b | claude-sonnet-5-5 | 15 | 0% | 100% | n/a | n/a | 100% |
 
+
+</details>
+
 <!-- results:end -->
+
+</details>

@@ -9,6 +9,29 @@ budget_seconds: 300
 
 Priya's platform team keeps the settings every service shares in one base. Each service keeps the few values it sets itself. When the team changes the base once, every app takes the change, and no app's own values are touched. Here three services stand in for the story's ten.
 
+## Quick start
+
+You need: an unpacked confighub mini package (from the [releases page](https://github.com/confighubai/confighub-mini-plugin/releases)) on macOS or Linux. No Docker, no account.
+
+| | By hand | Ask your agent |
+|---|---|---|
+| Make apps from the base | `cub mini adopt apps/$app --pattern company` for each service (step 4) | Your agent can run the same command. |
+| Change the base once | `cub mini set company KEY=VALUE --variant base --change-desc "WHY"` | "Make warn the default log level for every service on the company base, and give them all HEALTH_PATH=/healthz. Don't touch what any service set for itself." |
+| Every app takes it | `cub mini upgrade company-base/app --dry-run`, then `cub mini upgrade company-base/app --change-desc "WHY"` | Your agent can run the same command. |
+| See where a value came from | `cub unit blame app --space billing-base` | Your agent can run the same command. |
+| Production waits | `cub mini waiting` | You approve it yourself. |
+
+Each app keeps the values it set itself.
+
+Without ConfigHub: your agent copies the change into each service's own `.env` file, production included, and the next session has no record of why.
+
+## Deeper dive
+
+The rest of this page is the full version: every command with what it prints, what an agent leaves to you, and how this was tested.
+
+<details>
+<summary>Show the full walkthrough</summary>
+
 ## Human
 
 For a person following along in a terminal.
@@ -160,6 +183,9 @@ grep -qx 'LOG_LEVEL=warn' company.env && ! for a in search ledger; do grep -qx '
 
 <!-- results:begin -->
 
+<details><summary>Test results</summary>
+
+
 Results, 14 November 2026, confighub mini 0.11.1-mini.5. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run: passed, 46 seconds for the steps, within the page's budget of 300.
@@ -211,6 +237,11 @@ The Claude plugin offers it once, after the answer at whose end it showed the mo
 | a | claude-sonnet-5-5 | 15 | 0% | 100% | n/a | n/a | 0% |
 | b | claude-sonnet-5-5 | 15 | 0% | 100% | n/a | n/a | 13% |
 
+
+</details>
+
 <!-- results:end -->
 
 The proposed enterprise offer waits for all ten apps to serve the approved base revision in production. That moment was absent from all 12 kept mini.5 sessions in arms b and c. A persons-only rejudge of one kept session per arm showed the enterprise offer to zero of ten simulated readers. The wording has no conversion result.
+
+</details>

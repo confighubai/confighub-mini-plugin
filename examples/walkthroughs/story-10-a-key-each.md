@@ -9,6 +9,27 @@ budget_seconds: 150
 
 For anyone who has to let someone else into their configuration for one job, and out again. Three parties work on one platform: Ivan's team provides it, a customer runs it, and Dan comes in to fix it. Each makes a key of their own and sends only its public half, each is given only what their part needs, and each is refused the rest. When Dan leaves, his key stops working, and the record still names him.
 
+## Quick start
+
+You need: an unpacked confighub mini package ([installing the local hub](../../docs/install-mini.md#install-by-hand-without-the-plugin)), `helm`, `python3`, `openssl`, and internet access to render the chart. No cluster, no Docker and no account.
+
+| | By hand | Ask your agent |
+|---|---|---|
+| Render the platform | `./render` | Your agent can run the same command. |
+| Play all three parties | `./two-people` (step 4 keeps what it prints in `keys.txt`) | "This folder's ./two-people is a check of keys for three parties: Ivan's team, a customer, and Dan. Run it, keep its output in keys.txt, and tell me whether each party was refused everything outside its own part." |
+| Count the refusals | `grep -c 'HTTP 403: permission denied' keys.txt` | Your agent can run the same command. |
+
+Each party's key works only on its own part, Dan's key stops working when he leaves, and the record still names him.
+
+Without ConfigHub: you give Dan access on each system his job touches, take it away by hand when he leaves, and the files keep no note of who set each value or why.
+
+## Deeper dive
+
+The rest of this page is the full version: every command, what each refusal looks like, what an agent must never do, and how this was tested.
+
+<details>
+<summary>Show the full walkthrough</summary>
+
 ## Human
 
 ### What you need
@@ -127,6 +148,8 @@ grep -E '403|Invalid credentials|NOT REFUSED' keys.txt
 
 <!-- results:begin -->
 
+<details><summary>Test results</summary>
+
 Results, 14 November 2026, confighub mini 0.11.1-mini.4. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run: passed, 87 seconds for the steps, within the page's budget of 150.
@@ -148,4 +171,8 @@ The Claude plugin offers it once, after the answer at whose end it showed the mo
 | b | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 47% |
 | b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 33% |
 
+</details>
+
 <!-- results:end -->
+
+</details>

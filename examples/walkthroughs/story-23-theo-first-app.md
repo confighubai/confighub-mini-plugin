@@ -9,6 +9,27 @@ budget_seconds: 60
 
 Theo starts apps by asking Claude Code for them, sometimes from a copy of someone else's repository. Weeks later he wants to know why each setting is what it is and where the app came from. With the Claude plugin, every value the agent writes is kept with the request behind it, from the first file, along with the repository the app started from. No hub and no account are needed.
 
+## Quick start
+
+You need: Claude Code, Git, and the Claude plugin. No hub and no account.
+
+| | By hand | Ask your agent |
+|---|---|---|
+| Ask for the app | Type the request in Claude Code (step 2) | "Build me a booking page for my yoga studio, with a limit of 20 bookings a day: the room fits 20 mats." |
+| Ask why a value is set | `/confighub:why` followed by the setting's name | Your agent can run the same command. |
+| See what agents changed | `cub mini changes --dir .` | Your agent can run the same command. |
+
+Each setting keeps the request that set it, and the record names the repository the app started from.
+
+Without ConfigHub: your agent writes the limit into a settings file such as `.env`, and the next session has no record of why it is 20.
+
+## Deeper dive
+
+The rest of this page is the full version: each step in Claude Code, what the record looks like, and how this was tested.
+
+<details>
+<summary>Show the full walkthrough</summary>
+
 ## Human
 
 For a person following along. Steps 2 to 6 happen in Claude Code.
@@ -87,6 +108,9 @@ grep -rhsE --include='.env*' --include='*.env' --include='*.json' --include='*.y
 
 <!-- results:begin -->
 
+<details><summary>Test results</summary>
+
+
 Results, 14 November 2026, confighub mini 0.11.1-mini.5. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Environment, published confighub mini 0.11.1-mini.5 (tag mini-v0.11.1-mini.5, darwin-arm64, verified against SHA256SUMS) and the Claude plugin it carries: Claude Code with the Claude plugin on this computer, with no hub needed for the record, no stand-in, cluster or real service, and no approvals. The scripted run only makes the folder; its check needs a Claude Code session, so it is judged in the agent runs only. Arm a was run again the same day on the same package with a tightened file-level judge (the reason kept as data, not as a comment); arms b and c are from the first mini.5 pilot.
@@ -139,4 +163,9 @@ The Claude plugin offers it once, after the answer at whose end it showed the mo
 
 The test harness denied some tool use (1/3 in arm a, 3/3 in arm b). Keep that limitation in mind when comparing arms.
 
+
+</details>
+
 <!-- results:end -->
+
+</details>
