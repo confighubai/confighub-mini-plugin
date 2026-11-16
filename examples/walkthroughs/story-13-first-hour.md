@@ -18,7 +18,7 @@ You need: Claude Code, and an unpacked confighub mini package (from the [release
 | Give the hub your settings | `cub mini adopt . --name api` | Your agent can run the same command. |
 | Put production behind approval | `cub mini require-approval api --variant live --agent bot` | "Make sure an agent cannot change this app's production settings without my say. Staging can change freely." |
 | An agent proposes a change | `cub --context bot mini upload . --component api --change-desc "Cache on for next week's sale"` (step 7) | Your agent can run the same command. |
-| Approve production | `cub mini waiting`, then `cub mini approve BASE/ORDER` | You approve it yourself. |
+| Approve production | `cub mini approve api` | You approve it yourself. |
 | Read the record | `/confighub:changes` in Claude Code (step 9) | Your agent can run the same command. |
 
 Without ConfigHub: your agent changes `.env` directly, production included, and the next session has no record of why.

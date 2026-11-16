@@ -15,8 +15,7 @@ You need: an unpacked confighub mini package (from the [releases page](https://g
 
 | | By hand | Ask your agent |
 |---|---|---|
-| Put the app on the pattern | `cub mini adopt notes` | "Build me a small notes API, with its settings in an env file, that fits the team's pattern, pattern-web, with a staging and a live copy." |
-| Approve production | `cub mini approve notes-base/adopt` | You approve it yourself. |
+| Put the app on the pattern | `cub mini adopt notes`, which ends by asking you to approve production's first settings | "Build me a small notes API, with its settings in an env file, that fits the team's pattern, pattern-web, with a staging and a live copy." You approve production yourself. |
 | A rule holds a bad value | `cub mini pull notes --variant staging --dir ~/walkthrough/service` | Your agent can run the same command. |
 | Start the next app | `cub mini adopt blog --pattern notes` | Your agent can run the same command. |
 

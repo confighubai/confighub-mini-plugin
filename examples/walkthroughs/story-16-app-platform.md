@@ -17,8 +17,8 @@ You need: an unpacked confighub mini package (from the [releases page](https://g
 |---|---|---|
 | Put production behind approval | `cub mini require-approval shop --variant live --agent bot` (step 3) | Your agent can run the same command. |
 | The agent proposes a release | `cub --context bot mini upload shop --component shop --change-desc "Release 1.1.0: /health for the load balancer"` (step 5) | "Ship release 1.1.0 of shop, digest sha256:6d51e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1. Staging first; I approve production." |
-| Approve production | `cub mini approve ORDER --note "Staging answered /health; ship it" --yes` | You approve it yourself. |
-| Roll back | `cub mini rollback shop-live --change-order ORDER --reason "1.1.0 answers /health slowly under load; back to 1.0.0"`, then approve the new order (step 7) | You roll it back yourself. |
+| Approve production | `cub mini approve shop --note "Staging answered /health; ship it" --yes` | You approve it yourself. |
+| Roll back | `cub mini rollback shop --reason "1.1.0 answers /health slowly under load; back to 1.0.0"`, then approve the new order (step 7) | You roll it back yourself. |
 | See who shipped it | `cub mini receipts shop-live --revision 4` | Your agent can run the same command. |
 
 Each release is a revision of production you approved, with the agent's reason, and production's runtime only ever pulls approved revisions.

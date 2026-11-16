@@ -17,8 +17,8 @@ You need: the [local hub](../../docs/install-mini.md), unpacked, with starters s
 |---|---|---|
 | Connect the app | `cub mini adopt menu` | "Deploy my menu service: keep its settings in a staging and a production copy, and production should change only when I approve." |
 | Change a setting | Edit `menu/.env`, then `cub mini upload menu --change-desc "Warnings alone hide what customers do"` | "Production should log at info, not warn. Make that change for menu." |
-| Approve production | `cub mini waiting`, then `cub mini approve BASE/ORDER` (step 5) | You approve it yourself. |
-| Undo | `cub mini rollback menu-live --change-order ORDER --reason "Info logs show customer emails"` | "Undo that log level change in production; info logs show customer emails." |
+| Approve production | `cub mini approve menu` (step 5) | You approve it yourself. |
+| Undo | `cub mini rollback menu --reason "Info logs show customer emails"` | "Undo that log level change in production; info logs show customer emails." |
 
 Staging keeps its own log level, production changes only when you approve, and `cub mini pull` writes production's approved settings to the file your service reads.
 
