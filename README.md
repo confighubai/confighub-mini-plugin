@@ -2,9 +2,13 @@
 
 **Your agent makes your apps. Durable config makes the platform.**
 
-ConfigHub keeps your app’s settings and the reason for each change. Try changes in staging, review what goes to production, and reuse the setup for your next app.
+ConfigHub keeps the settings of the apps you make with a coding agent, such as a log level, a cache switch or the number of instances. With each change it keeps what you asked the agent for.
 
-Start with the Claude plugin alone: it keeps a record of the settings your agent changes and the reason for each, and `/confighub:why` shows them. Add a free local hub when you want your agent to change staging while production waits for you. It runs on macOS or Linux with no ConfigHub account, Docker or Kubernetes.
+A new agent session doesn’t know why the last one set a value. Ask one session to turn a cache on for a sale, and a later session chasing a memory leak turns it off. With ConfigHub, the later session is told the cache is on for the sale before it changes it.
+
+Settings kept with their reasons are durable config. They are still there for the next session and the next version of the app. Your next app can start from the same settings instead of from nothing. What your apps share in this way is your platform: it grows from your apps, and nobody has to build it first.
+
+Start with the Claude plugin alone: it keeps a record of the settings your agent changes and the reason for each, and `/confighub:why` shows them. Add a free local hub, a ConfigHub server that runs on your computer, when you want a staging copy of the app that your agent can change at once and a production copy that changes only when you approve. It runs on macOS or Linux with no ConfigHub account, Docker or Kubernetes.
 
 ## Install
 
