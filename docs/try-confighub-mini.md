@@ -6,7 +6,7 @@ The words on this page are explained in [the glossary](README.md#words).
 
 ## Install it
 
-Type `/confighub:install-mini` in Claude Code, or follow [the install steps](install-mini.md) up to and including `cub space list`. With `/confighub:install-mini`, the hub is already running, and it printed the full path of its `cub`; to type `cub` yourself, put that folder first on your path: `export PATH="$HOME/.confighub/mini/confighub-mini-VERSION-OS-ARCH/bin:$PATH"`.
+In a terminal, run `bin/confighub mini get` from the Claude plugin, or follow [the install steps](install-mini.md) up to and including `cub space list`. In Claude Code, `/confighub:staging`, typed in an app's folder, installs and starts the hub too, and also gives that app a staging and a production copy of its settings. To type `cub` yourself, put the package's folder first on your path: `export PATH="$HOME/.confighub/mini/confighub-mini-VERSION-OS-ARCH/bin:$PATH"`.
 
 ## Try one story
 
@@ -20,7 +20,7 @@ The package's `START-HERE.txt` lists more stories, and its `./verify` checks, on
 
 ## Put your agents' record into the hub
 
-If you have used the Claude plugin in a repository, its record of what agents changed can go into the hub. Each recorded change becomes a revision, with the request or reason behind it.
+If you have used the Claude plugin in a repository, its record of what agents changed can go into the hub. Each recorded change becomes a revision, with the request or reason behind it. If you typed `/confighub:staging` in the repository, it is there already.
 
 1. Go to the repository, and see what would be written, without writing it:
 

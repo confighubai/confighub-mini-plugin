@@ -24,7 +24,7 @@ If your vendor's software has none of this, the second and third ways in still w
 
 George made a start page for his team. You run your own copy. The example carries no setup of its own: it uses the local hub it came in, and starts a hub the first time you run it. You never type a `cub` command.
 
-1. Install the local hub, if you have not: type `/confighub:install-mini` in Claude Code ([install](../install-mini.md)).
+1. Install the local hub, if you have not: run `bin/confighub mini get` from the Claude plugin in a terminal ([install](../install-mini.md)).
 
 2. From the package's folder, `~/.confighub/mini/confighub-mini-VERSION-PLATFORM`, go to the example and open your page:
 

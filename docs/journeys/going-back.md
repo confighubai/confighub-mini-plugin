@@ -47,7 +47,7 @@ For an app you attached, your own `.env`, `.tfvars` or Kustomize files were neve
 
 ## Remove confighub mini
 
-1. Stop the hub, keeping its data, so that `/confighub:install-mini` can start it again later:
+1. Stop the hub, keeping its data, so that `/confighub:staging`, typed in a connected app's folder, can start it again later:
 
    ```bash
    cub mini stop

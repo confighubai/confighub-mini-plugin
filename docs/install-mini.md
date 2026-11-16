@@ -13,7 +13,7 @@ This page shows how to install it: in one step from Claude Code, on its own with
 | `cub`, ConfigHub's command-line tool, inside it | v0.11.1 |
 | The download | 52 to 77 MB, depending on the platform |
 
-The Claude plugin's own version is on the [releases page](https://github.com/confighubai/confighub-mini-plugin/releases). `/confighub:install-mini` always gets the newest the local hub.
+The Claude plugin's own version is on the [releases page](https://github.com/confighubai/confighub-mini-plugin/releases). `bin/confighub mini get` always gets the newest local hub.
 
 ## What you are installing
 
@@ -27,13 +27,13 @@ There is a package for macOS and one for Linux, each for ARM and for Intel, on t
 
 ## Install in one step, from Claude Code
 
-With [the Claude plugin](../README.md) installed, type this in a Claude Code session:
+With [the Claude plugin](../README.md) installed, open a Claude Code session in your app's folder, one that holds a settings file such as `.env`, and type:
 
 ```
-/confighub:install-mini
+/confighub:staging
 ```
 
-It does the following:
+When the local hub is not on your machine yet, it does the following:
 
 1. It finds the newest release.
 2. It downloads the package for your machine.
@@ -41,13 +41,13 @@ It does the following:
 4. It unpacks the package.
 5. It starts a hub.
 
-It asks nothing in Claude Code. It prints one line about a setting that is yours alone, off until you turn it on: whether a hub may start by itself for an app's settings files when an agent works in its folder ([what it does](agent-workflow.md#a-hub-that-starts-by-itself-only-if-you-say-yes)).
+Then it gives the app a staging and a production copy of its settings in that hub. Staging takes your agent's changes at once, and production only what you approve. It asks nothing, and approves nothing. Where production's first settings wait for you, it ends with the one command that approves them, to run in a terminal of your own. Then start a new Claude Code session in the folder ([approvals](approvals.md#on-confighub-mini-ask-for-it)).
 
-If you run it again, it starts the hub if the hub is stopped, and moves it onto a newer release if there is one ([how](#move-to-a-newer-confighub-mini)).
+With the package already here, it downloads nothing, and starts the hub if the hub is stopped. To move to a newer release, see [below](#move-to-a-newer-confighub-mini).
 
-When it is done, it prints the full path of the package's `cub`, which runs in a terminal of your own with nothing added to your `PATH`, and what to do next: put a repository's record into the hub with `cub mini copy --from-record` ([how](try-confighub-mini.md#put-your-agents-record-into-the-hub)), or follow [a first run](try-confighub-mini.md).
+For the record alone, with no app to connect, type `/confighub:to-hub --yes`. With no hub reachable, it starts one the same way, and copies the record into it.
 
-In a terminal, or in Codex, run `bin/confighub mini get` from the plugin. It does the same, and in a terminal, the first time on a machine, it asks that setting as a question before it starts the hub. Enter means no. The plugin on its own carries no server, so any `cub mini` command run as `bin/confighub mini COMMAND`, such as `bin/confighub mini install` or `bin/confighub mini need`, says it needs the local hub when none is downloaded, and names `confighub mini get`.
+In a terminal, or in Codex, run `bin/confighub mini get` from the plugin. It does steps 1 to 5. In a terminal, the first time on a machine, it asks one question before it starts the hub: whether a hub may start by itself for an app's settings files when an agent works in its folder ([what it does](agent-workflow.md#a-hub-that-starts-by-itself-only-if-you-say-yes)). Enter means no. The plugin on its own carries no server, so any `cub mini` command run as `bin/confighub mini COMMAND`, such as `bin/confighub mini install` or `bin/confighub mini need`, says it needs the local hub when none is downloaded, and names `confighub mini get`.
 
 The one-step install needs nothing else on the machine: no `tar`, `xz` or `curl`, and no system certificates. It works on Linux distributions that use glibc, such as Debian, Ubuntu, Fedora, Rocky and Amazon Linux, including their slim images. Alpine uses musl, and the bundled PostgreSQL does not run on it, so the install stops before it downloads anything and says so. Use a glibc image instead. In a container, run it as a user that has an account, since PostgreSQL will not start for a user ID without one.
 
@@ -124,7 +124,7 @@ The package's `START-HERE.txt` lists ten stories you can run on the hub. For a g
 
 ## Move to a newer confighub mini
 
-Type `/confighub:install-mini` again in Claude Code, or run `bin/confighub mini get` from the Claude plugin in a terminal. It downloads the newest release, checks it against `SHA256SUMS`, and moves the hub onto it. Every Space, revision, change order still waiting and secret is kept. Each agent that `cub mini require-approval --agent` set up runs `cub mini` from the new package from then on, and its Claude Code settings may read it. In a terminal, the command's last lines print the new `export PATH=...` line for its `cub`; in Claude Code, they print its full path. `--version VERSION` gets one release in particular.
+Run `bin/confighub mini get` from the Claude plugin in a terminal. It downloads the newest release, checks it against `SHA256SUMS`, and moves the hub onto it. Every Space, revision, change order still waiting and secret is kept. Each agent that `cub mini require-approval --agent` set up runs `cub mini` from the new package from then on, and its Claude Code settings may read it. Its last lines print the new `export PATH=...` line for its `cub`. `--version VERSION` gets one release in particular.
 
 A repository's `.claude/settings.local.json` is not changed for you. When one runs its sessions as an agent, the move prints the new package's folder to add to that file's `sandbox.filesystem.allowRead`.
 

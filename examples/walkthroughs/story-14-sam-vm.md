@@ -18,7 +18,7 @@ You need: an unpacked confighub mini package (from the [releases page](https://g
 | Give the hub your settings | `cub mini adopt api` | Your agent can run the same command. |
 | Give the agent a key | `cub mini require-approval api --variant live --agent bot` | Your agent can run the same command. |
 | The agent proposes | `cub --context bot mini upload api --component api --change-desc "Longer timeout for the large model"` (step 6) | "Our api times out on the large model. Raise TIMEOUT_SECONDS to 120 for production; I'll approve it." |
-| Approve production | `cub mini waiting`, then `cub mini approve ORDER --note "The large model needs it" --yes` | You approve it yourself. |
+| Approve production | `cub mini approve api --note "The large model needs it" --yes` | You approve it yourself. |
 | The VM takes the approved settings | `CUB_CONFIG=$VM_CONFIG cub mini pull api --variant live --dir ~/walkthrough/service --restart "echo restarting the api"` (step 5 makes the VM's key) | The VM runs it, not your agent. |
 
 The service's folder is written only from approved revisions, and the agent holds no key that reaches the service.

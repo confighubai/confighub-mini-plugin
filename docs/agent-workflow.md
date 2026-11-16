@@ -83,9 +83,9 @@ One question, asked once on this machine. When an agent works in a folder that h
 
 Enter means no. Your answer is kept, and the question is not asked again on that machine.
 In your own terminal you can set it explicitly with `--arrival yes` or `--arrival no`. A coding agent cannot set it for you. In Claude
-Code, `/confighub:install-mini` asks nothing, since whatever you could type there the
-agent could type too. It prints this line instead, once in a session, and the setting
-stays off. The command in it is the package's own `cub`, with your version and platform, so it runs as printed on a
+Code, the slash commands that start a hub, `/confighub:staging` and `/confighub:to-hub --yes`,
+ask nothing, since whatever you could type there the agent could type too, and the setting
+stays off. Where nobody can answer, setup prints this line instead, once in a session. The command in it is the package's own `cub`, with your version and platform, so it runs as printed on a
 machine where `cub` is not yet on your `PATH`:
 
 ```

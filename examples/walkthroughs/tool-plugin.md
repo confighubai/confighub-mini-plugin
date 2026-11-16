@@ -17,7 +17,7 @@ You need: Claude Code, signed in, and Git. The last row adds a hub on your compu
 | Install the plugin | `claude plugin marketplace add confighubai/confighub-mini-plugin`, then `claude plugin install confighub@confighub` | In Claude Code: `/plugin marketplace add confighubai/confighub-mini-plugin`, then `/plugin install confighub@confighub` |
 | Ask why a value is set | `/confighub:why CACHE` | "Why is the cache on in .env? Write the answer, with who asked for it and why, in WHY.md. Change nothing else." |
 | Change a value | `claude -p "Staging's slow tests time out: raise TIMEOUT to 60 in .env. Make the change now; don't commit." --permission-mode acceptEdits` | "Staging's slow tests time out: raise TIMEOUT to 60 in .env. Don't commit." |
-| Keep it in a hub | `/confighub:install-mini`, then `/confighub:to-hub` (step 10) | "Put what the agents changed in this repository, with the requests behind each change, into the ConfigHub hub on this machine." |
+| Keep it in a hub | `/confighub:staging` in the folder (step 9) | "Put what the agents changed in this repository, with the requests behind each change, into the ConfigHub hub on this machine." |
 
 Every change an agent makes to a settings file is recorded with the request behind it, and the next agent is told before it undoes it.
 
@@ -126,28 +126,27 @@ Claude Code, signed in, and Git. Each slash command below, such as `/confighub:c
    claude -p "Staging's slow tests time out: raise TIMEOUT to 60 in .env. Make the change now; don't commit." --permission-mode acceptEdits
    ```
 
-9. `/confighub:install-mini`: the step to a hub. The local hub is ConfigHub, the server that keeps configuration with every change and can make production wait for your approval, made small enough for one computer. This downloads it (52 to 77 MB, by platform), checks it, and starts a hub.
-   <!-- run: install-mini -->
+9. `/confighub:staging`: the step to a hub. The local hub is ConfigHub, the server that keeps configuration with every change and can make production wait for your approval, made small enough for one computer. Typed in the app's folder, this downloads it (52 to 77 MB, by platform), checks it, starts a hub, and gives the app a staging and a production copy of its settings. What the agents changed here, with each request, goes into the hub in the same step. It approves nothing. After it, start a new Claude Code session in the folder: from then on the agent works on a key of its own, which can change staging and only propose changes to production.
+   <!-- run: staging -->
    ```sh
-   claude -p "/confighub:install-mini"
+   claude -p "/confighub:staging"
    ```
    ```text
    …
-       It is the current context.
+   try-confighub now has a staging and a production copy of its settings, in a hub on this machine. Your files are unchanged.
+   Staging takes your agent's changes at once. Your agent can only propose changes to production; they wait for you.
+   Start a new Claude Code session here: from then on your agent works in this folder with a key of its own that can do just that.
    …
    ```
+   The next line says how many changes went into the hub, and the last one whether production's first settings wait for you and, if they do, the command that approves them, to run in a terminal of your own.
 
-10. `/confighub:to-hub`: copy what the agents changed, with each request, into the hub. It first says what it would write; `--yes` writes it.
+10. The record is in the hub: each change the agents made to `.env` is a revision of the hub's copy of the file, with the request behind it. The local hub's `cub` lists them; this shows the ones whose request named the sale:
    <!-- run: to-hub -->
    ```sh
-   claude -p "/confighub:to-hub"
-   claude -p "/confighub:to-hub --yes"
+   cub=$(ls -d ~/.confighub/mini/confighub-mini-*/bin/cub | tail -1)
+   s=$($cub space list -o 'jq=.[].Space.Slug' | grep -- '-local$' | head -1)
+   $cub unit list --space "$s" -o 'jq=.[].Unit.Slug' | while read u; do $cub revision list "$u" --space "$s" -o 'jq=.[].Revision.Description'; done | grep sale
    ```
-   ```text
-     would make try-confighub-env-base, the file as it was before the first recorded change, and try-confighub-env-local
-   …
-   ```
-   With `--yes` it says how many changes it wrote, each with its reason or request.
 
 ### Undo it
 Remove the hub and its data, then the Claude plugin:
@@ -168,7 +167,7 @@ For an AI agent working where the Claude plugin is installed.
 - **The request**, in the person's words: *"Why is this value set?"*, *"What did the last agent change?"*, *"Put what you changed into the hub."*
 - **Before you change a value**, read the file: the Claude plugin gives you what earlier sessions changed there and why. If your change undoes one, say so, with the earlier request, before or as you make it.
 - **To answer why**, use what the Claude plugin gave you. You cannot type slash commands; tell the person to type `/confighub:why NAME` or `/confighub:changes` for the full record. With the local hub installed, `cub mini changes --why NAME` prints the same.
-- **To move the record into a hub**, run `cub mini to-hub` first, show the person what it would write, then `cub mini to-hub --yes`. With no hub, tell the person to type `/confighub:install-mini`.
+- **To move the record into a hub**, run `cub mini to-hub` first, show the person what it would write, then `cub mini to-hub --yes`. With no hub, tell the person to type `/confighub:staging` in the app's folder, which starts one and copies the record into it, or `/confighub:to-hub --yes`, which starts one for the record alone.
 - **Never** delete or edit files under `~/.confighub/agent-changes`, turn off the Claude plugin's hooks, or change `/confighub:checks` or `/confighub:permissions --apply` for the person.
 - **You are done** when the answer names the request behind the value, or, for the hub, when `cub mini to-hub` says how many changes it wrote.
 
@@ -179,7 +178,7 @@ Arm a is an agent with no plugin and no hub, in the same repository after the sa
 > Why is the cache on in .env? Write the answer, with who asked for it and why, in WHY.md. Change nothing else.
 <!-- agent-task: shared after=shared -->
 > Staging's slow tests time out: raise TIMEOUT to 60 in .env. Don't commit.
-<!-- agent-task: to-hub after=to-hub -->
+<!-- agent-task: to-hub after=staging -->
 > Put what the agents changed in this repository, with the requests behind each change, into the ConfigHub hub on this machine.
 <!-- agent-check why: grep -qi sale WHY.md && grep -qx CACHE=on .env -->
 <!-- agent-check shared: grep -qx TIMEOUT=60 .env || grep -qx TIMEOUT=60 .env.staging -->
@@ -187,10 +186,10 @@ Arm a is an agent with no plugin and no hub, in the same repository after the sa
 <!-- agent-check-a why: test -s WHY.md && grep -qx CACHE=on .env && grep -qx LOG_LEVEL=warn .env -->
 <!-- agent-check to-hub: cub=$(ls -d ~/.confighub/mini/confighub-mini-*/bin/cub | tail -1) && s=$($cub space list -o 'jq=.[].Space.Slug' | grep -- '-local$' | head -1) && test -n "$s" && $cub unit list --space "$s" -o 'jq=.[].Unit.Slug' | while read u; do $cub revision list "$u" --space "$s" -o 'jq=.[].Revision.Description'; done | grep -q "sale" -->
 <!-- arms: a,b,c -->
-<!-- next-step boundary=plugin-to-mini when "production has it too": connect a hub | That change reached production too, since production reads .env. In a ConfigHub hub on this computer, production waits for your yes before an agent's change reaches it, and each value keeps its reason for good. If you want that, type /confighub:install-mini; you can remove it. -->
-The step this aims to win: connecting a hub with `/confighub:install-mini`.
+<!-- next-step boundary=plugin-to-mini when "production has it too": connect a hub | That change reached production too, since production reads .env. In a ConfigHub hub on this computer, production waits for your yes before an agent's change reaches it, and each value keeps its reason for good. If you want that, type /confighub:staging in this folder; you can remove it. -->
+The step this aims to win: connecting a hub with `/confighub:staging`.
 
-This proves: the record of changes and requests kept on this computer by the real plugin in real Claude Code sessions, and, in the last step, the changes stored in a local hub on this computer. Nothing is delivered to a service or cluster. A right result: `WHY.md` names next week's sale as the reason, and the hub holds each change with its request. The checks below can be run by hand, in `try-confighub`:
+This proves: the record of changes and requests kept on this computer by the real plugin in real Claude Code sessions, and, in the last two steps, the changes stored in a local hub on this computer. Nothing is delivered to a service or cluster. A right result: `WHY.md` names next week's sale as the reason, and the hub holds each change with its request. The checks below can be run by hand, in `try-confighub`:
 ```sh
 grep -qi sale WHY.md && grep -qx CACHE=on .env
 cub=$(ls -d ~/.confighub/mini/confighub-mini-*/bin/cub | tail -1) && s=$($cub space list -o 'jq=.[].Space.Slug' | grep -- '-local$' | head -1) && test -n "$s" && $cub unit list --space "$s" -o 'jq=.[].Unit.Slug' | while read u; do $cub revision list "$u" --space "$s" -o 'jq=.[].Revision.Description'; done | grep -q "sale"

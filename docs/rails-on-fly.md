@@ -12,7 +12,7 @@ You need: the [current local hub package](install-mini.md#the-current-release), 
 |---|---|---|
 | Try it without Fly | `python3 "$MINI/examples/starter-examples/rails-fly/run.py" --package "$MINI" --out "$OUT"` | Your agent can run the same command. |
 | Connect both apps | `cub mini adopt ./shop --name rails-shop`, then `cub mini adopt ./cart --name rails-cart --pattern rails-shop` | Your agent can run the same commands. |
-| Change the hours | `cub mini set rails-shop APP_SUPPORT_HOURS=Daily --variant base --change-desc "The help desk now opens daily"`, then upgrade and promote ([the full list](#change-the-hours-and-check-staging)) | Your agent can run the same command. |
+| Change the hours | `cub mini set rails-shop APP_SUPPORT_HOURS=Daily --variant base --fleet --change-desc "The help desk now opens daily"` ([the full list](#change-the-hours-and-check-staging)) | Your agent can run the same command. |
 | Approve and send to Fly | Approve the order, then run `"$MINI/bin/fly-settings" apply` with its order and revision ([the full command](#send-approved-settings-to-an-app-on-fly)) | You approve it yourself. |
 
 Without ConfigHub: your agent changes the settings directly with `flyctl`, production included, and the next session has no record of why.

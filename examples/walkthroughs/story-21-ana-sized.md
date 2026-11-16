@@ -18,7 +18,7 @@ You need: an unpacked confighub mini package (from the [releases page](https://g
 | Connect the service | `cub mini adopt notes` | Your agent can run the same command. |
 | Measure it | `"$MINI/examples/sized/measure" notes --rate 20 --seconds 20` | "Our notes service has the pattern's 2 CPU and 4Gi. Size it by what it actually uses at 20 requests a second, with what you measured as the reason. Staging can take it now; production waits for Sam." |
 | Propose sizes | `CUB_CONTEXT=bot "$MINI/examples/sized/propose" notes notes.measured.json` | Your agent can run the same command. |
-| Approve production | `cub mini waiting`, then `cub mini approve ORDER --note "Sized from what it used" --yes` | You approve it yourself. |
+| Approve production | `cub mini approve notes --note "Sized from what it used" --yes` | You approve it yourself. |
 
 Staging takes the sizes at once, and each size keeps its measurement as the reason.
 
