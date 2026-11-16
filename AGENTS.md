@@ -47,7 +47,16 @@ A value one copy keeps as its own, such as production's database address, is nev
 | `cub mini try`, `tries` | A copy of the app for one try, kept or dropped |
 | `cub mini secret set` | A secret the app reads and no agent's key can |
 
-In Claude Code, the Claude plugin adds `/confighub:changes`, `/confighub:why NAME`, `/confighub:inventory`, `/confighub:permissions`, `/confighub:checks`, `/confighub:install-mini` and `/confighub:to-hub`.
+In Claude Code, the Claude plugin adds eight slash commands. The person types them; an agent cannot, so tell the person which one to type.
+
+- `/confighub:changes`: what agents changed, and why.
+- `/confighub:why NAME`: every change to one setting, with what was asked each time.
+- `/confighub:inventory`: what the repository deploys, and what deploys it.
+- `/confighub:permissions`: what agents may run without asking.
+- `/confighub:checks`: how closely MCP tool calls are watched.
+- `/confighub:to-hub`: copy the record into a hub; with `--yes` and no hub reachable, it starts a local one.
+- `/confighub:staging`: in an app's folder, give the app a staging and a production copy in a local hub, with production behind the person's approval.
+- `/confighub:start-from APP`: in a new app's folder, start the app from APP, an app already in the hub.
 
 ## Starters
 

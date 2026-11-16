@@ -131,8 +131,9 @@ The Vercel, AWS Parameter Store and Daytona walkthroughs include a local rehears
 /confighub:inventory      what this repository deploys, and what deploys it
 /confighub:permissions    what your agents may run
 /confighub:checks         how closely MCP tool calls are watched
-/confighub:install-mini   install confighub mini
 /confighub:to-hub         copy the record into a hub
+/confighub:staging        a staging and a production copy for this app
+/confighub:start-from APP start this app from another app in the hub
 ```
 
 ## Documentation
