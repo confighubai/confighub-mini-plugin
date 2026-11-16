@@ -1,39 +1,19 @@
-# Why durable config, and why now
+# Why not just Git, your hosting service or a rules file
 
-For anyone deciding whether ConfigHub is worth a look, who wants the reasoning before the commands. [The front page](../README.md) shows what it does. This page says why it is needed now, shows one setup becoming two apps, and compares it with platform engineering as most teams know it.
+For anyone asking what ConfigHub replaces. [The front page](../README.md) tells the durable config story: why it is needed now, one setup becoming two apps, and how it differs from platform engineering. This page compares ConfigHub with the tools you already have, and shows one team using it across ten services.
 
-## Why now
+## Why Git, your hosting service and a rules file are not enough
 
-1. **People make and run apps by asking agents.** An agent changes settings many times a day, across staging, production and every customer's copy. No one reads diffs that fast.
-2. **So the platform has to come from somewhere else.** Staging, production, promotion, rollback and limits used to come from a platform team or a hosting service. An agent can now write them with the app. But they land in scattered files, the next session overwrites them, and every new app starts from nothing.
-3. **ConfigHub keeps the setup, its changes and their context.** It keeps the setup itself, wherever the app runs, with every change to it and the context for each change: what was asked, and why. That is what durable means. What you and your agents decided is still there for:
-   - **the next session**, which starts from what was set and why
-   - **the next agent**, which is told before it undoes a value
-   - **the next version**, which keeps your own values
-   - **the next environment**, which takes exactly what you approved
-   - **the next app**, which starts from the first
+- **Git** keeps a diff once someone commits. It shows nothing for a change nobody committed. If all you want is a reason in each commit message, one line in `CLAUDE.md` asks for that. ConfigHub keeps the reason by value, across sessions, and tells the next agent before it undoes one ([limits](limits.md)).
+- **Your hosting service's settings** keep the current value. They don't know what you asked your agent for, and an agent with your sign-in can change production there. ConfigHub sits beside your host: with Vercel, you try a setting in Preview and review the first production delivery when you are ready ([Next.js on Vercel](nextjs-on-vercel.md)).
+- **A rule in `CLAUDE.md`** that says "ask first" is only a request. An agent that holds the keys can be talked past it ([an agent that can propose and cannot approve](../examples/walkthroughs/story-11-propose-not-approve.md)).
+- **Branch protection and CODEOWNERS** approve a commit, and they stay the gate when Argo CD or Flux deploys from Git. ConfigHub adds the reason for each value, and a pull-request check that names any value nobody approved ([an app Argo CD or Flux deploys](journeys/gitops-app.md)).
 
-## An example: two apps from one setup
+## One team, many apps, many agents
 
-A developer builds a web shop with an agent. Their next app is a cart service.
+Priya's platform team looks after ten services, and coding agents change their configuration.
 
-1. **The first app gets a setup.** `cub mini adopt shop` gives the shop a staging and a production copy, with the team's settings from a [starter](starters.md), a small YAML file. Each setting has its reason.
-2. **A fix to the first app becomes part of the setup.** A teammate proposes warning-level logs and three instances for the next starter version, with a reason for each setting. The owner approves the version.
-3. **The second app starts with the fix, and the first keeps its own values.** The cart service starts with the new settings. The shop takes the update and keeps its production log level. Production changes still go through their own approval.
-
-The walkthrough [Alice ships it, Bob hardens it](../examples/walkthroughs/story-25-alice-bob-hardened.md) runs this on your laptop.
-
-## How this differs from platform engineering
-
-Platform engineering builds a platform and fits apps to it. Durable config starts with the app, so the platform grows out of the apps.
-
-| | Platform engineering as we know it | Durable config |
-|---|---|---|
-| What comes first | The platform, built by a team ahead of the apps | The app. Its setup becomes the base for the next one |
-| How an app gets its setup | A template, copied once when the app is created | A starter the app stays linked to |
-| Where the knowledge lives | Docs, tickets and the platform team's heads | With each value, as its reason |
-| Who it is built for | People: portals, forms and golden-path guides | Agents and people |
-| How a change spreads | One pull request in each repository | One change, read across every app |
-| Where you can start | With a platform team | With one app on your computer |
-
-ConfigHub doesn't run your app. Your cluster, hosting service or VM still does, and Argo CD and Flux still deliver to your clusters. It replaces the templates, the portal and the scattered settings files above them.
+1. **One base for all ten.** The team keeps the settings every service shares in one base, and each service keeps the few values it sets itself. When the team changes the base once, every service takes the change, and no service's own values are touched ([one base for every service](../examples/walkthroughs/story-24-company-base.md)).
+2. **Agents propose, and a person approves.** Each agent has a key of its own. It proposes Friday's change, it is refused when it tries to approve it, and production changes only when Priya says yes ([propose, not approve](../examples/walkthroughs/story-11-propose-not-approve.md)).
+3. **A yes in Slack counts only when it is hers.** Priya is told in the thread where the work was asked for, and her Approve there records the approval as hers. An agent relaying "Priya said yes" approves nothing ([approve from Slack](../examples/walkthroughs/story-22-priya-slack.md)).
+4. **What is running, and why.** For an app Argo CD deploys, the team sees Git, the hub and the cluster side by side, and sorts each difference into deliberate, drift, or Git out of date ([Git, the hub and what is running](../examples/walkthroughs/story-09-git-hub-and-running.md)).

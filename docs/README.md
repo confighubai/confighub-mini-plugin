@@ -22,7 +22,7 @@ The words these pages use, such as *hub*, *base*, *change order* and *Space*, ar
 
 | Page | What it's for |
 |---|---|
-| [Why durable config, and why now](why-durable-config.md) | Why agents change what a platform is, one setup becoming two apps, and a comparison with platform engineering |
+| [Why not just Git, your hosting service or a rules file](why-durable-config.md) | What ConfigHub adds to Git, to your host's settings, to a rule in `CLAUDE.md` and to branch protection, and one team running ten services with many agents |
 | [When ConfigHub acts](agent-workflow.md) | Why ordinary coding requests don't start a hub, the one question the Claude plugin may ask you, and where your app runs |
 | [How the Claude plugin works](how-it-works.md) | What agents are told and when, what's recorded and what never is, every setting, and the tokens each change cost |
 | [Approvals](approvals.md) | An agent proposes a change to production and only the person you name approves it, including when one agent asks another for a change |
