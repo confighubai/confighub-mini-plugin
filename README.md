@@ -35,11 +35,13 @@ The Claude plugin works alone, with no hub and no account, and its record stays 
 
 [Product overview](https://confighub.github.io/helm-expt/ai-agents/) · [Walkthroughs by stack](examples/walkthroughs/README.md) · [Instructions for AI agents](AGENTS.md)
 
-## What ConfigHub keeps
+## What ConfigHub does for your app
 
-ConfigHub keeps the settings of the apps you make with a coding agent. With each change it keeps what you asked the agent for. Settings kept with their reasons are durable config. It is the part of your agent's context that has to be true: what is running, where, and why. It is still there for the next session, the next version of the app and your next app.
+**Remember why.** The Claude plugin, on its own, keeps each setting an agent changes with what you asked for, and tells the next agent before it undoes one. `/confighub:why NAME` shows every change to one setting, with the request behind each. Settings kept with their reasons are durable config: the part of your agent's context that has to be true, still there for the next session, the next version and your next app.
 
-Your next app can start from the same settings instead of from nothing. What your apps share in this way is your platform. It grows from your apps, and nobody has to build it first.
+**Decide what goes live.** In your app's folder, one with a `.env` file, type `/confighub:staging`. It starts a hub, a ConfigHub server on your computer, and gives the app a staging and a production copy of its settings. Your agent changes staging at once, and production waits for you ([approvals](docs/approvals.md)).
+
+**Use it again.** In a new app's folder, `/confighub:start-from APP` starts the new app from one already in the hub, and keeps the values its own files set. For a team's defaults, a [starter](docs/starters.md) gives every new app of one kind the same settings, each with its reason. What your apps share this way is your platform, and nobody has to build it first.
 
 ## Why Git, your hosting service and a rules file are not enough
 
@@ -50,16 +52,15 @@ Your next app can start from the same settings instead of from nothing. What you
 
 ## When the record is not enough, add a hub
 
-The Claude plugin keeps a record. A hub adds control: a staging and a production copy of each app's settings, approval, a key for each agent, and delivery. A hub is one running ConfigHub server. Add one at the moment you need it, and stop at any step.
+A hub adds control to the record: a staging and a production copy of each app's settings, approval, a key for each agent, and delivery. Add one when you need it, and stop at any step.
 
 | When this happens | What you add | What you get |
 |---|---|---|
-| A new session undoes a setting | The Claude plugin, alone | Each change kept with the request behind it. The next agent is told before it undoes one ([try it](docs/try-the-plugin.md)) |
 | You open a repository you did not write | `/confighub:inventory`, in the Claude plugin | What the repository deploys, and what deploys it, before anyone changes it ([inventory](docs/inventory.md)) |
 | A teammate reviews a pull request | The [review action](review/README.md) for GitHub | A comment on each pull request with every setting it changes, and why |
-| You want your agent to try things without touching production | A local hub on your computer, free and with no account | A staging copy your agent changes at once, and a production copy that changes only when you approve ([a new app](docs/journeys/new-app.md)) |
+| You want your agent to try things without touching production | `/confighub:staging` in the app's folder: a local hub, free and with no account | A staging copy your agent changes at once, and a production copy that changes only when you approve ([a new app](docs/journeys/new-app.md)) |
 | Someone else's next version would overwrite your values | The same local hub | You take the new version and keep the values you changed, each with its reason ([keep your changes](examples/walkthroughs/story-02-keep-your-changes.md), [a Helm chart you use](docs/your-own-chart.md)) |
-| You start a second app | A [starter](docs/starters.md), a short file of your settings | The second app starts with your settings. A fix reaches every app made from the starter, and each app keeps its own values |
+| You start a second app | `/confighub:start-from APP` in its folder, or a [starter](docs/starters.md) for a team's defaults | The second app starts with the first's settings and keeps its own values. A fix to a starter reaches every app made from it |
 | An agent works in a sandbox or a CI job | A hub of its own for that run | The agent makes its fix there and writes it out for a person to review, and the hub is deleted with the run ([a hub for each agent run](examples/walkthroughs/story-03-a-hub-per-agent-run.md)) |
 | A teammate joins, or agents run for hours | A shared hub, on confighub.com or on your own servers | A key for each agent, which can propose a production change and cannot approve one. A way to cut one agent off. Signed records ([agents that run for weeks](docs/agents-that-run-for-weeks.md)) |
 | You run many apps on clusters | The hub as the source Argo CD or Flux pulls from | What you approved is what they deploy, and "which version runs where" is one question ([GitOps over OCI](docs/gitops-over-oci.md)) |
@@ -75,8 +76,6 @@ Priya's platform team looks after ten services, and coding agents change their c
 3. **A yes in Slack counts only when it is hers.** Priya is told in the thread where the work was asked for, and her Approve there records the approval as hers. An agent relaying "Priya said yes" approves nothing ([approve from Slack](examples/walkthroughs/story-22-priya-slack.md)).
 4. **What is running, and why.** For an app Argo CD deploys, the team sees Git, the hub and the cluster side by side, and sorts each difference into deliberate, drift, or Git out of date ([Git, the hub and what is running](examples/walkthroughs/story-09-git-hub-and-running.md)).
 
-More for agents that run for hours is in [agents that run for weeks](docs/agents-that-run-for-weeks.md).
-
 ## A first try, with a new app
 
 1. Make an empty folder and start Claude Code in it: `mkdir my-app && cd my-app && git init -q && claude`
@@ -88,17 +87,17 @@ More for agents that run for hours is in [agents that run for weeks](docs/agents
 
 ## An example: staging takes it, and production waits
 
-You ask your agent to turn on debug logging, and staging and production both read the same `.env` file. Without ConfigHub, production starts logging customers' email addresses. With ConfigHub, staging and production get their settings from the hub instead. Staging gets debug logging right away, and production waits. `cub mini waiting` shows `LOG_LEVEL=info → LOG_LEVEL=debug`, and you refuse it with a reason: "Debug logs leak customer emails." The next agent that tries is told you said no, and why. An agent that also holds your cloud or cluster credentials can still go around this ([what an agent can reach](docs/agents-that-run-for-weeks.md#limiting-what-an-agent-can-reach)).
+You ask your agent to turn on debug logging, and staging and production both read the same `.env` file. Without ConfigHub, production starts logging customers' email addresses. With ConfigHub, staging and production get their settings from the hub instead. Staging gets debug logging right away, and production waits. `cub mini waiting` shows `LOG_LEVEL=info → LOG_LEVEL=debug`, and you refuse it with a reason: "Debug logs leak customer emails." The next agent that tries is told you said no, and why.
 
 ## What it does not do
 
 - **It doesn't run your app**, and it doesn't watch what your agents do. Your cluster, hosting service or VM still runs it, and Argo CD and Flux still deliver to your clusters.
-- **The approval holds against an agent on a key of its own.** An agent that also holds your cloud or cluster credentials can go around it.
+- **The approval holds against an agent on a key of its own.** An agent that also holds your cloud or cluster credentials can go around it ([what an agent can reach](docs/agents-that-run-for-weeks.md#limiting-what-an-agent-can-reach)).
 - **What the next agent is told goes to your model provider** with the rest of that session. The record itself stays on your machine.
 
 [The full list](docs/limits.md) says more.
 
-## Start from the tools you use
+## Find your stack
 
 1. **Make a new app.** Ask Claude Code to build it "using ConfigHub". It writes the app and gives it a staging and a production setup ([a new app](docs/journeys/new-app.md)).
 2. **Attach an app you already have.** Its settings live in `.env` files, Terraform var files, Helm values, or a Kustomize repository that Argo CD or Flux deploys. Ask the agent to "attach ConfigHub to this app". It won't touch your files ([an app you already have](docs/journeys/existing-app.md)).
@@ -106,14 +105,10 @@ You ask your agent to turn on debug logging, and staging and production both rea
 
 Some software comes with a hub inside. You change it to suit you, and keep your changes when its next version arrives ([software with ConfigHub inside](docs/journeys/bundled.md)).
 
-Pick the guide for your app to see what its [starter](docs/starters.md) does and where you’ll be asked to approve a change.
-
 - **Where your app runs:** [Web](examples/walkthroughs/starter-web.md), [Vercel](examples/walkthroughs/starter-vercel.md), [Next.js on Vercel](docs/nextjs-on-vercel.md), [AWS Parameter Store](examples/walkthroughs/starter-parameter-store.md), [Argo CD](examples/walkthroughs/starter-kustomize-argocd.md), [Flux](examples/walkthroughs/starter-kustomize-flux.md), [Daytona](examples/walkthroughs/starter-daytona.md), [Temporal worker](examples/walkthroughs/starter-temporal-worker.md), [Unikraft](examples/walkthroughs/starter-unikraft.md), and [Rails on Fly](docs/rails-on-fly.md).
 - **Around the app:** Git and GitHub, Vault, Sigstore, SPIFFE, OpenTelemetry, Entire, MCP servers, sandboxes and containers, and Codex ([Integrations](docs/integrations.md) says what you get with each and how far along it is).
 
-Each walkthrough opens with a quick start: the whole flow in a few rows, by hand and with your agent.
-
-A starter gives every new app of one kind your team's default settings, such as retries, timeouts and worker limits, each with a note on why it is set. It is one short YAML file, the same idea as a [Spring Boot starter](https://docs.spring.io/spring-boot/reference/using/build-systems.html#using.build-systems.starters) but for any kind of app. When you connect an app, it gets the starter's settings, except where you have already set a value. When your team fixes a default, the fix goes into the starter's next version, and every new app gets it.
+A starter is one short YAML file of default settings, such as retries, timeouts and worker limits, each with a note on why it is set: the same idea as a [Spring Boot starter](https://docs.spring.io/spring-boot/reference/using/build-systems.html#using.build-systems.starters), for any kind of app. An app you connect gets the starter's settings, except where you already set a value.
 
 The Vercel, AWS Parameter Store and Daytona walkthroughs include a local rehearsal that needs no provider account. Starters are off until you switch them on. See [how to turn them on and write your own](docs/starters.md).
 
