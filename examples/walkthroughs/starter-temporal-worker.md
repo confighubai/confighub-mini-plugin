@@ -9,6 +9,28 @@ budget_seconds: 360
 
 A dependency is overloaded. Try one Activity attempt in staging while production continues retrying. When you approve the change, new workflow runs use the released policy. If callers need the old behavior, approve a rollback and watch the Temporal worker succeed again.
 
+## Quick start
+
+You need: an unpacked mini package containing the Temporal worker starter, plus Go, Python 3 and the [Temporal CLI](https://docs.temporal.io/cli).
+
+| | By hand | Ask your agent |
+|---|---|---|
+| Connect the worker | Adopt the checkout with `CUB_MINI_STARTERS=on`, then `cub mini receipts worker --setup` (step 2) | "Connect the disposable Temporal worker and show the approved catalog and initial behavior." |
+| Try one attempt | `cub mini set worker ACTIVITY_MAX_ATTEMPTS=1 --variant base --change-desc "Reduce retries during the incident"` | "Try one attempt, and show what happens before and after the owner's approval." |
+| Approve and deliver | Approve the live order, then deliver it with the cub plugin and `--live` (step 4) | You approve it yourself. |
+| Roll back | Propose restoring the retry limit, then approve and apply it (step 5) | "Restore the policy and show the Temporal worker uses the new rollback revision." |
+
+To rehearse all of it in disposable hubs, run `"$MINI/examples/temporal/starter/check-worker" --package "$MINI" --out "$PWD/temporal-results"`.
+
+Without ConfigHub: your agent changes the retry policy directly in the worker's `app.env`, production included, and the next session has no record of why.
+
+## Deeper dive
+
+The rest of this page is the full version: the packaged rehearsal, connecting your own worker, the probes that show how many attempts a workflow run makes, the move to a shared hub, and how this was tested.
+
+<details>
+<summary>Show the full walkthrough</summary>
+
 ## Human
 
 Use an unpacked mini package containing the Temporal worker starter, plus Go, Python 3 and the [Temporal CLI](https://docs.temporal.io/cli). The comparison uses disposable hubs on loopback and a real Temporal development service.
@@ -74,6 +96,8 @@ In the local macOS arm64 mini.908 comparison, the starter passed 19/19 checks an
 
 <!-- results:begin -->
 
+<details><summary>Test results</summary>
+
 Results, 14 November 2026, confighub mini 0.11.1-mini.7. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run: passed, 158 seconds for the steps, within the page's budget of 360. The real local Temporal worker passed 19 of 19 checks with the starter and 11 of 11 with manual mini. Both arms used scripted approvals.
@@ -87,4 +111,8 @@ On the checksum-verified macOS arm64 mini.8 archive, the separate Story 5 restar
 
 - Focused shared-hub check on [published mini.9](https://github.com/confighubai/confighub-mini-plugin/releases/tag/mini-v0.11.1-mini.9), 15 November 2026. The packaged Temporal starter established the initial policy, and the app was copied to a shared hub on confighub.com. The packaged delivery program refused the pending order. A real local Temporal worker still succeeded on attempt three from revision 2. The owner approved the destination order in the browser. The package delivered revision 3 using the destination's scoped reader, and a new workflow failed after one attempt as expected. The worker reported the same settings hash as the approved revision. The test app, workflows, reader and local processes were removed.
 
+</details>
+
 <!-- results:end -->
+
+</details>

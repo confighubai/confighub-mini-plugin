@@ -9,6 +9,29 @@ budget_seconds: 240
 
 Sam has a service and agents that build it. He wants what a platform gives him: a release he can name, approve and undo, a staging and a production copy, and agents that can propose a release but never ship one. Here one hub does all of that, and a folder on your computer stands in for the machine that runs the service.
 
+## Quick start
+
+You need: an unpacked confighub mini package (from the [releases page](https://github.com/confighubai/confighub-mini-plugin/releases)) on macOS or Linux. No Docker, no account.
+
+| | By hand | Ask your agent |
+|---|---|---|
+| Put production behind approval | `cub mini require-approval shop --variant live --agent bot` (step 3) | Your agent can run the same command. |
+| The agent proposes a release | `cub --context bot mini upload shop --component shop --change-desc "Release 1.1.0: /health for the load balancer"` (step 5) | "Ship release 1.1.0 of shop, digest sha256:6d51e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1. Staging first; I approve production." |
+| Approve production | `cub mini approve ORDER --note "Staging answered /health; ship it" --yes` | You approve it yourself. |
+| Roll back | `cub mini rollback shop-live --change-order ORDER --reason "1.1.0 answers /health slowly under load; back to 1.0.0"`, then approve the new order (step 7) | You roll it back yourself. |
+| See who shipped it | `cub mini receipts shop-live --revision 4` | Your agent can run the same command. |
+
+Each release is a revision of production you approved, with the agent's reason, and production's runtime only ever pulls approved revisions.
+
+Without ConfigHub: your agent ships a new release straight to production with whatever deploys it, and the next session has no record of who approved it or why.
+
+## Deeper dive
+
+The rest of this page is the full version: every command, a folder that stands in for the machine that runs the service, what an agent must never do, and how this was tested.
+
+<details>
+<summary>Show the full walkthrough</summary>
+
 ## Human
 
 For a person following along in a terminal.
@@ -169,6 +192,8 @@ grep -rlsE 'shop-1[.]1[.]0@sha256:6d51e2f3' --exclude-dir='.*' --exclude-dir=Lib
 
 <!-- results:begin -->
 
+<details><summary>Test results</summary>
+
 Results, 14 November 2026, confighub mini 0.11.1-mini.5. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run: passed, 35 seconds for the steps, within the page's budget of 240.
@@ -199,4 +224,8 @@ The Claude plugin offers it once, after the answer at whose end it showed the mo
 | b | claude-sonnet-5-5 | 30 | 100% | 100% | 13% | 77% | 33% |
 | c | claude-sonnet-5-5 | 30 | 67% | 100% | 55% | 40% | 40% |
 
+</details>
+
 <!-- results:end -->
+
+</details>

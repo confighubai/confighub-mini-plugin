@@ -9,6 +9,28 @@ budget_seconds: 120
 
 For a developer whose agents change his services' configuration on a laptop, and whose team keeps its hub on a server. Sam's rule is that the laptop connects out and nothing connects in, so the laptop never becomes a server he has to secure and leave on. Here the laptop's hub listens on the laptop only, and Sam's work, with its reason, goes up to the team's shared hub over a connection the laptop makes.
 
+## Quick start
+
+You need: an unpacked confighub mini package ([installing the local hub](../../docs/install-mini.md#install-by-hand-without-the-plugin)), and an account in your team's organization on a shared hub on confighub.com.
+
+| | By hand | Ask your agent |
+|---|---|---|
+| Start a hub on the laptop | `cub mini install --name laptop` | Your agent can run the same command. |
+| Keep a value with its reason | `cub mini set $APP TIMEOUT_SECONDS=120 --variant live --change-desc "Production waits longer for the model"` | Your agent can run the same command. |
+| Copy it up to the team's hub | `CUB_CONTEXT=team cub mini copy --from-context "$LAPTOP" "$APP"` | "My app is in the hub on my laptop (its context is in $LAPTOP, the app's name in $APP). Copy it, with its reasons, up to the team's hub, which I am signed in to as team. Don't open anything on my laptop to the network." |
+| Read it on the team's hub | `cub --context team unit data settings --space "$APP-live"` | Your agent can run the same command. |
+
+The laptop's hub listens on the laptop only, and the team's shared hub holds your work with its reason.
+
+Without ConfigHub: you send your settings to the team as a file or a commit, and the reason behind production's value goes along only if you write it down somewhere.
+
+## Deeper dive
+
+The rest of this page is the full version: every command, how to see that nothing on the laptop listens to the network, the sign-in to the team's hub, and how this was tested.
+
+<details>
+<summary>Show the full walkthrough</summary>
+
 ## Human
 
 ### What you need
@@ -141,6 +163,8 @@ lsof -nP -iTCP -sTCP:LISTEN | awk '/confighub|postgres/ {print $9}' | sort -u
 
 <!-- results:begin -->
 
+<details><summary>Test results</summary>
+
 Results, 14 November 2026, confighub mini 0.11.1-mini.4. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run: passed, 50 seconds for the steps, within the page's budget of 120.
@@ -184,4 +208,8 @@ The Claude plugin offers it once, after the answer at whose end it showed the mo
 | b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 40% |
 | c | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 53% |
 
+</details>
+
 <!-- results:end -->
+
+</details>

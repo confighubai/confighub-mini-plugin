@@ -9,6 +9,29 @@ budget_seconds: 300
 
 Alice connects an app her agents built with a starter, the team's default settings for a kind of app, each with its reason. Bob hardens the running app on a key of his own, and the fixes that suit every app become the starter's version 2. Alice's second app starts with them, and her first app takes them while keeping its own values. Alice and Bob are fictional.
 
+## Quick start
+
+You need: an unpacked confighub mini package (from the [releases page](https://github.com/confighubai/confighub-mini-plugin/releases)) on macOS or Linux. No Docker, no account.
+
+| | By hand | Ask your agent |
+|---|---|---|
+| Harden the app | `cub --context bob mini set shop REPLICAS=3 --variant base --change-desc "Three instances, so one can fail during a deploy and two still serve."`, one per value (step 4) | "Harden shop for production. Debug logs carry request bodies, so LOG_LEVEL should be warn; it needs 3 replicas so one can fail during a deploy; its database takes 20 connections (DB_POOL_SIZE). Then make the fixes that suit every web service version 2 of the team's web starter, each with its reason." |
+| Make starter version 2 | Change the starter in `starters-base` and ask for it with a change order (step 5) | Your agent can run the same command. |
+| Approve version 2 | `cub mini approve starters-base/web-v2 --note "Read it: Bob's fixes, for every web service" --yes` | You approve it yourself. |
+| Next app starts with it | `cub mini adopt cart` | Your agent can run the same command. |
+| First app takes it | `cub mini upgrade pattern-web/web-service --change-desc "Version 2 of the web starter: Bob's fixes" --fleet` | Your agent can run the same command. |
+
+The first app keeps its own values, and its production waits for Alice's approval.
+
+Without ConfigHub: your agent edits each app's `.env` file and the team's starter file separately, production included, and the next session has no record of why.
+
+## Deeper dive
+
+The rest of this page is the full version: every command with what it prints, how Bob's key is set up, what an agent leaves to you, and how this was tested.
+
+<details>
+<summary>Show the full walkthrough</summary>
+
 ## Human
 
 For a person following along in a terminal. Alice is the hub's owner; Bob is a second key on the same hub.
@@ -168,6 +191,9 @@ g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Lib
 
 <!-- results:begin -->
 
+<details><summary>Test results</summary>
+
+
 Results, 14 November 2026, confighub mini 0.11.1-mini.2. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run (on confighub mini 0.11.1-mini.2, 14 November 2026): passed, 63 seconds for the steps, within the page's budget of 300.
@@ -246,4 +272,9 @@ Results, 15 November 2026, source candidate for the owner review. Three guided s
 
 The readers judged the handoff and did not operate the terminal. The local owner fixture exercised approve, refuse and later on the separate orders.
 
+
+</details>
+
 <!-- results:end -->
+
+</details>

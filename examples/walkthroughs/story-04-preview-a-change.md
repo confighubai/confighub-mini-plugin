@@ -9,6 +9,29 @@ budget_seconds: 360
 
 For a team whose platform is about to take a new version. Before anyone agrees, you want to see what production would take and what it would keep, and to see it running with production's own settings, without touching the team's shared hub or production. Here a hub of its own and a local cluster play the preview: the platform is Traefik, an ingress controller, and production runs two controllers for a reason. Afterwards both are removed.
 
+## Quick start
+
+You need: an unpacked confighub mini package ([installing the local hub](../../docs/install-mini.md#install-by-hand-without-the-plugin)), and Docker (or OrbStack), `kind` and `kubectl`, for a local Kubernetes cluster. `cub cluster up` installs Argo CD for you. No account.
+
+| | By hand | Ask your agent |
+|---|---|---|
+| Make a local cluster | `cub cluster up wsa-preview --space preview` | Your agent can run the same command. |
+| Run production's settings | `cub mini upload platform`, then `cub mini set platform replicas 2 --change-desc "Production runs two controllers"` | Your agent can run the same command. |
+| See what would change | `cub mini upload platform-2 --component platform` | "Production, platform-preview in the hub, runs Traefik 3.7.12 on the local kind cluster wsa-preview, with two controllers on purpose. The platform's next version is in ./platform-2. Show me what it would do to production, then take it and let me see it running there. Leave it running for me to look at, and write the result as files for review in ./result." |
+| See it running | `cub mini promote platform-preview --change-desc "Preview of branch next-traefik: traefik 3.7.14"` | Your agent can run the same command. |
+| Remove it all | `cub cluster down wsa-preview`, then `cub mini uninstall --name preview --delete-data` | Your agent can run the same command. |
+
+You see that production would take Traefik 3.7.14 and keep its two controllers, and you see it running that way.
+
+Without ConfigHub: your agent applies the branch to a test cluster with `kubectl` or Helm, and you work out by hand which of production's values it would change and which it would keep.
+
+## Deeper dive
+
+The rest of this page is the full version: every step with what it prints, how to undo it, what an agent is asked to do and must never do, and how this was tested.
+
+<details>
+<summary>Show the full walkthrough</summary>
+
 ## Human
 
 ### What you need
@@ -157,6 +180,8 @@ grep 'two controllers' result/CHANGES.md
 
 <!-- results:begin -->
 
+<details><summary>Test results</summary>
+
 Results, 14 November 2026, confighub mini 0.11.1-mini.4. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run: passed, 177 seconds for the steps, within the page's budget of 360.
@@ -196,4 +221,8 @@ The Claude plugin offers it once, after the answer at whose end it showed the mo
 | b | claude-opus-5-5 | 30 | 0% | 100% | n/a | n/a | 13% |
 | b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 13% |
 
+</details>
+
 <!-- results:end -->
+
+</details>

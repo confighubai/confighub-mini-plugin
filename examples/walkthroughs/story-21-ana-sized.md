@@ -9,6 +9,28 @@ budget_seconds: 240
 
 Ana's agent built a small notes service on her team's pattern, which gives every service 2 CPU and 4Gi of memory. Nobody has seen it run, so nobody knows whether that is ten times too much or too little. Here the service runs in a container on your computer while a load generator sends it a stated number of requests, and what it used becomes the proposed size: each size an ordinary setting whose reason is the measurement. Staging takes it at once; production waits for Sam, who looks after the team's shared hub, to read the numbers and approve.
 
+## Quick start
+
+You need: an unpacked confighub mini package (from the [releases page](https://github.com/confighubai/confighub-mini-plugin/releases)) on macOS or Linux, Docker running, and Python 3. No account and no cluster.
+
+| | By hand | Ask your agent |
+|---|---|---|
+| Connect the service | `cub mini adopt notes` | Your agent can run the same command. |
+| Measure it | `"$MINI/examples/sized/measure" notes --rate 20 --seconds 20` | "Our notes service has the pattern's 2 CPU and 4Gi. Size it by what it actually uses at 20 requests a second, with what you measured as the reason. Staging can take it now; production waits for Sam." |
+| Propose sizes | `CUB_CONTEXT=bot "$MINI/examples/sized/propose" notes notes.measured.json` | Your agent can run the same command. |
+| Approve production | `cub mini waiting`, then `cub mini approve ORDER --note "Sized from what it used" --yes` | You approve it yourself. |
+
+Staging takes the sizes at once, and each size keeps its measurement as the reason.
+
+Without ConfigHub: your agent writes CPU and memory sizes directly into the service's `app.env`, production included, and the next session has no record of why.
+
+## Deeper dive
+
+The rest of this page is the full version: every command with what it prints, the sizing rule, a service that gets no size, and how this was tested.
+
+<details>
+<summary>Show the full walkthrough</summary>
+
 ## Human
 
 For a person following along in a terminal.
@@ -166,6 +188,9 @@ cub mini receipts notes-staging | grep 'Why:'
 
 <!-- results:begin -->
 
+<details><summary>Test results</summary>
+
+
 Results, 14 November 2026, confighub mini 0.11.1-mini.7. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run: passed, 79 seconds for the steps, within the page's budget of 240; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
@@ -209,4 +234,9 @@ The Claude plugin offers it once, after the answer at whose end it showed the mo
 | a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 60% |
 | b | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 20% |
 
+
+</details>
+
 <!-- results:end -->
+
+</details>

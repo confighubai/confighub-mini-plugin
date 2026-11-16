@@ -9,6 +9,28 @@ budget_seconds: 600
 
 An incident starts and you need a banner change without rebuilding the image. Connect a disposable service, approve a green incident banner, and restore blue when the incident ends. The same image serves each change. The HTTPS response includes the ConfigHub revision that the service loaded.
 
+## Quick start
+
+You need: an unpacked mini package with the Unikraft starter, the Unikraft CLI, BuildKit, jq, curl and a disposable Unikraft Cloud service.
+
+| | By hand | Ask your agent |
+|---|---|---|
+| Connect the service | `cub mini adopt app --name banner --live`, after the import and catalog review in step 2 | "Connect this test app to the approved Unikraft starter and show the current blue banner." |
+| Propose green | `cub mini set banner UNIKRAFT_BANNER=green --variant live --change-desc "Show the incident banner"` | "Propose a green incident banner. Check that blue is still live, then deliver after I approve and show the revision the endpoint serves." |
+| Approve and deliver | Approve the order, then deliver it with the scoped reader (step 4) | You approve it yourself. |
+| Restore blue | The same `cub mini set` command with `UNIKRAFT_BANNER=blue` (step 5) | "Propose restoring blue. Check that green is still live. After I approve, deliver the rollback and verify the new revision." |
+
+The same image serves each change, and the HTTPS response shows the revision the service loaded.
+
+Without ConfigHub: your agent changes the banner directly with the Unikraft CLI, production included, and the next session has no record of why.
+
+## Deeper dive
+
+The rest of this page is the full version: building the service, the scoped reader that delivers each approved revision, the move to a shared hub, what an agent leaves to you, and how this was tested.
+
+<details>
+<summary>Show the full walkthrough</summary>
+
 ## Human
 
 Use an unpacked mini package containing the Unikraft starter. Use a new test hub and a disposable single-instance service in an organization where you can also delete the resources. The packaged example at `examples/unikraft/README.md` gives the provider setup and scoped reader commands.
@@ -75,6 +97,8 @@ This proves: owner approval controls delivery of a specific revision to Unikraft
 
 <!-- results:begin -->
 
+<details><summary>Test results</summary>
+
 Published confighub mini 0.11.1-mini.7 (macOS arm64), 14 November 2026. The downloaded archive matched the published checksum. The stand-in passed 38 of 38 checks, including all eight planted faults.
 
 The live run used a disposable Frankfurt Unikraft Cloud service. The app selected starter version 1 from the hub's approved catalog at revision 2. The real owner approved production through ConfigHub. The delivery adapter refused each pending proposal, and the endpoint continued to serve the previous banner and revision.
@@ -91,4 +115,8 @@ An initial update attempt used a separate base order. That order released local 
 
 Two Claude Sonnet 5.5 pilots with the Claude plugin ran a local rehearsal of the packaged stand-in contract. Both passed the result check (2 of 2). The pilots exercised the stand-in only. Ten simulated readers noticed the result. One reported friction, and the Claude plugin showed no next-step offer.
 
+</details>
+
 <!-- results:end -->
+
+</details>

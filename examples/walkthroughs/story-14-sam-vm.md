@@ -9,6 +9,29 @@ budget_seconds: 240
 
 Sam runs a small API on a VM, configured by an `.env` file, and lets agents tune it. Here the service's settings are kept in a hub, the service's folder is written from the hub, and only values Sam approved ever reach it. The agent holds a key to the hub and nothing that reaches the service.
 
+## Quick start
+
+You need: an unpacked confighub mini package (from the [releases page](https://github.com/confighubai/confighub-mini-plugin/releases)) on macOS or Linux. No Docker, no account.
+
+| | By hand | Ask your agent |
+|---|---|---|
+| Give the hub your settings | `cub mini adopt api` | Your agent can run the same command. |
+| Give the agent a key | `cub mini require-approval api --variant live --agent bot` | Your agent can run the same command. |
+| The agent proposes | `cub --context bot mini upload api --component api --change-desc "Longer timeout for the large model"` (step 6) | "Our api times out on the large model. Raise TIMEOUT_SECONDS to 120 for production; I'll approve it." |
+| Approve production | `cub mini waiting`, then `cub mini approve ORDER --note "The large model needs it" --yes` | You approve it yourself. |
+| The VM takes the approved settings | `CUB_CONFIG=$VM_CONFIG cub mini pull api --variant live --dir ~/walkthrough/service --restart "echo restarting the api"` (step 5 makes the VM's key) | The VM runs it, not your agent. |
+
+The service's folder is written only from approved revisions, and the agent holds no key that reaches the service.
+
+Without ConfigHub: your agent changes `.env` on the VM directly over SSH, production included, and the next session has no record of why.
+
+## Deeper dive
+
+The rest of this page is the full version: every command, a folder that stands in for the VM, what happens to a hand edit on the VM, and how this was tested.
+
+<details>
+<summary>Show the full walkthrough</summary>
+
 ## Human
 
 For a person following along in a terminal. Everything runs on your own computer: a second folder and a second `cub` configuration stand in for the VM.
@@ -181,6 +204,8 @@ grep -qx 'TIMEOUT_SECONDS=30' api/.env && g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\
 
 <!-- results:begin -->
 
+<details><summary>Test results</summary>
+
 Results, 14 November 2026, confighub mini 0.11.1-mini.5. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run: passed, 47 seconds for the steps, within the page's budget of 240.
@@ -211,4 +236,8 @@ The Claude plugin offers it once, after the answer at whose end it showed the mo
 | b | claude-sonnet-5-5 | 30 | 100% | 100% | 0% | 73% | 40% |
 | c | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 93% |
 
+</details>
+
 <!-- results:end -->
+
+</details>

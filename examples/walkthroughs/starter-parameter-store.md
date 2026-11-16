@@ -9,6 +9,28 @@ budget_seconds: 240
 
 Your billing job retries a failed request five times. For invoice week, you want to try two retries in staging without changing production. This walkthrough shows what the job reads before approval, after approval, and after you restore five retries. It also shows how to hand the settings to a team without handing over your AWS credentials.
 
+## Quick start
+
+You need: the [local hub](../../docs/install-mini.md) and Python 3. Without an AWS account, the steps use a stand-in.
+
+| | By hand | Ask your agent |
+|---|---|---|
+| Connect the app | `cub mini adopt billing --provider-root ssm-account`, then approve and deliver (steps 3 and 4) | "Set up my billing function so that every change to production's settings waits for my approval, with a reason kept for each value, and deliver production's settings to Parameter Store." |
+| Change a setting | Edit `billing/.env`, then `cub mini upload billing --component billing --change-desc "The billing run must fail fast and be started again before invoices go out"` | "Make the billing run fail fast, with two retries; I'll approve production myself." |
+| Approve production | `cub mini approve BASE/ORDER`, then `sh deliver` (step 6) | You approve it yourself. |
+| Undo | `cub mini rollback billing-live --change-order ORDER --reason "Invoices are out; retry as before"`, then approve and deliver (step 7) | "Undo the retries change in production, and deliver it." |
+
+Staging takes each change at once, production waits until you approve it, and the encrypted value stays in Parameter Store.
+
+Without ConfigHub: your agent changes the parameter directly with the `aws` command, production included, and the next session has no record of why.
+
+## Deeper dive
+
+The rest of this page is the full version: every command, the stand-in AWS account, the move to your team's shared hub, what an agent leaves to you, and how this was tested.
+
+<details>
+<summary>Show the full walkthrough</summary>
+
 ## Human
 An unpacked confighub mini package ([install the local hub](../../docs/install-mini.md)) and Python 3. The local hub is ConfigHub made small enough to run on your computer: a hub, which keeps settings with every change, who made it and why. For step 8, a sign-in to your organization's shared hub, such as a shared hub on confighub.com.
 
@@ -180,6 +202,8 @@ This proves: the exact approved revision was delivered, to a local stand-in for 
 
 <!-- results:begin -->
 
+<details><summary>Test results</summary>
+
 Results, 14 November 2026, confighub mini 0.11.1-mini.3. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run (on confighub mini 0.11.1-mini.3, 14 November 2026): passed, 75 seconds for the steps, within the page's budget of 240; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
@@ -238,4 +262,8 @@ The Claude plugin offers it once, after the answer at whose end it showed the mo
 
 - Focused shared-hub check on [published mini.9](https://github.com/confighubai/confighub-mini-plugin/releases/tag/mini-v0.11.1-mini.9), 15 November 2026. The packaged delivery program refused the pending order, the AWS reader was denied a direct write, and Parameter Store continued to return 5 retries at version 1. After the owner approved and promoted the order in the shared hub's browser, the package applied live revision 3. Its receipt digest matched the approved revision. A separate AWS read returned 2 retries at version 2. Reapplying reported unchanged and AWS stayed at version 2. The test parameters, IAM roles, hub app and scoped reader were removed. This check read the AWS parameter directly. The no-account rehearsal above covers rollback.
 
+</details>
+
 <!-- results:end -->
+
+</details>

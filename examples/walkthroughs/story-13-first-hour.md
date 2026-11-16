@@ -9,6 +9,27 @@ budget_seconds: 180
 
 Sam has never heard of ConfigHub, and nobody is there to help. In his first hour he wants to see two things on his own project: a record of what his agents changed and why, and his agents unable to approve their own change to production. This takes the Claude plugin, then a hub on his laptop, with no account.
 
+## Quick start
+
+You need: Claude Code, and an unpacked confighub mini package (from the [releases page](https://github.com/confighubai/confighub-mini-plugin/releases)) on macOS or Linux. No Docker, no account.
+
+| | By hand | Ask your agent |
+|---|---|---|
+| Give the hub your settings | `cub mini adopt . --name api` | Your agent can run the same command. |
+| Put production behind approval | `cub mini require-approval api --variant live --agent bot` | "Make sure an agent cannot change this app's production settings without my say. Staging can change freely." |
+| An agent proposes a change | `cub --context bot mini upload . --component api --change-desc "Cache on for next week's sale"` (step 7) | Your agent can run the same command. |
+| Approve production | `cub mini waiting`, then `cub mini approve BASE/ORDER` | You approve it yourself. |
+| Read the record | `/confighub:changes` in Claude Code (step 9) | Your agent can run the same command. |
+
+Without ConfigHub: your agent changes `.env` directly, production included, and the next session has no record of why.
+
+## Deeper dive
+
+The rest of this page is the full version: every command, the agent's refused approval, the record in Claude Code, and how this was tested.
+
+<details>
+<summary>Show the full walkthrough</summary>
+
 ## Human
 
 For a person following along in a terminal. Steps 1 and 9 are in Claude Code; the rest run in a terminal.
@@ -139,6 +160,8 @@ find ~/walkthrough/api -name .git -prune -o -print | grep -qiE 'prod|live'
 
 <!-- results:begin -->
 
+<details><summary>Test results</summary>
+
 Results, 13 November 2026, confighub mini 0.11.1-mini.2. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run (on confighub mini 0.11.1-mini.2, 13 November 2026): passed, 35 seconds for the steps, within the page's budget of 180.
@@ -186,4 +209,8 @@ The Claude plugin offers it once, after the answer at whose end it showed the mo
 | a | claude-sonnet-5-5 | 15 | 0% | 100% | n/a | n/a | 100% |
 | b | claude-sonnet-5-5 | 15 | 0% | 100% | n/a | n/a | 73% |
 
+</details>
+
 <!-- results:end -->
+
+</details>

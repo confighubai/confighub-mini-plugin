@@ -9,6 +9,28 @@ budget_seconds: 600
 
 Flux already deploys your Kustomize app from Git. Move delivery to ConfigHub’s OCI gateway without replacing the running pods, then verify which approved revision Flux actually reconciles. Try it in a local kind cluster with the real controller before using it on your own app.
 
+## Quick start
+
+You need: the [local hub](../../docs/install-mini.md), Docker, `kind`, `kubectl`, Git and Python 3. Step 1 makes a local kind cluster with Flux.
+
+| | By hand | Ask your agent |
+|---|---|---|
+| Connect the app | `cub mini adopt orders --kube-context kind-orders-flux --source orders`, then approve and `cub mini deploy-from-hub` (step 4) | "Set up the orders repository so that every change to production waits for my approval, with a reason kept for each value, and have Flux deploy production from there." |
+| Change a setting | Commit the change, then `cub mini upload orders --component orders --change-desc "The holiday sale needs 250 orders a minute"` | "Allow 250 orders a minute; I'll approve production myself." |
+| Approve production | `cub mini waiting`, then `cub mini approve BASE/ORDER` (step 6) | You approve it yourself. |
+| Undo | Revert the commit, then `cub mini upload orders --component orders --change-desc "The sale is over"` and approve it (step 7) | "Undo the order limit change; production should allow 100 again." |
+
+Flux keeps deploying, and only what you approve reaches the cluster, with no pod restarted.
+
+Without ConfigHub: your agent edits the Kustomize files and commits them with Git, and Flux deploys whatever reaches the branch it watches, production included.
+
+## Deeper dive
+
+The rest of this page is the full version: every command, a local cluster with the real Flux, the move to your team's shared hub, what an agent leaves to you, and how this was tested.
+
+<details>
+<summary>Show the full walkthrough</summary>
+
 ## Human
 ### What you need
 An unpacked confighub mini package ([install the local hub](../../docs/install-mini.md)), Docker, `kind`, `kubectl`, Git and Python 3. The local hub is ConfigHub made small enough to run on your computer: a hub, which keeps configuration with every change, who made it and why. For step 8, a sign-in to your organization's shared hub, such as a shared hub on confighub.com.
@@ -177,6 +199,8 @@ This proves: the exact approved revision was delivered and is running, under a r
 
 <!-- results:begin -->
 
+<details><summary>Test results</summary>
+
 Results, 14 November 2026, confighub mini 0.11.1-mini.3. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run (on confighub mini 0.11.1-mini.3, 14 November 2026): passed, 206 seconds for the steps, within the page's budget of 600; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
@@ -229,4 +253,8 @@ The Claude plugin offers it once, after the answer at whose end it showed the mo
 | a | claude-sonnet-5-5 | 15 | 0% | 100% | n/a | n/a | 100% |
 | b | claude-sonnet-5-5 | 15 | 0% | 100% | n/a | n/a | 100% |
 
+</details>
+
 <!-- results:end -->
+
+</details>

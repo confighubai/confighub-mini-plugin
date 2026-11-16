@@ -74,7 +74,7 @@ A hub, on your laptop or shared, holds a change to production for the person you
 | What you want | What to do |
 |---|---|
 | A comment on every pull request listing each configuration value it changes, and why | Add the review GitHub Action ([how](../review/README.md)): one step in a workflow file |
-| What your agents changed, and why, in a shared hub, with no the local hub | Sign in with `cub auth login`, then type `/confighub:to-hub` ([Git, GitHub and a hub](git-and-github.md)) |
+| What your agents changed, and why, in a shared hub, with no local hub | Sign in with `cub auth login`, then type `/confighub:to-hub` ([Git, GitHub and a hub](git-and-github.md)) |
 | Agents that propose changes to production, which only a person you name can approve | One command on the local hub for your own agents; your organization's shared hub for a team ([approvals](approvals.md)) |
 | An agent in a sandbox or CI job with a hub of its own, that hands back a pull request with its reasons | One workflow file ([agents in CI](../ci/README.md), [in CI or a sandbox](ci-and-sandboxes.md)) |
 | To keep your own values through a vendor's next version of a Helm chart, and see first what it changes | Type `/confighub:install-mini` in Claude Code, then follow [a Helm chart you use, with your values](your-own-chart.md) |

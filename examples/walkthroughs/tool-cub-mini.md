@@ -8,6 +8,29 @@ budget_seconds: 150
 
 A tour of the dozen `cub mini` commands a newcomer needs, used in order on one small app. Each step says what the command does, shows what it prints, and names the plain `cub` commands it stands for.
 
+## Quick start
+
+You need: an unpacked confighub mini package ([how to get one](../../docs/install-mini.md#install-by-hand-without-the-plugin)).
+
+| | By hand | Ask your agent |
+|---|---|---|
+| Start and connect | `cub mini install --name tour --use`, then `cub mini adopt shop` | Your agent can run the same commands. |
+| Change staging | `cub mini set shop LOG_LEVEL=debug --variant staging --change-desc "Debug logs while we chase a slow checkout"`, then `cub mini promote shop-staging` (step 4) | "In the shop app, give staging LOG_LEVEL=debug as its own value, and set TIMEOUT=30s in the shared settings, then bring that into staging but not production. Give a reason for each change." |
+| Propose for production | `cub mini upload shop --change-desc "Quieter logs, to cut the log bill"` | "Production for the shop app in ~/cub-mini-tour/shop should log at warn, to cut the log bill. Make the change with the agent key helper and propose it for production. Don't approve it." |
+| Approve or refuse | `cub mini waiting`, then approve or refuse the change by its name (step 7) | You approve it yourself. |
+| Try somewhere safe | `cub mini try shop sale` | "Try CACHE_TTL=600 for the shop app in a copy of its own, made from staging, without changing staging or production." |
+
+Each value keeps its reason, and production changes only when you say yes.
+
+Without ConfigHub: your agent edits the app's `.env` directly, production included, and the next session has no record of why.
+
+## Deeper dive
+
+The rest of this page is the full version: each of the dozen commands in order, what it prints, the plain `cub` commands it stands for, what an agent may and may not run, and how this was tested.
+
+<details>
+<summary>Show the full walkthrough</summary>
+
 ## Human
 For a person following along in a terminal.
 
@@ -181,6 +204,8 @@ n=0; for s in $(cub space list -o 'jq=.[].Space.Slug'); do case $s in shop-base|
 
 <!-- results:begin -->
 
+<details><summary>Test results</summary>
+
 Results, 13 November 2026, confighub mini 0.11.1-mini.2. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run (on confighub mini 0.11.1-mini.2, 13 November 2026): passed, 50 seconds for the steps, within the page's budget of 150.
@@ -207,4 +232,8 @@ The Claude plugin offers it once, after the answer at whose end it showed the mo
 | a | claude-sonnet-5-5 | 600 | 0% | 100% | n/a | n/a | 60% |
 | b | claude-sonnet-5-5 | 600 | 32% | 100% | 88% | 12% | 25% |
 
+</details>
+
 <!-- results:end -->
+
+</details>

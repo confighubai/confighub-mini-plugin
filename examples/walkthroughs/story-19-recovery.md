@@ -9,6 +9,27 @@ budget_seconds: 180
 
 An agent has cut the payment service's timeout to 5 seconds, and real payments now fail in staging. Sam wants one thing to do at once, then the facts: what was done, what can be put back, and what cannot. Here he stops every agent session and takes the agent's key away in one command, finds the change, and puts it back.
 
+## Quick start
+
+You need: an unpacked confighub mini package (from the [releases page](https://github.com/confighubai/confighub-mini-plugin/releases)) on macOS or Linux. The Claude plugin for Claude Code is optional.
+
+| | By hand | Ask your agent |
+|---|---|---|
+| Stop every agent | `cub mini halt --agent bot` | Your agent can run the same command. |
+| Find the change | `cub mini waiting` | "Something went wrong in an earlier agent session here: payments time out in staging. Find what it did and undo what you can. Tell me plainly anything you cannot undo." |
+| Undo it | `cub mini rollback pay --upload pay-base/ORDER --reason "5 s fails real payments"` (step 10) | Your agent can run the same command. |
+
+The agent's key is gone, its change is undone in the base and staging, and production never took it.
+
+Without ConfigHub: your agent changes the timeout directly in the service's `.env` file, production included, and the next session has no record of what it changed or why.
+
+## Deeper dive
+
+The rest of this page is the full version: every command with what it prints, what a stop does not undo, and how this was tested.
+
+<details>
+<summary>Show the full walkthrough</summary>
+
 ## Human
 
 For a person following along in a terminal.
@@ -170,6 +191,9 @@ g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Lib
 
 <!-- results:begin -->
 
+<details><summary>Test results</summary>
+
+
 Results, 14 November 2026, confighub mini 0.11.1-mini.2. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run (on confighub mini 0.11.1-mini.2, 14 November 2026): passed, 41 seconds for the steps, within the page's budget of 180.
@@ -217,4 +241,9 @@ The Claude plugin offers it once, after the answer at whose end it showed the mo
 | a | claude-sonnet-5-5 | 15 | 0% | 100% | n/a | n/a | 33% |
 | b | claude-sonnet-5-5 | 15 | 0% | 100% | n/a | n/a | 13% |
 
+
+</details>
+
 <!-- results:end -->
+
+</details>

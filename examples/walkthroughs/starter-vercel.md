@@ -8,6 +8,28 @@ live_budget_seconds: 1200
 -->
 # An app on Vercel, with production behind your approval
 Connect a Vercel app and keep a reason for every approved production setting. Try a personal Hobby project or use the local stand-in without a Vercel account.
+## Quick start
+
+You need: a [local hub](../../docs/install-mini.md) with starters switched on, and the app's folder linked to its Vercel project.
+
+| | By hand | Ask your agent |
+|---|---|---|
+| Connect the app | `cub mini adopt shop --live` | "Set up my Vercel shop so production settings wait for my approval, and keep production's region." |
+| Change a setting | Edit the settings file and propose the change with its reason (step 5) | "Make prices show within thirty seconds; I'll approve production myself." |
+| Approve production | `cub mini waiting`, then `cub mini approve ORDER` | You approve it yourself. |
+| Undo | `cub mini rollback shop-live --change-order ORDER --reason "The sale is over"` | "Propose restoring the previous cache setting. I’ll approve delivery." |
+
+Staging takes each change at once. Production keeps its value until you approve, and each value keeps its reason.
+
+Without ConfigHub: your agent sets the value with `vercel env` or in the dashboard, production included, and the next session has no record of why.
+
+## Deeper dive
+
+The rest of this page is the full version: every command, a path that needs no Vercel account, the move to a shared hub, what an agent leaves to you, and how this was tested.
+
+<details>
+<summary>Show the full walkthrough</summary>
+
 ## Human
 ### What you need
 An unpacked [confighub mini package](../../docs/install-mini.md) and Python 3. Step 8 needs a sign-in to your organization's shared hub.
@@ -179,6 +201,8 @@ For trials use the fixture. **Deploy** with step 3 or `cub mini adopt shop --liv
 This proves: the real Hobby run checks what the production endpoint serves before and after first delivery, an update and a rollback. The no-account run checks delivery to the local stand-in and the move to a shared hub.
 <!-- results:begin -->
 
+<details><summary>Test results</summary>
+
 Results, 14 November 2026, confighub mini 0.11.1-mini.5. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run: passed, 64 seconds for the steps, within the page's budget of 200; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
@@ -230,4 +254,8 @@ Earlier records of this page, kept with their own date, package and scope:
 
 - Scripted no-account run on checksum-verified mini.5 for macOS arm64: passed, 66 seconds for the steps, within the page's budget of 200. The shared base restored 60 seconds and the live copy and stand-in held 30 while approval was pending. After the scripted owner approved delivery, the stand-in served 60. The shared-hub copy and read-only approval check passed.
 
+</details>
+
 <!-- results:end -->
+
+</details>

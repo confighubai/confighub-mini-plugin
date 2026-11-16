@@ -5,7 +5,14 @@ the folder's index lists each file and only files that are there.
     python3 .github/tools/lint-walkthroughs.py [FOLDER]
     python3 .github/tools/lint-walkthroughs.py --self-test
 
-A walkthrough starts with a header block, then one title, then three sections
+A walkthrough starts with a header block, then one title, then two tiers. The
+first tier is Quick start: the whole flow in a few rows, for a reader deciding
+whether to go on. It has a line starting "You need: ", a table headed
+"| | By hand | Ask your agent |" with two to five rows (the command a person
+types beside the request a person gives an agent), and a line starting
+"Without ConfigHub: " that says what the reader would do with the tools they
+already know. The second tier opens with Deeper dive, a few lines saying what
+the rest of the page holds, then three sections
 in order: Human (numbered steps, each command block marked <!-- run: STEP -->),
 Agent, and Testing (an <!-- agent-task --> with a > quoted request, at least
 one <!-- agent-check: COMMAND -->, a line starting "This proves: ", and at
@@ -31,8 +38,13 @@ import re
 import sys
 import tempfile
 
-SECTIONS = ["Human", "Agent", "Testing"]
-MAX_LINES = 180
+SECTIONS = ["Quick start", "Deeper dive", "Human", "Agent", "Testing"]
+MAX_LINES = 220
+# The first tier stays short enough to read without scrolling.
+QUICK_LINES = 16
+QUICK_ROWS = (2, 5)
+QUICK_HEAD = "| | By hand | Ask your agent |"
+DEEPER_LINES = 4
 STEPS = (5, 10)
 STARTS_WITH = {"plugin", "mini", "both"}
 STARTER_TASKS = ["deploy", "update", "undo", "delete", "move"]
@@ -166,6 +178,32 @@ def figures_outside_testing(text):
     return out
 
 
+def quick_start_problems(text):
+    """What is wrong with the first tier and the lines that open the second."""
+    bad = []
+    quick = [l for l in section(text, "Quick start").split("\n") if l.strip()]
+    if len(quick) > QUICK_LINES:
+        bad.append(f"Quick start has {len(quick)} lines that are not blank; the limit is {QUICK_LINES}")
+    if not any(l.startswith("You need: ") for l in quick):
+        bad.append('Quick start has no line starting "You need: "')
+    if not any(l.startswith("Without ConfigHub: ") for l in quick):
+        bad.append('Quick start has no line starting "Without ConfigHub: "')
+    if QUICK_HEAD not in quick:
+        bad.append(f"Quick start has no table headed {QUICK_HEAD}")
+    else:
+        rows = [l for l in quick[quick.index(QUICK_HEAD) + 1:] if l.startswith("|") and not re.fullmatch(r"[|\s:-]+", l)]
+        if not QUICK_ROWS[0] <= len(rows) <= QUICK_ROWS[1]:
+            bad.append(f"Quick start's table has {len(rows)} rows; want {QUICK_ROWS[0]} to {QUICK_ROWS[1]}")
+        for r in rows:
+            cells = [c.strip() for c in r.strip().strip("|").split("|")]
+            if len(cells) != 3 or not all(cells):
+                bad.append(f"a Quick start row does not have a step, a command and a request: {r[:80]}")
+    deeper = [l for l in section(text, "Deeper dive").split("\n") if l.strip()]
+    if not deeper or len(deeper) > DEEPER_LINES:
+        bad.append(f"Deeper dive has {len(deeper)} lines that are not blank; want 1 to {DEEPER_LINES}, saying what the rest of the page holds")
+    return bad
+
+
 def lint(path):
     """What is wrong with one walkthrough: [problem], empty when nothing."""
     path = Path(path)
@@ -195,6 +233,7 @@ def lint(path):
         bad.append(f"{len(titles)} level-one titles; want one")
     if sections(text) != SECTIONS:
         bad.append(f"the sections are {sections(text)}; want exactly {SECTIONS}, in that order")
+    bad += quick_start_problems(text)
     n = len(re.sub(re.escape(RESULTS_BEGIN) + r".*?" + re.escape(RESULTS_END), "", text, flags=re.S).rstrip("\n").split("\n"))
     if n > MAX_LINES:
         bad.append(f"{n} lines; the limit is {MAX_LINES}")
@@ -294,6 +333,9 @@ def lint_folder(folder):
 FAULTS = [
     ("no header", lambda t: HEADER.sub("", t, count=1)),
     ("sections out of order", lambda t: t.replace("\n## Agent\n", "\n## Agent-renamed\n", 1)),
+    ("no Quick start table", lambda t: t.replace(QUICK_HEAD, "| | Commands | Requests |", 1)),
+    ("no Without ConfigHub line", lambda t: t.replace("\nWithout ConfigHub: ", "\nOtherwise: ", 1)),
+    ("no You need line", lambda t: t.replace("\nYou need: ", "\nNeeds: ", 1)),
     ("no agent-task", lambda t: re.sub(r"(?m)^<!-- agent-task.*-->$", "", t)),
     ("no agent-check", lambda t: re.sub(r"(?m)^<!-- agent-check(?!-a).*-->$", "", t)),
     ("no This proves", lambda t: t.replace("This proves: ", "It proves: ")),

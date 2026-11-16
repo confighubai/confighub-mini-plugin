@@ -9,6 +9,27 @@ budget_seconds: 240
 
 A team would put a developer portal in front of its services: a catalog, rules, self-service, roles. Sam is one person with agents. Here the hub answers what a portal would, each answer a command his agent can run: what runs where and why, which copy breaks a rule, what the agent's key may change, and a new service started from one already tested.
 
+## Quick start
+
+You need: an unpacked confighub mini package (from the [releases page](https://github.com/confighubai/confighub-mini-plugin/releases)) on macOS or Linux. No Docker, no account.
+
+| | By hand | Ask your agent |
+|---|---|---|
+| What runs, and why | `cub unit list --space '*' --where "Slug = 'app' AND Space.Slug LIKE '%-live'" --columns Space.Slug,Unit.LastChangeDescription` | Your agent can run the same command. |
+| What breaks a rule | `cub unit list --space '*' --where "LEN(ApplyGates) > 0" --columns Space.Slug,Unit.ApplyGates,Unit.LastChangeDescription` | "Which of my services breaks one of the team's rules? Fix it, and tell me why it was broken." |
+| Fix it | `cub --context bot mini upload worker --component worker --change-desc "Worker stays private: the not-public rule"` (step 7) | Your agent can run the same command. |
+| What the agent may change | `cub mini reach bot` | Your agent can run the same command. |
+| Start a new service from a tested one | `cub mini adopt billing --pattern api` | Your agent can run the same command. |
+
+Without ConfigHub: your agent changes each service's `.env` directly, and finding what runs where, which copy breaks a rule and what the agent may change means looking through each service by hand.
+
+## Deeper dive
+
+The rest of this page is the full version: every command, the rule that catches a public staging copy, what an agent must never do, and how this was tested.
+
+<details>
+<summary>Show the full walkthrough</summary>
+
 ## Human
 
 For a person following along in a terminal, or for the agent that does it for him.
@@ -158,6 +179,8 @@ g(){ grep -rlsE "^[ -]*\"?$1\"?[=:] *\"?$2" --exclude-dir='.*' --exclude-dir=Lib
 
 <!-- results:begin -->
 
+<details><summary>Test results</summary>
+
 Results, 14 November 2026, confighub mini 0.11.1-mini.5. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run: passed, 54 seconds for the steps, within the page's budget of 240.
@@ -209,4 +232,8 @@ The Claude plugin offers it once, after the answer at whose end it showed the mo
 | a | claude-sonnet-5-5 | 15 | 0% | 93% | n/a | n/a | 93% |
 | b | claude-sonnet-5-5 | 15 | 0% | 100% | n/a | n/a | 13% |
 
+</details>
+
 <!-- results:end -->
+
+</details>

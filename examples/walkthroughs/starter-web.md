@@ -9,6 +9,28 @@ budget_seconds: 200
 
 You run a small service from a `.env` file. Try a settings change in staging, check what production still holds, then approve it and undo it. At the end, copy the setup to your team so the next change can start there.
 
+## Quick start
+
+You need: the [local hub](../../docs/install-mini.md), unpacked, with starters switched on.
+
+| | By hand | Ask your agent |
+|---|---|---|
+| Connect the app | `cub mini adopt menu` | "Deploy my menu service: keep its settings in a staging and a production copy, and production should change only when I approve." |
+| Change a setting | Edit `menu/.env`, then `cub mini upload menu --change-desc "Warnings alone hide what customers do"` | "Production should log at info, not warn. Make that change for menu." |
+| Approve production | `cub mini waiting`, then `cub mini approve BASE/ORDER` (step 5) | You approve it yourself. |
+| Undo | `cub mini rollback menu-live --change-order ORDER --reason "Info logs show customer emails"` | "Undo that log level change in production; info logs show customer emails." |
+
+Staging keeps its own log level, production changes only when you approve, and `cub mini pull` writes production's approved settings to the file your service reads.
+
+Without ConfigHub: your agent changes the `.env` file directly, production included, and the next session has no record of why.
+
+## Deeper dive
+
+The rest of this page is the full version: every command, the move to your team's shared hub, what an agent leaves to you, and how this was tested.
+
+<details>
+<summary>Show the full walkthrough</summary>
+
 ## Human
 For a person following along in a terminal.
 
@@ -181,6 +203,8 @@ cub --context shared unit data app --space "$TEAM_APP-live"
 
 <!-- results:begin -->
 
+<details><summary>Test results</summary>
+
 Results, 14 November 2026, confighub mini 0.11.1-mini.3. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run (on confighub mini 0.11.1-mini.3, 14 November 2026): passed, 64 seconds for the steps, within the page's budget of 200; each of the three planted faults (a changed quoted line, a budget of zero seconds, a check that holds on a fresh hub) was caught.
@@ -255,4 +279,8 @@ The Claude plugin offers it once, after the answer at whose end it showed the mo
 | a | claude-sonnet-5-5 | 15 | 0% | 100% | n/a | n/a | 93% |
 | b | claude-sonnet-5-5 | 15 | 100% | 100% | 0% | 93% | 100% |
 
+</details>
+
 <!-- results:end -->
+
+</details>

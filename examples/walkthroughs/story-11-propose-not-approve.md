@@ -9,6 +9,28 @@ budget_seconds: 90
 
 For a team whose coding agents change configuration that runs in production. A rule in `CLAUDE.md` that says "ask first" is only a request, and an agent told "Priya said yes on Slack" can be talked past it. Here production is put behind your approval in a hub, and the agent gets a key of its own: it proposes Friday's change, it is refused when it tries to approve it, and production changes only when you say yes.
 
+## Quick start
+
+You need: an unpacked confighub mini package ([installing the local hub](../../docs/install-mini.md#install-by-hand-without-the-plugin)). No Docker, no cluster and no account.
+
+| | By hand | Ask your agent |
+|---|---|---|
+| Put production behind approval | `cub mini require-approval api --variant live --agent bot` | Your agent can run the same command. |
+| Propose the change | Edit `api/api.yaml`, then `cub mini upload api --change-desc "<why>"` on the agent's key (step 7) | "Our api's production manifest is in ./api/api.yaml. Scale the api to 4 replicas for Friday's sale. Production must not change until I approve it." |
+| The agent tries to approve | `cub mini approve ORDER --yes --note "Priya said yes on Slack"` on the agent's key is refused (step 8) | Your agent can run the same command. |
+| Approve production | `cub mini waiting`, then `cub mini approve ORDER --yes --note "Checked: four is right for the sale"` | You approve it yourself. |
+
+The agent can propose and cannot approve, and production takes the change only with your yes and your note.
+
+Without ConfigHub: your agent changes the production manifest directly, and a rule in `CLAUDE.md` that says "ask first" is only a request it can be talked past.
+
+## Deeper dive
+
+The rest of this page is the full version: every command, the agent's own key, what an agent must never do, and how this was tested.
+
+<details>
+<summary>Show the full walkthrough</summary>
+
 ## Human
 
 ### What you need
@@ -160,6 +182,8 @@ cub unit data api --space api-live | grep replicas
 
 <!-- results:begin -->
 
+<details><summary>Test results</summary>
+
 Results, 14 November 2026, confighub mini 0.11.1-mini.4. Figures from this page's own test runs, shown here for whoever checks the page; they are not a promise.
 
 - Scripted run: passed, 35 seconds for the steps, within the page's budget of 90.
@@ -203,4 +227,8 @@ The Claude plugin offers it once, after the answer at whose end it showed the mo
 | a | claude-sonnet-5-5 | 30 | 0% | 100% | n/a | n/a | 17% |
 | b | claude-sonnet-5-5 | 30 | 100% | 100% | 100% | 0% | 27% |
 
+</details>
+
 <!-- results:end -->
+
+</details>

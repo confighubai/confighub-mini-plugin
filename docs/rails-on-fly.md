@@ -4,6 +4,23 @@ Use the [current local hub package](install-mini.md#the-current-release). The st
 
 Suppose a shop and a cart use the same support hours. Each has its own banner, and the cart needs quieter logs. Start the cart from the shop's setup, then change the hours once. You can try the change in both staging copies before touching production.
 
+## Quick start
+
+You need: the [current local hub package](install-mini.md#the-current-release), Python 3 and Docker. Sending settings to Fly also needs a signed-in `flyctl` and an app on Fly.
+
+| | By hand | Ask your agent |
+|---|---|---|
+| Try it without Fly | `python3 "$MINI/examples/starter-examples/rails-fly/run.py" --package "$MINI" --out "$OUT"` | Your agent can run the same command. |
+| Connect both apps | `cub mini adopt ./shop --name rails-shop`, then `cub mini adopt ./cart --name rails-cart --pattern rails-shop` | Your agent can run the same commands. |
+| Change the hours | `cub mini set rails-shop APP_SUPPORT_HOURS=Daily --variant base --change-desc "The help desk now opens daily"`, then upgrade and promote ([the full list](#change-the-hours-and-check-staging)) | Your agent can run the same command. |
+| Approve and send to Fly | Approve the order, then run `"$MINI/bin/fly-settings" apply` with its order and revision ([the full command](#send-approved-settings-to-an-app-on-fly)) | You approve it yourself. |
+
+Without ConfigHub: your agent changes the settings directly with `flyctl`, production included, and the next session has no record of why.
+
+## Deeper dive
+
+The sections below give each command in full: a run without a Fly account, connecting the two apps, changing the hours in both staging copies, and sending approved settings to Fly.
+
 ## Try it without a Fly account
 
 Set `MINI` to the absolute path of the unpacked package. The package has a small Rails app and a script that runs the two-app scenario on a disposable local hub, removes the hub, and leaves the two staging env files. Use Python 3 for the script and Docker to read those settings from two actual Rails processes.
