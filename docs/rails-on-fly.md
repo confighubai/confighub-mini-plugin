@@ -88,7 +88,7 @@ cub mini waiting
 
 Look for `Daily` in both staging copies, `coral` and `info` in the shop, and `indigo` and `warn` in the cart. Pass those three values to each staging app. Check the page or endpoint that uses them. For the sample app, use `/api/settings`. Copy only those three values so you don’t lose any settings your app already uses.
 
-`cub mini waiting` shows the exact ConfigHub orders and the commands the owner can use to review each. Leave them pending for this exercise. ConfigHub does not block a direct Fly deploy by someone with Fly credentials. A hub approval changes the hub's production copy; it does not deploy a Fly Machine.
+`cub mini waiting` shows the exact ConfigHub orders and the commands the owner can use to review each. Leave them pending for this exercise. When you approve one, the same command sends the approved settings to the app's Fly Machine, as [the next section](#send-approved-settings-to-an-app-on-fly) shows. ConfigHub does not block a direct Fly deploy by someone with Fly credentials.
 
 When done, remove the disposable hub with `cub mini uninstall --name rails-fly-example --delete-data`.
 
