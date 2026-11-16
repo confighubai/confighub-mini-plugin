@@ -15,6 +15,13 @@ Nothing was committed, so `git diff` shows the new value but not why. With Confi
 
 `/confighub:why CACHE` then shows every change to that value, with the request behind each ([the walkthrough](examples/walkthroughs/tool-plugin.md)). On a cluster the same thing looks like this: Git shows replicas 2 → 1, and your agent set 4 in between ([the problem it solves](docs/try-the-plugin.md#the-problem-it-solves)).
 
+That is one of four things that go wrong when agents change configuration:
+
+- **Agents undo each other's changes**, and nobody is told.
+- **Nothing stands between an agent and production.** An agent working under your sign-in can approve its own change.
+- **A new version overwrites your changes**, such as the values you set in someone else's Helm chart.
+- **Nobody knows what a repository deploys** before they, or an agent, change it.
+
 ## Install
 
 For Claude Code, run these two commands in a terminal:
@@ -50,8 +57,10 @@ The Claude plugin keeps a record. A hub adds control: a staging and a production
 | When this happens | What you add | What you get |
 |---|---|---|
 | A new session undoes a setting | The Claude plugin, alone | Each change kept with the request behind it. The next agent is told before it undoes one ([try it](docs/try-the-plugin.md)) |
+| You open a repository you did not write | `/confighub:inventory`, in the Claude plugin | What the repository deploys, and what deploys it, before anyone changes it ([inventory](docs/inventory.md)) |
 | A teammate reviews a pull request | The [review action](review/README.md) for GitHub | A comment on each pull request with every setting it changes, and why |
 | You want your agent to try things without touching production | A local hub on your computer, free and with no account | A staging copy your agent changes at once, and a production copy that changes only when you approve ([a new app](docs/journeys/new-app.md)) |
+| Someone else's next version would overwrite your values | The same local hub | You take the new version and keep the values you changed, each with its reason ([keep your changes](examples/walkthroughs/story-02-keep-your-changes.md), [a Helm chart you use](docs/your-own-chart.md)) |
 | You start a second app | A [starter](docs/starters.md), a short file of your settings | The second app starts with your settings. A fix reaches every app made from the starter, and each app keeps its own values |
 | An agent works in a sandbox or a CI job | A hub of its own for that run | The agent makes its fix there and writes it out for a person to review, and the hub is deleted with the run ([a hub for each agent run](examples/walkthroughs/story-03-a-hub-per-agent-run.md)) |
 | A teammate joins, or agents run for hours | A shared hub, on confighub.com or on your own servers | A key for each agent, which can propose a production change and cannot approve one. A way to cut one agent off. Signed records ([agents that run for weeks](docs/agents-that-run-for-weeks.md)) |
@@ -82,6 +91,14 @@ More control for long-running agents, such as stopping one agent and checking si
 ## An example: staging takes it, and production waits
 
 You ask your agent to turn on debug logging, and staging and production both read the same `.env` file. Without ConfigHub, production starts logging customers' email addresses. With ConfigHub, staging and production get their settings from the hub instead. Staging gets debug logging right away, and production waits. `cub mini waiting` shows `LOG_LEVEL=info → LOG_LEVEL=debug`, and you refuse it with a reason: "Debug logs leak customer emails." The next agent that tries is told you said no, and why. An agent that also holds your cloud or cluster credentials can still go around this ([what an agent can reach](docs/agents-that-run-for-weeks.md#limiting-what-an-agent-can-reach)).
+
+## What it does not do
+
+- **It doesn't run your app**, and it doesn't watch what your agents do. Your host and your own tools still do that.
+- **The approval holds against an agent on a key of its own.** An agent that also holds your cloud or cluster credentials can go around it.
+- **What the next agent is told goes to your model provider** with the rest of that session. The record itself stays on your machine.
+
+[The full list](docs/limits.md) says more, including what a careful setup with Git alone already gives you.
 
 ## Start from the tools you use
 
