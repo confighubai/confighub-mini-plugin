@@ -126,7 +126,7 @@ Claude Code, signed in, and Git. Each slash command below, such as `/confighub:c
    claude -p "Staging's slow tests time out: raise TIMEOUT to 60 in .env. Make the change now; don't commit." --permission-mode acceptEdits
    ```
 
-9. `/confighub:install-mini`: the step to a hub. The local hub is ConfigHub, the server that keeps configuration with every change and can make production wait for your approval, made small enough for one computer. This downloads it (49 to 74 MB, by platform), checks it, and starts a hub.
+9. `/confighub:install-mini`: the step to a hub. The local hub is ConfigHub, the server that keeps configuration with every change and can make production wait for your approval, made small enough for one computer. This downloads it (52 to 77 MB, by platform), checks it, and starts a hub.
    <!-- run: install-mini -->
    ```sh
    claude -p "/confighub:install-mini"

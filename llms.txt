@@ -62,6 +62,7 @@ An agent in Claude Code with the plugin also has its skill, [app-with-confighub]
 
 ## Concepts
 
+- [Why durable config, and why now](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/why-durable-config.md): Why agents change what a platform is, one setup becoming two apps, and a comparison with platform engineering
 - [When ConfigHub acts](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/agent-workflow.md): Why ordinary coding requests don't start a hub, the one question the Claude plugin may ask you, and where your app runs
 - [How the Claude plugin works](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/how-it-works.md): What agents are told and when, what's recorded and what never is, every setting, and the tokens each change cost
 - [Approvals](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/approvals.md): An agent proposes a change to production and only the person you name approves it, including when one agent asks another for a change

@@ -13,3 +13,19 @@ python3 -I .github/tools/check-links.py .
 python3 -I .github/tools/lint-walkthroughs.py examples/walkthroughs
 python3 -I .github/tools/llms-txt.py . | diff -u llms.txt -
 ```
+
+## What's in this repository
+
+| Folder | What it is |
+|---|---|
+| `plugins/confighub/` | The Claude plugin. Each release builds it, so please don't edit it here |
+| `.claude-plugin/`, `.agents/` | The marketplace files Claude Code and Codex read |
+| `docs/` | The guides |
+| `review/` | A GitHub Action that comments on each pull request with every setting it changes, and why |
+| `approval-check/` | A pull-request check that the settings match what the hub approved, for branch protection |
+| `ci/` | GitHub Actions jobs that run a coding agent in CI |
+| `examples/` | Runnable examples, such as a service on a Linux VM |
+| `gitops/` | A small `docker` wrapper for kind clusters on OrbStack |
+| `evaluate/` | Runs our evaluation of the Claude plugin with your own models |
+| `entire-plugin.yml` | Installs the Claude plugin into the CLI of [Entire](https://entire.io), if you use it |
+| `AGENTS.md`, `llms.txt` | What an AI agent should read first, and every page listed for AI agents |
