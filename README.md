@@ -31,7 +31,7 @@ claude plugin marketplace add confighubai/confighub-mini-plugin
 claude plugin install confighub@confighub
 ```
 
-That is the whole first step. The Claude plugin works alone, with no hub and no account, and its record stays on your computer. Open a new session, ask your agent to change a setting, then run `/confighub:why SETTING` to see the change and the request behind it ([try the plugin without a hub](docs/try-the-plugin.md)). Using Codex? Follow [the Codex setup](docs/codex.md), including its separate hook approval. You can also [install the local hub without a coding agent](docs/install-mini.md).
+The Claude plugin works alone, with no hub and no account, and its record stays on your computer. Open a new session, ask your agent to change a setting, then run `/confighub:why SETTING` ([try the plugin without a hub](docs/try-the-plugin.md)). Using Codex? Follow [the Codex setup](docs/codex.md), including its separate hook approval. You can also [install the local hub without a coding agent](docs/install-mini.md).
 
 [Product overview](https://confighub.github.io/helm-expt/ai-agents/) · [Walkthroughs by stack](examples/walkthroughs/README.md) · [Instructions for AI agents](AGENTS.md)
 
@@ -40,8 +40,6 @@ That is the whole first step. The Claude plugin works alone, with no hub and no 
 ConfigHub keeps the settings of the apps you make with a coding agent. With each change it keeps what you asked the agent for. Settings kept with their reasons are durable config. It is the part of your agent's context that has to be true: what is running, where, and why. It is still there for the next session, the next version of the app and your next app.
 
 Your next app can start from the same settings instead of from nothing. What your apps share in this way is your platform. It grows from your apps, and nobody has to build it first.
-
-ConfigHub doesn't run your app. Your cluster, hosting service or VM still does, and Argo CD and Flux still deliver to your clusters.
 
 ## Why Git, your hosting service and a rules file are not enough
 
@@ -77,7 +75,7 @@ Priya's platform team looks after ten services, and coding agents change their c
 3. **A yes in Slack counts only when it is hers.** Priya is told in the thread where the work was asked for, and her Approve there records the approval as hers. An agent relaying "Priya said yes" approves nothing ([approve from Slack](examples/walkthroughs/story-22-priya-slack.md)).
 4. **What is running, and why.** For an app Argo CD deploys, the team sees Git, the hub and the cluster side by side, and sorts each difference into deliberate, drift, or Git out of date ([Git, the hub and what is running](examples/walkthroughs/story-09-git-hub-and-running.md)).
 
-More control for long-running agents, such as stopping one agent and checking signed records, is in [agents that run for weeks](docs/agents-that-run-for-weeks.md), [approvals](docs/approvals.md) and [signed records](docs/signed-records.md).
+More for agents that run for hours is in [agents that run for weeks](docs/agents-that-run-for-weeks.md).
 
 ## A first try, with a new app
 
@@ -94,11 +92,11 @@ You ask your agent to turn on debug logging, and staging and production both rea
 
 ## What it does not do
 
-- **It doesn't run your app**, and it doesn't watch what your agents do. Your host and your own tools still do that.
+- **It doesn't run your app**, and it doesn't watch what your agents do. Your cluster, hosting service or VM still runs it, and Argo CD and Flux still deliver to your clusters.
 - **The approval holds against an agent on a key of its own.** An agent that also holds your cloud or cluster credentials can go around it.
 - **What the next agent is told goes to your model provider** with the rest of that session. The record itself stays on your machine.
 
-[The full list](docs/limits.md) says more, including what a careful setup with Git alone already gives you.
+[The full list](docs/limits.md) says more.
 
 ## Start from the tools you use
 
@@ -108,58 +106,22 @@ You ask your agent to turn on debug logging, and staging and production both rea
 
 Some software comes with a hub inside. You change it to suit you, and keep your changes when its next version arrives ([software with ConfigHub inside](docs/journeys/bundled.md)).
 
-A [starter](docs/starters.md) recognizes the tools your app already uses and fills in settings you haven’t set. It makes staging and production copies in ConfigHub. Some starters also connect delivery. Pick the guide for your app to see what it does and where you’ll be asked to approve a change.
+Pick the guide for your app to see what its [starter](docs/starters.md) does and where you’ll be asked to approve a change.
 
 - **Where your app runs:** [Web](examples/walkthroughs/starter-web.md), [Vercel](examples/walkthroughs/starter-vercel.md), [Next.js on Vercel](docs/nextjs-on-vercel.md), [AWS Parameter Store](examples/walkthroughs/starter-parameter-store.md), [Argo CD](examples/walkthroughs/starter-kustomize-argocd.md), [Flux](examples/walkthroughs/starter-kustomize-flux.md), [Daytona](examples/walkthroughs/starter-daytona.md), [Temporal worker](examples/walkthroughs/starter-temporal-worker.md), [Unikraft](examples/walkthroughs/starter-unikraft.md), and [Rails on Fly](docs/rails-on-fly.md).
 - **Around the app:** Git and GitHub, Vault, Sigstore, SPIFFE, OpenTelemetry, Entire, MCP servers, sandboxes and containers, and Codex ([Integrations](docs/integrations.md) says what you get with each and how far along it is).
 
-Each walkthrough opens with a quick start: the whole flow in a few rows, by hand and with your agent, side by side. The full version follows it.
+Each walkthrough opens with a quick start: the whole flow in a few rows, by hand and with your agent.
 
 A starter gives every new app of one kind your team's default settings, such as retries, timeouts and worker limits, each with a note on why it is set. It is one short YAML file, the same idea as a [Spring Boot starter](https://docs.spring.io/spring-boot/reference/using/build-systems.html#using.build-systems.starters) but for any kind of app. When you connect an app, it gets the starter's settings, except where you have already set a value. When your team fixes a default, the fix goes into the starter's next version, and every new app gets it.
 
 The Vercel, AWS Parameter Store and Daytona walkthroughs include a local rehearsal that needs no provider account. Starters are off until you switch them on. See [how to turn them on and write your own](docs/starters.md).
 
-Then try [the cub mini tour](examples/walkthroughs/tool-cub-mini.md), [your first hour](examples/walkthroughs/story-13-first-hour.md), [approve from Slack](examples/walkthroughs/story-22-priya-slack.md), [size a service from real use](examples/walkthroughs/story-21-ana-sized.md), [Git, the hub and what is running](examples/walkthroughs/story-09-git-hub-and-running.md), and [one base for ten apps](examples/walkthroughs/story-24-company-base.md). Find more tools and user stories in the [walkthrough index](examples/walkthroughs/README.md).
-
-## Why now
-
-1. **People make and run apps by asking agents.** An agent changes settings many times a day, across staging, production and every customer's copy. No one reads diffs that fast.
-2. **So the platform has to come from somewhere else.** Staging, production, promotion, rollback and limits used to come from a platform team or a hosting service. An agent can now write them with the app. But they land in scattered files, the next session overwrites them, and every new app starts from nothing.
-3. **ConfigHub keeps the setup, its changes and their context.** It keeps the setup itself, wherever the app runs, with every change to it and the context for each change: what was asked, and why. That is what durable means. What you and your agents decided is still there for:
-   - **the next session**, which starts from what was set and why
-   - **the next agent**, which is told before it undoes a value
-   - **the next version**, which keeps your own values
-   - **the next environment**, which takes exactly what you approved
-   - **the next app**, which starts from the first
-
-## An example: two apps from one setup
-
-A developer builds a web shop with an agent. Their next app is a cart service.
-
-1. **The first app gets a setup.** `cub mini adopt shop` gives the shop a staging and a production copy, with the team's settings from a [starter](docs/starters.md), a small YAML file. Each setting has its reason.
-2. **A fix to the first app becomes part of the setup.** A teammate proposes warning-level logs and three instances for the next starter version, with a reason for each setting. The owner approves the version.
-3. **The second app starts with the fix, and the first keeps its own values.** The cart service starts with the new settings. The shop takes the update and keeps its production log level. Production changes still go through their own approval.
-
-The walkthrough [Alice ships it, Bob hardens it](examples/walkthroughs/story-25-alice-bob-hardened.md) runs this on your laptop.
-
-## How this differs from platform engineering
-
-Platform engineering builds a platform and fits apps to it. Durable config starts with the app, so the platform grows out of the apps.
-
-| | Platform engineering as we know it | Durable config |
-|---|---|---|
-| What comes first | The platform, built by a team ahead of the apps | The app. Its setup becomes the base for the next one |
-| How an app gets its setup | A template, copied once when the app is created | A starter the app stays linked to |
-| Where the knowledge lives | Docs, tickets and the platform team's heads | With each value, as its reason |
-| Who it is built for | People: portals, forms and golden-path guides | Agents and people |
-| How a change spreads | One pull request in each repository | One change, read across every app |
-| Where you can start | With a platform team | With one app on your computer |
-
-ConfigHub doesn't run your app. Your cluster, hosting service or VM still does, and Argo CD and Flux still deliver to your clusters. It replaces the templates, the portal and the scattered settings files above them.
+[Why durable config, and why now](docs/why-durable-config.md) gives the reasoning: why agents change what a platform is, one setup becoming two apps, and a comparison with platform engineering.
 
 ## Why `cub mini`
 
-`cub` is ConfigHub's command-line tool, and it works with every hub. `cub mini` adds commands that each do a whole job in one step, such as `cub mini adopt` to connect an app and `cub mini approve` to approve a change after showing it to you. Underneath, it runs the same `cub` commands. [`cub mini` and plain `cub`](docs/cub-mini-and-cub.md) lists each one next to the `cub` commands it stands for.
+`cub` is ConfigHub's command-line tool, and it works with every hub. `cub mini` adds commands that each do a whole job in one step, and runs the same `cub` commands underneath ([`cub mini` and plain `cub`](docs/cub-mini-and-cub.md)).
 
 ## Commands in Claude Code
 
@@ -184,19 +146,7 @@ The [documentation index](docs/README.md) lists every page, with a line on each.
 
 ## What's in this repository
 
-| Folder | What it is |
-|---|---|
-| `plugins/confighub/` | The Claude plugin. Each release builds it, so please don't edit it here |
-| `.claude-plugin/`, `.agents/` | The marketplace files Claude Code and Codex read |
-| `docs/` | The guides |
-| `review/` | A GitHub Action that comments on each pull request with every setting it changes, and why |
-| `approval-check/` | A pull-request check that the settings match what the hub approved, for branch protection |
-| `ci/` | GitHub Actions jobs that run a coding agent in CI |
-| `examples/` | Runnable examples, such as a service on a Linux VM |
-| `gitops/` | A small `docker` wrapper for kind clusters on OrbStack |
-| `evaluate/` | Runs our evaluation of the Claude plugin with your own models |
-| `entire-plugin.yml` | Installs the Claude plugin into the CLI of [Entire](https://entire.io), if you use it |
-| `AGENTS.md`, `llms.txt` | What an AI agent should read first, and every page listed for AI agents |
+The Claude plugin is in `plugins/confighub/`, built by each release, so please don't edit it here. The guides are in `docs/`, and runnable examples in `examples/`. [Contributing](CONTRIBUTING.md#whats-in-this-repository) lists every folder.
 
 ## Open, and yours to extend
 
