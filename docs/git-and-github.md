@@ -35,7 +35,7 @@ You need a hub for approvals: agents that propose, and a person who approves. If
 
 Then require approval for production, and give each agent a key of its own ([approvals](approvals.md#on-hosted-confighub-or-your-own-server-with-cub-alone)).
 
-For a hub of your own, on your machine, type `/confighub:install-mini` instead ([install the local hub](install-mini.md)). `/confighub:to-hub` then writes into that hub. The other `cub mini` commands that move work between hubs, `copy`, `connect` and `offer`, come with the local hub ([how the commands map](cub-mini-and-cub.md)).
+For a hub of your own, on your machine, type `/confighub:to-hub --yes` with no hub signed in: it starts one on this machine, downloading the local hub first if it is not here, and writes the record into it ([install the local hub](install-mini.md)). To give an app a staging and a production copy of its settings too, type `/confighub:staging` in the app's folder instead. The other `cub mini` commands that move work between hubs, `copy`, `connect` and `offer`, come with the local hub ([how the commands map](cub-mini-and-cub.md)).
 
 ## A hub beside Git, with Git still delivering
 

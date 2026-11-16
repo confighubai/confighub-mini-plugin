@@ -25,12 +25,12 @@ The words on this page, such as *hub*, *base* and *change order*, are explained 
 
 ## On confighub mini: ask for it
 
-In Claude Code, in the repository your agents work in:
+In Claude Code, in the folder of the app your agents work on:
 
-1. Type `/confighub:install-mini`. It starts a hub.
-2. Ask, in your own words: *"Make changes to production wait for my approval; agents may only propose them."* The agent puts the repository's files in the hub and requires your approval for the live copy. From then on, every Claude Code session in this repository runs on the agent's own key: it can propose, and it cannot approve.
+1. Type `/confighub:staging`. It starts a hub and gives the app a staging and a production copy of its settings, with production behind your approval. Your agent's next sessions in the folder get a key of their own, which can change staging and only propose for production. It approves nothing: where production's first settings wait for you, it ends with the one command to approve them in a terminal of your own. It reads `.env`-style settings files (`.env`, `app.env`, `.env.staging`, `.env.production`, `.env.prod`). For other files, such as Kubernetes manifests, start the hub with `bin/confighub mini get` from the Claude plugin in a terminal, then ask in your own words: *"Make changes to production wait for my approval; agents may only propose them."*
+2. Start a new Claude Code session in the folder. From then on, every Claude Code session there runs on the agent's own key: it can propose, and it cannot approve.
 3. Ask for changes as you always have. The agent edits the files, then proposes them. At the end of its turn you see one line: *"A change to production (APP-live) waits for your approval: … To approve it: ~/.confighub/mini/confighub-mini-VERSION-OS-ARCH/bin/cub mini approve …"*. The command names the local hub's own `cub` by its full path, so it runs in a terminal as printed.
-4. In a terminal, approve it: `cub mini approve`. It shows what the change would do and asks you first. Asking stops an agent's ordinary shell, but it is not what keeps the agent out: an agent on your own sign-in could pass `--yes` or fake a terminal. What does is the key of its own from step 2, whose approval the hub refuses. Or refuse it: `cub mini refuse --reason "why"`. This updates the approved configuration. Production uses it when its deployment path reads that revision; verify the running service as described below.
+4. In a terminal, approve it: `cub mini approve`. It shows what the change would do and asks you first. Asking stops an agent's ordinary shell, but it is not what keeps the agent out: an agent on your own sign-in could pass `--yes` or fake a terminal. What does is the key of its own from step 1, whose approval the hub refuses. Or refuse it: `cub mini refuse --reason "why"`. This updates the approved configuration. Production uses it when its deployment path reads that revision; verify the running service as described below.
 
 You learn no command until the moment you need it. The steps below are the same, by hand.
 

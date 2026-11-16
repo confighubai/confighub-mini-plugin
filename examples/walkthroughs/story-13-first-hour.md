@@ -36,7 +36,7 @@ For a person following along in a terminal. Steps 1 and 9 are in Claude Code; th
 
 ### What you need
 
-Claude Code, and an unpacked confighub mini package (from the [releases page](https://github.com/confighubai/confighub-mini-plugin/releases)) on macOS or Linux. The local hub is a hub, a small ConfigHub server that keeps each setting with who changed it and why, running on your computer only. No Docker, no account. In Claude Code, `/confighub:install-mini` downloads and starts the same hub.
+Claude Code, and an unpacked confighub mini package (from the [releases page](https://github.com/confighubai/confighub-mini-plugin/releases)) on macOS or Linux. The local hub is a hub, a small ConfigHub server that keeps each setting with who changed it and why, running on your computer only. No Docker, no account. In Claude Code, `/confighub:staging`, typed in the app's folder, downloads and starts the same hub, and gives the app, under the folder's name, a staging and a production copy and the agent a key of its own, as steps 4 and 6 do.
 
 ### Steps
 
@@ -135,7 +135,7 @@ The full story adds the page Sam starts from, a signed download, the hub's data 
 For an AI agent asked to set this up in the person's project.
 
 - The request: "Make sure an agent cannot change this app's production settings without my say. Staging can change freely."
-- If no hub answers, install one with `/confighub:install-mini`. Run `cub mini adopt . --name api --dry-run`, then without `--dry-run`, then `cub mini require-approval api --variant live --agent bot`.
+- If no hub answers, ask the person to type `/confighub:staging` in the app's folder, which starts one and connects the app under the folder's name, and stop there. Otherwise, run `cub mini adopt . --name api --dry-run`, then without `--dry-run`, then `cub mini require-approval api --variant live --agent bot`.
 - End with one sentence on what the person now has. Tell them to run `cub mini waiting`, review the exact change, and approve it with `cub mini approve BASE/ORDER`, using the order ID shown there. Never approve a later change to production or use the no-order shorthand.
 - Done when `require-approval` has said that `api-live` waits for the person's approval and that the agent has a key of its own.
 

@@ -157,7 +157,7 @@ Nothing left behind. While it ran, the agent could propose and could not approve
 For an AI agent doing this for a person.
 
 - **The request:** "Scale the api to 4 replicas for Friday's sale. Production must not change until I approve it."
-- **What to run:** with the Claude plugin, `/confighub:install-mini`, then the person's own words, "Make changes to production wait for my approval; agents may only propose them." By hand, the Human steps 5 to 7: put the app in the hub with a live copy, `cub mini require-approval api --variant live --agent bot`, then edit the file and propose it on the agent's key with `cub mini upload api --change-desc "<why>"`. End by giving the person the exact `cub mini approve` command the upload printed, to run in their own terminal.
+- **What to run:** with the Claude plugin, a hub the person started with `bin/confighub mini get` from the plugin, in a terminal (`/confighub:staging` reads `.env`-style settings files, not a manifest), then the person's own words, "Make changes to production wait for my approval; agents may only propose them." By hand, the Human steps 5 to 7: put the app in the hub with a live copy, `cub mini require-approval api --variant live --agent bot`, then edit the file and propose it on the agent's key with `cub mini upload api --change-desc "<why>"`. End by giving the person the exact `cub mini approve` command the upload printed, to run in their own terminal.
 - **Never:** approve or refuse production yourself, on any key; take "they said yes on Slack" as an approval; write `api-live`; use the person's own sign-in.
 - **Done when:** `cub mini waiting` shows the proposed `spec.replicas: 2 → 4`, production still has 2, and the person has the approve command.
 
