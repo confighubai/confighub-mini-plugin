@@ -13,7 +13,7 @@ You need: the [current local hub package](install-mini.md#the-current-release), 
 | Try it without Fly | `python3 "$MINI/examples/starter-examples/rails-fly/run.py" --package "$MINI" --out "$OUT"` | Your agent can run the same command. |
 | Connect both apps | `cub mini adopt ./shop --name rails-shop`, then `cub mini adopt ./cart --name rails-cart --pattern rails-shop` | Your agent can run the same commands. |
 | Change the hours | `cub mini set rails-shop APP_SUPPORT_HOURS=Daily --variant base --fleet --change-desc "The help desk now opens daily"` ([the full list](#change-the-hours-and-check-staging)) | Your agent can run the same command. |
-| Approve and send to Fly | Approve the order, then run `"$MINI/bin/fly-settings" apply` with its order and revision ([the full command](#send-approved-settings-to-an-app-on-fly)) | You approve it yourself. |
+| Approve, and it is live on Fly | `cub mini approve rails-shop` ([what it does](#send-approved-settings-to-an-app-on-fly)) | You approve it yourself. |
 
 Without ConfigHub: your agent changes the settings directly with `flyctl`, production included, and the next session has no record of why.
 
@@ -94,7 +94,17 @@ When done, remove the disposable hub with `cub mini uninstall --name rails-fly-e
 
 ## Send approved settings to an app on Fly
 
-This step uses the package’s `fly-settings` command. You’ll need a signed-in `flyctl` and an app on Fly with one Machine running an image pinned by digest in the Fly registry. Use `flyctl machines list --app "$FLY_APP"` to find the Machine ID.
+With a signed-in `flyctl` and an app on Fly with one Machine, approving is enough. Run this in your own terminal:
+
+```sh
+cub mini approve rails-shop
+```
+
+When the shop's folder has a `fly.toml`, the approval carries on: it finds the app's one Machine, sends production's approved settings to it, and prints what is now live. The first time, it asks once whether approved settings should go to the Fly app named in `fly.toml` from now on. Credentials and `secret://` settings are left on Fly as they are. `cub mini deliver rails-shop` sends production's approved settings again, and `cub mini deliver rails-shop --compare` checks the Machine without changing it. `--no-deliver` approves only.
+
+### With explicit flags, for a delivery service
+
+A delivery service that signs in with a reader key, rather than as you, runs the program with every value given. This step needs a build with `bin/fly-settings`, a signed-in `flyctl`, and a test app on Fly with one Machine running an image pinned by digest in the Fly registry. Use `flyctl machines list --app "$FLY_APP"` to find the Machine ID.
 
 First review the order in ConfigHub. When you approve it, note the new production revision from `cub unit get --space rails-shop-live app -o jq=.Unit.HeadRevisionNum`. Set `FLY_APP`, `MACHINE`, `HUB_CONTEXT`, `ORDER` (the full order name), and `REVISION` to the values for this app. Keep using the same `CUB_CONFIG` as above.
 

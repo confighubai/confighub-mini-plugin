@@ -1,6 +1,6 @@
 # A Next.js app on Vercel
 
-Build a Next.js app with your agent, try its settings in Vercel Preview, and review the first production delivery when you are ready. ConfigHub keeps the app's setup and its reasons, so you can start the next app from it.
+Build a Next.js app with your agent, try its settings in Vercel Preview, and put a production change live by approving it. ConfigHub keeps the app's setup and its reasons, so you can start the next app from it.
 
 ## Quick start
 
@@ -11,7 +11,7 @@ You need: a local hub running with starters switched on, and a Next.js app linke
 | Connect the app | `cub mini adopt . --name APP --live` | Ask it to set up the app so production settings wait for your approval. |
 | Change staging | `cub mini set APP APP_BANNER=preview-coral --variant staging --change-desc "Show the coral banner in Preview"` | Your agent can run the same command. |
 | Try it in Preview | `vercel deploy --environment preview --env APP_BANNER=preview-coral` | Your agent can run the same command. |
-| Review production | `cub mini waiting` | You approve it yourself. |
+| Approve, and it is live | `cub mini approve APP` | You approve it yourself. |
 
 Without ConfigHub: your agent passes settings to Vercel directly with `vercel deploy`, production included, and the next session has no record of why.
 
@@ -25,6 +25,6 @@ The numbered steps below give each command in full, from linking the Vercel proj
 4. With the local hub running, turn on starters with `export CUB_MINI_STARTERS=on`. Run `cub mini adopt . --name APP --live`. The plan selects `nextjs-vercel` after `vercel` and shows what it adds and what you set yourself.
 5. If the app is already connected, set its staging banner with `cub mini set APP APP_BANNER=preview-coral --variant staging --change-desc "Show the coral banner in Preview"`. Check the staging copy with `cub unit data app --space APP-staging`. For this example, look for `APP_BANNER=preview-coral`.
 6. Run `vercel deploy --environment preview --env APP_BANNER=preview-coral`. This passes the staging value explicitly. Check the hosted response with `vercel curl /api/settings --deployment PREVIEW_URL`.
-7. Run `cub mini waiting`. Leave the `APP-live/connect` order for the owner to review before delivering to production. [Vercel production delivery](../examples/walkthroughs/starter-vercel.md).
+7. Run `cub mini waiting` to read what would change in production, then `cub mini approve APP` in your own terminal. The approval puts production’s approved settings live on the Vercel project and prints the deployment. The first time, it asks you once whether approved settings should go to that project from now on. Secrets are left in Vercel as they are. `cub mini deliver APP --compare` writes nothing and says whether the project still holds what you approved. [Vercel production delivery](../examples/walkthroughs/starter-vercel.md).
 
 For a second app that uses the first app's setup, use `cub mini adopt ./second-app --name SECOND --pattern APP`. Give the second app its own banner and keep the shared settings in the first app's base.

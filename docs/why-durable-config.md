@@ -5,7 +5,7 @@ For anyone asking what ConfigHub replaces. [The front page](../README.md) tells 
 ## Why Git, your hosting service and a rules file are not enough
 
 - **Git** keeps a diff once someone commits. It shows nothing for a change nobody committed. If all you want is a reason in each commit message, one line in `CLAUDE.md` asks for that. ConfigHub keeps the reason by value, across sessions, and tells the next agent before it undoes one ([limits](limits.md)).
-- **Your hosting service's settings** keep the current value. They don't know what you asked your agent for, and an agent with your sign-in can change production there. ConfigHub sits beside your host: with Vercel, you try a setting in Preview and review the first production delivery when you are ready ([Next.js on Vercel](nextjs-on-vercel.md)).
+- **Your hosting service's settings** keep the current value. They don't know what you asked your agent for, and an agent with your sign-in can change production there. ConfigHub sits beside your host: with Vercel or Fly, you try a setting in staging, and when you approve a production change the same command puts it live on the host ([Next.js on Vercel](nextjs-on-vercel.md)).
 - **A rule in `CLAUDE.md`** that says "ask first" is only a request. An agent that holds the keys can be talked past it ([an agent that can propose and cannot approve](../examples/walkthroughs/story-11-propose-not-approve.md)).
 - **Branch protection and CODEOWNERS** approve a commit, and they stay the gate when Argo CD or Flux deploys from Git. ConfigHub adds the reason for each value, and a pull-request check that names any value nobody approved ([an app Argo CD or Flux deploys](journeys/gitops-app.md)).
 
