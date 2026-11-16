@@ -109,7 +109,7 @@ What to expect from it:
 
 ## Changes made by commands
 
-A value set on the command line is recorded too. It is recorded under the name it would have in a file. The Claude plugin reads values from these commands:
+A value set on the command line is recorded too. It is recorded under the name it would have in a file. The Claude plugin reads values from these commands, among others ([the full list](#the-commands-it-records)):
 
 - `kubectl scale`, `set image`, `set env`, `label`, `annotate` and `patch`;
 - `helm install` and `upgrade` with `--set`;
@@ -142,8 +142,7 @@ With `CUB_MINI_ASK_REASONS=1`, the agent is asked why it set these values too. T
 **What is recorded:**
 
 - Each value the agent changes in Kubernetes files, Helm values, Kustomize, Compose, GitHub Actions workflows, settings files, Terraform variables and agent configuration. This includes changes made with the agent's edit tool or with shell commands such as `sed`, and files Git ignores.
-- Each `kubectl`, `helm`, `argocd`, `flux`, `terraform`, `tofu`, `cub` and `nvkectl` command. For each, the Claude plugin records where it went, whether it changed something, and the values it set.
-- Each `curl` that writes to NVKE's API. Its request files are read as values too, by cluster and node pool.
+- Each command in [the table below](#the-commands-it-records), and each MCP tool call: the server, the tool and its arguments.
 - What the agent said at the end of each turn.
 - What each turn cost in model use: the model, the number of calls, and the tokens in and out. The Claude plugin reads these counts from Claude Code's own record of the session, and keeps nothing else from it ([model use](#model-use)).
 
@@ -160,7 +159,7 @@ Deployment/api/spec.replicas, in k8s/api.yaml: 2 in the file now
 
 Only the agent's own words are kept, quoted, never summarized, with credentials taken out, and only for a value whose key they name. They are not given to a later agent. With a hub, they go into the revision's description, and `cub mini receipts` shows them. `CUB_MINI_DECISIONS=0` turns this off. In Codex, only the agent's closing message is read.
 
-Commands are recorded also when they run through `env`, `bash -c`, `xargs`, `make` or a script in the repository. `/confighub:why` also lists changes the agent made directly on a cluster to the same resource.
+`/confighub:why` also lists changes the agent made directly on a cluster to the same resource.
 
 **What was changed outside an agent session.** Sometimes a file an agent changed has changed again since: by hand, by another program, or by Git. Before the next request, the Claude plugin records that change as made outside a session. So it is never put down to the agent, and the next agent is told.
 
@@ -168,9 +167,39 @@ Commands are recorded also when they run through `env`, `bash -c`, `xargs`, `mak
 
 - a command's output;
 - a copy of a file;
-- a value that looks like a credential. This includes a password inside an address or a connection string (`postgres://user:password@host`, `password=`, `AccountKey=`). It holds even when the request, the command or the agent names the credential in words.
+- a value that looks like a credential. This includes a password inside an address or a connection string (`postgres://user:password@host`, `password=`, `AccountKey=`). It holds even when the request, the command or the agent names the credential in words. Its name is recorded as changed, and the value is taken out of the command line too;
+- the value of a secret: a Heroku config var, a Fly, Supabase or GitHub secret, a Vercel variable added with `--sensitive`, or an AWS SecureString. Its name is recorded as changed.
 
 **Where the record is kept.** In `~/.confighub/agent-changes` on your machine, outside the repository. Nothing leaves your machine unless you turn on one of the settings below. One exception: what the next agent is told is part of its context, so it goes to the model provider with the rest of that context.
+
+### The commands it records
+
+A command is recorded when an agent runs it in the shell, and also when it runs through `env`, `bash -c`, `xargs`, `make` or a script in the repository. For each, the record keeps the command line, where it went, and whether it changed something. A command run with `--dry-run` changes nothing, and is recorded as a read.
+
+A value kept is the name and the new value of one setting, such as `LOG_LEVEL` set to `debug`. None of these commands says what the value was before, so the record has only the new one.
+
+| Tool | Recorded as a change | Values kept | Recorded as a read |
+|---|---|---|---|
+| `kubectl` | `apply`, `create`, `delete`, `patch`, `replace`, `scale`, `set`, `edit`, `label`, `annotate`, `rollout restart`, `rollout undo`, `autoscale`, `expose`, `cordon`, `drain`, `taint` | the values set on the command line, such as replicas, an image or an environment variable, with the context and namespace | every other command, such as `get` |
+| `helm` | `install`, `upgrade`, `uninstall`, `rollback`, `delete` | each `--set` value | every other command |
+| `argocd` | `app sync`, `app set`, `app create`, `app delete`, `app rollback`, `app patch` | none, only the command | every other command |
+| `flux` | `reconcile`, `suspend`, `resume`, `create`, `delete`, `bootstrap` | none, only the command | every other command |
+| `terraform`, `tofu` | `apply`, `destroy`, `import` | each `-var`, and each `-var-file` named, with the folder | every other command |
+| `cub` | `unit create`, `unit update`, `unit delete`, `unit apply`, `unit destroy`, `function set`, `function do`, `variant create`, `variant promote`, `variant upload`, `variant approve`, `changeorder create`, `changeorder delete`, `mini set`, `mini upload`, `mini promote`, `mini copy` | the values set, with the context and Space | every other command |
+| `nvkectl` | `create`, `patch`, `delete`, `bootstrap` | the values set, with the site | every other command |
+| `docker` | `run`, `push`, `rm`, `rmi`, `stop`, `kill`, `compose up`, `compose down`, `stack deploy`, `service create`, `service update`, `service rm` | none, only the command | none |
+| `gh` | `pr merge`, `secret set`, `secret delete`, `variable set`, `variable delete`, `release create`, `release delete`, `repo delete`, `repo edit`, `workflow run`, and `api` with a method other than GET | a variable's value; for a secret, its name only | `secret list`, `secret get`, `variable list`, `variable get` |
+| `vercel` | `deploy`, `rm`, `remove`, `env add`, `env rm`, `alias set` | an environment variable's value, with the environment; its name only when added with `--sensitive` | `env ls`, `env list`, `env pull` |
+| `supabase` | `secrets set`, `secrets unset`, `db push`, `functions deploy` | a secret's name only, with the project | `secrets list` |
+| `fly`, `flyctl` | `secrets set`, `secrets unset`, `secrets import`, `deploy`, `scale` | a secret's name only, with the app | `secrets list` |
+| `railway` | `variables set`, `variables delete`, `variables --set`, `variable set`, `variable delete`, `up`, `redeploy` | a variable's value, with the environment and service | `variables`, `variables get`, `variables list`, `variable list` |
+| `heroku` | `config:set`, `config:unset`, `config:remove` | a config var's name only, with the app or Git remote | `config`, `config:get` |
+| `kraft` (Unikraft) | `cloud deploy`; `cloud instance create`, `start`, `stop` and `remove`; `cloud service create` and `remove`; `cloud scale add`, `init`, `remove` and `reset`; `cloud compose create`, `up`, `down`, `start` and `stop` | each `-e` environment variable's value, with the metro and the name | none |
+| `unikraft` | `run`, and `create`, `run`, `edit`, `delete`, `start`, `stop`, `suspend` or `restart` after `instance` or `instances` | each `-e` environment variable's value, with the metro and the instance | none |
+| `daytona` | `create`, `start`, `stop`, `delete`, `pause`, `archive` | each `-e` environment variable's value given to `create`, with the sandbox | none |
+| `aws` | any command whose verb begins with `create`, `delete`, `update`, `put`, `modify`, `attach`, `detach`, `terminate`, `run`, `start`, `stop`, `set`, `authorize`, `revoke`, `deploy`, `tag`, `untag`, `register`, `deregister`, `associate`, `disassociate`, `add`, `remove`, `enable` or `disable`; `s3 cp`, `s3 mv`, `s3 rm`, `s3 sync`, `s3 mb`, `s3 rb` | an SSM parameter's value, with the region and profile; for a SecureString, its name only | `ssm get-parameter`, `get-parameters`, `get-parameters-by-path`, `describe-parameters`, `get-parameter-history` |
+| `gcloud`, `az` | any command with the word `create`, `delete`, `update`, `deploy`, `set`, `patch`, `assign`, `start`, `stop`, `resize`, `add-iam-policy-binding`, `remove-iam-policy-binding` or `set-iam-policy` | none, only the command | none |
+| `curl` | a write to NVKE's API | the values its request sets, by cluster and node pool | none |
 
 ## Settings
 
