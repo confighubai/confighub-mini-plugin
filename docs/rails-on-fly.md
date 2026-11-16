@@ -1,12 +1,12 @@
 # Two Rails apps on Fly, one shared setup
 
-**Preview.** Use a local hub build with `starters/rails-fly.yaml`. The starter sets up your Rails settings in ConfigHub. You can try it on your computer without a Fly account.
+Use the [current local hub package](install-mini.md#the-current-release). The starter sets up your Rails settings in ConfigHub. You can try the example on your computer without a Fly account.
 
 Suppose a shop and a cart use the same support hours. Each has its own banner, and the cart needs quieter logs. Start the cart from the shop's setup, then change the hours once. You can try the change in both staging copies before touching production.
 
 ## Try it without a Fly account
 
-Set `MINI` to the absolute path of the unpacked candidate package. The package has a small Rails app and a script that runs the two-app scenario on a disposable local hub, removes the hub, and leaves the two staging env files. Use Python 3 for the script and Docker to read those settings from two actual Rails processes.
+Set `MINI` to the absolute path of the unpacked package. The package has a small Rails app and a script that runs the two-app scenario on a disposable local hub, removes the hub, and leaves the two staging env files. Use Python 3 for the script and Docker to read those settings from two actual Rails processes.
 
 ```sh
 OUT="$(mktemp -d)"
@@ -31,7 +31,7 @@ Start with two Rails folders with a `Gemfile`, `bin/rails`, `config/application.
 | `./shop/.env` | `APP_BANNER=coral` and `APP_SUPPORT_HOURS=Weekdays` |
 | `./cart/.env` | `APP_BANNER=indigo` and `RAILS_LOG_LEVEL=warn` |
 
-Use an empty test hub. From a fresh terminal, set `MINI` to the absolute path of the unpacked candidate package and run:
+Use an empty test hub. From a fresh terminal, set `MINI` to the absolute path of the unpacked package and run:
 
 ```sh
 unset CUB_CONTEXT
@@ -77,7 +77,7 @@ When done, remove the disposable hub with `cub mini uninstall --name rails-fly-e
 
 ## Send approved settings to an app on Fly
 
-This step needs a build with `bin/fly-settings`, a signed-in `flyctl`, and a test app on Fly with one Machine running an image pinned by digest in the Fly registry. Use `flyctl machines list --app "$FLY_APP"` to find the Machine ID.
+This step uses the package’s `fly-settings` command. You’ll need a signed-in `flyctl` and an app on Fly with one Machine running an image pinned by digest in the Fly registry. Use `flyctl machines list --app "$FLY_APP"` to find the Machine ID.
 
 First review the order in ConfigHub. When you approve it, note the new production revision from `cub unit get --space rails-shop-live app -o jq=.Unit.HeadRevisionNum`. Set `FLY_APP`, `MACHINE`, `HUB_CONTEXT`, `ORDER` (the full order name), and `REVISION` to the values for this app. Keep using the same `CUB_CONFIG` as above.
 
@@ -95,7 +95,7 @@ To go back, propose the old settings as a new change. Wait for approval, then us
 
 ## Testing
 
-On an unreleased mini build, a disposable local hub stored the two apps' settings. One change moved both staging copies from revision 2 to 3. Two Rails processes running locally read the staging settings and served `Daily`, with their own banners and log levels. Both hub production copies stayed at revision 2 and orders still waited for the owner. The starter check also caught three planted faults.
+An early test used a disposable local hub to store the two apps’ settings. One change moved both staging copies from revision 2 to 3. Two Rails processes running locally read the staging settings and served `Daily`, with their own banners and log levels. Both hub production copies stayed at revision 2 and orders still waited for the owner. The starter check also caught three planted faults.
 
 On 15–16 November, both Fly staging apps served `Daily` from revision 3. We then checked production with separate approvals for the update and rollback:
 
