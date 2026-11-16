@@ -97,6 +97,15 @@ To go back, propose the old settings as a new change. Wait for approval, then us
 
 On an unreleased mini build, a disposable local hub stored the two apps' settings. One change moved both staging copies from revision 2 to 3. Two Rails processes running locally read the staging settings and served `Daily`, with their own banners and log levels. Both hub production copies stayed at revision 2 and orders still waited for the owner. The starter check also caught three planted faults.
 
-On Fly, both staging apps served `Daily` from revision 3 and kept their own banners and log levels. Both production apps served `Weekdays` while their orders waited. After the owner approved the shop’s change, the shop served `Daily` from revision 3. Attempting its pending rollback left it at `Daily`. The new command also restarted the shop on its already approved settings. Tests against a stand-in checked that the command changes only the settings you name.
+On 15–16 November, both Fly staging apps served `Daily` from revision 3. We then checked production with separate approvals for the update and rollback:
 
-**Still to run:** the cart’s approved production delivery, the shop rollback after approval, and a move to a shared hub. The starter is still a preview.
+| What Fly served | Shop | Cart |
+| --- | --- | --- |
+| While the update waited | Weekdays | Weekdays |
+| After update approval and delivery | Daily (revision 3) | Daily (revision 5) |
+| While the rollback waited | Daily | Daily |
+| After rollback approval and delivery | Weekdays (revision 4) | Weekdays (revision 6) |
+
+The shop kept `coral` and `info`; the cart kept `indigo` and `warn`. The delivery command refused pending orders. It delivered the cart update and both rollbacks without changing the image. The final cart rollback ran from the Mac archive built for the next release, before it was published. We removed all four test apps and the local hub.
+
+The run used one Fly Machine per app and a local hub. It did not test a shared hub or a group of Machines.
