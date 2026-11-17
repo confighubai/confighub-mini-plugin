@@ -10,17 +10,11 @@ This page is for setting up the ConfigHub plugin in Codex. Codex runs only the h
    plugins/confighub/bin/confighub mini codex-setup
    ```
 
-   If you plan to use a local hub on macOS, start it from your own terminal before asking Codex to connect the app:
-
-   ```sh
-   plugins/confighub/bin/confighub mini get
-   ```
-
-   Codex's macOS sandbox can block the database from starting. Once the hub is running, Codex can use it. For the record alone, skip this command.
-
 2. In Codex, type `/hooks` and approve the plugin's hooks. Repeat setup after an update and review the changed definitions in a fresh session.
 
 Codex can work on a scoped proposal key with a separate launcher ([setup and limits](approvals.md#codex-sessions-on-the-proposal-key)).
+
+On a Mac with no hub configuration, ask Codex to “Build me a small web app using ConfigHub.” The approved hook starts the local hub and tells you when it is ready. Other requests keep their usual behavior. If the hook cannot start the hub, it gives you the command to run in your own terminal.
 
 Use normal app requests after setup; see [how the agent chooses a useful step and attributes ConfigHub actions](agent-workflow.md).
 
