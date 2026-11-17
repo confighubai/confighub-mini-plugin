@@ -8,7 +8,7 @@ This page explains what happens and why. To see every command and what it prints
 - [A new app that fits the team's pattern](../../examples/walkthroughs/story-18-dev-intent.md): a new app on a pattern, with rules that keep a bad value from production, and a second app made from the first.
 - [The `cub mini` commands](../../examples/walkthroughs/tool-cub-mini.md): each command the agent runs here, on one small app.
 
-The app might run on your own machine, on another machine, in CI, on one or many sandbox nodes, in a shared development cluster, or eventually in production. This page makes the staging and live configuration in the hub. Connect the running copies to it with the deployment path for your target ([where the app runs](../agent-workflow.md#where-the-app-runs)).
+The app might run on your own machine, on another machine, in CI, on one or many sandbox nodes, in a shared development cluster, or eventually in production. This page makes the staging and live configuration in the hub. Connect the running copies to it with the deployment path for your target ([where the app runs](../agent-workflow.md#where-the-app-runs)). If you ask to run the app on this machine, the agent can run staging from the settings pulled from the hub. Production's first run still needs your approval.
 
 The words on this page, such as *hub*, *base* and *change order*, are explained in [the glossary](../README.md#words).
 
