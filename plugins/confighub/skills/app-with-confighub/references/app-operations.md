@@ -130,9 +130,10 @@ shell you run yourself. There, the plugin gives each session its program by its 
 
 For Codex hook-only setup, use `${CODEX_HOME:-$HOME/.codex}/confighub/bin/confighub mini get`
 instead. A restricted agent with an existing app must use its configured hub, not install another.
-On macOS, Codex's sandbox can block PostgreSQL from starting. If `mini get` reports denied
-shared memory, give the person the exact `mini get` command for their own terminal. Then
-continue with the app's existing hub. Do not change sandbox permissions or try another hub.
+On macOS a trusted Codex hook starts the first local hub when the person explicitly
+asks to build an app using ConfigHub. Use the cub path it gives you. If the hook could
+not start it and `mini get` reports denied shared memory, give the person the exact
+`mini get` command for their terminal. Continue with the app's existing hub.
 
 It downloads confighub mini (about 60 MB), starts a hub on this machine and signs `cub` in to
 it, in under a minute. Its last lines name its `cub` by its full path. In each later command,
@@ -223,9 +224,11 @@ person's values, not the person's app. Then step 3 for the person's app.
 ## 3. Production only with the person
 
 ```
-cub mini require-approval APP --variant live --agent APP-agent
+cub mini require-approval APP --variant live --agent APP-agent --try preview
 ```
 
+For a new app using an env settings file, `--try preview` prepares an isolated copy
+during the same setup. Leave the flag off if the app holds Kustomize manifests.
 Adopt already makes live wait for the person's approval. This adds a key of its own for the
 agent: it can change the base and staging, so its uploads reach staging at once, and ask for
 live; it cannot approve, promote or write live. Run it in the app's folder or the folder above
@@ -291,7 +294,8 @@ say what they need, and `cub mini needs APP` lists it. Do not write the service'
 
 When the person asks to "try" a change "first", "in a copy", or "without touching
 production", change neither staging nor live. A restricted proposer uses an assigned
-try or gives the owner the setup step from the main workflow; it cannot create variants. Make a copy of the app for the try, change
+try, including an empty `preview` made during app setup, before considering an owner
+step. It cannot create additional variants. Make a copy of the app for the try, change
 it there, and read what differs:
 
 ```

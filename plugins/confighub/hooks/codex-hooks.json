@@ -18,7 +18,7 @@
           {
             "type": "command",
             "command": "\"${PLUGIN_ROOT:-$CLAUDE_PLUGIN_ROOT}/bin/confighub\" mini hook --codex || true",
-            "timeout": 10
+            "timeout": 90
           }
         ]
       }
