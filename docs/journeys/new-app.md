@@ -77,7 +77,7 @@ What you do not have yet is a running service that reads live's values. Connect 
 
 In the same folder:
 
-1. Ask the agent for a change, such as *"make the greeting warmer"*. Run `cub mini waiting`, then the `cub mini approve` command it prints.
+1. Ask, *“Try a warmer greeting in preview and show me what the running app serves.”* Staging and production keep their old settings. If you like it, ask to make the greeting the shared default and put it in staging. Use the exact approval command it gives you when you are ready for production.
 2. In Claude Code, type `/confighub:why GREETING`: each change to the greeting, the request behind it, and the agent's own words about it.
 3. Run `cub mini receipts APP-live` for everything the hub keeps about live's latest revision: who made it, why, and who approved it. `cub mini receipts APP --setup` shows the app's setup: its copies, approval, agent keys, own values and delivery, each with why, and the `cub` command that changes it.
 

@@ -20,6 +20,14 @@ Use normal app requests after setup; see [how the agent chooses a useful step an
 
 For what is recorded, refused or left to a person, see the [client capability matrix](how-it-works.md#client-capabilities).
 
+## Try a change and start a second app
+
+On macOS, with plugin 0.99.0 and mini.17, adopting a new local app with an env file also prepares a preview and a scoped launcher. Use the launcher the setup prints to open a fresh session for the app.
+
+1. Ask, “Try a warmer greeting in preview and show me what it serves over HTTP.” The agent pulls the preview settings and runs a separate copy of the app. Staging and production stay as they were. Ask for the actual response if you only see what the hub stored.
+2. If you like it, ask, “Make that the shared greeting and put it in staging.” Use the exact approval command the agent gives you when you are ready for production to take it. Delivery to a running app needs a connected deployment path.
+3. In a new folder, ask, “Build a second app using the first app’s setup.” Codex can find the local hub you already use. The second app starts with the shared greeting and gets its own first production review.
+
 ## Read the record
 
 The record is the plugin's list of what agents changed, and why. To read it:
