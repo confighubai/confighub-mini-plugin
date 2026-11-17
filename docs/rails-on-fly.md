@@ -1,25 +1,28 @@
-# Two Rails apps on Fly, one shared setup
+# Rails on Fly
 
-Use the [current local hub package](install-mini.md#the-current-release). The starter sets up your Rails settings in ConfigHub. You can try the example on your computer without a Fly account.
+Connect a Rails app that already runs on Fly. Give your agent a staging copy of its settings and review what goes to production.
 
-Suppose a shop and a cart use the same support hours. Each has its own banner, and the cart needs quieter logs. Start the cart from the shop's setup, then change the hours once. You can try the change in both staging copies before touching production.
+## Connect and approve with two commands
 
-## Quick start
+You need Claude Code with the [ConfigHub plugin](../README.md#install) 0.97.0 or later, a signed-in `flyctl`, and a `fly.toml` naming your Fly app. Use a disposable app with one Machine, a Fly registry image pinned by digest, and a readable, non-secret setting such as `APP_SUPPORT_HOURS`. If the Machine uses a tag, see [how to pin its image](#pin-the-fly-machine-image).
 
-You need: the [current local hub package](install-mini.md#the-current-release), Python 3 and Docker. Sending settings to Fly also needs a signed-in `flyctl` and an app on Fly.
+1. **Connect.** In the app folder in Claude Code, type `/confighub:staging`. ConfigHub installs and starts the local hub if needed. **Start a new Claude Code session in the same folder** to pick up the agent’s key.
+2. **Ask for a change.** “Set `APP_SUPPORT_HOURS` to `Daily` in staging. Propose the same change for production and show me the approval command.” This updates the hub’s staging settings. The running Fly app still serves its old value.
+3. **Review and deliver.** In your own terminal, paste the printed approval command, such as `~/.confighub/mini/cub mini approve SPACE/ORDER`. On the first delivery you’ll confirm two things:
+   - **Approve the change.** Check the old and new values.
+   - **Authorize delivery.** Check the Fly app name. That permission applies to future delivery to the same app. Each production change still needs approval.
 
-| | By hand | Ask your agent |
-|---|---|---|
-| Try it without Fly | `python3 "$MINI/examples/starter-examples/rails-fly/run.py" --package "$MINI" --out "$OUT"` | Your agent can run the same command. |
-| Connect both apps | `cub mini adopt ./shop --name rails-shop`, then `cub mini adopt ./cart --name rails-cart --pattern rails-shop` | Your agent can run the same commands. |
-| Change the hours | `cub mini set rails-shop APP_SUPPORT_HOURS=Daily --variant base --fleet --change-desc "The help desk now opens daily"` ([the full list](#change-the-hours-and-check-staging)) | Your agent can run the same command. |
-| Approve, and it is live on Fly | `cub mini approve rails-shop` ([what it does](#send-approved-settings-to-an-app-on-fly)) | You approve it yourself. |
+When the command reports **Live on Fly**, check the new value in the running app. The sample Rails app exposes it at `/api/settings`. See [what ran on Fly](#testing).
 
-Without ConfigHub: your agent changes the settings directly with `flyctl`, production included, and the next session has no record of why.
+### Pin the Fly Machine image
 
-## Deeper dive
+Run `flyctl machines list --app APP --json` to find the Machine ID, image repository, and `image_ref.digest`. Pin the image the Machine already runs with `flyctl machine update MACHINE --app APP --image registry.fly.io/IMAGE_REPOSITORY@DIGEST`. Use the full digest, starting with `sha256:`. Delivery expects one Machine without extra containers or processes.
 
-The sections below give each command in full: a run without a Fly account, connecting the two apps, changing the hours in both staging copies, and sending approved settings to Fly.
+## Use the starter for two Rails apps
+
+Suppose a shop and a cart use the same support hours. Each has its own banner, and the cart needs quieter logs. Start the cart from the shop’s setup, then change the hours once and see it in both staging copies.
+
+Use the [current local hub package](install-mini.md#the-current-release). The local example uses Python 3 and Docker.
 
 ## Try it without a Fly account
 
@@ -121,6 +124,12 @@ The command checks the approval before contacting Fly. It changes only the named
 To go back, propose the old settings as a new change. Wait for approval, then use the new order and revision in the same command. Anyone with Fly deploy access can still deploy directly; this check applies only to this command.
 
 ## Testing
+
+**Published mini.15 and plugin 0.97.0, 17 November 2026.** A disposable Rails app ran on one Fly Machine. The initial Fly deploy used an image tag, so we pinned that Machine to the digest of its running image before connecting. We called the published plugin’s staging command directly with a clean ConfigHub setup. It downloaded mini.15 for macOS arm64, started a local hub, and imported the Machine’s readable settings.
+
+- A scoped key set the hub’s staging support hours to `Daily` and proposed the production change. The hub refused approval from that key, delivery refused the pending order, and the Rails endpoint still served `Weekdays`.
+- The owner approved the change and authorized delivery in two separate confirmations through a temporary browser helper that displayed the CLI’s prompts. The published flow asks for both confirmations in the owner’s terminal.
+- The Machine reported approved revision 3 and kept its ID and image digest. The Rails endpoint served `Daily` and kept the `coral` banner and `info` log level. We removed the Fly app and local hub. This run covered one production change. The two-app and rollback results below come from separate runs.
 
 An early test used a disposable local hub to store the two apps’ settings. One change moved both staging copies from revision 2 to 3. Two Rails processes running locally read the staging settings and served `Daily`, with their own banners and log levels. Both hub production copies stayed at revision 2 and orders still waited for the owner. The starter check also caught three planted faults.
 
