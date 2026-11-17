@@ -130,6 +130,9 @@ shell you run yourself. There, the plugin gives each session its program by its 
 
 For Codex hook-only setup, use `${CODEX_HOME:-$HOME/.codex}/confighub/bin/confighub mini get`
 instead. A restricted agent with an existing app must use its configured hub, not install another.
+On macOS, Codex's sandbox can block PostgreSQL from starting. If `mini get` reports denied
+shared memory, give the person the exact `mini get` command for their own terminal. Then
+continue with the app's existing hub. Do not change sandbox permissions or try another hub.
 
 It downloads confighub mini (about 60 MB), starts a hub on this machine and signs `cub` in to
 it, in under a minute. Its last lines name its `cub` by its full path. In each later command,
@@ -171,6 +174,14 @@ Adopt writes `.confighub-app` into the folder, a note of what its files match in
 commit it with the app, so that `cub mini upload` from any clone proposes only what that
 clone changed.
 
+If the person asks to run the new app here, connect the local process to the hub
+in the same turn. Use `cub mini pull APP --variant staging --dir DIR` and make the
+service read the resulting settings file. Use separate directories and loopback
+ports for the copies. Check the health endpoint and a response that depends on
+the setting. Prepare production to read the same way after the owner approves its
+first settings. Before approval, leave production stopped. Running the input
+`.env.production` file directly would bypass the approval check.
+
 An app that Argo CD or Flux already deploys from Git, with `CUB_MINI_STARTERS` set, is
 connected by the one line in section 0, in place of this section and the next.
 
@@ -183,6 +194,13 @@ cub mini adopt APP-FOLDER --pattern FIRST-APP
 It gets the first's base as its own base, keeps its own values, and takes what the first
 changes next (`cub mini upgrade APP-base/app`). Use it whenever the person asks for another
 app "like" one that is here, or with "the same setup"; `cub space list` shows which apps are.
+
+Start the second app in its own folder. Check the current session's identity
+with `cub context get` from that folder, using its own configuration. Do not set
+the source app's proposal key for the new folder or mistake a read you made with
+it for the current session's identity. If your local setup session can adopt,
+do it yourself. Put only the new app's own settings in its files. Leave
+inherited settings out of those files so later changes to the source can reach it.
 
 ### An app from a setup someone shared
 
@@ -283,15 +301,23 @@ cub mini tries APP                                                     # what th
 ```
 
 NAME is a word for the try (`limit`). `--from live` makes the copy from what runs instead.
-`cub mini copies APP --to DIR` writes the copy as a file, to run the app on it. Then there
-are two ways out, and only the person chooses:
+When asked to show the try running, pull only that copy with
+`cub mini pull APP --variant try-NAME --dir DIR`. Start a separate loopback
+instance on a free port using the resulting settings file, then verify its
+response. A setting shown by `cub mini tries` only proves what the hub holds.
+There are two ways out, and only the person chooses:
 
 ```
 cub mini try APP NAME --keep --change-desc "WHY"    # staging now, live once the person approves; the copy removed
 cub mini try APP NAME --drop                        # the copy removed, with a line saying what it held
 ```
 
-Unless the person said to keep it or to drop it, leave the copy. End with what the copy
+For an app whose settings live in files, when the person asks to roll out a tried setting,
+read it from the try, edit the app's settings file, and run one `cub mini upload` with the
+reason. This keeps the checkout and hub in step, changes staging, and proposes production.
+Neither a base-only `mini set` nor a stale input settings file verifies what staging runs.
+
+Leave the try in place until the person asks to keep or drop it. End with what the copy
 holds differently from staging, that staging and live are unchanged, and the two
 commands above.
 
