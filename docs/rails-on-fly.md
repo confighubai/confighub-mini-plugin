@@ -125,6 +125,13 @@ To go back, propose the old settings as a new change. Wait for approval, then us
 
 ## Testing
 
+**Follow-up with a tagged Fly deploy, 17 November 2026.** We used plugin 0.97.0 and a test build based on mini.15 that reads the running image digest from Fly. A normal Fly deploy left a tag in the Machine configuration. We connected the app with that tag still in place, changed the hub’s staging copy to `Daily`, and proposed the same change for production. The agent’s approval attempt and delivery of the pending order were both refused. The Rails endpoint kept serving `Weekdays`.
+
+- The owner approved the production change in a temporary browser helper. The helper stalled before forwarding the delivery confirmation, so the owner authorized delivery separately. The separate delivery used the owner’s existing approval of revision 3.
+- Fly kept the same Machine and image digest. The delivery comparison matched revision 3, and a separate request to the Rails endpoint returned `Daily`, with the same banner and log level. We then removed the Fly app and local hub.
+
+The published mini.15 package still needs the manual pin described above.
+
 **Published mini.15 and plugin 0.97.0, 17 November 2026.** A disposable Rails app ran on one Fly Machine. The initial Fly deploy used an image tag, so we pinned that Machine to the digest of its running image before connecting. We called the published plugin’s staging command directly with a clean ConfigHub setup. It downloaded mini.15 for macOS arm64, started a local hub, and imported the Machine’s readable settings.
 
 - A scoped key set the hub’s staging support hours to `Daily` and proposed the production change. The hub refused approval from that key, delivery refused the pending order, and the Rails endpoint still served `Weekdays`.
