@@ -6,6 +6,8 @@ ConfigHub keeps your app’s settings and the reason for each change. Try change
 
 Start with the Claude plugin alone: it keeps a record of the settings your agent changes and the reason for each, and `/confighub:why` shows them. Add a free local hub when you want your agent to change staging while production waits for you: type `/confighub:staging` in your app’s folder. It runs on macOS or Linux with no ConfigHub account, Docker or Kubernetes.
 
+**First time?** [Try the Claude Code plugin in five minutes](docs/try-the-plugin.md#try-it-in-five-minutes) · [Start in Codex](docs/codex.md#set-it-up)
+
 ## Install
 
 For Claude Code, run these two commands in a terminal:
@@ -15,7 +17,7 @@ claude plugin marketplace add confighubai/confighub-mini-plugin
 claude plugin install confighub@confighub
 ```
 
-The Claude plugin works alone, with no hub and no account, and its record stays on your computer. Open a new session, ask your agent to change a setting, then run `/confighub:why SETTING` ([try the plugin without a hub](docs/try-the-plugin.md)). Using Codex? Follow [the Codex setup](docs/codex.md), including its separate hook approval. You can also [install the local hub without a coding agent](docs/install-mini.md).
+Open a fresh Claude Code session after installing. Ask Claude to change a setting, then type `/confighub:why SETTING` in Claude Code to see the change and the request behind it. The record stays on your computer. [Install the local hub on its own](docs/install-mini.md).
 
 [Product overview](https://confighub.github.io/helm-expt/ai-agents/) · [Walkthroughs by stack](examples/walkthroughs/README.md) · [Instructions for AI agents](AGENTS.md)
 
