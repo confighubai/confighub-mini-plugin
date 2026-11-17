@@ -95,6 +95,8 @@ The local hub is the full ConfigHub server, and the commands work the same way o
 
 [A new app](docs/journeys/new-app.md) explains each step, and the walkthrough [your first hour](examples/walkthroughs/story-13-first-hour.md) shows every command and what it prints. Already have an app? Ask the agent to "attach ConfigHub to this app". It won't touch your files ([an app you already have](docs/journeys/existing-app.md)). To remove the local hub, run `cub mini uninstall --delete-data`. More walkthroughs, for each tool and most starters and user stories, are in [walkthroughs](examples/walkthroughs/README.md).
 
+Then ask, “Try a warmer greeting in preview and show me the running app.” The preview has its own settings. If you like the change, ask to put it in staging. Production waits for your approval. For a second app, open a new folder and ask it to start from the first app’s setup. [Claude Code steps](docs/journeys/new-app.md) · [Codex on macOS](docs/codex.md#try-a-change-and-start-a-second-app)
+
 ## Find your stack
 
 1. **Make a new app.** Ask Claude Code to build it "using ConfigHub". It writes the app and gives it a staging and a production setup ([a new app](docs/journeys/new-app.md)).
