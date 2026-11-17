@@ -1,6 +1,31 @@
 # Try the plugin on its own
 
-This page is for you if you want to see what the Claude plugin does before you set up a hub. On its own, the Claude plugin keeps a record of what your agents change in configuration, and why, and tells the next agent before it undoes an earlier change. It needs no hub and no account. To install it, see [the README](../README.md#install).
+You can ask Claude to change one setting and see what changed and why. You need Claude Code and Git. The record stays on your computer. No hub or ConfigHub account is needed.
+
+Using Codex? Follow the [Codex setup](codex.md#set-it-up), including hook approval, before trying it in a fresh session.
+
+## Try it in five minutes
+
+1. If you haven't installed the plugin, run these in your terminal:
+
+   ```sh
+   claude plugin marketplace add confighubai/confighub-mini-plugin
+   claude plugin install confighub@confighub
+   ```
+
+2. Open a fresh Claude Code session in a throwaway project. This creates one with a sample setting:
+
+   ```sh
+   mkdir try-confighub && cd try-confighub && git init -q &&
+     printf 'CACHE=off\n' > .env && git add .env && claude
+   ```
+
+3. In Claude Code, ask: **“Turn the cache on in `.env` for next week's sale. Don't commit.”** Allow the edit if Claude asks.
+4. In Claude Code, type `/confighub:why CACHE`. Look for the change from `off` to `on` and your request about the sale.
+
+To see what carries over, open a new Claude Code session in the same folder and ask why the cache is on. You can delete the sample folder when you're done. The local record expires after 30 days without use.
+
+The [full plugin walkthrough](../examples/walkthroughs/tool-plugin.md) shows the output, what happens when a later agent turns the cache off, and how to add a hub when you need one.
 
 ## The problem it solves
 
@@ -23,12 +48,6 @@ With the Claude plugin, the second agent was told about the 4 before it made its
 > **This change undoes an earlier one.** The file already had an uncommitted change that raised replicas from 2 to 4. A session earlier today made it, with this request: *"Friday's flash sale will quadruple traffic to the api: give it 4 replicas."* So 1 replica is below even the committed value of 2, and it would leave the api with a single pod on Friday.
 
 The same thing happens on a cluster, when one agent's deploy would undo another's change.
-
-## Try it in five minutes
-
-The walkthrough [the Claude plugin](../examples/walkthroughs/tool-plugin.md) does it with every command and what it prints: one session turns a cache on for a sale, the next is told about it before it turns the cache off to chase a memory leak, and `/confighub:why CACHE` shows both changes with the request behind each. It then shows each `/confighub:` command, and the step to a hub. You need Claude Code and Git.
-
-When you are done, delete the folder. Its record is kept in `~/.confighub/agent-changes` and removed after 30 days without use.
 
 ## Stop every agent at once
 
