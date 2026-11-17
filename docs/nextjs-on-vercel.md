@@ -1,23 +1,22 @@
 # A Next.js app on Vercel
 
-Build a Next.js app with your agent, try its settings in Vercel Preview, and put a production change live by approving it. ConfigHub keeps the app's setup and its reasons, so you can start the next app from it.
+Connect an app that already runs on Vercel. Give your agent a staging copy of its settings and review what goes to production.
 
-## Quick start
+## Connect and approve with two commands
 
-You need: a local hub running with starters switched on, and a Next.js app linked to a disposable Vercel project with `vercel link`.
+You need Claude Code with the [ConfigHub plugin](../README.md#install) 0.97.0 or later, a signed-in Vercel CLI, and an app folder already linked to a running Vercel project with `vercel link`. Try this on a disposable project with a readable, non-secret setting such as `APP_BANNER`.
 
-| | By hand | Ask your agent |
-|---|---|---|
-| Connect the app | `cub mini adopt . --name APP --live` | Ask it to set up the app so production settings wait for your approval. |
-| Change staging | `cub mini set APP APP_BANNER=preview-coral --variant staging --change-desc "Show the coral banner in Preview"` | Your agent can run the same command. |
-| Try it in Preview | `vercel deploy --environment preview --env APP_BANNER=preview-coral` | Your agent can run the same command. |
-| Approve, and it is live | `cub mini approve APP` | You approve it yourself. |
+1. **Connect.** In the app folder in Claude Code, type `/confighub:staging`. ConfigHub installs and starts the local hub if needed. **Start a new Claude Code session in the same folder** to pick up the agent’s key.
+2. **Ask for a change.** “Set `APP_BANNER` to `coral` in staging. Propose the same change for production and show me the approval command.” This updates the hub’s staging settings. Try them on Vercel with the Preview step below.
+3. **Review and deliver.** In your own terminal, paste the printed approval command, such as `~/.confighub/mini/cub mini approve SPACE/ORDER`. On the first delivery you’ll confirm two things:
+   - **Approve the change.** Check the old and new values.
+   - **Authorize delivery.** Check the Vercel project name. That permission applies to future delivery to the same project. Each production change still needs approval.
 
-Without ConfigHub: your agent passes settings to Vercel directly with `vercel deploy`, production included, and the next session has no record of why.
+When the command reports **Live on Vercel**, ask the agent to check the running app or its settings endpoint for the new value. See [what ran on a real Hobby project](../examples/walkthroughs/starter-vercel.md#testing).
 
-## Deeper dive
+## Use the Next.js starter and try Vercel Preview
 
-The numbered steps below give each command in full, from linking the Vercel project to leaving the first production order for review.
+Use this path if you’re building a Next.js app from scratch or want the starter’s defaults as a setup you can reuse. You’ll need a [local hub](install-mini.md).
 
 1. Create a Next.js app with `next` in its package dependencies. For a quick check, give it an `/api/settings` route that reads a non-secret setting such as `APP_BANNER` at request time.
 2. From the app folder, link the project with `vercel link --yes --scope SCOPE --project APP`. Use a disposable project for this walkthrough. Vercel requires a project's first deployment to use its Production environment. An owner preparing a project can stage a placeholder build with `vercel deploy --prod --skip-domain` to leave the production domain unassigned. [Vercel staged deployments](https://vercel.com/docs/deployments/promoting-a-deployment).
