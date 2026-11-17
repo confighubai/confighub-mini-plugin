@@ -199,6 +199,16 @@ For trials use the fixture. **Deploy** with step 3 or `cub mini adopt shop --liv
 <!-- next-step boundary=same-tier when "another owner needs to review production": a backup approver | A teammate needs to review changes to this shop while you're away. Want to give them approval access on your team's hub? -->
 <!-- arms: a,b,c -->
 This proves: the real Hobby run checks what the production endpoint serves before and after first delivery, an update and a rollback. The no-account run checks delivery to the local stand-in and the move to a shared hub.
+
+**Live Hobby test on published mini.15 and plugin 0.97.0, 17 November 2026.** We started with a linked disposable Vercel app and no local ConfigHub setup. We ran the plugin's staging command directly from its published tag. It downloaded and verified mini.15 for macOS arm64, started a local hub, and imported the app's readable production setting.
+
+- The agent's scoped key set the hub's staging banner to `preview-coral` and proposed `approved-coral` for production. The hub refused approval from that key, the delivery command refused to send the pending change, and the live Vercel endpoint still served `baseline`.
+- The owner used a temporary page on the test Mac to answer the CLI's two prompts. They approved the exact change and then authorized delivery to the linked Vercel project. The first browser submission returned a 403. Both confirmations worked after we fixed the form. The page was a test helper. The published flow asks for these confirmations in the owner's terminal.
+- ConfigHub applied revision 3. The delivery comparison matched that revision to Vercel's setting, and a separate request to the public production endpoint returned `approved-coral`.
+- We deleted the Vercel project and stopped the local hub and the temporary page. Vercel could no longer find the project or deployment. The public endpoint briefly kept answering after deletion, then returned `404 DEPLOYMENT_NOT_FOUND` on both a normal and a fresh request.
+
+This run covered connecting an existing app and delivering its first approved change. The rollback and shared-hub results below come from separate runs.
+
 <!-- results:begin -->
 
 <details><summary>Test results</summary>
