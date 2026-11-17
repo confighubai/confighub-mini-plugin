@@ -197,7 +197,8 @@ changes next (`cub mini upgrade APP-base/app`). Use it whenever the person asks 
 app "like" one that is here, or with "the same setup"; `cub space list` shows which apps are.
 
 Start the second app in its own folder. Check the current session's identity
-with `cub context get` from that folder, using its own configuration. Do not set
+with `~/.confighub/mini/cub context get` from that folder if the local hub is
+already installed and cub is missing from PATH. Use the selected configuration. Do not set
 the source app's proposal key for the new folder or mistake a read you made with
 it for the current session's identity. If your local setup session can adopt,
 do it yourself. Put only the new app's own settings in its files. Leave
@@ -223,11 +224,15 @@ person's values, not the person's app. Then step 3 for the person's app.
 
 ## 3. Production only with the person
 
+For an env-file app adopted in Codex on your local hub, adopt prepares the scoped
+agent and preview in the same command. When it prints the scoped launcher, no
+second setup command is needed. For other sessions, or to repair incomplete setup:
+
 ```
 cub mini require-approval APP --variant live --agent APP-agent --try preview
 ```
 
-For a new app using an env settings file, `--try preview` prepares an isolated copy
+For a new env-file app, `--try preview` prepares an isolated copy
 during the same setup. Leave the flag off if the app holds Kustomize manifests.
 Adopt already makes live wait for the person's approval. This adds a key of its own for the
 agent: it can change the base and staging, so its uploads reach staging at once, and ask for
