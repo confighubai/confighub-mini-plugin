@@ -1,29 +1,27 @@
 # Try the plugin on its own
 
-You can ask Claude to change one setting and see what changed and why. You need Claude Code and Git. The record stays on your computer. No hub or ConfigHub account is needed.
-
-Using Codex? Follow the [Codex setup](codex.md#set-it-up), including hook approval, before trying it in a fresh session.
+Ask your agent to change one setting, then open a fresh session and see whether it can explain the change. You need Git and Claude Code or Codex. The record stays on your computer. No hub or ConfigHub account is needed.
 
 ## Try it in five minutes
 
-1. If you haven't installed the plugin, run these in your terminal:
+1. **Claude Code:** if you haven’t installed the plugin, run these in Terminal. **Codex:** use the [copyable Codex setup](codex.md#set-it-up) and approve its hooks instead.
 
    ```sh
    claude plugin marketplace add confighubai/confighub-mini-plugin
    claude plugin install confighub@confighub
    ```
 
-2. Open a fresh Claude Code session in a throwaway project. This creates one with a sample setting:
+2. Create a throwaway Git folder with a sample setting. Then start a fresh session in that folder with `claude` or `codex`.
 
    ```sh
    mkdir try-confighub && cd try-confighub && git init -q &&
-     printf 'CACHE=off\n' > .env && git add .env && claude
+     printf 'CACHE=off\n' > .env && git add -f .env
    ```
 
-3. In Claude Code, ask: **“Turn the cache on in `.env` for next week's sale. Don't commit.”** Allow the edit if Claude asks.
-4. In Claude Code, type `/confighub:why CACHE`. Look for the change from `off` to `on` and your request about the sale.
+3. Ask **“Turn the cache on in `.env` for next week’s sale. Don’t commit.”** In Codex, add **“Use your `apply_patch` edit tool.”** This lets the record name the setting. A script that rewrites the file can leave only the filename and the request. Allow the edit if your agent asks.
+4. Start another fresh session in the same folder and ask **“Why is the cache on?”** Look for both the change from `off` to `on` and the request about the sale. To check the record yourself, type `/confighub:why CACHE` in Claude Code or run the [Codex record command](codex.md#read-the-record) in the project.
 
-To see what carries over, open a new Claude Code session in the same folder and ask why the cache is on. You can delete the sample folder when you're done. The local record expires after 30 days without use.
+[What fresh sessions recovered in this test](evidence.md#two-first-actions-in-fresh-sessions). You can delete the sample folder when you’re done. The local record expires after 30 days without use.
 
 The [full plugin walkthrough](../examples/walkthroughs/tool-plugin.md) shows the output, what happens when a later agent turns the cache off, and how to add a hub when you need one.
 
