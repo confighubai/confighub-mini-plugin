@@ -1,0 +1,34 @@
+{
+  "observed_utc": "2026-11-18T07:32:38.672734+00:00",
+  "destination": "A second disposable mini hub on this Mac; independent from the source. Hosted Kubara is a separate test.",
+  "imported": {
+    "base": {
+      "match_objects": 14,
+      "source": "oci://europe-west1-docker.pkg.dev/nth-fort-499605-q5/helm-expt/bitnami-redis:25.5.3@sha256:a216ce212424e05b341ef5000f1798e6014b72b8bc3dce9f315285871037af2a",
+      "selection_sha256": "af536f73c559b7fb023581f8b54bc220a0e4556281f02cee0805a41108e64ef2",
+      "before_order_revision": 2
+    },
+    "staging": {
+      "match_objects": 14,
+      "source": "oci://europe-west1-docker.pkg.dev/nth-fort-499605-q5/helm-expt/bitnami-redis:25.5.3@sha256:a216ce212424e05b341ef5000f1798e6014b72b8bc3dce9f315285871037af2a",
+      "selection_sha256": "af536f73c559b7fb023581f8b54bc220a0e4556281f02cee0805a41108e64ef2",
+      "before_order_revision": 4,
+      "protected_override": {
+        "resource": "StatefulSet redis/redis-replicas",
+        "path": "spec.replicas",
+        "value": "2",
+        "reason": "Keep two read replicas in staging to test failover without paying for a third."
+      }
+    },
+    "live": {
+      "match_objects": 14,
+      "source": "oci://europe-west1-docker.pkg.dev/nth-fort-499605-q5/helm-expt/bitnami-redis:25.5.3@sha256:a216ce212424e05b341ef5000f1798e6014b72b8bc3dce9f315285871037af2a",
+      "selection_sha256": "af536f73c559b7fb023581f8b54bc220a0e4556281f02cee0805a41108e64ef2",
+      "before_order_revision": 2
+    }
+  },
+  "pending_order": "rx-restore-check-base/upload-20261118-073157-k3rx",
+  "delta_read_from_owner_view": "StatefulSet/redis-replicas/spec.replicas: 3 \u2192 2",
+  "pending_live_replica_count": 3,
+  "approved_or_deployed": false
+}

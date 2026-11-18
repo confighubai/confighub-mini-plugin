@@ -216,7 +216,9 @@ On the local hub, mini.17 adopted the rendered objects through a Kustomize base 
 
 The portable copy contained all three variants. Its staging Unit carried the exact installer selection in `workshop-selection`, the pinned URI in `workshop-source`, and the reason for the override in `CopyExplains`. On the disposable cluster the original primary and all three read replicas were ready. A change to settings in the local hub had not scaled the running cluster.
 
-**Where this run stopped:** the shared hub required a fresh sign-in. The exported copy is evidence of what left the local hub, not of a shared-hub import, owner approval or a running two-replica deployment. For this package, those checks are still open.
+A second, empty local hub restored all 14 objects in each variant. The package pin and original selection matched; the staging override still named the same field, value and reason. An owner reviewing the proposed change saw just the replica count, 3 → 2. Live stayed at 3 while that order waited. [Source hub and running Redis readings](runs/2026-11-18/redis-handoff/evidence-local.json) · [Independent local restore](runs/2026-11-18/redis-handoff/evidence-local-restore.json).
+
+**Where this run stopped:** the team's shared hub required a fresh sign-in. Neither a second local hub nor a pending order proves a shared-hub approval or a running two-replica deployment. For this package, those checks are still open.
 
 ## Step 4: agents that run unattended
 
