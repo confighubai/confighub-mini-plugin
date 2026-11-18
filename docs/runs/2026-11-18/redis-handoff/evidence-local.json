@@ -1,0 +1,77 @@
+{
+  "observed_utc": "2026-11-18T07:30:01.299684+00:00",
+  "mini": "0.11.1-mini.17",
+  "source": "oci://europe-west1-docker.pkg.dev/nth-fort-499605-q5/helm-expt/bitnami-redis:25.5.3@sha256:a216ce212424e05b341ef5000f1798e6014b72b8bc3dce9f315285871037af2a",
+  "selection": {
+    "package": "bitnami-redis",
+    "packageVersion": "25.5.3",
+    "base": "reuse-existing-secret"
+  },
+  "selection_sha256": "af536f73c559b7fb023581f8b54bc220a0e4556281f02cee0805a41108e64ef2",
+  "rendered_oci": "sha256:1da455a2f7ccd6f2e375705e94e44b357abddf071c6dde06ee71e73bce5ace31",
+  "rendered_object_set": "sha256:518db60ad92b59818c9e84042b12cc7b3d850a583ab7ca565bbf09f6806e4324",
+  "rendered_objects": 14,
+  "rendered_secret_objects": 0,
+  "local_units": {
+    "base": {
+      "revision": 2,
+      "redis_replica_count": 3
+    },
+    "live": {
+      "revision": 2,
+      "redis_replica_count": 3
+    },
+    "staging": {
+      "revision": 4,
+      "redis_replica_count": 2
+    }
+  },
+  "change": {
+    "resource": "StatefulSet/redis/redis-replicas",
+    "path": "spec.replicas",
+    "before": 3,
+    "after": 2,
+    "other_manifest_differences": 0,
+    "reason": "Keep two read replicas in staging to test failover without paying for a third."
+  },
+  "export": {
+    "app": "rx-handoff-lxcicx",
+    "sha256": "bdc57fd53f49c6d1d17e971080eac476014adfa02fd164de3a2fc10217edf679",
+    "retains_original_selection_bytes_and_source": [
+      "base",
+      "staging"
+    ],
+    "retains_staging_reason": true,
+    "protected_paths": [
+      "apps/v1/StatefulSet:redis/redis-replicas:spec.$comment$line$replicas",
+      "apps/v1/StatefulSet:redis/redis-replicas:spec.replicas"
+    ],
+    "live_approval_safeguard": true,
+    "provenance_attached": "The operator explicitly attached package identity and original selection to the base and staging units before export."
+  },
+  "independent_workshop_baseline": {
+    "delivery": "kubectl apply of original Workshop render into a dedicated kind cluster; no post-approval delivery claimed",
+    "workloads": {
+      "redis-master": {
+        "desired": 1,
+        "ready": 1,
+        "observed_generation": 1,
+        "generation": 1,
+        "uid": "59f4f5fc-4c44-4a80-a7ba-6f05eee78f23"
+      },
+      "redis-replicas": {
+        "desired": 3,
+        "ready": 3,
+        "observed_generation": 1,
+        "generation": 1,
+        "uid": "3eccf829-2c7c-4572-a1a9-e333910c6f60"
+      }
+    },
+    "redis_probe": [
+      "PONG",
+      "role:master",
+      "connected_slaves:3"
+    ]
+  },
+  "shared_import_and_approval": "Login required before shared import; untested at this checkpoint."
+}
