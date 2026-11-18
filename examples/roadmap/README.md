@@ -102,6 +102,6 @@ PASS retrying the same revision is idempotent
 
 ## What it checks
 
-Each section above names its assertions and limits. A failed assertion stops the example, exits nonzero and attempts cleanup. A scripted approval does not count as a real person's acceptance.
+Each section above names its assertions and limits. A failed assertion stops the example, exits nonzero and attempts cleanup.
 
 The words on this page, such as *hub*, *base* and *change order*, are explained in [the glossary](../../docs/README.md#words).

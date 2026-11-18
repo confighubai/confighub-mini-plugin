@@ -7,11 +7,21 @@ This page is for setting up the ConfigHub plugin in Codex. Codex runs only the h
 1. With Git and the Codex CLI installed, paste this in Terminal. It downloads the released plugin into `~/confighub-mini-plugin` and installs its hooks and app workflow into Codex. You can run it from any folder.
 
    ```sh
-   git clone --depth 1 --branch v0.99.0 https://github.com/confighubai/confighub-mini-plugin.git "$HOME/confighub-mini-plugin" &&
+   git clone --depth 1 --branch v0 https://github.com/confighubai/confighub-mini-plugin.git "$HOME/confighub-mini-plugin" &&
      "$HOME/confighub-mini-plugin/plugins/confighub/bin/confighub" mini codex-setup
    ```
 
-2. In the Codex CLI, type `/hooks`, review and approve the ConfigHub hooks, then start a fresh session in your app’s folder. If you already cloned this release to the path above, run just the second line. After updating the plugin, rerun setup from the updated copy and review any changed hooks.
+2. In the Codex CLI, type `/hooks`, review and approve the ConfigHub hooks, then start a fresh session in your app’s folder.
+
+The `v0` tag tracks the published plugin. To update an existing installation, run:
+
+```sh
+git -C "$HOME/confighub-mini-plugin" fetch origin refs/tags/v0 &&
+  git -C "$HOME/confighub-mini-plugin" switch --detach FETCH_HEAD &&
+  "$HOME/confighub-mini-plugin/plugins/confighub/bin/confighub" mini codex-setup
+```
+
+Review changed hooks in `/hooks` and start a fresh session.
 
 To try it, [change one setting and recover its reason](try-the-plugin.md#try-it-in-five-minutes) or [run a preview of your app](journeys/existing-app.md#run-a-preview-of-my-app).
 

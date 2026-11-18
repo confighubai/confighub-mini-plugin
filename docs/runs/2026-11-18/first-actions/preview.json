@@ -1,6 +1,6 @@
 {
   "date": "2026-11-18",
-  "scope": "One existing Git-tracked, real Node app on loopback in an isolated macOS HOME; no external user.",
+  "scope": "One existing Git-tracked, real Node app on loopback in an isolated macOS HOME.",
   "versions": {
     "plugin": "0.99.0",
     "mini": "0.11.1-mini.17",
