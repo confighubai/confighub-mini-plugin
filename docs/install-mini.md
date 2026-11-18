@@ -92,7 +92,7 @@ On Linux you need `curl` and `xz`. On Debian or Ubuntu, install them with `apt-g
    xattr -dr com.apple.quarantine .
    ```
 
-   The macOS programs are not signed yet. macOS holds back unsigned programs downloaded through a browser, and this command releases them. Programs downloaded with `curl`, as above, are not held back.
+   These macOS binaries are unsigned. Check the archive against the release checksum in step 3 before clearing the browser download’s quarantine flag. Run the command only in the extracted package folder.
 
 6. Add the `cub mini` commands to the package's `cub`, and put the package's `cub` first on your path. You do this once:
 

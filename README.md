@@ -34,7 +34,7 @@ Open a fresh Claude Code session after installing. Ask Claude to change a settin
 **Using the Codex CLI?** With Git installed, paste this in Terminal to install the released hooks and app workflow:
 
 ```sh
-git clone --depth 1 --branch v0.99.0 https://github.com/confighubai/confighub-mini-plugin.git "$HOME/confighub-mini-plugin" &&
+git clone --depth 1 --branch v0 https://github.com/confighubai/confighub-mini-plugin.git "$HOME/confighub-mini-plugin" &&
   "$HOME/confighub-mini-plugin/plugins/confighub/bin/confighub" mini codex-setup
 ```
 
@@ -42,10 +42,12 @@ In the Codex CLI, open `/hooks`, review and approve the ConfigHub hooks, then st
 
 [Product overview](https://confighub.github.io/helm-expt/ai-agents/) · [Walkthroughs by stack](examples/walkthroughs/README.md) · [Instructions for AI agents](AGENTS.md)
 
+Already reviewing changes? [See settings and reasons on a pull request](review/README.md) or [compare Git, the hub and your running cluster](examples/walkthroughs/story-09-git-hub-and-running.md).
+
 ## Why this, and why now
 
-1. **People make and run apps by asking agents.** An agent changes settings many times a day, across staging, production and every customer's copy. No one reads diffs that fast.
-2. **So the platform has to come from somewhere else.** Staging, production, promotion, rollback and limits used to come from a platform team or a hosting service. An agent can now write them with the app. But they land in scattered files, the next session overwrites them, and every new app starts from nothing.
+1. **Agents change settings across environments.** A change meant for staging can affect production if both read the same file.
+2. **The next session needs context.** When a limit is spread across files, a new agent can miss why you raised it in the first place.
 3. **ConfigHub keeps the setup, its changes and their context.** It keeps the setup itself, wherever the app runs, with every change to it and the context for each change: what was asked, and why. That is what durable means. What you and your agents decided is still there for:
    - **the next session**, which starts from what was set and why
    - **the next agent**, which is told before it undoes a value

@@ -44,7 +44,7 @@ The [client capability matrix](how-it-works.md#client-capabilities) distinguishe
 
 - **The inventory reads one repository's files.** A folder deployed from another repository shows as deployed by nothing, and the inventory says what the files ask for, not what is running. Some ApplicationSet generators are listed but not followed ([what it does not do](inventory.md#what-it-does-not-do)).
 
-- **ConfigHub's approval controls deployment only when its path consumes the approved configuration.** A VM can pull approved files; a cluster can deploy approved releases from the hub. When Argo CD or Flux deploys from Git, branch protection and CODEOWNERS on that repository are the gate. They already give an approval of an exact commit by a named person.
+- **ConfigHub's approval controls deployment only when its path consumes the approved configuration.** For Vercel or Fly, keep the provider’s production credentials with the owner or delivery process. A shell signed in as a provider administrator can still change production directly. A VM can pull approved files, and a cluster can deploy approved releases from the hub. When Argo CD or Flux deploys from Git, branch protection and CODEOWNERS on that repository are the gate. They already give an approval of an exact commit by a named person.
 
 - **A careful setup can match part of each example.** Each of these does part of the job without ConfigHub:
   - a `CLAUDE.md` rule asking agents to log changes made on a cluster;
