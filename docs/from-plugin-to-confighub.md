@@ -210,15 +210,16 @@ An agent asked to rotate a production password gives you the `secret set` comman
 
 ## Redis from the Workshop
 
-The [Workshop Redis try](https://confighub.github.io/helm-expt/site/try.html) starts with a package, a version and a named configuration. In the 18 November run, the installer pulled `bitnami-redis:25.5.3` by its digest (`sha256:a216ce212424e05b341ef5000f1798e6014b72b8bc3dce9f315285871037af2a`), selected `reuse-existing-secret` and verified the 14 rendered objects against its local OCI output. The objects contained no Secret.
+Can you take a Workshop package to a shared hub and still tell which settings you chose and why? On 18 November 2026 we did this with the [Workshop Redis example](https://confighub.github.io/helm-expt/site/redis-walkthrough.html#local-to-shared), published mini.17 and a disposable Kubernetes cluster.
 
-On the local hub, mini.17 adopted the rendered objects through a Kustomize base and overlays. The operator explicitly attached the original selection file and package pin to the hub data; mini did not infer them from the rendered YAML. Staging changed only the Redis read-replica count (3 → 2). The hub kept the reason: “Keep two read replicas in staging to test failover without paying for a third.” Base and live still held 3.
+| Where | What we checked |
+|---|---|
+| Workshop → local hub | We pulled `bitnami-redis:25.5.3` by digest, selected `reuse-existing-secret` and adopted its 14 rendered objects. We explicitly attached the original selection file and package digest before export. The Redis password stayed on the cluster. |
+| Local staging → shared hub | We changed one field, the read-replica count from 3 to 2. All 14 objects in each copy matched after import into Kubara. The package selection matched byte for byte, and staging retained the reason on that field: “Keep two read replicas in staging to test failover without paying for a third.” |
+| Waiting for approval | We read the count and reason from shared staging and proposed the same change for the cluster. The owner saw only `StatefulSet/redis-replicas/spec.replicas: 3 → 2`. While it waited, live revision 2 held 3 and the Redis primary still reported three connected replicas. |
+| After approval | The owner approved base revision 4. Kubara promoted it to live revision 3. The file from `mini pull` matched that immutable revision byte for byte. We applied it with `kubectl`. Kubernetes showed one ready primary and two ready replicas. Redis answered `PONG` and reported `connected_slaves:2`. |
 
-The portable copy contained all three variants. Its staging Unit carried the exact installer selection in `workshop-selection`, the pinned URI in `workshop-source`, and the reason for the override in `CopyExplains`. On the disposable cluster the original primary and all three read replicas were ready. A change to settings in the local hub had not scaled the running cluster.
-
-A second, empty local hub restored all 14 objects in each variant. The package pin and original selection matched; the staging override still named the same field, value and reason. An owner reviewing the proposed change saw just the replica count, 3 → 2. Live stayed at 3 while that order waited. [Source hub and running Redis readings](runs/2026-11-18/redis-handoff/evidence-local.json) · [Independent local restore](runs/2026-11-18/redis-handoff/evidence-local-restore.json).
-
-**Where this run stopped:** the team's shared hub required a fresh sign-in. Neither a second local hub nor a pending order proves a shared-hub approval or a running two-replica deployment. For this package, those checks are still open.
+The two StatefulSets and the three surviving pods kept their identities. We removed the cluster and the test resources on both local and shared hubs. The proposal and the owner's interactive approval used the same shared account. This run exercised manual Kubernetes delivery. [Full run record](runs/2026-11-18/redis-handoff/evidence-shared.json) · [Original staging change and baseline](runs/2026-11-18/redis-handoff/evidence-local.json) · [Independent local restore](runs/2026-11-18/redis-handoff/evidence-local-restore.json).
 
 ## Step 4: agents that run unattended
 
