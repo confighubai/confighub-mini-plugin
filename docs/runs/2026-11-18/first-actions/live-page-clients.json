@@ -1,0 +1,124 @@
+{
+  "date": "2026-11-18",
+  "entry": "https://confighub.github.io/helm-expt/ai-agents/",
+  "published_plugin": "0.99.2",
+  "published_mini": "0.11.1-mini.19",
+  "platform": "macOS arm64",
+  "method": "One isolated profile per client. Each first session read the live page before setup. A runner executed its published install commands, accepted client permissions for the test apps, and reopened the documented app session. Each agent turn started a separate conversation. The recall and preview-return prompts contained neither the reason nor an address. HTTP checks ran outside the clients after both preview sessions exited. Staging and production observations were hub readbacks.",
+  "clients": [
+    {
+      "client": "Claude Code 2.1.285 (Sonnet)",
+      "edit": "Turn the cache on in .env for the marzipan tasting on Thursday. Leave it uncommitted.",
+      "return_prompts": {
+        "why": "Why is the cache on?",
+        "return": "Is my preview still running? What does it serve?"
+      },
+      "preview_request": "Try “Welcome, marzipan bakers!” in preview.",
+      "observed_body": "Welcome, marzipan bakers!",
+      "http_status": 200,
+      "preview_revision": [
+        2,
+        3
+      ],
+      "staging_revision": [
+        2,
+        2
+      ],
+      "live_revision": [
+        2,
+        2
+      ],
+      "checks": {
+        "six separate sessions": true,
+        "exact reason and previous value recovered": true,
+        "record pairs the request and the field change": true,
+        "index still off, working file on, no commit": true,
+        "same URL, process, start time, live response and answer after closing the first session": true,
+        "original tracked app files unchanged": true,
+        "same staging and live data and revisions before preview and after both sessions": true,
+        "only preview setting advanced": true
+      },
+      "judge_controls": {
+        "wrong reason rejected": true,
+        "different service rejected": true,
+        "wrong response rejected": true
+      },
+      "session_seconds": {
+        "page": 19.8,
+        "edit": 6.0,
+        "why": 9.6,
+        "attach": 98.5,
+        "preview": 15.8,
+        "return": 7.2
+      },
+      "passed": true,
+      "published_attach_handoff": {
+        "next_step_matches_client": false,
+        "left_production_for_later": false,
+        "observation": "The attach reply gave a Codex command to a Claude Code user and asked for production approval first. The runner followed the public Claude instructions, reopening the same folder and leaving the order pending."
+      },
+      "cleanup": {
+        "hub_removed": true,
+        "preview_stopped": true,
+        "no_test_server_remaining": true
+      }
+    },
+    {
+      "client": "Codex CLI 0.163.0 (GPT-6.1 Terra)",
+      "edit": "Turn the cache on in .env for the lantern parade on Tuesday. Leave it uncommitted.",
+      "return_prompts": {
+        "why": "Why is the cache on?",
+        "return": "Is my preview still running? What does it serve?"
+      },
+      "preview_request": "Try “Welcome, lantern makers!” in preview.",
+      "observed_body": "Welcome, lantern makers!",
+      "http_status": 200,
+      "preview_revision": [
+        2,
+        3
+      ],
+      "staging_revision": [
+        2,
+        2
+      ],
+      "live_revision": [
+        2,
+        2
+      ],
+      "checks": {
+        "six separate sessions": true,
+        "exact reason and previous value recovered": true,
+        "record pairs the request and the field change": true,
+        "index still off, working file on, no commit": true,
+        "same URL, process, start time, live response and answer after closing the first session": true,
+        "original tracked app files unchanged": true,
+        "same staging and live data and revisions before preview and after both sessions": true,
+        "only preview setting advanced": true
+      },
+      "judge_controls": {
+        "wrong reason rejected": true,
+        "different service rejected": true,
+        "wrong response rejected": true
+      },
+      "session_seconds": {
+        "page": 21.8,
+        "edit": 16.0,
+        "why": 12.4,
+        "attach": 88.6,
+        "preview": 26.5,
+        "return": 22.6
+      },
+      "passed": true,
+      "published_attach_handoff": {
+        "next_step_matches_client": true,
+        "left_production_for_later": true,
+        "observation": "The reply printed the scoped Codex launcher. The runner used that exact command for both preview sessions."
+      },
+      "cleanup": {
+        "hub_removed": true,
+        "preview_stopped": true,
+        "no_test_server_remaining": true
+      }
+    }
+  ]
+}

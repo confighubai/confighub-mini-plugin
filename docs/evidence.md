@@ -122,6 +122,19 @@ Git and the plugin both met the target for explaining the chosen value. The diff
 
 ## Two first actions in fresh sessions
 
+### Starting from the live page in Claude Code and Codex
+
+On 18 November, six separate sessions in each client used plugin 0.99.2 and mini.19 on macOS. Each client began at the [live page](https://confighub.github.io/helm-expt/ai-agents/). After the edit, we asked only “Why is the cache on?” After closing the preview session, we asked only “Is my preview still running? What does it serve?”
+
+| Client | Why the uncommitted cache changed from off to on | What the returning session found |
+| --- | --- | --- |
+| Claude Code | Thursday’s marzipan tasting | Its original preview served “Welcome, marzipan bakers!” |
+| Codex CLI | Tuesday’s lantern parade | Its original preview served “Welcome, lantern makers!” |
+
+We fetched both addresses independently. Each returned HTTP 200 from the same process that had served the preview before the session closed. The tracked app files stayed intact, and the staging and production settings stayed at revision 2.
+
+Claude’s setup reply sent the reader to Codex and asked for production approval. We followed the guide, reopened Claude Code in the same folder and left the order pending. Codex gave the correct launcher. [Prompts, timed results and checks](runs/2026-11-18/first-actions/live-page-clients.json).
+
 ### The default preview on plugin 0.99.2 and mini.19
 
 Each model started with a clean Mac profile and an existing Codex sign-in. We asked “Try ‘Saturday pickup’ in preview for weekend collections.” We gave no instructions about files, keeping it running or choosing a command. A fresh app session received only “Where is my pickup preview, and what is it serving?”
