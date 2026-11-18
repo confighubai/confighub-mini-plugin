@@ -218,7 +218,7 @@ The portable copy contained all three variants. Its staging Unit carried the exa
 
 A second, empty local hub restored all 14 objects in each variant. The package pin and original selection matched; the staging override still named the same field, value and reason. An owner reviewing the proposed change saw just the replica count, 3 → 2. Live stayed at 3 while that order waited. [Source hub and running Redis readings](runs/2026-11-18/redis-handoff/evidence-local.json) · [Independent local restore](runs/2026-11-18/redis-handoff/evidence-local-restore.json).
 
-**Where this run stopped:** the team's shared hub required a fresh sign-in. Neither a second local hub nor a pending order proves a shared-hub approval or a running two-replica deployment. For this package, those checks are still open.
+The team then restored the export on its shared hub, Kubara. All 14 objects matched in each copy, as did the package pin and the original selection file. Staging revision 4 kept two replicas and the original reason on that field. We proposed that same count for the disposable cluster. While the proposal waited, live revision 2 still held three, Kubernetes had three ready replicas, and Redis reported three connected replicas. [Shared hub import readings](runs/2026-11-18/redis-handoff/shared-import.json).
 
 ## Step 4: agents that run unattended
 

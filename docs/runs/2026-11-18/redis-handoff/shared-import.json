@@ -1,0 +1,24 @@
+{
+  "base": {
+    "source": "oci://europe-west1-docker.pkg.dev/nth-fort-499605-q5/helm-expt/bitnami-redis:25.5.3@sha256:a216ce212424e05b341ef5000f1798e6014b72b8bc3dce9f315285871037af2a",
+    "selection_sha256": "af536f73c559b7fb023581f8b54bc220a0e4556281f02cee0805a41108e64ef2",
+    "matched_objects": 14,
+    "revision": 2,
+    "replicas": 3
+  },
+  "staging": {
+    "source": "oci://europe-west1-docker.pkg.dev/nth-fort-499605-q5/helm-expt/bitnami-redis:25.5.3@sha256:a216ce212424e05b341ef5000f1798e6014b72b8bc3dce9f315285871037af2a",
+    "selection_sha256": "af536f73c559b7fb023581f8b54bc220a0e4556281f02cee0805a41108e64ef2",
+    "matched_objects": 14,
+    "revision": 4,
+    "replicas": 2,
+    "reason": "Keep two read replicas in staging to test failover without paying for a third."
+  },
+  "live": {
+    "source": "oci://europe-west1-docker.pkg.dev/nth-fort-499605-q5/helm-expt/bitnami-redis:25.5.3@sha256:a216ce212424e05b341ef5000f1798e6014b72b8bc3dce9f315285871037af2a",
+    "selection_sha256": "af536f73c559b7fb023581f8b54bc220a0e4556281f02cee0805a41108e64ef2",
+    "matched_objects": 14,
+    "revision": 2,
+    "replicas": 3
+  }
+}
