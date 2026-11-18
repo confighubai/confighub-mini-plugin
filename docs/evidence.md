@@ -120,8 +120,22 @@ We asked Claude Code to keep an API available during a node drain while paying f
 
 Git and the plugin both met the target for explaining the chosen value. The difference on this example was being able to recover a tradeoff that never made it into the file. Even the plugin recorded that alternative in fewer than half the sessions. [See what the plugin keeps](how-it-works.md).
 
+## Two first actions in fresh sessions
+
+On 18 November 2026 we tested the public plugin 0.99.0 on macOS. Each follow-up session began in the same project without the previous conversation. These timings are from individual trials.
+
+| Task | Time to a result | What the next session recovered |
+|---|---|---|
+| Remember why the cache is on, Claude Code | 10.6 seconds from starting marketplace installation to checking the recorded key, old value, new value and reason. | At 16.2 seconds from the same start, a fresh session answered “Why is the cache on?” with the reason about next week’s sale. Git had no commits. |
+| Remember why the cache is on, Codex CLI | The public setup command took 4.5 seconds. On the first attempt, Codex rewrote the file with Python. On a retry with the built-in editor, the field and reason were recorded in 7.7 seconds from the prompt. | After the Python edit the fresh session found the change in Git but missed the reason. The full ConfigHub record still showed the request against the file. After the editor retry a fresh session recovered the sale reason in 9.4 seconds. The retry reused the installed hooks in a new repository. |
+| Run a preview of an existing app, Codex CLI | 4 minutes 19 seconds from starting installation to independently reading the changed heading over HTTP, including recovery from a failed hub startup. | A fresh session recovered the weekend collection reason and served the saved heading again in 52 seconds. Another session given no URL guessed the wrong port and reported a running preview as stopped. |
+
+The preview used mini.17 and the app’s limited account. The preview served **Saturday pickup** while staging and the original app both served **Weekday pickup**. First production delivery was left pending. The agent’s background server stopped when its noninteractive session ended. The foreground command in a separate Terminal kept serving after the agent exited. Given the actual URL, a new session confirmed HTTP 200 and the Saturday heading; it did not establish the original reason from that endpoint.
+
+The timed Claude run used an existing CLI sign-in and explicitly loaded the marketplace-installed plugin into two fresh sessions. The interactive Codex cache trial included folder and hook trust. The noninteractive preview trial trusted the released hooks for the test. Signing up for a coding client was outside these timings. [Cache run record](runs/2026-11-18/first-actions/cache.json) · [Running preview and cleanup](runs/2026-11-18/first-actions/preview.json).
+
 ## What this means for you
 
-The Claude plugin keeps the reason for a value with the value. It does this across sessions, worktrees and folders. So the next agent knows why the value is there. It can finish its job without reverting the value, or it can tell you that it is reverting it.
+For supported field edits, the record keeps the request with the value. A fresh agent can use that record to explain why the value is there. It can finish its job without reverting the value, or it can tell you that it is reverting it.
 
 To see the same thing in five minutes on your own machine, follow [try the Claude plugin on its own](try-the-plugin.md#try-it-in-five-minutes). What these runs do not show is in [what we do not claim](limits.md).

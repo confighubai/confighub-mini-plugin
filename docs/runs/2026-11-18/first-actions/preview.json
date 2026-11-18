@@ -1,0 +1,77 @@
+{
+  "date": "2026-11-18",
+  "scope": "One existing Git-tracked, real Node app on loopback in an isolated macOS HOME; no external user.",
+  "versions": {
+    "plugin": "0.99.0",
+    "mini": "0.11.1-mini.17",
+    "codex_cli": "0.163.0",
+    "agent": "gpt-6-luna",
+    "plugin_commit": "4c45d8b58ff7dbae9ba32981819f53a1953b374e",
+    "mini_archive_sha256": "afb431684be43fb387c7e091f700ac43146f64ecb05374af3a2ad8603e7cf55e"
+  },
+  "method": "Real, fresh Codex exec sessions with different thread IDs and no chat carried forward. The original app was already running independently when ConfigHub attached. An independent host process issued HTTP requests to the app; it tested the actual URL again immediately after each scoped session exited. The automation pretrusted the inspected release hooks; interactive /hooks review and human typing time are unmeasured.",
+  "install": {
+    "command": "git clone --depth 1 --branch v0.99.0 https://github.com/confighubai/confighub-mini-plugin.git \"$HOME/confighub-mini-plugin\" && \"$HOME/confighub-mini-plugin/plugins/confighub/bin/confighub\" mini codex-setup",
+    "seconds": 3.501,
+    "first_attach": "PostgreSQL startup was blocked by the Codex workspace sandbox. The agent offered a generic temporary app URL. It never attached ConfigHub in that session.",
+    "recovery": "Owner-terminal command \"$HOME/.codex/confighub/bin/confighub\" mini get; explicit recovery outside Codex, with the earlier package download already cached.",
+    "owner_recovery_seconds": 5.306,
+    "launcher": "mini adopt printed the app-scoped run-codex path. The successful attachment session omitted it from its final answer. No PATH edits, production approvals or deployments."
+  },
+  "preview": {
+    "app": "Pickup board, with a configurable PICKUP_LABEL.",
+    "before": "Weekday pickup",
+    "preview": "Saturday pickup",
+    "staging_revision": 2,
+    "preview_revision": 3,
+    "reason_in_hub": "Preview Saturday collection heading| Functions: set-string-path",
+    "reason_recovered_from_project_record": "Show customers the weekend collection option.",
+    "original_service": "Original unconnected process remained live with Weekday pickup.",
+    "hub_live": "Starting revision 2. mini pull refused first delivery pending owner approval of pickup-base/adopt.",
+    "services_checked_together": {
+      "preview": {
+        "http": 200,
+        "body": "Saturday pickup"
+      },
+      "stage": {
+        "http": 200,
+        "body": "Weekday pickup"
+      },
+      "original": {
+        "http": 200,
+        "body": "Weekday pickup"
+      }
+    }
+  },
+  "timing_one_run_seconds": {
+    "start_clone_to_agent_managed_unchanged_staging_HTTP": 185.8,
+    "start_clone_to_first_configured_preview_HTTP": 259.3,
+    "preview_request_to_independent_HTTP": 52.8,
+    "fresh_return_request_to_independent_HTTP": 52.2,
+    "first_failed_attach_session": 88.132,
+    "reattach_after_owner_fallback_session": 95.693,
+    "end_of_preview_session": 61.868
+  },
+  "fresh_session_results": {
+    "ordinary_preview": "Set the assigned preview, pulled its settings and ran the app. Independent HTTP from outside the agent returned Saturday pickup. Original unchanged.",
+    "uncoached_return": "Read the saved project journal, accurately recovered the reason and value, and served Saturday pickup again. It first guessed .env; mini pull produced app.env.",
+    "exit_behavior": "Both headless-session URLs closed as soon as that agent session exited in this run.",
+    "foreground_workaround": "After the scoped agent exited, ran its one-line command in a separate foreground Terminal; the scoped identity pulled try-preview, then Node used app.env with PORT=4173. HTTP root returned Saturday pickup and /health returned ready. Ctrl-C stops it.",
+    "uncoached_runtime_discovery": "A new session was asked to find this still-running preview. It checked only port 3000 and incorrectly reported it stopped while 4173 was still serving.",
+    "handing_over_url": "A fresh session given the actual Terminal URL verified the response. It inferred the Saturday experiment but did not recover the original reason from the files it checked.",
+    "production_gate": "An agent never approved. No deployment to production took place."
+  },
+  "cleanup": {
+    "remaining_app_processes": 0,
+    "hub_running": false,
+    "auth_link_remaining": false,
+    "all_disposable_profile_files_removed": true,
+    "tested_urls": {
+      "deferred": "closed",
+      "ordinary_preview": "closed",
+      "reopened_preview": "closed",
+      "original": "closed"
+    },
+    "outside_temp_directories_removed": 4
+  }
+}

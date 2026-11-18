@@ -23,6 +23,18 @@ If Argo CD or Flux deploys the app from Git, read this page, then [an app that A
 
 The words on this page, such as *hub*, *base* and *change order*, are explained in [the glossary](../README.md#words).
 
+## Run a preview of my app
+
+Start with a web app you can run locally and a visible setting in its `.env`, such as its greeting. If you want a sample instead, ask your agent to build a small greeting app using ConfigHub. You need the [Claude Code plugin](../../README.md#install) or the [Codex setup](../codex.md#set-it-up). The first preview downloads a local hub if you don’t have one yet.
+
+1. Open the Git folder in your agent and ask **“Attach ConfigHub to this app so I can try a preview. Keep my staging and production settings as they are.”** For a new app already connected to ConfigHub, skip this step.
+2. Ask the attaching agent for the app’s `run-codex` command if you’re using the Codex CLI. Paste it in Terminal to open a fresh session with the app’s permissions. In Claude Code, reopen the same folder. Ask **“Try a warmer greeting in preview and show me what it serves. Leave staging and production as they are.”** Substitute a visible setting if your app doesn’t have a greeting.
+3. Open the local URL the agent gives you and compare it with the original app. The preview should serve the new value while the original still serves the old one. You can try the preview while first delivery to production waits for your approval.
+
+**If Codex on macOS asks you to start the hub:** run `"$HOME/.codex/confighub/bin/confighub" mini get` in your own Terminal. Once the hub is ready, return to the app folder and ask Codex to finish attaching it. This step is only for the hub-backed preview.
+
+**To keep the preview open after your agent exits**, ask **“Give me one command for another Terminal that runs this app in the foreground with its saved preview settings. Use the app’s limited permissions and a local URL.”** Keep the printed URL and leave that Terminal open. Give the URL to your next session if you want it to check this same running app. Press Ctrl-C to stop it. The preview settings stay in the hub. [What the running apps served in our test](../evidence.md#two-first-actions-in-fresh-sessions).
+
 ## What it takes
 
 - **The download.** the local hub ([its size](../install-mini.md#the-current-release)), the first time, into `~/.confighub/mini`. It runs as two processes on this machine. No account and no sign-in.

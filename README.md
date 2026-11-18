@@ -2,7 +2,8 @@
 
 Ask Claude Code or Codex to build an app. With ConfigHub, you can try a change in a running preview, leave production as it is, and keep what worked for the next app.
 
-**[Try it in Claude Code in five minutes](docs/try-the-plugin.md#try-it-in-five-minutes)** · **[Start in Codex](docs/codex.md#set-it-up)**. The plugin alone records changes on your computer. No hub or ConfigHub account needed.
+- **[Remember one setting in five minutes](docs/try-the-plugin.md#try-it-in-five-minutes)**. Ask “Turn the cache on in `.env` for next week’s sale. Don’t commit.” In Codex, add “Use your `apply_patch` edit tool.” Reopen the folder in a fresh session and ask “Why is the cache on?” Look for `CACHE=off → on` and the reason about the sale. The record stays on your computer. No hub or ConfigHub account needed.
+- **[Run a preview of my app](docs/journeys/existing-app.md#run-a-preview-of-my-app)**. In a local web app, ask “Try a warmer greeting in preview and show me what it serves.” Open the preview URL. Only the preview should show the new greeting. This path uses a local hub.
 
 | Where are you starting? | What to try |
 | --- | --- |
@@ -29,6 +30,15 @@ claude plugin install confighub@confighub
 ```
 
 Open a fresh Claude Code session after installing. Ask Claude to change a setting, then type `/confighub:why SETTING` in Claude Code to see the change and the request behind it. The record stays on your computer. [Install the local hub on its own](docs/install-mini.md).
+
+**Using the Codex CLI?** With Git installed, paste this in Terminal to install the released hooks and app workflow:
+
+```sh
+git clone --depth 1 --branch v0.99.0 https://github.com/confighubai/confighub-mini-plugin.git "$HOME/confighub-mini-plugin" &&
+  "$HOME/confighub-mini-plugin/plugins/confighub/bin/confighub" mini codex-setup
+```
+
+In the Codex CLI, open `/hooks`, review and approve the ConfigHub hooks, then start a fresh session in your app’s folder. [Codex setup and removal](docs/codex.md#set-it-up).
 
 [Product overview](https://confighub.github.io/helm-expt/ai-agents/) · [Walkthroughs by stack](examples/walkthroughs/README.md) · [Instructions for AI agents](AGENTS.md)
 

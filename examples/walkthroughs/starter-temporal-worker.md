@@ -24,6 +24,17 @@ To rehearse all of it in disposable hubs, run `"$MINI/examples/temporal/starter/
 
 Without ConfigHub: your agent changes the retry policy directly in the worker's `app.env`, production included, and the next session has no record of why.
 
+### Restart the Temporal worker during a rollout
+
+Use the [mini package](../../docs/install-mini.md#install-by-hand-without-the-plugin) and the tools listed above. From the unpacked package directory, run:
+
+```sh
+MINI="$PWD"
+"$MINI/examples/temporal/starter/check-worker" --rollout --package "$MINI" --out "$MINI/temporal-rollout"
+```
+
+The rehearsal uses a test owner. Check that production keeps its old retry limit while approval waits, that the worker resumes after a restart, and that delivery refuses a policy whose contents differ from its approved digest.
+
 ## Deeper dive
 
 The rest of this page is the full version: the packaged rehearsal, connecting your own worker, the probes that show how many attempts a workflow run makes, the move to a shared hub, and how this was tested.
