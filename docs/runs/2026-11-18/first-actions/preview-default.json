@@ -1,0 +1,109 @@
+{
+  "date": "2026-11-18",
+  "task": "Keep a Node app preview running by default",
+  "platform": "macOS arm64",
+  "plugin": "0.99.2",
+  "mini": "0.11.1-mini.19",
+  "scope": "Distinct Codex CLI sessions for attach, preview and return. The Terra trial also starts with a separate session asked only to try a preview. Each trial used a fresh local profile with an existing Codex sign-in, normal trust prompts, a disposable Git checkout and a local hub. An independent client checked the HTTP service after each scoped session exited.",
+  "runs": [
+    {
+      "model": "gpt-6-luna",
+      "preview_request": "Try “Saturday pickup” in preview for weekend collections.",
+      "return_request": "Where is my pickup preview, and what is it serving?",
+      "preview_and_return_checked_same_process": true,
+      "preview_and_return_http_status": 200,
+      "preview_and_return_response": "Saturday pickup",
+      "reason_saved": "Try Saturday pickup for weekend collections",
+      "original_app_response": "Weekday pickup",
+      "staging_app_response": "Weekday pickup",
+      "production_delivery": "refused while waiting for first owner approval",
+      "checks_after_each_session": {
+        "preview": {
+          "tracked_and_untracked_app_files_unchanged": true,
+          "index_and_HEAD_unchanged": true,
+          "unchanged_hub_data_and_revisions": {
+            "staging": true,
+            "live": true
+          },
+          "changed_files": []
+        },
+        "return": {
+          "tracked_and_untracked_app_files_unchanged": true,
+          "index_and_HEAD_unchanged": true,
+          "unchanged_hub_data_and_revisions": {
+            "staging": true,
+            "live": true
+          },
+          "changed_files": []
+        }
+      },
+      "cleanup": "preview stopped, port closed, test hub removed",
+      "seconds": {
+        "full_clone_setup_to_first_independent_preview_including_permissions_and_handoff": 168.64,
+        "scoped_preview_start_to_first_independent_preview": 26.06,
+        "fresh_return_start_to_independent_check_after_exit": 36.05,
+        "plugin_setup_without_clone": 0.53
+      },
+      "local_client_permission_count_during_attach": 1
+    },
+    {
+      "model": "gpt-6.1-terra",
+      "preview_request": "Try “Saturday pickup” in preview for weekend collections.",
+      "return_request": "Where is my pickup preview, and what is it serving?",
+      "preview_and_return_checked_same_process": true,
+      "preview_and_return_http_status": 200,
+      "preview_and_return_response": "Saturday pickup",
+      "reason_saved": "Try Saturday pickup for weekend collections",
+      "original_app_response": "Weekday pickup",
+      "staging_app_response": "Weekday pickup",
+      "production_delivery": "refused while waiting for first owner approval",
+      "checks_after_each_session": {
+        "preview": {
+          "tracked_and_untracked_app_files_unchanged": true,
+          "index_and_HEAD_unchanged": true,
+          "unchanged_hub_data_and_revisions": {
+            "staging": true,
+            "live": true
+          },
+          "changed_files": []
+        },
+        "return": {
+          "tracked_and_untracked_app_files_unchanged": true,
+          "index_and_HEAD_unchanged": true,
+          "unchanged_hub_data_and_revisions": {
+            "staging": true,
+            "live": true
+          },
+          "changed_files": []
+        }
+      },
+      "cleanup": "preview stopped, port closed, test hub removed",
+      "seconds": {
+        "full_clone_setup_to_first_independent_preview_including_permissions_and_handoff": 145.88,
+        "scoped_preview_start_to_first_independent_preview": 23.79,
+        "fresh_return_start_to_independent_check_after_exit": 19.6,
+        "plugin_setup_without_clone": 0.322
+      },
+      "local_client_permission_count_during_attach": 1,
+      "bare_request": {
+        "prompt": "Try a preview.",
+        "independent_http_after_session_exit": 200,
+        "returned_preview_address": true,
+        "separate_from_original": true,
+        "preview_response": "Weekday pickup",
+        "original_response": "Weekday pickup",
+        "preview_revision_unchanged": true,
+        "app_files_and_staging_and_production_unchanged": true
+      }
+    }
+  ],
+  "public_download": {
+    "plugin_tag": "v0.99.2",
+    "plugin_git_sha": "e2b7e50ccedc825472cc6c785b62ecda4445cead",
+    "installed_native_plugin_sha256": "e642862700db7a108eb6df3877b9717d420d6f6a27f385d6afbff60181db789b",
+    "mini_package": "confighub-mini-0.11.1-mini.19-darwin-arm64",
+    "published_manifest_entries_verified": 1518,
+    "mini_executable_sha256": "357f19a6de2ef3199ca63b4b30254f4d1cb37a6b0097b49277140c40dade638b"
+  },
+  "codex_cli": "0.163.0"
+}

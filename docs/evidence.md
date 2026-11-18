@@ -122,6 +122,19 @@ Git and the plugin both met the target for explaining the chosen value. The diff
 
 ## Two first actions in fresh sessions
 
+### The default preview on plugin 0.99.2 and mini.19
+
+Each model started with a clean Mac profile and an existing Codex sign-in. We asked “Try ‘Saturday pickup’ in preview for weekend collections.” We gave no instructions about files, keeping it running or choosing a command. A fresh app session received only “Where is my pickup preview, and what is it serving?”
+
+| Codex model | From clean setup to verified Saturday pickup | From reopening to verified response |
+| --- | ---: | ---: |
+| gpt-6-luna | 169 s | 36 s |
+| gpt-6.1-terra | 146 s | 20 s |
+
+In the Terra trial we first asked only “Try a preview.” It returned a separate, still-running **Weekday pickup** app and left the try’s revision unchanged. That extra session is included in its setup time.
+
+After the requested setting change, the preview stayed on **Saturday pickup**, at the same address and in the same Node process after both sessions closed. The original app and a separate app run with staging’s settings served **Weekday pickup**. We compared all app files, the Git index, and the contents and revisions of staging and production before and after both prompts. All matched. First production delivery still required the owner’s approval. The check stopped the preview, checked the closed port and removed the test hub. [Mac run records](runs/2026-11-18/first-actions/preview-default.json).
+
 ### Published plugin 0.99.1 and mini.18 on macOS
 
 **Remember one setting.** With the five-minute guide’s two prompts, Codex chose a shell command to turn `CACHE` on. A fresh session answered “Why is the cache on?” in 8.1 seconds. It recovered both the previous value and the reason, next week’s sale. We repeated the exercise and asked for Python to reproduce the edit that failed on 0.99.0. Codex rewrote `.env` with Python, and the new session recovered the same answer in 7.6 seconds. Each trial began with a staged file in a clean profile. Neither made a commit or started a hub.

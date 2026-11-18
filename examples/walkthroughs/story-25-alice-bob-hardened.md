@@ -11,6 +11,8 @@ Alice connects an app her agents built with a starter, the team's default settin
 
 ## Quick start
 
+**You** set up the two roles in steps 1–3 and give your agent the hardening request below. You decide separately whether to approve the shop change and the shared starter. **Your agent** proposes each change, starts the cart from the approved starter and checks that the shop keeps its own settings.
+
 You need: an unpacked confighub mini package (from the [releases page](https://github.com/confighubai/confighub-mini-plugin/releases)) on macOS or Linux. No Docker, no account.
 
 | | By hand | Ask your agent |

@@ -1,5 +1,7 @@
 # A new app in Claude Code, with a staging copy and a live copy
 
+**You** choose a folder, describe the app and review production changes. **Your agent** builds and runs the app, prepares its settings and gives you the preview address when you ask to try a change.
+
 Ask Claude Code for an app using ConfigHub. Your agent builds it and a local hub keeps its staging and production setup, with the reason for each change. Try changes in staging, review them before production delivery, and start the next app from the setup you already have.
 
 This page explains what happens and why. To see every command and what it prints, follow a walkthrough:

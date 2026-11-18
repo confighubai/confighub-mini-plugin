@@ -1,11 +1,13 @@
 # ConfigHub for your first app
 
-Build your first app with Claude Code or Codex, or open one you already run. The plugin remembers why a setting changed. Add a local hub when you want to try a change in preview or carry a useful fix into your next app.
+Build your first app with Claude Code or Codex, or open one you already run. The plugin remembers why a setting changed. A local hub adds previews and settings you can reuse.
 
-- **[Remember one setting in five minutes](docs/try-the-plugin.md#try-it-in-five-minutes)**. Ask “Turn the cache on in `.env` for next week’s sale. Don’t commit.” Reopen the folder in a fresh session and ask “Why is the cache on?” Look for `CACHE=off → on` and the reason about the sale. The record stays on your computer. No hub or ConfigHub account needed.
-- **[Run a preview of my app](docs/journeys/existing-app.md#run-a-preview-of-my-app)**. In a local Node app, ask “Try a warmer greeting in preview. Give me its address and leave it running. Keep my files, staging and production as they are.” Reopen the app and ask “Is my preview still running?” Only the preview should serve the new greeting. This path uses a local hub.
+**[Three things to try first](https://confighub.github.io/helm-expt/ai-agents/first-look.html)** shows what you do, what your agent does and how to check the result.
 
-Already reviewing changes? [See settings and reasons on a pull request](review/README.md) or [compare Git, the hub and your running cluster](examples/walkthroughs/story-09-git-hub-and-running.md).
+- **[Remember one setting in five minutes](docs/try-the-plugin.md#try-it-in-five-minutes)**. Ask “Turn the cache on for next week’s sale. Don’t commit.” In a fresh session ask “Why is the cache on?” Your agent should recover the change and the sale reason. No hub needed.
+- **[Run a preview of my app](docs/journeys/existing-app.md#run-a-preview-of-my-app)**. In a local Node app, ask “Try a warmer greeting in preview.” Your agent gives you the address. Open it, then ask a fresh app session what’s running.
+
+Reviewing someone’s changes? [See reasons on a pull request](review/README.md) or [compare Git, the hub and the cluster](examples/walkthroughs/story-09-git-hub-and-running.md).
 
 | Where are you starting? | What to try |
 | --- | --- |

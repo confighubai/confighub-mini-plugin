@@ -26,7 +26,7 @@ Without ConfigHub: your agent changes the retry policy directly in the worker's 
 
 ### Restart the Temporal worker during a rollout
 
-Use the [mini package](../../docs/install-mini.md#install-by-hand-without-the-plugin) and the tools listed above. From the unpacked package directory, run:
+**You** choose the disposable rehearsal and ask your agent to show what survives the restart. **Your agent** runs the command below from the [unpacked package](../../docs/install-mini.md#install-by-hand-without-the-plugin) and reports the retry count before and after the test approval. You can also run it yourself. For a real production rollout, you approve the policy.
 
 ```sh
 MINI="$PWD"

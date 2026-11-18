@@ -4,6 +4,8 @@ Ask your agent to change one setting, then open a fresh session and see whether 
 
 ## Try it in five minutes
 
+**You** install the plugin, open the sample folder and ask two questions in separate sessions. **Your agent** makes the edit, then uses the record to explain it in the next session.
+
 1. **Claude Code:** if you haven’t installed the plugin, run these in Terminal. **Codex:** use the [copyable Codex setup](codex.md#set-it-up) and approve its hooks instead.
 
    ```sh
