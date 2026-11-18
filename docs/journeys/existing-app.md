@@ -34,6 +34,8 @@ For this exercise, use a local Node app with a greeting or another visible setti
 3. Open the local URL the agent gives you and compare it with the original app. The preview should serve the new value while the original still serves the old one. You can try the preview while first delivery to production waits for your approval.
 4. Close the agent and reopen the same app with its scoped launcher. Ask **“Is my preview still running? What does it serve?”** The agent can find the same preview and read its response. Ask it to stop the preview when you’re finished.
 
+For an app with a `GREETING` setting, your agent can run `cub mini preview --set 'GREETING=Welcome back!' --change-desc 'Welcome returning visitors'` in the app session. It finds the address again with `cub mini preview --status` and stops it on request with `cub mini preview --stop`.
+
 Use Node.js 20.6 or newer and `lsof`. ConfigHub uses the latter to check which process owns the preview URL. For another runtime, use the app’s usual local preview command with the try’s settings. [See the Mac run](../evidence.md#two-first-actions-in-fresh-sessions).
 
 ## What it takes
