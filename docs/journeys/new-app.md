@@ -1,86 +1,91 @@
-# A new app in Claude Code, with a staging copy and a live copy
+# Build a new app in Claude Code (with staging, preview, and gated production)
 
-**You** choose a folder, describe the app and review production changes. **Your agent** builds and runs the app, prepares its settings and gives you the preview address when you ask to try a change.
+Describe the app you want, and let Claude Code set up both the code and a local ConfigHub with separate `staging`, `preview`, and `live` (production) configurations.
 
-Ask Claude Code for an app using ConfigHub. Your agent builds it and a local hub keeps its staging and production setup, with the reason for each change. Try changes in staging, review them before production delivery, and start the next app from the setup you already have.
+## Quick start (4 steps)
 
-This page explains what happens and why. To see every command and what it prints, follow a walkthrough:
+1. **Install the plugin** ([README](../../README.md#install)) and open a fresh `claude` session in an empty Git folder:
+   ```sh
+   mkdir greeter && cd greeter && git init -q && claude
+   ```
+2. **Ask for your app with “using ConfigHub”:**
+   ```text
+   Build me a small web service using ConfigHub, with a health endpoint, a configurable greeting, and a staging and a production setup.
+   ```
+3. **Approve production’s starting settings** in your own terminal using the exact full-path command Claude prints:
+   ```sh
+   ~/.confighub/mini/.../bin/cub mini approve greeter-base/adopt
+   ```
+   *(Add that `bin` directory to your `PATH` if you want to run `cub` directly without the full path.)*
+4. **Commit your app** along with `.confighub-app`.
 
-- [Your first hour](../../examples/walkthroughs/story-13-first-hour.md): the Claude plugin and a hub on your laptop, production behind your approval, and an agent's own approval refused.
-- [A new app that fits the team's pattern](../../examples/walkthroughs/story-18-dev-intent.md): a new app on a pattern, with rules that keep a bad value from production, and a second app made from the first.
-- [The `cub mini` commands](../../examples/walkthroughs/tool-cub-mini.md): each command the agent runs here, on one small app.
+From the next session onward, you don’t need to say “using ConfigHub”—sessions in this folder automatically run on the app’s scoped agent key ([how ordinary requests work](../agent-workflow.md)).
 
-The app might run on your own machine, on another machine, in CI, on one or many sandbox nodes, in a shared development cluster, or eventually in production. This page makes the staging and live configuration in the hub. Connect the running copies to it with the deployment path for your target ([where the app runs](../agent-workflow.md#where-the-app-runs)). If you ask to run the app on this machine, the agent can run staging from the settings pulled from the hub. Production's first run still needs your approval.
+---
 
-The words on this page, such as *hub*, *base* and *change order*, are explained in [the glossary](../README.md#words).
+## Try a preview & change settings later
 
-## What it takes
+### Changing the app later
 
-- **The download.** The first time, the agent downloads the local hub ([its size](../install-mini.md#the-current-release)) into `~/.confighub/mini`, and starts a hub. The hub listens on this machine only. Nothing else is installed.
-- **Your folder.** Besides the app's own files, two files appear: `.confighub-app`, a note of what the files match in the hub, which you commit; and `.claude/settings.local.json`, which runs later Claude Code sessions in the repository on the agent's key. That second file holds paths on your machine, so the agent's setup adds it to `.git/info/exclude`, and Git leaves it out.
-- **An account.** None. No sign-in is asked of you.
+Ask Claude for changes in plain words:
 
-## What you do
-
-1. Install the Claude plugin ([the README](../../README.md#install)).
-2. In an empty folder with Git, start Claude Code and ask for the app in your own words, with "using ConfigHub". For example: *"Build me a small web service using ConfigHub, with a health endpoint, a configurable greeting, and a staging and a production setup."*
-3. When the agent is done, run the one command it gives you, in a terminal of your own: `cub mini approve APP-base/adopt`, with `cub`'s full path. It shows production's starting settings and asks you first.
-4. Commit the app with its `.confighub-app`.
-
-You do not need special words for later work. For an ordinary request, the [current workflow](../agent-workflow.md) checks your setup first, and offers a hub only with the benefit and the cost.
-
-## What the agent does, and why
-
-1. **It writes the app and its settings files**: `.env` for what every copy shares, `.env.staging` and `.env.production` for what each sets itself.
-2. **It starts a hub, if none answers.** It runs the Claude plugin's own `confighub mini get`, which downloads the local hub, checks it against the release's checksums, starts a hub and signs `cub` in to it. You are asked nothing. The one setting it names, whether a hub may start by itself in other folders, stays off until you turn it on ([a hub that starts by itself](../agent-workflow.md#a-hub-that-starts-by-itself-only-if-you-say-yes)).
-3. **It runs `cub mini adopt`**, which keeps three copies of the settings in the hub: the base, staging and live, each named after the app, such as `greeter-base`. Your files are not changed. The values your files set are kept as your own; settings your app does not set come from `pattern-web`, the defaults every small web service starts from, with four rules, such as one that refuses a value named like a password. The pattern is yours to change or ignore. It is not one of the optional [starters](../starters.md).
-4. **It runs `cub mini require-approval APP --variant live --agent APP-agent --try preview`.** The preview copy is ready for the next session to try a change away from staging and production. Live now takes a change only when you approve it, and the agent gets a key of its own that can propose a change to live and cannot approve one. Claude Code sessions started in the folder from then on run on that key.
-5. **It tells you, in plain words,** what you now have and the one command to type: the approval of production's starting settings.
-
-When you approve, production keeps every value `.env.production` sets: a change to the shared settings never overwrites a copy's own value. Approving also records that you read production's settings. Until you approve, nothing delivers live: `cub mini pull`, `pull-key` and `deploy-from-hub` refuse, and name the command.
-
-## Changing the app later
-
-Ask for a change as you would. The agent edits the files, then proposes the change with `cub mini upload`. Staging takes it at once, unless staging has its own value for that setting. Live waits for you. The agent's turn ends with one line that a change waits for you, and the command that approves it; `cub mini waiting` lists every change that waits.
-
-- **A copy's own value wins.** If production sets its own greeting in `.env.production`, a new greeting in the shared settings is recorded for production when you approve, and production keeps its own. To change production's value, change `.env.production`.
-- **The agent cannot approve.** On its key, `cub mini approve` is refused: only a person named as an approver for production can approve the change.
-- **A refusal keeps its reason.** `cub mini refuse APP-base/ORDER --reason "WHY"` keeps the change out of production. The refused value stays in the shared settings until someone changes it back, and `cub mini waiting` and `cub mini approve` mark it, with your reason, so you do not approve it by accident inside a later change. With the Claude plugin, the next agent that tries the same value is told your reason.
+1. **Test in a running preview first:**
+   ```text
+   Try a warmer greeting in preview and show me what the running app serves.
+   ```
+   `staging` and `live` stay untouched while you inspect the local preview URL.
+2. **Promote to staging & propose for production:**
+   Ask Claude to make the change the shared default (or edit files normally—Claude uploads via `cub mini upload`).
+   - **`staging`** takes shared changes immediately (unless `.env.staging` overrides that key).
+   - **`live` (production)** waits until you run `cub mini approve` in your own terminal (`cub mini waiting` lists pending orders).
+   - **Overrides win:** Any key set explicitly in `.env.production` stays production’s own unless `.env.production` itself is updated.
+   - **Refusals are remembered:** `cub mini refuse APP-base/ORDER --reason "WHY"` blocks the change and warns future agent sessions why that value was rejected.
 
 ## A second app from the first
 
-Start Claude Code in a new folder, outside the first app's repository, and ask for *"a second app like the first"*. The agent runs `cub mini adopt notes --pattern greeter`: the second app's base is made from the first's. It keeps its own values, and can take what the first changes next, with `cub mini upgrade greeter-base/app`. Approve its live copy as for the first app. [A new app that fits the team's pattern](../../examples/walkthroughs/story-18-dev-intent.md) shows it with every command.
+Open a **new folder outside the first app’s repo** (the first app’s scoped session key cannot create new apps) and start Claude Code:
 
-## If something goes wrong
+```sh
+mkdir catalog && cd catalog && git init -q && claude
+```
 
-- **`cub: command not found`.** Use the command as the agent printed it, with `cub`'s full path. To type `cub` yourself, first run `export PATH="$HOME/.confighub/mini/confighub-mini-VERSION-OS-ARCH/bin:$PATH"`, with the folder name the agent's command shows.
-- **No hub answers after a restart.** Type `/confighub:staging` in Claude Code, in the app's folder, or ask the agent to start the hub. In a folder already connected, it starts the hub you had, with everything in it, and says what waits for you.
-- **The agent wrote a setup script for you to run, or asked you to sign in.** The Claude plugin's skill was not used. Check that the Claude plugin is installed with `claude plugin list`, and ask again with the words "using ConfigHub".
-- **Adopt found no settings.** It prints `reads no settings adopt can find` when the app has no `.env`, compose file, `.env.example` or `.tfvars` file, and its code reads no setting. Ask the agent to put the app's settings in `.env`, then adopt again. If the folder has an env file by another name, such as `api.env`, the message names it and gives the two ways on: rename it to `.env`, or keep it with `cub mini upload APP --variant live --target none`.
-- **Live does not have a production value you asked for.** The agent wrote it in `.env`, which the copies share, and not in `.env.production`. Live takes a shared value only when you approve it: `cub mini waiting` shows it, and `cub mini approve APP-base/adopt` gives it to live. To make it live's own from the start, ask the agent to put it in `.env.production` too.
-- **A value was left out and named.** A value that looks like a password or a token never goes into the hub. Keep it out of the file, and set it in a terminal with `cub mini secret set APP KEY --variant live --change-desc "WHY"` ([a secret for live](../from-plugin-to-confighub.md#a-secret-for-live-that-no-agent-can-read)).
-- **The second app did not start from the first.** This happens when the second app is asked for inside the first app's repository. Sessions there run on the first app's agent key, which may not make a new app. Ask from a folder of its own.
-- **Alpine Linux.** the local hub does not run on it. Use a distribution with glibc ([install](../install-mini.md)).
+Type `/confighub:start-from greeter` or ask: **“Build a second app like `greeter`.”**
+- Claude runs `cub mini adopt catalog --pattern greeter`.
+- `catalog` inherits `greeter`’s shared settings and reasons immediately in staging, keeps its own app-specific settings separate, and requires its own production approval.
+- Later improvements on `greeter` can flow to `catalog` via `cub mini upgrade greeter-base/app` ([walkthrough with every command](../../examples/walkthroughs/story-18-dev-intent.md)).
 
-## How to go back
+## What it takes & what you have
 
-Each way out, from refusing one change to removing the hub, is on [going back](going-back.md). If an agent has already done damage, [Sam's bad afternoon](../../examples/walkthroughs/story-19-recovery.md) stops every agent at once, finds the change and puts it back.
+- **Download:** First use downloads the local hub ([size](../install-mini.md#the-current-release)) into `~/.confighub/mini` and runs ConfigHub + PostgreSQL on `127.0.0.1` only. **No Docker, no account.**
+- **Files added:** `.confighub-app` (commit this) and `.claude/settings.local.json` (auto-excluded via `.git/info/exclude` so Claude sessions in this repo use the scoped agent key).
+- **Connecting real deployment:** Local setup prepares hub copies and local runs; connect delivery when deploying to a cloud host, VM, or cluster ([where the app runs](../agent-workflow.md#where-the-app-runs) · [verify live state](../approvals.md#verify-the-result)).
 
-## What you have now
+**Inspect anytime:**
+- In Claude Code: `/confighub:why GREETING` (every change, prompt, and agent rationale).
+- In Terminal: `cub mini receipts APP-live` (who changed, why, who approved) or `cub mini receipts APP --setup`.
 
-- The app, with its files as the agent wrote them, and `.confighub-app` committed beside them.
-- A hub on this machine with three copies of its settings: the base; staging, which takes each change at once; and live, which takes a change only when you approve it.
-- A key of the agent's own. Claude Code sessions in the folder run on it: they can propose a change to live, and cannot approve it.
-- The Claude plugin's record of what each agent changed, with the request and, where the agent said it, what it chose and why. `CUB_MINI_DECISIONS=0` in Claude Code's settings stops keeping what the agent said.
+Next steps: [Your first hour](../../examples/walkthroughs/story-13-first-hour.md) · [`cub mini` tour](../../examples/walkthroughs/tool-cub-mini.md) · [Add Postgres/Redis/S3](../from-plugin-to-confighub.md#a-service-the-app-needs) · [Live secrets agents can't read](../from-plugin-to-confighub.md#a-secret-for-live-that-no-agent-can-read) · [Move to a shared team hub](../from-plugin-to-confighub.md#step-3-your-organizations-confighub) · [Going back / recovery](going-back.md) · [Glossary](../README.md#words).
 
-What you do not have yet is a running service that reads live's values. Connect the [deployment path for your target](../agent-workflow.md#where-the-app-runs), then check that the service answers and that what it loaded matches the approved live revision ([verification](../approvals.md#verify-the-result)).
+---
 
-## What to try next
+<details>
+<summary><strong>Under the hood: what the agent runs during Step 2</strong></summary>
 
-In the same folder:
+1. Writes the app and `.env` (shared), `.env.staging`, and `.env.production`.
+2. Runs `confighub mini get` if no local hub is running (verifies release checksums, starts the hub on loopback, signs `cub` in; auto-start in other folders stays off unless you enable it).
+3. Runs `cub mini adopt`, creating `APP-base`, `APP-staging`, and `APP-live` plus baseline `pattern-web` rules (such as rejecting secret-shaped values in plain settings; separate from optional [starters](../starters.md)).
+4. Runs `cub mini require-approval APP --variant live --agent APP-agent --try preview`, creating the preview slot and scoping the folder's agent key.
+5. Prints the exact `cub mini approve APP-base/adopt` command for your terminal. Until you approve, `cub mini pull`, `pull-key`, and `deploy-from-hub` refuse production delivery.
+</details>
 
-1. Ask, *“Try a warmer greeting in preview and show me what the running app serves.”* Staging and production keep their old settings. If you like it, ask to make the greeting the shared default and put it in staging. Use the exact approval command it gives you when you are ready for production.
-2. In Claude Code, type `/confighub:why GREETING`: each change to the greeting, the request behind it, and the agent's own words about it.
-3. Run `cub mini receipts APP-live` for everything the hub keeps about live's latest revision: who made it, why, and who approved it. `cub mini receipts APP --setup` shows the app's setup: its copies, approval, agent keys, own values and delivery, each with why, and the `cub` command that changes it.
+<details>
+<summary><strong>Troubleshooting (<code>cub: command not found</code>, restarts, secrets, Linux)</strong></summary>
 
-Then, each a sentence to the agent: [try a change in a copy first](../from-plugin-to-confighub.md#try-a-change-in-a-copy-first), [a Postgres, a Redis, an S3 bucket or a mail sender](../from-plugin-to-confighub.md#a-service-the-app-needs), or [a password for live that no agent can read](../from-plugin-to-confighub.md#a-secret-for-live-that-no-agent-can-read). Later: [your team on one hub](../from-plugin-to-confighub.md#step-3-your-organizations-confighub), [a service on a VM](../vm.md) fed only approved values, or [a cluster](../gitops-over-oci.md) that deploys what the hub approved.
+- **`cub: command not found`:** Paste the full binary path printed by the agent, or add it to your shell: `export PATH="$HOME/.confighub/mini/confighub-mini-VERSION-OS-ARCH/bin:$PATH"`.
+- **Hub stopped after reboot:** Type `/confighub:staging` in Claude Code in the app folder (or ask the agent to start the hub); all data and pending orders persist.
+- **Agent wrote a bash setup script or asked for login:** Confirm the plugin is active with `claude plugin list`, start a fresh session, and include `"using ConfigHub"` in your prompt.
+- **`reads no settings adopt can find`:** Ask the agent to move configurable values into `.env` (or rename custom env files like `api.env` to `.env`).
+- **Missing value in `live`:** Shared `.env` values reach `live` only after `cub mini approve APP-base/adopt` (check `cub mini waiting`).
+- **Passwords / tokens skipped:** Use `cub mini secret set APP KEY --variant live --change-desc "WHY"` in your own terminal.
+- **Alpine Linux:** Requires glibc; Alpine (`musl`) is unsupported ([install details](../install-mini.md)).
+</details>
