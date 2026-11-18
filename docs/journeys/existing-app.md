@@ -25,15 +25,15 @@ The words on this page, such as *hub*, *base* and *change order*, are explained 
 
 ## Run a preview of my app
 
-Start with a web app you can run locally and a visible setting in its `.env`, such as its greeting. If you want a sample instead, ask your agent to build a small greeting app using ConfigHub. You need the [Claude Code plugin](../../README.md#install) or the [Codex setup](../codex.md#set-it-up). The first preview downloads a local hub if you don’t have one yet.
+For this exercise, use a local Node app with a greeting or another visible setting in `.env`. Its `npm start` script should call Node directly, for example `node server.js`, and its HTTP server should listen on `127.0.0.1`. If you want a sample instead, ask your agent to build a small greeting app using ConfigHub. You need the [Claude Code plugin](../../README.md#install) or the [Codex setup](../codex.md#set-it-up). Attaching the app downloads and starts a local hub if you need one.
 
 1. Open the Git folder in your agent and ask **“Attach ConfigHub to this app so I can try a preview. Keep my staging and production settings as they are.”** For a new app already connected to ConfigHub, skip this step.
 2. Ask the attaching agent for the app’s `run-codex` command if you’re using the Codex CLI. Paste it in Terminal to open a fresh session with the app’s permissions. In Claude Code, reopen the same folder. Ask **“Try a warmer greeting in preview and show me what it serves. Leave staging and production as they are.”** Substitute a visible setting if your app doesn’t have a greeting.
 3. Open the local URL the agent gives you and compare it with the original app. The preview should serve the new value while the original still serves the old one. You can try the preview while first delivery to production waits for your approval.
 
-**If Codex on macOS asks you to start the hub:** run `"$HOME/.codex/confighub/bin/confighub" mini get` in your own Terminal. Once the hub is ready, return to the app folder and ask Codex to finish attaching it. This step is only for the hub-backed preview.
+4. Close the agent and reopen the same app with its scoped launcher. Ask **“Is my preview still running? What does it serve?”** The agent can find the same preview and read its response. Ask it to stop the preview when you’re finished.
 
-**To keep the preview open after your agent exits**, ask **“Give me one command for another Terminal that runs this app in the foreground with its saved preview settings. Use the app’s limited permissions and a local URL.”** Keep the printed URL and leave that Terminal open. Give the URL to your next session if you want it to check this same running app. Press Ctrl-C to stop it. The preview settings stay in the hub. [What the running apps served in our test](../evidence.md#two-first-actions-in-fresh-sessions).
+Use Node.js 20.6 or newer and `lsof`. ConfigHub uses the latter to check which process owns the preview URL. For another runtime, use the app’s usual local preview command with the try’s settings. [See the Mac run](../evidence.md#two-first-actions-in-fresh-sessions).
 
 ## What it takes
 

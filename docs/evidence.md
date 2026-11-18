@@ -122,6 +122,12 @@ Git and the plugin both met the target for explaining the chosen value. The diff
 
 ## Two first actions in fresh sessions
 
+### After the shell-edit fix
+
+On a clean macOS profile, Codex rewrote the staged `.env` with Python. A second session received only **“Why is the cache on?”** It recovered `off → on` and the reason, next week’s sale, in 12.1 seconds. The journal and a lookup by key agreed. In a separate trial we used the two guide prompts verbatim. Codex chose a shell command, and the new session recovered the same answer in 7.5 seconds. Both trials used a development build, local hooks and a repository with no commits or hub.
+
+### Earlier run on plugin 0.99.0
+
 On 18 November 2026 we tested the public plugin 0.99.0 on macOS. Each follow-up session began in the same project without the previous conversation. These timings are from individual trials.
 
 | Task | Time to a result | What the next session recovered |

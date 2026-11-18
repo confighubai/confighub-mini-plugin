@@ -2,8 +2,10 @@
 
 Ask Claude Code or Codex to build an app. With ConfigHub, you can try a change in a running preview, leave production as it is, and keep what worked for the next app.
 
-- **[Remember one setting in five minutes](docs/try-the-plugin.md#try-it-in-five-minutes)**. Ask “Turn the cache on in `.env` for next week’s sale. Don’t commit.” In Codex, add “Use your `apply_patch` edit tool.” Reopen the folder in a fresh session and ask “Why is the cache on?” Look for `CACHE=off → on` and the reason about the sale. The record stays on your computer. No hub or ConfigHub account needed.
-- **[Run a preview of my app](docs/journeys/existing-app.md#run-a-preview-of-my-app)**. In a local web app, ask “Try a warmer greeting in preview and show me what it serves.” Open the preview URL. Only the preview should show the new greeting. This path uses a local hub.
+- **[Remember one setting in five minutes](docs/try-the-plugin.md#try-it-in-five-minutes)**. Ask “Turn the cache on in `.env` for next week’s sale. Don’t commit.” Reopen the folder in a fresh session and ask “Why is the cache on?” Look for `CACHE=off → on` and the reason about the sale. The record stays on your computer. No hub or ConfigHub account needed.
+- **[Run a preview of my app](docs/journeys/existing-app.md#run-a-preview-of-my-app)**. In a local Node app, ask “Try a warmer greeting in preview and show me what it serves.” Reopen the app and ask “Is my preview still running?” Only the preview should serve the new greeting. This path uses a local hub.
+
+Already reviewing changes? [See settings and reasons on a pull request](review/README.md) or [compare Git, the hub and your running cluster](examples/walkthroughs/story-09-git-hub-and-running.md).
 
 | Where are you starting? | What to try |
 | --- | --- |
@@ -41,8 +43,6 @@ git clone --depth 1 --branch v0 https://github.com/confighubai/confighub-mini-pl
 In the Codex CLI, open `/hooks`, review and approve the ConfigHub hooks, then start a fresh session in your app’s folder. [Codex setup and removal](docs/codex.md#set-it-up).
 
 [Product overview](https://confighub.github.io/helm-expt/ai-agents/) · [Walkthroughs by stack](examples/walkthroughs/README.md) · [Instructions for AI agents](AGENTS.md)
-
-Already reviewing changes? [See settings and reasons on a pull request](review/README.md) or [compare Git, the hub and your running cluster](examples/walkthroughs/story-09-git-hub-and-running.md).
 
 ## Why this, and why now
 

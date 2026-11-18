@@ -18,7 +18,7 @@ Ask your agent to change one setting, then open a fresh session and see whether 
      printf 'CACHE=off\n' > .env && git add -f .env
    ```
 
-3. Ask **“Turn the cache on in `.env` for next week’s sale. Don’t commit.”** In Codex, add **“Use your `apply_patch` edit tool.”** This lets the record name the setting. A script that rewrites the file can leave only the filename and the request. Allow the edit if your agent asks.
+3. Ask **“Turn the cache on in `.env` for next week’s sale. Don’t commit.”** Allow the edit if your agent asks.
 4. Start another fresh session in the same folder and ask **“Why is the cache on?”** Look for both the change from `off` to `on` and the request about the sale. To check the record yourself, type `/confighub:why CACHE` in Claude Code or run the [Codex record command](codex.md#read-the-record) in the project.
 
 [What fresh sessions recovered in this test](evidence.md#two-first-actions-in-fresh-sessions). You can delete the sample folder when you’re done. The local record expires after 30 days without use.

@@ -27,7 +27,7 @@ To try it, [change one setting and recover its reason](try-the-plugin.md#try-it-
 
 Codex can work on a scoped proposal key with a separate launcher ([setup and limits](approvals.md#codex-sessions-on-the-proposal-key)).
 
-On a Mac with no hub configuration, ask Codex to “Build me a small web app using ConfigHub.” The approved hook starts the local hub and tells you when it is ready. Other requests keep their usual behavior. If the hook cannot start the hub, it gives you the command to run in your own terminal.
+On a Mac with no hub configuration, ask “Build me a small web app using ConfigHub” or “Attach ConfigHub to this app so I can try a preview.” The approved hook starts the local hub. The five-minute cache example uses the plugin alone.
 
 Use normal app requests after setup; see [how the agent chooses a useful step and attributes ConfigHub actions](agent-workflow.md).
 
@@ -49,7 +49,7 @@ The record is the plugin's list of what agents changed, and why. Run this in the
 ~/.codex/confighub/bin/confighub mini changes
 ```
 
-If a script rewrote a whole file, the record can show the request against the filename without an entry for the individual key. For the five-minute example, ask Codex to use its built-in editor (`apply_patch`).
+For an env file, the record compares the settings before and after the edit. You can look up `CACHE` even if Codex used Python to rewrite the file and the repository has no commits.
 
 ## Remove it
 
