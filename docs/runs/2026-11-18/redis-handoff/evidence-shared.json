@@ -1,0 +1,175 @@
+{
+  "date": "2026-11-18",
+  "task": "Carry a reviewed Workshop Redis package and one staging override through mini into a hosted hub, then deliver the owner-approved value and verify the running database.",
+  "product": {
+    "local_and_shared_cli": "0.11.1-mini.17",
+    "published_package_sha256": "afb431684be43fb387c7e091f700ac43146f64ecb05374af3a2ad8603e7cf55e",
+    "cluster": "disposable kind cluster",
+    "provider": "hosted ConfigHub"
+  },
+  "inputs": {
+    "source": "oci://europe-west1-docker.pkg.dev/nth-fort-499605-q5/helm-expt/bitnami-redis:25.5.3@sha256:a216ce212424e05b341ef5000f1798e6014b72b8bc3dce9f315285871037af2a",
+    "selection": {
+      "package": "bitnami-redis",
+      "packageVersion": "25.5.3",
+      "base": "reuse-existing-secret"
+    },
+    "selection_sha256": "af536f73c559b7fb023581f8b54bc220a0e4556281f02cee0805a41108e64ef2",
+    "rendered_oci": "sha256:1da455a2f7ccd6f2e375705e94e44b357abddf071c6dde06ee71e73bce5ace31",
+    "rendered_object_set": "sha256:518db60ad92b59818c9e84042b12cc7b3d850a583ab7ca565bbf09f6806e4324",
+    "rendered_objects": 14,
+    "rendered_secret_objects": 0
+  },
+  "baseline": {
+    "source": "Rendered Workshop manifests applied with kubectl. The chart reads a separately created Kubernetes Secret.",
+    "redis": [
+      "PONG",
+      "role:master",
+      "connected_slaves:3"
+    ],
+    "master_ready": 1,
+    "replicas_ready": 3
+  },
+  "local": {
+    "revisions": {
+      "base": {
+        "revision": 2,
+        "redis_replica_count": 3
+      },
+      "live": {
+        "revision": 2,
+        "redis_replica_count": 3
+      },
+      "staging": {
+        "revision": 4,
+        "redis_replica_count": 2
+      }
+    },
+    "change": {
+      "resource": "StatefulSet/redis/redis-replicas",
+      "path": "spec.replicas",
+      "before": 3,
+      "after": 2,
+      "other_manifest_differences": 0,
+      "reason": "Keep two read replicas in staging to test failover without paying for a third."
+    },
+    "copy": "The package URI and original selection file were explicitly attached as Unit annotations before native mini copy export.",
+    "copy_sha256": "bdc57fd53f49c6d1d17e971080eac476014adfa02fd164de3a2fc10217edf679"
+  },
+  "shared_import": {
+    "how": "mini copy --from-file on the hosted hub",
+    "variants": {
+      "base": {
+        "matched_objects": 14,
+        "revision": 2,
+        "replicas": 3
+      },
+      "staging": {
+        "matched_objects": 14,
+        "revision": 4,
+        "replicas": 2
+      },
+      "live": {
+        "matched_objects": 14,
+        "revision": 2,
+        "replicas": 3
+      }
+    },
+    "selection_in_every_variant": "Byte-identical to the original selection.yaml; the source URI/digest also matched.",
+    "protected_staging_reason": "Keep two read replicas in staging to test failover without paying for a third."
+  },
+  "proposed": {
+    "how": "Read the replica count and field-level reason from the hosted staging unit. Explicitly set that count on the shared base to propose the one-field production change.",
+    "owner_read": "wt-redis-lxcicx-live: app: StatefulSet/redis-replicas/spec.replicas 3 \u2192 2",
+    "read_against": "wt-redis-lxcicx-live:app@2",
+    "order": "wt-redis-lxcicx-base/upload-20261118-074132-hu02",
+    "base_revision": 4,
+    "pending_gate_result": "Promotion dry run: base app revision 4 had 0 of 1 required approvals.",
+    "while_pending": {
+      "mini_pull_offered_live_revision": 2,
+      "live_replica_setting": 3,
+      "redis_master_reply": [
+        "PONG",
+        "connected_slaves:3"
+      ]
+    }
+  },
+  "approval": {
+    "recorded_by": "Owner, in a separate interactive approval. The same account\u2019s credentials were used to propose; separate people or roles were not tested.",
+    "type": "Approval",
+    "result": "Pass",
+    "at": "2026-11-18T07:45:46.539174Z",
+    "order_state": "Released",
+    "released_at": "2026-11-18T07:45:51.356449Z"
+  },
+  "delivery": {
+    "verified_manifest_objects": 14,
+    "other_object_differences": 0,
+    "approved_base_revision": 4,
+    "promoted_live_revision": 3,
+    "immutable_live_revision_bytes_sha256": "643577e649bd06968763944251c1557055c174862b518a22d438d123a9c43d92",
+    "mini_pull_file_sha256": "643577e649bd06968763944251c1557055c174862b518a22d438d123a9c43d92",
+    "canonical_manifest_sha256": "1950c62e27405bc33aeee452de150fba472d368a4fb91fbeb84b2e67947835f2",
+    "matches_hosted_staging": true,
+    "approved_live_revision_id": "3689b7bf-426b-40ca-b59c-84fa25eb09a1",
+    "how": "mini pull wrote the live revision to a file. The file matched an independent read of the immutable revision byte-for-byte. The operator applied the file with kubectl; no in-cluster GitOps controller was used."
+  },
+  "cluster": {
+    "observed_utc": "2026-11-18T07:47:21.329045+00:00",
+    "delivery": "The operator applied the file from mini pull after comparing all 14 manifests to the pinned live revision using kubectl in the disposable kind cluster.",
+    "apply_result": {
+      "unchanged": 7,
+      "configured": [
+        "service/redis-master configured",
+        "service/redis-replicas configured",
+        "statefulset.apps/redis-master configured",
+        "statefulset.apps/redis-replicas configured",
+        "poddisruptionbudget.policy/redis-master configured",
+        "poddisruptionbudget.policy/redis-replicas configured",
+        "networkpolicy.networking.k8s.io/redis configured"
+      ],
+      "server_dry_run_diff": "Only the replica StatefulSet spec.replicas and its server-controlled generation changed.",
+      "post_apply_diff_empty": true
+    },
+    "workloads": {
+      "redis-master": {
+        "uid": "59f4f5fc-4c44-4a80-a7ba-6f05eee78f23",
+        "desired": 1,
+        "ready": 1,
+        "generation": 1,
+        "observedGeneration": 1
+      },
+      "redis-replicas": {
+        "uid": "3eccf829-2c7c-4572-a1a9-e333910c6f60",
+        "desired": 2,
+        "ready": 2,
+        "generation": 2,
+        "observedGeneration": 2
+      }
+    },
+    "same_statefulset_uids": true,
+    "surviving_pods_kept_uids": [
+      "redis-master-0",
+      "redis-replicas-0",
+      "redis-replicas-1"
+    ],
+    "removed_pod": "redis-replicas-2",
+    "pod_count": 3,
+    "redis_probe": [
+      "PONG",
+      "role:master",
+      "connected_slaves:2"
+    ]
+  },
+  "cleanup": {
+    "remaining_test_resources": {
+      "components": 0,
+      "spaces": 0,
+      "workflows": 0,
+      "clusters": 0,
+      "nodes": 0,
+      "processes": 0
+    },
+    "scope": "Only the test component, its three spaces and its workflow, the test kind cluster and the two disposable local minis were removed."
+  }
+}
