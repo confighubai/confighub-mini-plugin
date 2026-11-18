@@ -36,7 +36,7 @@ For this exercise, use a local Node app with a greeting or another visible setti
 
 For an app with a `GREETING` setting, your agent can run `cub mini preview --set 'GREETING=Welcome back!' --change-desc 'Welcome returning visitors'` in the app session. It finds the address again with `cub mini preview --status` and stops it on request with `cub mini preview --stop`.
 
-Use Node.js 20.6 or newer and `lsof`. ConfigHub uses the latter to check which process owns the preview URL. For another runtime, use the app’s usual local preview command with the try’s settings. [See the Mac run](../evidence.md#two-first-actions-in-fresh-sessions).
+Use Node.js 20.6 or newer and `lsof`. ConfigHub uses the latter to check which process owns the preview URL. For another runtime, use the app’s usual local preview command with the try’s settings. [See what the preview served on a clean Mac profile](../evidence.md#the-default-preview-on-plugin-0992-and-mini19).
 
 ## What it takes
 
