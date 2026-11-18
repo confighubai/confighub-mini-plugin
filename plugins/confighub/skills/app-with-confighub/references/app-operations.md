@@ -245,8 +245,10 @@ person who uses Codex or asks to start the agent in another folder. Codex's laun
 uses separate settings and native command permissions, with the owner's sign-in out of
 reach.
 
-Its last lines, under "Tell the person this, in these words", are what the person needs after
-setup: what they now have, what it does for them next time, and the one command to type if a
+For a local preview, reopen Claude Code in the app folder or give the Codex user the printed
+`run-codex` command. Leave production orders pending.
+
+For other setup, the last lines under "Tell the person this, in these words" are what they need: what they now have, what it does for them next time, and the one command to type if a
 change already waits for them. End your reply with those lines as they are. Do not add the
 hub's Spaces, PATH lines, launch lines, or other commands for the person; they can ask.
 

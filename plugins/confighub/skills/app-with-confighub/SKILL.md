@@ -14,9 +14,19 @@ a setup choice. Complete that requested setup; do not replace it with plain file
 whether they want ConfigHub again. For an app that Argo CD or Flux already deploys, with
 `CUB_MINI_STARTERS` set, read reference section 0 first: one line does the setup. Otherwise
 read reference sections 1–3, build the app and settings,
-start/find the chosen hub, adopt the app, and prepare its restricted agent setup. If asked to attach an app so the person can try a preview, finish by giving them the
-exact scoped run-codex launcher that adopt printed and end the setup turn there.
-Leave preview verification and changes to that app session, using the cub on its PATH. Missing
+start/find the chosen hub, adopt the app, and prepare its restricted agent setup.
+
+**When the request is to attach an app for a local preview**, end the setup turn
+with just the next step for the client you are running in:
+- **Claude Code:** “Reopen Claude Code in this app folder and ask for the preview.”
+  The app folder already has its scoped settings.
+- **Codex CLI:** Give the exact scoped `run-codex` command printed by adopt and
+  ask the person to start their preview there.
+
+That is the complete preview handoff. The approval line printed under “Tell the
+person this” is for shipping to production. Omit it from a preview reply, even
+as an optional next step. The preview works with that order pending. Make and
+verify the preview change in the new app session using the cub on its PATH. Missing
 `cub` is what the bundled program's `mini get` installs, not a reason to stop. A restricted
 key still uses the owner handoff below rather than acquiring new rights.
 
@@ -29,7 +39,7 @@ Inspect `.confighub-app` and existing environment and deployment setup first.
 | Attach ConfigHub to an app that Argo CD or Flux already deploys (`kubectl get applications.argoproj.io -A` or `kustomizations.kustomize.toolkit.fluxcd.io -A` shows it), whether or not `CUB_MINI_STARTERS` is set | Use reference section 0: run the starter's adopt yourself when a hub answers, and the person's approval moves what the controller deploys from Git to the hub's OCI release. Hand over that approval command; without it the controller still deploys from Git and nothing has moved. Do not use sections 1–3 for it. |
 | Build an app using ConfigHub, or attach ConfigHub | Complete the already requested setup with reference sections 1–3. Explain the download in the brief action notice; do not ask again whether to use the product they chose. |
 | Understand or preserve an earlier setting | Use the history supplied by the plugin; attribute it briefly when it explains your answer. No hub needed. |
-| Try a preview or see a setting change before shipping | In an attached env-file Node app, use the app’s scoped launcher. Run `cub mini preview --set 'KEY=VALUE' --change-desc "WHY"` with the app’s actual setting. For a preview of the current settings use `cub mini preview`. This changes only the assigned try. Leave app files (including .env), staging and live alone. Fetch the printed URL, tell the person what it serves and leave it running after the session closes. Stop only on request. When someone returns, run `cub mini preview --status` and fetch that address. For another runtime or a named try, see app-operations section 4. |
+| Try a preview or see a setting change before shipping | In an attached env-file Node app, use the app’s scoped session. Run `cub mini preview --set 'KEY=VALUE' --change-desc "WHY"` with the app’s actual setting. For a preview of the current settings use `cub mini preview`. This changes only the assigned try. Leave app files (including .env), staging and live alone. Fetch the printed URL, tell the person what it serves and leave it running after the session closes. Stop only on request. When someone returns, run `cub mini preview --status` and fetch that address. For another runtime or a named try, see app-operations section 4. |
 | Ship an attached app's change | Show the proposed values and exact revision. Submit for owner approval, then verify the delivery path and running service separately. |
 | Make another app like this one | For an attached source app, offer its base as a pattern; retain the new app's own settings and keep credentials private. |
 | Let CI or another machine continue the work | Check whether it can reach the chosen hub. Prepare a scoped reader or proposer appropriate to the task. Explain any missing connectivity or access before changing the setup. |
@@ -87,7 +97,7 @@ merge histories, or prove that a hosted/team path works.
 
 ## End the turn with what they gained, then one thing to do
 
-The person reads your last message, not your commands. Write it in this order:
+For a local preview, use the client-specific handoff above. For other requests, write the handoff in this order:
 
 1. One sentence on what they have now, in their words, before any detail. For example:
    "Production can't change without you now; staging takes your agents' changes at once."
@@ -120,7 +130,7 @@ delivery do not come with it.
   around it. It is about your session, not the person's: do not mention it to them at all, nor the
   settings file, the key's name or how to revoke it, unless they ask. Read with the agent's
   `CUB_CONFIG` and `CUB_CONTEXT` it printed.
-- After setup, your whole reply is the lines `require-approval --agent` printed under
+- After other setup, your whole reply is the lines `require-approval --agent` printed under
   "Tell the person this, in these words", as they are, with at most one sentence of your own before
   them; give the person no other command, even one a guide names, since those lines carry the
   command as it runs in their terminal.
