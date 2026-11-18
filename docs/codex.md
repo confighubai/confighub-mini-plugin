@@ -1,58 +1,66 @@
-# In Codex
+# Using ConfigHub in Codex CLI
 
-This page is for setting up the ConfigHub plugin in Codex. Codex runs only the hooks in its own configuration, not the hooks a plugin carries. So installing the plugin in Codex records nothing until you run one setup command. That command also installs the shared app workflow for ordinary development requests.
+Codex runs hooks configured in its own settings directory rather than plugin-bundled hooks. One setup command installs the ConfigHub binary (`~/.codex/confighub/bin/confighub`), hooks, and shared app workflow into Codex.
 
 ## Set it up
 
-1. With Git and the Codex CLI installed, paste this in Terminal. It downloads the released plugin into `~/confighub-mini-plugin` and installs its hooks and app workflow into Codex. You can run it from any folder.
+1. **Install hooks and workflow** (paste in Terminal from any folder; requires Git and Codex CLI):
 
    ```sh
    git clone --depth 1 --branch v0 https://github.com/confighubai/confighub-mini-plugin.git "$HOME/confighub-mini-plugin" &&
      "$HOME/confighub-mini-plugin/plugins/confighub/bin/confighub" mini codex-setup
    ```
 
-2. In the Codex CLI, type `/hooks`, review and approve the ConfigHub hooks, then start a fresh session in your app’s folder.
+2. **Approve hooks once in Codex CLI:** open `codex`, run `/hooks`, review and approve the ConfigHub hooks, then start a **fresh `codex` session** in your project folder.
 
-The `v0` tag tracks the published plugin. To update an existing installation, run:
+**What to try first:**
+- **Plugin only (no server):** [Remember why a setting changed in five minutes](try-the-plugin.md#try-it-in-five-minutes).
+- **Local hub + live preview:** [Run a preview of an existing app](journeys/existing-app.md#run-a-preview-of-my-app) or follow [the preview and second-app steps below](#try-a-change-and-start-a-second-app).
 
-```sh
-git -C "$HOME/confighub-mini-plugin" fetch origin refs/tags/v0 &&
-  git -C "$HOME/confighub-mini-plugin" switch --detach FETCH_HEAD &&
-  "$HOME/confighub-mini-plugin/plugins/confighub/bin/confighub" mini codex-setup
-```
+<details>
+<summary><strong>Updating or removing the Codex integration</strong></summary>
 
-Review changed hooks in `/hooks` and start a fresh session.
+- **Update to the latest `v0` release:**
+  ```sh
+  git -C "$HOME/confighub-mini-plugin" fetch origin refs/tags/v0 &&
+    git -C "$HOME/confighub-mini-plugin" switch --detach FETCH_HEAD &&
+    "$HOME/confighub-mini-plugin/plugins/confighub/bin/confighub" mini codex-setup
+  ```
+  Then review any changed hooks in `/hooks` and start a fresh session.
+- **Uninstall:** Run `"$HOME/confighub-mini-plugin/plugins/confighub/bin/confighub" mini codex-setup --remove`. This removes the hooks, `~/.codex/confighub` binary copy, and unmodified app workflow (any custom or edited personal skill is preserved).
+</details>
 
-To try it, [change one setting and recover its reason](try-the-plugin.md#try-it-in-five-minutes) or [run a preview of your app](journeys/existing-app.md#run-a-preview-of-my-app).
-
-Codex can work on a scoped proposal key with a separate launcher ([setup and limits](approvals.md#codex-sessions-on-the-proposal-key)).
-
-On a Mac with no hub configuration, ask “Build me a small web app using ConfigHub” or “Attach ConfigHub to this app so I can try a preview.” The approved hook starts the local hub. The five-minute cache example uses the plugin alone.
-
-Use normal app requests after setup; see [how the agent chooses a useful step and attributes ConfigHub actions](agent-workflow.md).
-
-For what is recorded, refused or left to a person, see the [client capability matrix](how-it-works.md#client-capabilities).
+---
 
 ## Try a change and start a second app
 
-**You** request the preview and decide whether to keep it. **Your agent** starts and checks it, leaves it running, and can recover its address in the next app session. You review any production change.
+**You** choose what to share and decide separately about production. **Your agent** checks the preview, makes the greeting a shared staging setting at your request, and verifies the second app’s response.
 
-On macOS, attaching a local env-file app prepares a preview and gives you the full path to its `run-codex` launcher. Run that command in Terminal to open a fresh session with the app’s permissions. For a Node app that starts with a direct `node` command, that same launcher lets you return to a running preview.
+When you create or attach an app on macOS, ConfigHub prepares a local hub, a preview slot, and a **scoped `run-codex` launcher** for that folder. Running `run-codex` starts Codex on the app's proposal key—so the agent can update `preview` and `staging` freely while the hub refuses any attempt by the agent to self-approve `live` ([scoped Codex key details](approvals.md#codex-sessions-on-the-proposal-key)).
 
-1. Ask, “Try a warmer greeting in preview.” The agent pulls the preview settings and runs a separate copy of the app. Staging and production stay as they were. Ask for the actual response if you only see what the hub stored.
-2. If you like it, ask, “Make that the shared greeting and put it in staging.” Use the exact approval command the agent gives you when you are ready for production to take it. Delivery to a running app needs a connected deployment path.
-3. For a second app, open an ordinary Codex session in a new Git folder. Ask, “Build a second app using the first app’s setup.” The first app’s limited session cannot attach another app. The second app uses the same hub, starts with the shared greeting and gets its own first production review.
+1. **Attach or create your first app** in an ordinary `codex` session:
+   - Empty Git folder: `Build me a small web app using ConfigHub.`
+   - Existing Node app: `Attach ConfigHub to this app so I can try a preview.`
+2. **Open the app’s scoped session** in Terminal using the `run-codex` path printed at the end of Step 1, then ask:
+   ```text
+   Try a warmer greeting in preview.
+   ```
+   The agent starts an isolated local preview process and prints its `http://127.0.0.1:...` URL while keeping your `.env` files, `staging`, and `live` unchanged.
+3. **Promote when ready:** Ask `Make that the shared greeting and put it in staging. Show me what the first app serves there.` When you want production to take it, run the printed `cub mini approve` command in your own terminal.
+4. **Start a second app from the first:** Open a normal `codex` session (not the first app's scoped `run-codex` launcher) in a **new Git folder** and ask:
+   ```text
+   Build a second app using the first app’s ConfigHub setup. Let it inherit the greeting. Run the second app with its staging settings and show me its response.
+   ```
+   Check that both staging apps serve the same greeting and the second app has no greeting in its own settings file. Its production approval is separate.
+
+See [normal app workflow behavior](agent-workflow.md) and the [client capability matrix](how-it-works.md#client-capabilities) for details on what Codex hooks record vs. refuse.
 
 ## Read the record
 
-The record is the plugin's list of what agents changed, and why. Run this in the project folder:
+Inspect what Codex sessions changed and why from your Terminal inside any project folder (`codex-setup` places the CLI at `~/.codex/confighub/bin/confighub`):
 
-```
+```sh
 ~/.codex/confighub/bin/confighub mini changes
 ```
 
-For an env file, the record compares the settings before and after the edit. You can look up `CACHE` even if Codex used Python to rewrite the file and the repository has no commits.
-
-## Remove it
-
-`codex-setup --remove` takes out the hooks, program copy and installed app workflow. Setup refuses to overwrite a personal skill of the same name or an edited installed workflow; it reports the conflict before changing hooks. Removal keeps a personal or edited workflow while taking out the hooks and program copy.
+For `.env` files, this compares before/after values and shows the prompt behind each edit—even when the repo has no Git commits or Codex edited the file via Python.

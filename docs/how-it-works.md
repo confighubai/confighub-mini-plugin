@@ -1,8 +1,12 @@
 # How the plugin works
 
-This page is for anyone who has installed the Claude plugin, or is deciding whether to, and wants to know what it does in detail. The Claude plugin keeps a record of each configuration value an agent changes, and of why. This page covers what the next agent is told and when, when the Claude plugin stops a command, what is recorded, the settings, and what it costs. To install it, see [the README](../README.md).
+This page is for anyone who has installed the ConfigHub plugin (in Claude Code or Codex CLI), or is deciding whether to, and wants to know what it does in detail. To install it, see [the README](../README.md); for walkthrough output, see [the plugin walkthrough](../examples/walkthroughs/tool-plugin.md) and [the glossary](README.md#words).
 
-The words on this page, such as *session*, *turn* and *record*, are explained in [the glossary](README.md#words). The walkthrough [the Claude plugin](../examples/walkthroughs/tool-plugin.md) shows the Claude plugin at work, with every command and what it prints.
+**At a glance:**
+- **Local hooks only (~9 MB binary):** Runs around each tool call on macOS and Linux—no background daemon, no database, no Docker, and no ConfigHub account.
+- **Stored locally on your machine:** Records live in `~/.confighub/agent-changes` outside your Git repository. Nothing leaves your machine unless you turn on OpenTelemetry (`CUB_MINI_OTEL=1`) or copy records to a shared hub ([where the record is kept](#what-it-records-and-what-it-does-not)).
+- **Secrets redacted automatically:** Passwords, connection strings, and provider secrets have their values stripped—only the setting name and prompt are recorded.
+- **History across sessions.** A fresh session can look up a recorded setting and its reason. In Codex, supported reads can supply earlier context, and `apply_patch` edits are recorded after they run. See the client table below for warnings and refusals.
 
 ## Client capabilities
 

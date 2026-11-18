@@ -1,77 +1,87 @@
 # Try the plugin on its own
 
-Ask your agent to change one setting, then open a fresh session and see whether it can explain the change. You need Git and Claude Code or Codex. The record stays on your computer. No hub or ConfigHub account is needed.
+Give your next session the reason for an uncommitted edit. The plugin records the change on your machine. You need Git and Claude Code or Codex. No server or ConfigHub account is required.
 
 ## Try it in five minutes
 
-**You** install the plugin, open the sample folder and ask two questions in separate sessions. **Your agent** makes the edit, then uses the record to explain it in the next session.
+**You** open a sample folder and ask two questions in separate sessions. **Your agent** edits the setting and later reads the record to explain why.
 
-1. **Claude Code:** if you haven’t installed the plugin, run these in Terminal. **Codex:** use the [copyable Codex setup](codex.md#set-it-up) and approve its hooks instead.
+1. **Install the plugin** (skip if already installed):
 
+   **Claude Code:**
    ```sh
    claude plugin marketplace add confighubai/confighub-mini-plugin
    claude plugin install confighub@confighub
    ```
+   *(Using **Codex CLI**? Follow the [one-command Codex setup](codex.md#set-it-up) and approve `/hooks` instead.)*
 
-2. Create a throwaway Git folder with a sample setting. Then start a fresh session in that folder with `claude` or `codex`.
+2. **Create a throwaway Git folder** and start a fresh `claude` or `codex` session inside it:
 
    ```sh
    mkdir try-confighub && cd try-confighub && git init -q &&
      printf 'CACHE=off\n' > .env && git add -f .env
    ```
 
-3. Ask **“Turn the cache on in `.env` for next week’s sale. Don’t commit.”** Allow the edit if your agent asks.
-4. Start another fresh session in the same folder and ask **“Why is the cache on?”** Look for both the change from `off` to `on` and the request about the sale. To check the record yourself, type `/confighub:why CACHE` in Claude Code or run the [Codex record command](codex.md#read-the-record) in the project.
+3. **Ask in Session 1** (and allow the edit):
 
-[What fresh sessions recovered in this test](evidence.md#two-first-actions-in-fresh-sessions). You can delete the sample folder when you’re done. The local record expires after 30 days without use.
+   ```text
+   Turn the cache on in .env for next week's sale. Don't commit.
+   ```
 
-The [full plugin walkthrough](../examples/walkthroughs/tool-plugin.md) shows the output, what happens when a later agent turns the cache off, and how to add a hub when you need one.
+4. **Open a fresh session** in the same folder and ask:
 
-## The problem it solves
+   ```text
+   Why is the cache on?
+   ```
 
-Without the Claude plugin:
+### What you should see
 
-1. You ask an agent to give the api 4 replicas, because Friday's sale will bring four times the usual traffic.
-2. Later, in another session, you ask an agent to cut costs. It sets the api to 1 replica.
-3. Nobody committed in between, so Git shows only this:
+Even though nobody made a Git commit, the fresh session recovers both the previous value (`off → on`) and your reason about next week's sale.
 
-```
-$ git diff k8s/api.yaml
--  replicas: 2
-+  replicas: 1
-```
+You can also inspect the record directly:
+- **In Claude Code:** type `/confighub:why CACHE`
+- **In Terminal (Codex):** run `~/.codex/confighub/bin/confighub mini changes`
 
-The 4, and the reason for it, are gone. Nothing tells you or the next agent that the sale needed them.
-
-With the Claude plugin, the second agent was told about the 4 before it made its change, and it said so:
-
-> **This change undoes an earlier one.** The file already had an uncommitted change that raised replicas from 2 to 4. A session earlier today made it, with this request: *"Friday's flash sale will quadruple traffic to the api: give it 4 replicas."* So 1 replica is below even the committed value of 2, and it would leave the api with a single pod on Friday.
-
-The same thing happens on a cluster, when one agent's deploy would undo another's change.
-
-## Stop every agent at once
-
-To stop every Claude Code session with the Claude plugin at its next tool call, make this file from any terminal. Remove it to let them run again:
-
-```
-touch ~/.confighub/halt
+```text
+CACHE: on in .env
+  off → on
+  asked: "Turn the cache on in .env for next week's sale. Don't commit."
 ```
 
-A process an agent already started keeps running, and credentials on your machine stay valid. [Sam's bad afternoon](../examples/walkthroughs/story-19-recovery.md) shows what to do next: find the change and put it back.
+Delete `try-confighub` when you're done (unused local records expire after 30 days). See [measured session timings](evidence.md#two-first-actions-in-fresh-sessions) or the [full plugin walkthrough](../examples/walkthroughs/tool-plugin.md).
 
-To choose how closely MCP calls are watched in a folder, use `/confighub:checks`. At `repeats`, an agent that is about to repeat an earlier change, such as refunding a charge again, is held back once and told about it. At `ask`, you are asked before each call that changes something ([how it works](how-it-works.md#how-closely-mcp-calls-are-watched)).
+---
 
-## What it records
+## Why Git alone misses this
 
-- **Values in configuration files**, such as Kubernetes files, Helm values, `.env` and Terraform variables, whether the agent used its edit tool or a shell command such as `sed`.
-- **Commands and MCP tool calls that change something**, such as `kubectl`, `helm`, `terraform`, `cub` or a refund through a payments server, with the values they set and credentials taken out.
-- **Why**: the request the agent was given, and what it said it chose for a value it changed.
+Suppose Session 1 raises `replicas` from `2` to `4` for Friday's flash sale without committing, and Session 2 is asked to cut costs and sets `replicas: 1`. Comparing the original file with the final one shows `2 → 1`. The intermediate value and the sale request are missing from that diff.
 
-Each entry is signed as it is written, so a later check names any entry that was changed, added or taken out ([signed records](signed-records.md)). It never keeps a command's output, a copy of a file, or anything that looks like a password, key or token, and nothing leaves your machine unless you turn on a setting that sends it somewhere. The whole list, every setting and what is never kept are in [how it works](how-it-works.md#what-it-records-and-what-it-does-not); [limits](limits.md) says what it does not do.
+On a supported Claude Code edit, a later session can see this warning before changing the value:
 
-## Set it up for your whole team
+> **This change undoes an earlier one.** The file already had an uncommitted change that raised replicas from 2 to 4. A session earlier today made it, with this request: *"Friday's flash sale will quadruple traffic to the api: give it 4 replicas."*
 
-To give the Claude plugin to everyone who opens a repository in Claude Code, commit this as `.claude/settings.json` in it, or add the two keys to the one it has:
+Codex can recover the same history. Its hooks record `apply_patch` edits **after** they run. The [capability table](how-it-works.md#client-capabilities) identifies which operations get a warning or can be refused. [See the measured runs](evidence.md).
+
+## What it records (and never records)
+
+- **Recorded:** Changed keys in `.env`, Kubernetes manifests, Helm values, Kustomize, Compose, GitHub Actions, and Terraform files; state-changing CLI commands (`kubectl`, `helm`, `terraform`, `vercel`, `fly`, `aws ssm`, `cub`) and MCP tool calls; the user request and the agent's stated rationale. Each entry is cryptographically signed ([signed records](signed-records.md)).
+- **Never recorded:** Command outputs, full file copies, or anything resembling a password, secret, key, or connection-string credential. Nothing leaves your machine unless you opt in ([all details](how-it-works.md#what-it-records-and-what-it-does-not) · [what we do not claim](limits.md)).
+
+<details>
+<summary><strong>Emergency stop &amp; MCP tool guardrails</strong></summary>
+
+- **Pause all Claude Code sessions at their next tool call:**
+  ```sh
+  touch ~/.confighub/halt   # remove the file to resume
+  ```
+  See [Sam's bad afternoon](../examples/walkthroughs/story-19-recovery.md) for full incident recovery.
+- **Control MCP write calls:** Use `/confighub:checks` (`log`, `warn`, `repeats`, or `ask`) in Claude Code to hold back duplicate side effects (like double refunds) or require human confirmation ([how MCP checks work](how-it-works.md#how-closely-mcp-calls-are-watched)).
+</details>
+
+<details>
+<summary><strong>Share plugin setup with your team via Git</strong></summary>
+
+Add these keys to `.claude/settings.json` in your repository so teammates opening the project in Claude Code get the marketplace automatically:
 
 ```json
 {
@@ -82,19 +92,17 @@ To give the Claude plugin to everyone who opens a repository in Claude Code, com
 }
 ```
 
-When a teammate trusts the folder and starts a session, Claude Code adds the marketplace. If `/plugin` then says the Claude plugin is enabled but not installed, they run `claude plugin install confighub@confighub --scope project` once.
+If `/plugin` reports the plugin is enabled but not yet installed, run `claude plugin install confighub@confighub --scope project` once.
+</details>
 
-## When you want more than a record
+## When you want more than a local record
 
-The record tells you and your agents what happened. It cannot stop an agent that holds your keys, and it cannot approve anything. For that, you add a hub.
+A record informs you and your agents, but an agent running with your credentials can still touch production. Add a **hub** when you want hard environment boundaries:
 
-A hub, on your laptop or shared, holds a change to production for the person you name. The local hub can also run in a sandbox or a CI job, and the Claude plugin's record goes into it with `cub mini copy --from-record`.
-
-| What you want | What to do |
+| Goal | Next step |
 |---|---|
-| A comment on every pull request listing each configuration value it changes, and why | Add the review GitHub Action ([how](../review/README.md)): one step in a workflow file |
-| What your agents changed, and why, in a shared hub, with no local hub | Sign in with `cub auth login`, then type `/confighub:to-hub` ([Git, GitHub and a hub](git-and-github.md)) |
-| Agents that propose changes to production, which only a person you name can approve | One command on the local hub for your own agents; your organization's shared hub for a team ([approvals](approvals.md)) |
-| An agent in a sandbox or CI job with a hub of its own, that hands back a pull request with its reasons | One workflow file ([agents in CI](../ci/README.md), [in CI or a sandbox](ci-and-sandboxes.md)) |
-| To keep your own values through a vendor's next version of a Helm chart, and see first what it changes | Install the local hub with `bin/confighub mini get` from the Claude plugin, in a terminal ([install](install-mini.md)), then follow [a Helm chart you use, with your values](your-own-chart.md) |
-| Agents that run unattended for days, with a key of their own and a way to stop them at once | A ConfigHub organization ([agents that run for weeks](agents-that-run-for-weeks.md)) |
+| Comment changed config values + reasons on every GitHub PR | Add the one-step [PR review Action](../review/README.md) |
+| Test changes in a local preview & put `live` behind human approval | Run `/confighub:staging` or follow [attach an existing app](journeys/existing-app.md) |
+| Keep your overrides cleanly across upstream Helm chart upgrades | Install the local hub ([install](install-mini.md)) and see [your own Helm chart](your-own-chart.md) |
+| Run agents in CI or sandboxes with disposable hubs | See [agents in CI](../ci/README.md) and [CI & sandboxes](ci-and-sandboxes.md) |
+| Share records, keys, and approvals across teammates | Connect to [a shared hub](git-and-github.md) or see [unattended agents](agents-that-run-for-weeks.md) |

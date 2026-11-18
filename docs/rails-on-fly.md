@@ -4,7 +4,7 @@ Connect a Rails app that already runs on Fly. Give your agent a staging copy of 
 
 ## Connect and approve with two commands
 
-You need Claude Code with the [ConfigHub plugin](../README.md#install) 0.97.0 or later, a signed-in `flyctl`, and a `fly.toml` naming your Fly app. Use a disposable app with one Machine, a Fly registry image pinned by digest, and a readable, non-secret setting such as `APP_SUPPORT_HOURS`. If the Machine uses a tag, see [how to pin its image](#pin-the-fly-machine-image).
+Use Claude Code with the [ConfigHub plugin](../README.md#install) and the [current mini package](install-mini.md#the-current-release), a signed-in `flyctl`, and a `fly.toml` naming your disposable app. Use one Machine, one Fly registry image and a readable setting such as `APP_SUPPORT_HOURS`. A normal tagged deploy works when Fly reports the running image’s digest. Delivery uses that exact digest and stops if it cannot verify it.
 
 1. **Connect.** In the app folder in Claude Code, type `/confighub:staging`. ConfigHub installs and starts the local hub if needed. **Start a new Claude Code session in the same folder** to pick up the agent’s key.
 2. **Ask for a change.** “Set `APP_SUPPORT_HOURS` to `Daily` in staging. Propose the same change for production and show me the approval command.” This updates the hub’s staging settings. The running Fly app still serves its old value.
@@ -14,10 +14,6 @@ You need Claude Code with the [ConfigHub plugin](../README.md#install) 0.97.0 or
 
 When the command reports **Live on Fly**, check the new value in the running app. The sample Rails app exposes it at `/api/settings`. See [what ran on Fly](#testing).
 
-### Pin the Fly Machine image
-
-Run `flyctl machines list --app APP --json` to find the Machine ID, image repository, and `image_ref.digest`. Pin the image the Machine already runs with `flyctl machine update MACHINE --app APP --image registry.fly.io/IMAGE_REPOSITORY@DIGEST`. Use the full digest, starting with `sha256:`. Delivery expects one Machine without extra containers or processes.
-
 ## Use the starter for two Rails apps
 
 Suppose a shop and a cart use the same support hours. Each has its own banner, and the cart needs quieter logs. Start the cart from the shop’s setup, then change the hours once and see it in both staging copies.
@@ -25,6 +21,9 @@ Suppose a shop and a cart use the same support hours. Each has its own banner, a
 Use the [current local hub package](install-mini.md#the-current-release). The local example uses Python 3 and Docker.
 
 ## Try it without a Fly account
+
+<details>
+<summary><strong>Run two local Rails containers against a disposable hub (Docker + Python 3)</strong></summary>
 
 Set `MINI` to the absolute path of the unpacked package. The package has a small Rails app and a script that runs the two-app scenario on a disposable local hub, removes the hub, and leaves the two staging env files. Use Python 3 for the script and Docker to read those settings from two actual Rails processes.
 
@@ -41,17 +40,31 @@ docker run --rm --name rails-cart-example --env-file "$OUT/rails-cart.staging.en
 ```
 
 Once both start, read `/api/settings` on [port 3101](http://127.0.0.1:3101/api/settings) and [port 3102](http://127.0.0.1:3102/api/settings). Both should show `Daily`, with the separate values below. Stop the two containers with `docker stop rails-shop-example rails-cart-example`.
+</details>
 
 ## Connect the two apps
 
-Start with two Rails folders with a `Gemfile`, `bin/rails`, `config/application.rb` and a `fly.toml` in each. Give them these non-secret settings. Keep passwords, keys and Rails credentials in your existing secret store.
+Start with two Rails folders (`shop` and `cart`) with a `Gemfile`, `bin/rails`, `config/application.rb`, and `fly.toml` in each. Keep passwords, keys, and Rails credentials in your existing secret store; put only non-secret settings in `.env`:
 
 | File | Settings |
 |---|---|
 | `./shop/.env` | `APP_BANNER=coral` and `APP_SUPPORT_HOURS=Weekdays` |
 | `./cart/.env` | `APP_BANNER=indigo` and `RAILS_LOG_LEVEL=warn` |
 
-Use an empty test hub. From a fresh terminal, set `MINI` to the absolute path of the unpacked package and run:
+Adopt `shop` first, then start `cart` from `shop`’s setup (your agent can run these, or run them in Terminal):
+
+```sh
+export CUB_MINI_STARTERS=on
+cub mini adopt ./shop --name rails-shop
+cub mini adopt ./cart --name rails-cart --pattern rails-shop
+```
+
+`cart` inherits `APP_SUPPORT_HOURS=Weekdays` from `shop` while keeping its own `indigo` banner and `warn` log level.
+
+<details>
+<summary><strong>Isolated test-hub setup commands (optional)</strong></summary>
+
+To try this in a throwaway hub instead of your default `~/.confighub`, set `MINI` to the unpacked package path first:
 
 ```sh
 unset CUB_CONTEXT
@@ -59,23 +72,11 @@ export CUB_CONFIG="$(mktemp -d "$HOME/.confighub-rails-example.XXXXXX")"
 "$MINI/bin/confighub-mini-app" mini install-plugin "$CUB_CONFIG"
 cub() { "$MINI/bin/cub" "$@"; }
 cub mini install --name rails-fly-example --use
+cub mini adopt ./shop --name rails-shop --dry-run   # previews the rails-fly starter plan
 ```
 
-Then move to the directory containing `shop` and `cart`:
-
-```sh
-export CUB_MINI_STARTERS=on
-cub mini adopt ./shop --name rails-shop --dry-run
-```
-
-Look for `rails-fly` in the plan. It fills in `RAILS_LOG_LEVEL=info` with a reason and says delivery is left to you.
-
-```sh
-cub mini adopt ./shop --name rails-shop
-cub mini adopt ./cart --name rails-cart --pattern rails-shop
-```
-
-The cart takes the support hours from the shop. The cart's banner and log level stay its own.
+When done, remove the disposable hub with `cub mini uninstall --name rails-fly-example --delete-data`.
+</details>
 
 ## Change the hours and check staging
 
@@ -125,30 +126,32 @@ To go back, propose the old settings as a new change. Wait for approval, then us
 
 ## Testing
 
+In verified runs across two Rails apps (`shop` and `cart`) sharing support hours from one starter while keeping separate banners and log levels, Fly served:
+
+| Stage of rollout | `shop` on Fly (`coral`, `info`) | `cart` on Fly (`indigo`, `warn`) |
+| --- | --- | --- |
+| While production order waited for approval | `Weekdays` | `Weekdays` |
+| After owner approval and delivery | `Daily` (revision 3) | `Daily` (revision 5) |
+| While rollback order waited for approval | `Daily` | `Daily` |
+| After rollback approval and delivery | `Weekdays` (revision 4) | `Weekdays` (revision 6) |
+
+The delivery command refused pending orders. The cart update and both rollbacks kept the running image. The final cart rollback used the Mac build before publication. All four Fly apps and the local hub were removed.
+
+<details>
+<summary><strong>Detailed verification notes (15–17 November 2026)</strong></summary>
+
 **Follow-up with a tagged Fly deploy, 17 November 2026.** We used plugin 0.97.0 and a test build based on mini.15 that reads the running image digest from Fly. A normal Fly deploy left a tag in the Machine configuration. We connected the app with that tag still in place, changed the hub’s staging copy to `Daily`, and proposed the same change for production. The agent’s approval attempt and delivery of the pending order were both refused. The Rails endpoint kept serving `Weekdays`.
 
 - The owner approved the production change in a temporary browser helper. The helper stalled before forwarding the delivery confirmation, so the owner authorized delivery separately. The separate delivery used the owner’s existing approval of revision 3.
 - Fly kept the same Machine and image digest. The delivery comparison matched revision 3, and a separate request to the Rails endpoint returned `Daily`, with the same banner and log level. We then removed the Fly app and local hub.
 
-The published mini.15 package still needs the manual pin described above.
+### Pin the Fly Machine image
+
+The earlier mini.15 release required a manual pin. For that test, the owner read the running digest from `flyctl machines list --app APP --json` and used `flyctl machine update` to pin that same image. Current packages resolve the digest during delivery.
 
 **Published mini.15 and plugin 0.97.0, 17 November 2026.** A disposable Rails app ran on one Fly Machine. The initial Fly deploy used an image tag, so we pinned that Machine to the digest of its running image before connecting. We called the published plugin’s staging command directly with a clean ConfigHub setup. It downloaded mini.15 for macOS arm64, started a local hub, and imported the Machine’s readable settings.
 
 - A scoped key set the hub’s staging support hours to `Daily` and proposed the production change. The hub refused approval from that key, delivery refused the pending order, and the Rails endpoint still served `Weekdays`.
 - The owner approved the change and authorized delivery in two separate confirmations through a temporary browser helper that displayed the CLI’s prompts. The published flow asks for both confirmations in the owner’s terminal.
-- The Machine reported approved revision 3 and kept its ID and image digest. The Rails endpoint served `Daily` and kept the `coral` banner and `info` log level. We removed the Fly app and local hub. This run covered one production change. The two-app and rollback results below come from separate runs.
-
-An early test used a disposable local hub to store the two apps’ settings. One change moved both staging copies from revision 2 to 3. Two Rails processes running locally read the staging settings and served `Daily`, with their own banners and log levels. Both hub production copies stayed at revision 2 and orders still waited for the owner. The starter check also caught three planted faults.
-
-On 15–16 November, both Fly staging apps served `Daily` from revision 3. We then checked production with separate approvals for the update and rollback:
-
-| What Fly served | Shop | Cart |
-| --- | --- | --- |
-| While the update waited | Weekdays | Weekdays |
-| After update approval and delivery | Daily (revision 3) | Daily (revision 5) |
-| While the rollback waited | Daily | Daily |
-| After rollback approval and delivery | Weekdays (revision 4) | Weekdays (revision 6) |
-
-The shop kept `coral` and `info`; the cart kept `indigo` and `warn`. The delivery command refused pending orders. It delivered the cart update and both rollbacks without changing the image. The final cart rollback ran from the Mac archive built for the next release, before it was published. We removed all four test apps and the local hub.
-
-The run used one Fly Machine per app and a local hub. It did not test a shared hub or a group of Machines.
+- The Machine reported approved revision 3 and kept its ID and image digest. The Rails endpoint served `Daily` and kept the `coral` banner and `info` log level. We removed the Fly app and local hub. This run covered one production change. The two-app and rollback results above come from separate runs on 15–16 November (one Fly Machine per app on a local hub; shared hubs and multi-Machine groups were not tested).
+</details>
