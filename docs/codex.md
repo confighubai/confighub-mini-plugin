@@ -35,9 +35,9 @@ For what is recorded, refused or left to a person, see the [client capability ma
 
 ## Try a change and start a second app
 
-On macOS, with plugin 0.99.0 and mini.17, adopting a new local app with an env file also prepares a preview and a scoped launcher. When the agent attaches the app, ask it for the full path to the app’s `run-codex` launcher. Run that command in Terminal to open the next session with the app’s permissions.
+On macOS, attaching a local env-file app prepares a preview and gives you the full path to its `run-codex` launcher. Run that command in Terminal to open a fresh session with the app’s permissions. For a Node app that starts with a direct `node` command, that same launcher lets you return to a running preview.
 
-1. Ask, “Try a warmer greeting in preview and show me what it serves over HTTP.” The agent pulls the preview settings and runs a separate copy of the app. Staging and production stay as they were. Ask for the actual response if you only see what the hub stored.
+1. Ask, “Try a warmer greeting in preview. Give me its address and leave it running. Keep my files, staging and production as they are.” The agent pulls the preview settings and runs a separate copy of the app. Staging and production stay as they were. Ask for the actual response if you only see what the hub stored.
 2. If you like it, ask, “Make that the shared greeting and put it in staging.” Use the exact approval command the agent gives you when you are ready for production to take it. Delivery to a running app needs a connected deployment path.
 3. For a second app, open an ordinary Codex session in a new Git folder. Ask, “Build a second app using the first app’s setup.” The first app’s limited session cannot attach another app. The second app uses the same hub, starts with the shared greeting and gets its own first production review.
 

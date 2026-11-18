@@ -122,11 +122,15 @@ Git and the plugin both met the target for explaining the chosen value. The diff
 
 ## Two first actions in fresh sessions
 
-### After the shell-edit fix
+### Published plugin 0.99.1 and mini.18 on macOS
 
-On a clean macOS profile, Codex rewrote the staged `.env` with Python. A second session received only **“Why is the cache on?”** It recovered `off → on` and the reason, next week’s sale, in 12.1 seconds. The journal and a lookup by key agreed. In a separate trial we used the two guide prompts verbatim. Codex chose a shell command, and the new session recovered the same answer in 7.5 seconds. Both trials used a development build, local hooks and a repository with no commits or hub.
+**Remember one setting.** With the five-minute guide’s two prompts, Codex chose a shell command to turn `CACHE` on. A fresh session answered “Why is the cache on?” in 8.1 seconds. It recovered both the previous value and the reason, next week’s sale. We repeated the exercise and asked for Python to reproduce the edit that failed on 0.99.0. Codex rewrote `.env` with Python, and the new session recovered the same answer in 7.6 seconds. Each trial began with a staged file in a clean profile. Neither made a commit or started a hub.
 
-In a separate local Node app, the returning Codex session was given neither a port nor a URL. It located the existing preview and read **Saturday pickup**. Independent HTTP requests reached that same preview process after both sessions exited. The original continued serving **Weekday pickup**.
+**Run a preview.** The starting Node app served **Weekday pickup**. We asked Codex to try **Saturday pickup** for weekend collections, give us its address, leave it running and keep the app files, staging and production as they were. After the session closed, a new Codex session found the same address and explained why the heading had changed. Independent HTTP requests reached the same Node process and read **Saturday pickup** after both sessions. The original app and a separate copy run with staging’s settings served **Weekday pickup**. The tracked files stayed unchanged. First production delivery still required approval.
+
+From the public download through the first independent preview check took 2 minutes 12 seconds. Opening the returning session through independent verification took 58.7 seconds. The sessions used the app’s scoped launcher and an existing Codex sign-in. At teardown, the preview port closed and the test hub was removed.
+
+Two earlier prompts exposed a difference worth spelling out. When we asked to preserve staging and production, the agent did both but also edited the local `.env`. When we asked it to keep the files and show what the preview served, it verified the result and stopped the process. The guide now asks for the files to stay as they are and the preview to stay running. [Prompts, results and package fingerprints](runs/2026-11-18/first-actions/uncoached-mac.json).
 
 ### Earlier run on plugin 0.99.0
 

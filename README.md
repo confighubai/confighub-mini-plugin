@@ -1,9 +1,9 @@
 # ConfigHub for your first app
 
-Ask Claude Code or Codex to build an app. With ConfigHub, you can try a change in a running preview, leave production as it is, and keep what worked for the next app.
+Build your first app with Claude Code or Codex, or open one you already run. The plugin remembers why a setting changed. Add a local hub when you want to try a change in preview or carry a useful fix into your next app.
 
 - **[Remember one setting in five minutes](docs/try-the-plugin.md#try-it-in-five-minutes)**. Ask “Turn the cache on in `.env` for next week’s sale. Don’t commit.” Reopen the folder in a fresh session and ask “Why is the cache on?” Look for `CACHE=off → on` and the reason about the sale. The record stays on your computer. No hub or ConfigHub account needed.
-- **[Run a preview of my app](docs/journeys/existing-app.md#run-a-preview-of-my-app)**. In a local Node app, ask “Try a warmer greeting in preview and show me what it serves.” Reopen the app and ask “Is my preview still running?” Only the preview should serve the new greeting. This path uses a local hub.
+- **[Run a preview of my app](docs/journeys/existing-app.md#run-a-preview-of-my-app)**. In a local Node app, ask “Try a warmer greeting in preview. Give me its address and leave it running. Keep my files, staging and production as they are.” Reopen the app and ask “Is my preview still running?” Only the preview should serve the new greeting. This path uses a local hub.
 
 Already reviewing changes? [See settings and reasons on a pull request](review/README.md) or [compare Git, the hub and your running cluster](examples/walkthroughs/story-09-git-hub-and-running.md).
 

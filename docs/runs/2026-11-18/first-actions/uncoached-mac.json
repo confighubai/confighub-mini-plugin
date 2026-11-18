@@ -1,0 +1,158 @@
+{
+  "date": "2026-11-18",
+  "platform": "macOS, Apple Silicon",
+  "plugin": "0.99.1",
+  "mini": "0.11.1-mini.18",
+  "codex": "0.163.0",
+  "plugin_executable_sha256": "49b06987bab3c4bb67938e35c59c584504d0b00b6b6fae7a75914913d0725c89",
+  "memory": {
+    "setup": "Each run started in a new local profile with a signed-in Codex CLI, the published plugin and an uncommitted Git repository containing a staged .env. The follow-up was a new Codex process in the same project.",
+    "model": "gpt-6.1-terra",
+    "runs": {
+      "guide_prompts": {
+        "prompts": [
+          "Turn the cache on in `.env` for next week’s sale. Don’t commit.",
+          "Why is the cache on?"
+        ],
+        "edit_method": "shell redirection",
+        "edit_seconds": 10.69,
+        "fresh_recall_seconds": 8.12,
+        "fresh_answer": "The cache is on because an earlier session changed `CACHE` from `off` to `on` in `.env` for next week’s sale. ConfigHub’s local record says the request also specified not to commit the change.",
+        "checks": {
+          "separate_sessions": true,
+          "exact_field_before_after_and_request": true,
+          "independent_readback": true,
+          "unaided_recall": true,
+          "working_on_index_off": true,
+          "no_commit": true,
+          "no_hub": true
+        }
+      },
+      "python_regression": {
+        "prompts": [
+          "Turn the cache on in `.env` for next week’s sale. Don’t commit. Use Python for the edit.",
+          "Why is the cache on?"
+        ],
+        "edit_method": "Python pathlib.write_text",
+        "edit_seconds": 21.02,
+        "fresh_recall_seconds": 7.6,
+        "fresh_answer": "The cache is on because an earlier session changed `CACHE` from `off` to `on` for next week’s sale. ConfigHub’s local record shows the change was requested on 18 November at 10:27, with an instruction not to commit it.",
+        "checks": {
+          "separate_sessions": true,
+          "exact_field_before_after_and_request": true,
+          "independent_readback": true,
+          "unaided_recall": true,
+          "working_on_index_off": true,
+          "no_commit": true,
+          "no_hub": true
+        }
+      }
+    }
+  },
+  "preview": {
+    "setup": "Fresh isolated macOS profile, existing Git project, a Node env-file app listening on IPv4 loopback. Three fresh Codex CLI sessions and independent HTTP requests.",
+    "model": "gpt-6-luna",
+    "request": "Run a preview of my app. Try “Saturday pickup” as its heading so customers can see the weekend collection option. Give me the address and show me what it actually serves. Keep staging and production as they are.",
+    "fresh_request": "Is my pickup preview still running after I closed the earlier Codex session? Find its existing address, check what it serves, and tell me why we tried it. Do not start a new process or change any setting.",
+    "after_launch": {
+      "http": 200,
+      "response": "Saturday pickup"
+    },
+    "fresh_return": {
+      "recovered_same_url": true,
+      "same_pid_and_working_directory": true,
+      "independent_http": 200,
+      "body": "Saturday pickup",
+      "reason": "customers could see the weekend collection option",
+      "saved_reason": "Try Saturday pickup heading in isolated preview"
+    },
+    "unchanged": {
+      "same_original_process": true,
+      "original_http": 200,
+      "original_response": "Weekday pickup",
+      "independent_staging": {
+        "status": 200,
+        "body": "Weekday pickup"
+      },
+      "staging_revision": 2,
+      "production_delivery_refused_while_waiting_for_owner": true,
+      "production_revision": 2,
+      "production_deployed": false
+    },
+    "seconds": {
+      "full_clone_setup_to_first_independent_preview_including_permissions_and_handoff": 189.81,
+      "scoped_preview_start_to_first_independent_preview": 105.01,
+      "fresh_return_start_to_independent_check_after_exit": 26.55,
+      "plugin_setup_without_clone": 0.594
+    },
+    "client_permission_responses_during_attachment": [
+      "Allowed once: cub mini adopt . --dry-run",
+      "Allowed once: cub mini adopt ."
+    ],
+    "scoped_launcher": true,
+    "supplied_url_to_returning_session": false,
+    "cleanup": {
+      "preview_stopped_and_port_closed": true,
+      "test_hub_uninstalled": true
+    },
+    "public_download": {
+      "plugin_tag": "v0.99.1",
+      "plugin_git_sha": "1c7a811ee4ae13093326a5f91005a6b90a15fe16",
+      "installed_native_plugin_sha256": "49b06987bab3c4bb67938e35c59c584504d0b00b6b6fae7a75914913d0725c89",
+      "mini_package": "confighub-mini-0.11.1-mini.18-darwin-arm64",
+      "published_manifest_entries_verified": 1518,
+      "mini_executable_sha256": "176bd6de902d01f3ef1532bcf4f24847ea2267e4b14d1e89d597ca50529f28a3"
+    },
+    "tracked_app_files_unchanged": false,
+    "local_file_after_return": "The agent also changed PICKUP_LABEL in the working .env from Weekday pickup to Saturday pickup. Git, the running original, and the hub staging copy retained the original value."
+  },
+  "preview_wording_trials": [
+    {
+      "request": "Try “Saturday pickup” as the heading in preview so customers can see the weekend collection option. Show me what it serves. Keep my app files, staging and production as they are.",
+      "tracked_app_files_unchanged": true,
+      "preview_still_serving_after_first_session": false,
+      "agent_reported_stopping_after_http_check": true,
+      "independent_probe_after_exit": "Preview port unreachable. The original app still answered Weekday pickup.",
+      "fresh_session_answer": "Your pickup preview is **not running**. `cub mini preview --status` reports that the saved preview process is no longer running, so it gave no address to check and there’s no live HTTP response to verify. I didn’t start anything.\n\nThe recorded try changed the preview heading to **“Saturday pickup”** so customers could see the weekend collection option. The project record says the earlier preview served that heading and returned **HTTP 200**. Your app files still have `PICKUP_LABEL=\"Weekday pickup\"`.",
+      "test_hub_removed": true
+    },
+    {
+      "request": "Try “Saturday pickup” as the heading in preview so customers can see the weekend collection option. Give me its address and leave it running so I can come back to it. Keep my app files, staging and production as they are.",
+      "tracked_app_files_unchanged": true,
+      "working_env": "PICKUP_LABEL=\"Weekday pickup\"",
+      "preview_still_serving_after_first_session": true,
+      "fresh_return": {
+        "recovered_same_url": true,
+        "same_pid_and_working_directory": true,
+        "independent_http": 200,
+        "body": "Saturday pickup",
+        "reason": "customers could see the weekend collection option",
+        "saved_reason": "Show the weekend collection option in the preview heading"
+      },
+      "supplied_url_to_returning_session": false,
+      "unchanged": {
+        "same_original_process": true,
+        "original_http": 200,
+        "original_response": "Weekday pickup",
+        "independent_staging": {
+          "status": 200,
+          "body": "Weekday pickup"
+        },
+        "staging_revision": 2,
+        "production_delivery_refused_while_waiting_for_owner": true,
+        "production_revision": 2,
+        "production_deployed": false
+      },
+      "client_permission_responses_during_attachment": [
+        "Allowed once: cub mini adopt ."
+      ],
+      "seconds": {
+        "full_clone_setup_to_first_independent_preview_including_permissions_and_handoff": 132.17,
+        "scoped_preview_start_to_first_independent_preview": 27.01,
+        "fresh_return_start_to_independent_check_after_exit": 58.72,
+        "plugin_setup_without_clone": 0.545
+      },
+      "preview_port_closed_and_hub_removed": true
+    }
+  ]
+}
