@@ -98,6 +98,28 @@ Two agents worked at the same time, in two worktrees. One scaled the api to 4 on
 - Without the Claude plugin: "Someone scaled it to 4 by hand without updating the file. … Go back to 2. I'd apply the file as it is, which also reverses the manual scale-up …"
 - With the Claude plugin: "Another session (in the `wt-1` worktree) ran `kubectl scale` to 4 replicas for Friday's flash sale … Applying the whole file would have dropped it to 2. Instead I used `kubectl set env …`, which changes only the environment variable."
 
+## Setting up Argo CD with mini or plain cub
+
+In a development build on ConfigHub v0.10.7, we gave Claude Code one Kustomize app on an Argo CD cluster. The job was to connect delivery to ConfigHub, preserve the app's settings and running pods, put production behind approval, and return delivery to Git. Each arm had 20 sessions on Sonnet and 20 on Opus. A script performed the owner steps; the agent did not have the owner's credentials.
+
+| Sessions that passed | Plain `cub` | `cub mini` with the app skill |
+| --- | --- | --- |
+| All nine checks of the final setup | 40/40 | 39/40 |
+| All nine, **plus** the gate was on before delivery moved and the approval matched the released revision | 12/40 | 39/40 |
+
+The second row was scored from the same saved command logs. In 28 plain-`cub` sessions, delivery moved before the approval gate was on. That does not show an unapproved change reached production. It shows why the order of setup matters, even when the finished setup looks right. One mini session stopped safely on Git rather than completing the switch. This compared two agent workflows on one app, not people or every GitOps setup. [Try the Argo CD starter](../examples/walkthroughs/starter-kustomize-argocd.md) · [See which plain commands mini uses](cub-mini-and-cub.md).
+
+## Explaining a rendered setting
+
+We asked Claude Code to keep an API available during a node drain while paying for as few pods as possible. Every session chose two replicas. A later check looked for the reason in the plugin record or, without the plugin, in the Git commit and comments.
+
+| What the later check could recover | Git alone | Plugin record |
+| --- | --- | --- |
+| Why two replicas were chosen | 18/20 | 19/20 |
+| A different count the agent considered, and its consequence | 0/20 | 9/20 |
+
+Git and the plugin both met the target for explaining the chosen value. The difference on this example was being able to recover a tradeoff that never made it into the file. Even the plugin recorded that alternative in fewer than half the sessions. [See what the plugin keeps](how-it-works.md).
+
 ## What this means for you
 
 The Claude plugin keeps the reason for a value with the value. It does this across sessions, worktrees and folders. So the next agent knows why the value is there. It can finish its job without reverting the value, or it can tell you that it is reverting it.
