@@ -11,6 +11,8 @@ For someone who looks after an app that Argo CD deploys from Git, where support 
 
 ## Quick start
 
+**You** choose a disposable local cluster and give your agent the request below. **Your agent** runs the example, reports what Git, the hub and the cluster each say, then shows that Git has taken over delivery again. Ask it to remove the test cluster when you’re finished inspecting it.
+
 You need: an unpacked confighub mini package ([installing the local hub](../../docs/install-mini.md#install-by-hand-without-the-plugin)), Docker (or OrbStack), `kind`, `kubectl`, `git`, `python3`, the cub-scout plugin for `cub`, and internet access. Argo CD is installed for you. No account.
 
 Before running the example, expand **Show the full walkthrough** below. Follow steps 1–3 to select the test cluster, install cub-scout and copy the example into a working folder. Run `./run` there.
