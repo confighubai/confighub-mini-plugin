@@ -17,6 +17,7 @@ Connect an app you already have without rewriting its config files or changing h
 2. **Reopen on the app’s scoped session:**
    - **Claude Code:** Close and reopen `claude` in the same folder (`.claude/settings.local.json` scopes it automatically).
    - **Codex CLI:** Run the `run-codex` command printed at the end of Step 1.
+   You can leave the first production approval pending throughout this exercise.
 3. **Start a preview:**
    ```text
    Try a warmer greeting in preview.
