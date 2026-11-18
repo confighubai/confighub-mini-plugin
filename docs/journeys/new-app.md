@@ -47,11 +47,13 @@ From the folder that **contains** the greeter repo, create a sibling folder and 
 mkdir catalog && cd catalog && git init -q && claude
 ```
 
-Ask **“Build a small catalog service using greeter’s ConfigHub setup. Let it inherit the greeting. Run catalog with its staging settings and show me the response.”** Look for the same greeting the greeter served. You can also start with `/confighub:start-from greeter`.
+Ask **“Build a small catalog service using greeter’s ConfigHub setup. Let it inherit the greeting. Run catalog with its staging settings and show me the response.”** Look for the same greeting the greeter served.
 
 - Claude runs `cub mini adopt catalog --pattern greeter`.
 - `catalog` inherits `greeter`’s shared settings and reasons immediately in staging, keeps its own app-specific settings separate, and requires its own production approval.
 - Later improvements on `greeter` can flow to `catalog` via `cub mini upgrade greeter-base/app` ([walkthrough with every command](../../examples/walkthroughs/story-18-dev-intent.md)).
+
+If you already have the catalog app and a settings file such as `.env`, open that folder in Claude Code and use `/confighub:start-from greeter` to link it. In an empty folder, use the request above to build the app first.
 
 ## What it takes & what you have
 

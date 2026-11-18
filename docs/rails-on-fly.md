@@ -51,6 +51,22 @@ Start with two Rails folders (`shop` and `cart`) with a `Gemfile`, `bin/rails`, 
 | `./shop/.env` | `APP_BANNER=coral` and `APP_SUPPORT_HOURS=Weekdays` |
 | `./cart/.env` | `APP_BANNER=indigo` and `RAILS_LOG_LEVEL=warn` |
 
+<details>
+<summary><strong>Optional: start a disposable local hub before adding the apps</strong></summary>
+
+In a fresh terminal, set `MINI` to the absolute path of the unpacked package. From the folder containing `shop` and `cart`, run:
+
+```sh
+unset CUB_CONTEXT
+export CUB_CONFIG="$(mktemp -d "$HOME/.confighub-rails-example.XXXXXX")"
+"$MINI/bin/confighub-mini-app" mini install-plugin "$CUB_CONFIG"
+cub() { "$MINI/bin/cub" "$@"; }
+cub mini install --name rails-fly-example --use
+```
+
+Continue below in this terminal so both apps use the same hub.
+</details>
+
 Adopt `shop` first, then start `cart` from `shop`’s setup (your agent can run these, or run them in Terminal):
 
 ```sh
@@ -60,23 +76,6 @@ cub mini adopt ./cart --name rails-cart --pattern rails-shop
 ```
 
 `cart` inherits `APP_SUPPORT_HOURS=Weekdays` from `shop` while keeping its own `indigo` banner and `warn` log level.
-
-<details>
-<summary><strong>Isolated test-hub setup commands (optional)</strong></summary>
-
-To try this in a throwaway hub instead of your default `~/.confighub`, set `MINI` to the unpacked package path first:
-
-```sh
-unset CUB_CONTEXT
-export CUB_CONFIG="$(mktemp -d "$HOME/.confighub-rails-example.XXXXXX")"
-"$MINI/bin/confighub-mini-app" mini install-plugin "$CUB_CONFIG"
-cub() { "$MINI/bin/cub" "$@"; }
-cub mini install --name rails-fly-example --use
-cub mini adopt ./shop --name rails-shop --dry-run   # previews the rails-fly starter plan
-```
-
-When done, remove the disposable hub with `cub mini uninstall --name rails-fly-example --delete-data`.
-</details>
 
 ## Change the hours and check staging
 
@@ -94,21 +93,15 @@ Look for `Daily` in both staging copies, `coral` and `info` in the shop, and `in
 
 `cub mini waiting` shows the exact ConfigHub orders and the commands the owner can use to review each. Leave them pending for this exercise. When you approve one, the same command sends the approved settings to the app's Fly Machine, as [the next section](#send-approved-settings-to-an-app-on-fly) shows. ConfigHub does not block a direct Fly deploy by someone with Fly credentials.
 
-When done, remove the disposable hub with `cub mini uninstall --name rails-fly-example --delete-data`.
-
 ## Send approved settings to an app on Fly
 
-With a signed-in `flyctl` and an app on Fly with one Machine, approving is enough. Run this in your own terminal:
-
-```sh
-cub mini approve rails-shop
-```
+With a signed-in `flyctl` and a Fly app with one Machine, run `cub mini waiting` and paste the approval command for the exact shop order into your own terminal. Review the values before you confirm.
 
 When the shop's folder has a `fly.toml`, the approval carries on: it finds the app's one Machine, sends production's approved settings to it, and prints what is now live. The first time, it asks once whether approved settings should go to the Fly app named in `fly.toml` from now on. Credentials and `secret://` settings are left on Fly as they are. `cub mini deliver rails-shop` sends production's approved settings again, and `cub mini deliver rails-shop --compare` checks the Machine without changing it. `--no-deliver` approves only.
 
 ### With explicit flags, for a delivery service
 
-A delivery service that signs in with a reader key, rather than as you, runs the program with every value given. This step needs a build with `bin/fly-settings`, a signed-in `flyctl`, and a test app on Fly with one Machine running an image pinned by digest in the Fly registry. Use `flyctl machines list --app "$FLY_APP"` to find the Machine ID.
+A delivery service that signs in with a reader key, rather than as you, runs the program with every value given. This step needs a build with `bin/fly-settings`, a signed-in `flyctl`, and a test app on Fly with one Machine running a Fly registry image whose digest Fly can report. Use `flyctl machines list --app "$FLY_APP"` to find the Machine ID.
 
 First review the order in ConfigHub. When you approve it, note the new production revision from `cub unit get --space rails-shop-live app -o jq=.Unit.HeadRevisionNum`. Set `FLY_APP`, `MACHINE`, `HUB_CONTEXT`, `ORDER` (the full order name), and `REVISION` to the values for this app. Keep using the same `CUB_CONFIG` as above.
 
@@ -123,6 +116,8 @@ First review the order in ConfigHub. When you approve it, note the new productio
 The command checks the approval before contacting Fly. It changes only the named settings and adds the ConfigHub revision number. It keeps the image and starts the Machine if it was stopped. Use `compare` in place of `apply` to check the Machine without changing it. Open the app afterward to see what it serves.
 
 To go back, propose the old settings as a new change. Wait for approval, then use the new order and revision in the same command. Anyone with Fly deploy access can still deploy directly; this check applies only to this command.
+
+If you created the disposable hub, run `cub mini uninstall --name rails-fly-example --delete-data` in the same terminal after your last check.
 
 ## Testing
 
