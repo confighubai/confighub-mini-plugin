@@ -6,7 +6,7 @@ This page is for anyone who has installed the ConfigHub plugin (in Claude Code o
 - **Local hooks only (~9 MB binary):** Runs around each tool call on macOS and Linux—no background daemon, no database, no Docker, and no ConfigHub account.
 - **Stored locally on your machine:** Records live in `~/.confighub/agent-changes` outside your Git repository. Nothing leaves your machine unless you turn on OpenTelemetry (`CUB_MINI_OTEL=1`) or copy records to a shared hub ([where the record is kept](#what-it-records-and-what-it-does-not)).
 - **Secrets redacted automatically:** Passwords, connection strings, and provider secrets have their values stripped—only the setting name and prompt are recorded.
-- **Supplies uncommitted context to the next session:** When a later agent reads a config file or runs a deploy command, it sees what earlier sessions changed and why before overwriting it.
+- **History across sessions.** A fresh session can look up a recorded setting and its reason. In Codex, supported reads can supply earlier context, and `apply_patch` edits are recorded after they run. See the client table below for warnings and refusals.
 
 ## Client capabilities
 

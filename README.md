@@ -1,11 +1,11 @@
 # ConfigHub for your first app
 
-Use ConfigHub with Claude Code or Codex to keep track of **why** settings changed across sessions, test config changes in a running local preview while production stays untouched, and reuse proven setups in your next app.
+Ask Claude Code or Codex why a setting changed. When you want to see a change running or reuse it in a second app, add a local hub.
 
-- **Plugin alone (`confighub`):** Records config edits, CLI commands, and the prompts behind them on your machine. Warns the next session before it silently undoes an earlier change. **No server, no account.**
-- **Local hub (`cub mini`, optional):** Runs the ConfigHub server and PostgreSQL on `127.0.0.1` (no Docker, no account). Adds isolated previews, separate `staging` and `live` copies, and scoped agent keys that cannot approve their own production changes.
+- **[Remember one setting in five minutes](docs/try-the-plugin.md#try-it-in-five-minutes)**. Change an uncommitted value and ask a fresh session why. All you need is the plugin.
+- **[Run a preview of my app](docs/journeys/existing-app.md#run-a-preview-of-my-app)**. Ask for a new greeting in a local Node app. Your agent leaves the preview running and gives you its address.
 
-👉 **Prefer a single self-contained page?** Open **[Three things to try first](https://confighub.github.io/helm-expt/ai-agents/first-look.html)** (with a Claude Code / Codex toggle and copyable steps).
+[Three things to try first](https://confighub.github.io/helm-expt/ai-agents/first-look.html) has copyable steps for both clients, including how to give a second app the shared greeting.
 
 ## Install
 
@@ -31,7 +31,7 @@ Then in Codex CLI, run `/hooks`, review and approve the ConfigHub hooks, and ope
 
 *(Want the local hub CLI without a coding agent? [Install the local hub on its own](docs/install-mini.md).)*
 
-## Try one setting in two minutes
+## Try one setting
 
 1. Create a throwaway Git folder and start a fresh `claude` (or `codex`) session inside it:
    ```sh
@@ -45,7 +45,7 @@ Then in Codex CLI, run `/hooks`, review and approve the ConfigHub hooks, and ope
 
 | Starting point | What to ask your agent | Guide |
 | --- | --- | --- |
-| **Already building an app** *(plugin only)* | *“Turn the cache on in `.env` for Friday’s sale.”* Check any value later with `/confighub:why CACHE`. | [Try the plugin](docs/try-the-plugin.md#try-it-in-five-minutes) |
+| **Already building an app** *(plugin only)* | *“Turn the cache on in `.env` for Friday’s sale.”* Ask a fresh session why the cache is on. | [Try the plugin](docs/try-the-plugin.md#try-it-in-five-minutes) |
 | **Already running an app** *(local hub + preview)* | *“Attach ConfigHub to this app so I can try a preview.”* Then ask: *“Try a warmer greeting in preview.”* Your existing files stay untouched. | [Attach an existing app](docs/journeys/existing-app.md#run-a-preview-of-my-app) |
 | **Starting from scratch** *(new app + second app)* | *“Build a small greeting app using ConfigHub. Give it a configurable greeting and run it locally.”* Later, start a second app from the same setup. | [Build a new app](docs/journeys/new-app.md) · [Codex walkthrough](docs/codex.md#try-a-change-and-start-a-second-app) |
 
@@ -55,7 +55,7 @@ Reviewing agent pull requests on GitHub? Add the [PR config review Action](revie
 
 ## Why durable config matters with coding agents
 
-1. **Agents change settings faster than humans read diffs.** A tweak meant for a debug run or a Friday sale gets silently reverted by the next session because Git only keeps committed values—not *why* a value was chosen.
+1. **A fresh session can explain yesterday’s change.** If you turned on caching for a sale, your next agent can find that request alongside the edit.
 2. **Prompts alone don’t protect production.** Telling an agent “ask before changing prod” in `AGENTS.md` fails if the agent runs with your credentials. A hub gives the agent a scoped key: free to update `staging`, refused by the server if it tries to approve `live`.
 3. **Templates rot after day one; linked setups stay live.** When you build a second service (say `cart` after `shop`) from a shared base or [starter](docs/starters.md), shared fixes (`LOG_LEVEL=warn`) flow to both apps while `shop` keeps its own `DB_POOL_SIZE` and production overrides. ([Walkthrough: Alice ships it, Bob hardens it](examples/walkthroughs/story-25-alice-bob-hardened.md) · [Why not just Git, your host, or a rules file?](docs/why-durable-config.md))
 

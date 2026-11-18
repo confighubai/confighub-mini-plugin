@@ -34,6 +34,8 @@ Codex runs hooks configured in its own settings directory rather than plugin-bun
 
 ## Try a change and start a second app
 
+**You** choose what to share and decide separately about production. **Your agent** checks the preview, makes the greeting a shared staging setting at your request, and verifies the second app’s response.
+
 When you create or attach an app on macOS, ConfigHub prepares a local hub, a preview slot, and a **scoped `run-codex` launcher** for that folder. Running `run-codex` starts Codex on the app's proposal key—so the agent can update `preview` and `staging` freely while the hub refuses any attempt by the agent to self-approve `live` ([scoped Codex key details](approvals.md#codex-sessions-on-the-proposal-key)).
 
 1. **Attach or create your first app** in an ordinary `codex` session:
@@ -44,12 +46,12 @@ When you create or attach an app on macOS, ConfigHub prepares a local hub, a pre
    Try a warmer greeting in preview.
    ```
    The agent starts an isolated local preview process and prints its `http://127.0.0.1:...` URL while keeping your `.env` files, `staging`, and `live` unchanged.
-3. **Promote when ready:** Ask `Make that the shared greeting and put it in staging.` When you want production to take it, run the printed `cub mini approve` command in your own terminal.
+3. **Promote when ready:** Ask `Make that the shared greeting and put it in staging. Show me what the first app serves there.` When you want production to take it, run the printed `cub mini approve` command in your own terminal.
 4. **Start a second app from the first:** Open a normal `codex` session (not the first app's scoped `run-codex` launcher) in a **new Git folder** and ask:
    ```text
-   Build a second app using the first app's setup.
+   Build a second app using the first app’s ConfigHub setup. Let it inherit the greeting. Run the second app with its staging settings and show me its response.
    ```
-   The second app links to the same local hub, inherits the shared greeting immediately in staging, and gets its own production approval gate.
+   Check that both staging apps serve the same greeting and the second app has no greeting in its own settings file. Its production approval is separate.
 
 See [normal app workflow behavior](agent-workflow.md) and the [client capability matrix](how-it-works.md#client-capabilities) for details on what Codex hooks record vs. refuse.
 

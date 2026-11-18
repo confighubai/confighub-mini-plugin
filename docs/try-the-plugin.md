@@ -1,8 +1,10 @@
 # Try the plugin on its own
 
-Record **why** your coding agent changed a setting—and keep the next session from silently undoing it. You only need Git and Claude Code or Codex. Everything stays in `~/.confighub` on your machine, with **no server and no account**.
+Give your next session the reason for an uncommitted edit. The plugin records the change on your machine. You need Git and Claude Code or Codex. No server or ConfigHub account is required.
 
 ## Try it in five minutes
+
+**You** open a sample folder and ask two questions in separate sessions. **Your agent** edits the setting and later reads the record to explain why.
 
 1. **Install the plugin** (skip if already installed):
 
@@ -52,13 +54,13 @@ Delete `try-confighub` when you're done (unused local records expire after 30 da
 
 ## Why Git alone misses this
 
-Suppose Session 1 raises `replicas` from `2` to `4` for Friday's flash sale without committing, and Session 2 is asked to cut costs and sets `replicas: 1`. Git only sees `2 → 1`—the `4` and the sale reason vanish.
+Suppose Session 1 raises `replicas` from `2` to `4` for Friday's flash sale without committing, and Session 2 is asked to cut costs and sets `replicas: 1`. Comparing the original file with the final one shows `2 → 1`. The intermediate value and the sale request are missing from that diff.
 
-With the plugin installed, Session 2 is warned **before** overwriting the value:
+On a supported Claude Code edit, a later session can see this warning before changing the value:
 
 > **This change undoes an earlier one.** The file already had an uncommitted change that raised replicas from 2 to 4. A session earlier today made it, with this request: *"Friday's flash sale will quadruple traffic to the api: give it 4 replicas."*
 
-The same warning fires before `kubectl apply` or deploy scripts undo a live cluster change made by an earlier session ([measured across 190 runs](evidence.md)).
+Codex can recover the same history. Its hooks record `apply_patch` edits **after** they run. The [capability table](how-it-works.md#client-capabilities) identifies which operations get a warning or can be refused. [See the measured runs](evidence.md).
 
 ## What it records (and never records)
 

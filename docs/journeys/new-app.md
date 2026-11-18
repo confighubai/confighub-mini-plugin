@@ -12,11 +12,7 @@ Describe the app you want, and let Claude Code set up both the code and a local 
    ```text
    Build me a small web service using ConfigHub, with a health endpoint, a configurable greeting, and a staging and a production setup.
    ```
-3. **Approve production’s starting settings** in your own terminal using the exact full-path command Claude prints:
-   ```sh
-   ~/.confighub/mini/.../bin/cub mini approve greeter-base/adopt
-   ```
-   *(Add that `bin` directory to your `PATH` if you want to run `cub` directly without the full path.)*
+3. **Review the starting settings** when you want production to use them. Paste the exact approval command Claude gives you into your own terminal, check the values and decide. You can try the preview while the order waits.
 4. **Commit your app** along with `.confighub-app`.
 
 From the next session onward, you don’t need to say “using ConfigHub”—sessions in this folder automatically run on the app’s scoped agent key ([how ordinary requests work](../agent-workflow.md)).
@@ -43,13 +39,16 @@ Ask Claude for changes in plain words:
 
 ## A second app from the first
 
-Open a **new folder outside the first app’s repo** (the first app’s scoped session key cannot create new apps) and start Claude Code:
+**You** choose a greeting to share. **Your agent** makes it the shared default, then checks what both apps serve in staging. In the greeter session, ask **“Make the preview greeting our shared default for welcoming visitors. Put it in staging and show me what the greeter serves there.”**
+
+From the folder that **contains** the greeter repo, create a sibling folder and start a fresh Claude Code session:
 
 ```sh
 mkdir catalog && cd catalog && git init -q && claude
 ```
 
-Type `/confighub:start-from greeter` or ask: **“Build a second app like `greeter`.”**
+Ask **“Build a small catalog service using greeter’s ConfigHub setup. Let it inherit the greeting. Run catalog with its staging settings and show me the response.”** Look for the same greeting the greeter served. You can also start with `/confighub:start-from greeter`.
+
 - Claude runs `cub mini adopt catalog --pattern greeter`.
 - `catalog` inherits `greeter`’s shared settings and reasons immediately in staging, keeps its own app-specific settings separate, and requires its own production approval.
 - Later improvements on `greeter` can flow to `catalog` via `cub mini upgrade greeter-base/app` ([walkthrough with every command](../../examples/walkthroughs/story-18-dev-intent.md)).

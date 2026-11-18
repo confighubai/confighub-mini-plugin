@@ -6,7 +6,7 @@ Connect an app you already have without rewriting its config files or changing h
 
 ## Run a preview of my app
 
-Try a setting change in an isolated local preview process over HTTP while your working files, staging, and production stay untouched.
+**You** choose the app, ask for a change and open the address. **Your agent** changes the preview setting, checks the response and leaves it running. Your working files and both staging and production settings stay as they were.
 
 **Prerequisites:** The [Claude Code plugin](../../README.md#install) or [Codex setup](../codex.md#set-it-up). For automatic local HTTP process management, use a Node.js (20.6+) app whose `npm start` runs `node` directly (e.g. `node server.js` listening on `127.0.0.1`) and reads a visible setting from `.env` (plus `lsof` installed). *(Using Next.js, Vite, Python, or Rails? Use [the general attach steps](#what-you-do) and run your usual dev server with `cub mini try` settings, or ask your agent to scaffold a quick sample greeting app first.)*
 
@@ -39,11 +39,7 @@ Works with any `.env`, Compose, Terraform, or Kustomize repository:
    ```text
    Attach ConfigHub to this existing app: keep my staging and production values as they are, and require my approval before production changes.
    ```
-3. **Approve production’s starting baseline** in your own terminal using the exact full-path command the agent prints:
-   ```sh
-   ~/.confighub/mini/.../bin/cub mini approve APP-base/adopt
-   ```
-   *(Tip: add that `bin` directory to your `PATH` if you want to type `cub mini ...` directly. For Kustomize overlays that already define every production value, nothing waits for approval.)*
+3. **Review production’s starting settings** when you want to use them. Paste the exact approval command the agent gives you into your own terminal. Check the named order and values before you confirm. With a Kustomize overlay that defines every production value, there may be no pending change.
 4. **Commit `.confighub-app`** (the pointer linking your repo to the hub).
 
 ### Supported configuration files

@@ -4,7 +4,7 @@ Connect a Rails app that already runs on Fly. Give your agent a staging copy of 
 
 ## Connect and approve with two commands
 
-You need Claude Code with the [ConfigHub plugin](../README.md#install) 0.97.0 or later, a signed-in `flyctl`, and a `fly.toml` naming your Fly app. Use a disposable app with one Machine, a Fly registry image pinned by digest, and a readable, non-secret setting such as `APP_SUPPORT_HOURS`. If the Machine uses a tag, see [how to pin its image](#pin-the-fly-machine-image).
+Use Claude Code with the [ConfigHub plugin](../README.md#install) and the [current mini package](install-mini.md#the-current-release), a signed-in `flyctl`, and a `fly.toml` naming your disposable app. Use one Machine, one Fly registry image and a readable setting such as `APP_SUPPORT_HOURS`. A normal tagged deploy works when Fly reports the running image’s digest. Delivery uses that exact digest and stops if it cannot verify it.
 
 1. **Connect.** In the app folder in Claude Code, type `/confighub:staging`. ConfigHub installs and starts the local hub if needed. **Start a new Claude Code session in the same folder** to pick up the agent’s key.
 2. **Ask for a change.** “Set `APP_SUPPORT_HOURS` to `Daily` in staging. Propose the same change for production and show me the approval command.” This updates the hub’s staging settings. The running Fly app still serves its old value.
@@ -13,10 +13,6 @@ You need Claude Code with the [ConfigHub plugin](../README.md#install) 0.97.0 or
    - **Authorize delivery.** Check the Fly app name. That permission applies to future delivery to the same app. Each production change still needs approval.
 
 When the command reports **Live on Fly**, check the new value in the running app. The sample Rails app exposes it at `/api/settings`. See [what ran on Fly](#testing).
-
-### Pin the Fly Machine image
-
-Run `flyctl machines list --app APP --json` to find the Machine ID, image repository, and `image_ref.digest`. Pin the image the Machine already runs with `flyctl machine update MACHINE --app APP --image registry.fly.io/IMAGE_REPOSITORY@DIGEST`. Use the full digest, starting with `sha256:`. Delivery expects one Machine without extra containers or processes.
 
 ## Use the starter for two Rails apps
 
@@ -139,7 +135,7 @@ In verified runs across two Rails apps (`shop` and `cart`) sharing support hours
 | While rollback order waited for approval | `Daily` | `Daily` |
 | After rollback approval and delivery | `Weekdays` (revision 4) | `Weekdays` (revision 6) |
 
-Unapproved orders and agent self-approval attempts were refused; approved deliveries updated settings without changing the Machine ID or pinned image digest.
+The delivery command refused pending orders. The cart update and both rollbacks kept the running image. The final cart rollback used the Mac build before publication. All four Fly apps and the local hub were removed.
 
 <details>
 <summary><strong>Detailed verification notes (15–17 November 2026)</strong></summary>
@@ -149,7 +145,9 @@ Unapproved orders and agent self-approval attempts were refused; approved delive
 - The owner approved the production change in a temporary browser helper. The helper stalled before forwarding the delivery confirmation, so the owner authorized delivery separately. The separate delivery used the owner’s existing approval of revision 3.
 - Fly kept the same Machine and image digest. The delivery comparison matched revision 3, and a separate request to the Rails endpoint returned `Daily`, with the same banner and log level. We then removed the Fly app and local hub.
 
-The published mini.15 package still needs the manual pin described above.
+### Pin the Fly Machine image
+
+The earlier mini.15 release required a manual pin. For that test, the owner read the running digest from `flyctl machines list --app APP --json` and used `flyctl machine update` to pin that same image. Current packages resolve the digest during delivery.
 
 **Published mini.15 and plugin 0.97.0, 17 November 2026.** A disposable Rails app ran on one Fly Machine. The initial Fly deploy used an image tag, so we pinned that Machine to the digest of its running image before connecting. We called the published plugin’s staging command directly with a clean ConfigHub setup. It downloaded mini.15 for macOS arm64, started a local hub, and imported the Machine’s readable settings.
 
