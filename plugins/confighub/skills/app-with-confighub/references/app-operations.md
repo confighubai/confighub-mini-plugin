@@ -310,7 +310,11 @@ cub mini tries APP                                                     # what th
 ```
 
 NAME is a word for the try (`limit`). `--from live` makes the copy from what runs instead.
-When asked to show the try running, pull only that copy with
+In Codex, open the scoped launcher printed at setup to work on the preview. In that session use the cub on its PATH. The owner launcher pins its own profile even if called with agent environment variables.
+
+For an env-file Node app whose start script calls Node directly (for example, `node server.js`), run `cub mini preview --try NAME` in the attached folder after changing the try. It pulls that try, runs the app independently on loopback, and prints the actual URL. Check its HTTP response before handing it over. On return, `cub mini preview --try NAME --status` checks the same running instance. For the reason, read the preview Unit receipt or the project record. When asked to stop, run `cub mini preview --try NAME --stop`. The default NAME is `preview`.
+
+For other app types, when asked to show the try running, pull only that copy with
 `cub mini pull APP --variant try-NAME --dir DIR`. Start a separate loopback
 instance on a free port using the resulting settings file, then verify its
 response. A setting shown by `cub mini tries` only proves what the hub holds.
