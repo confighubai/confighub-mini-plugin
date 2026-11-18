@@ -1,12 +1,23 @@
-# ConfigHub: durable config for apps made with AI
+# ConfigHub for your first app
 
-**Your agent makes your apps. Durable config makes the platform.**
+Ask Claude Code or Codex to build an app. With ConfigHub, you can try a change in a running preview, leave production as it is, and keep what worked for the next app.
 
-ConfigHub keeps your app’s settings and the reason for each change. Try changes in staging, review what goes to production, and reuse the setup for your next app.
+**[Try it in Claude Code in five minutes](docs/try-the-plugin.md#try-it-in-five-minutes)** · **[Start in Codex](docs/codex.md#set-it-up)**. The plugin alone records changes on your computer. No hub or ConfigHub account needed.
 
-Start with the Claude plugin alone: it keeps a record of the settings your agent changes and the reason for each, and `/confighub:why` shows them. Add a free local hub when you want your agent to change staging while production waits for you: type `/confighub:staging` in your app’s folder. It runs on macOS or Linux with no ConfigHub account, Docker or Kubernetes.
+| Where are you starting? | What to try |
+| --- | --- |
+| **From scratch** | In an empty Git folder, ask: “Build a small greeting app using ConfigHub. Give it a configurable greeting and run it locally.” The local hub keeps separate staging and production settings. [Build your first app](docs/journeys/new-app.md). |
+| **Halfway through building** | Install the plugin and reopen the same project. Ask: “Turn the cache on in `.env` for Friday’s sale.” In a fresh Claude Code session, type `/confighub:why CACHE` to find that change and your request. Recording starts when you install and reopen. [Try it on one setting](docs/try-the-plugin.md#try-it-in-five-minutes). |
+| **Already running an app** | Ask: “Attach ConfigHub to this app. I want to try a change in staging.” It reads the settings your files already hold without rewriting them or switching your deployment. Connect delivery when you want the running app to use what you approve. [Attach an existing app](docs/journeys/existing-app.md). |
 
-**First time?** [Try the Claude Code plugin in five minutes](docs/try-the-plugin.md#try-it-in-five-minutes) · [Start in Codex](docs/codex.md#set-it-up)
+**What did the preview actually show?** In a local macOS run with fresh Codex sessions, the greeter answered these HTTP requests:
+
+| What changed | Staging served | Production served |
+| --- | --- | --- |
+| Only preview served **Welcome to the neighborhood!** | Hello, world! | Hello, world! |
+| The new greeting became the shared default | Welcome to the neighborhood! | Hello, world! |
+
+After approval, production served **Welcome to the neighborhood!** too. Then a fresh session built a catalog in a new folder, linked to the greeter’s setup. The catalog served the same greeting in staging **without a greeting in its own settings file**. Its production copy needed its own approval. This local run used a scripted owner. [Try it in Codex](docs/codex.md#try-a-change-and-start-a-second-app).
 
 ## Install
 
@@ -90,20 +101,9 @@ The local hub is the full ConfigHub server, and the commands work the same way o
 
 ## A first try, with a new app
 
-1. Make an empty folder and start Claude Code in it: `mkdir my-app && cd my-app && git init -q && claude`
-2. Ask: `Build me a small web service using ConfigHub, with a staging and a production setup.`
-3. The agent writes the app, starts the local hub if no hub is running, and puts the staging and production settings in it. It ends with one command for you to paste into your own terminal: `cub mini approve`, with the full path to `cub`, ConfigHub's command-line tool.
-4. Run it to approve production's starting settings. From then on, agents change staging right away, and production changes wait for you: `cub mini waiting` shows them, and `cub mini approve` or `cub mini refuse` decides.
-
-[A new app](docs/journeys/new-app.md) explains each step, and the walkthrough [your first hour](examples/walkthroughs/story-13-first-hour.md) shows every command and what it prints. Already have an app? Ask the agent to "attach ConfigHub to this app". It won't touch your files ([an app you already have](docs/journeys/existing-app.md)). To remove the local hub, run `cub mini uninstall --delete-data`. More walkthroughs, for each tool and most starters and user stories, are in [walkthroughs](examples/walkthroughs/README.md).
-
-Then ask, “Try a warmer greeting in preview and show me the running app.” The preview has its own settings. If you like the change, ask to put it in staging. Production waits for your approval. For a second app, open a new folder and ask it to start from the first app’s setup. [Claude Code steps](docs/journeys/new-app.md) · [Codex on macOS](docs/codex.md#try-a-change-and-start-a-second-app)
+After [installing](#install), start Claude Code in an empty Git folder: `mkdir my-app && cd my-app && git init -q && claude`. Ask for the greeting app above. Review production’s starting settings with the exact command the agent gives you. Then ask: “Try a warmer greeting in preview and show me what it serves.” [New app guide](docs/journeys/new-app.md) · [Your first hour](examples/walkthroughs/story-13-first-hour.md).
 
 ## Find your stack
-
-1. **Make a new app.** Ask Claude Code to build it "using ConfigHub". It writes the app and gives it a staging and a production setup ([a new app](docs/journeys/new-app.md)).
-2. **Attach an app you already have.** Its settings live in `.env` files, Terraform var files, Helm values, or a Kustomize repository that Argo CD or Flux deploys. Ask the agent to "attach ConfigHub to this app". It won't touch your files ([an app you already have](docs/journeys/existing-app.md)).
-3. **Use a starter.** [Pick one for your app](docs/starters.md) to fill in settings and see what it can connect.
 
 Some software comes with a hub inside. You change it to suit you, and keep your changes when its next version arrives ([software with ConfigHub inside](docs/journeys/bundled.md)).
 
