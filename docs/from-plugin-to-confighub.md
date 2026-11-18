@@ -208,6 +208,16 @@ An agent asked to rotate a production password gives you the `secret set` comman
 
 **When you need the next step.** An agent that runs for days, on a cluster, beside other agents, raises new questions. Which of the agents on a node made a change? Can its key be stolen? How do you stop it at once?
 
+## Redis from the Workshop
+
+The [Workshop Redis try](https://confighub.github.io/helm-expt/site/try.html) starts with a package, a version and a named configuration. In the 18 November run, the installer pulled `bitnami-redis:25.5.3` by its digest (`sha256:a216ce212424e05b341ef5000f1798e6014b72b8bc3dce9f315285871037af2a`), selected `reuse-existing-secret` and verified the 14 rendered objects against its local OCI output. The objects contained no Secret.
+
+On the local hub, mini.17 adopted the rendered objects through a Kustomize base and overlays. The operator explicitly attached the original selection file and package pin to the hub data; mini did not infer them from the rendered YAML. Staging changed only the Redis read-replica count (3 → 2). The hub kept the reason: “Keep two read replicas in staging to test failover without paying for a third.” Base and live still held 3.
+
+The portable copy contained all three variants. Its staging Unit carried the exact installer selection in `workshop-selection`, the pinned URI in `workshop-source`, and the reason for the override in `CopyExplains`. On the disposable cluster the original primary and all three read replicas were ready. A change to settings in the local hub had not scaled the running cluster.
+
+**Where this run stopped:** the shared hub required a fresh sign-in. The exported copy is evidence of what left the local hub, not of a shared-hub import, owner approval or a running two-replica deployment. For this package, those checks are still open.
+
 ## Step 4: agents that run unattended
 
 **Priya's story, continued.** Priya's team runs a nightly agent on its GPU training cluster that adjusts the batch workers. Several agents share the nodes. The cluster already gives each workload an identity with SPIRE. Priya points the Claude plugin at the agent's identity, so the record of each change is signed by `spiffe://example.org/ns/agents/sa/nightly-tuner`, not by whichever node it ran on. One night the agent's changes look wrong. Priya takes the agent's rights away in ConfigHub, and removes its SPIRE registration. Its next request to the hub is refused. Once its certificate expires, any change it still makes is recorded but not signed, and the check fails, so Marco, on call the next morning, can see exactly what happened after she stopped it.
