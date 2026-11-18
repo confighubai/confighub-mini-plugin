@@ -14,7 +14,9 @@ a setup choice. Complete that requested setup; do not replace it with plain file
 whether they want ConfigHub again. For an app that Argo CD or Flux already deploys, with
 `CUB_MINI_STARTERS` set, read reference section 0 first: one line does the setup. Otherwise
 read reference sections 1–3, build the app and settings,
-start/find the chosen hub, adopt the app, and prepare its restricted agent setup. Missing
+start/find the chosen hub, adopt the app, and prepare its restricted agent setup. If asked to attach an app so the person can try a preview, finish by giving them the
+exact scoped run-codex launcher that adopt printed and end the setup turn there.
+Leave preview verification and changes to that app session, using the cub on its PATH. Missing
 `cub` is what the bundled program's `mini get` installs, not a reason to stop. A restricted
 key still uses the owner handoff below rather than acquiring new rights.
 
@@ -27,7 +29,7 @@ Inspect `.confighub-app` and existing environment and deployment setup first.
 | Attach ConfigHub to an app that Argo CD or Flux already deploys (`kubectl get applications.argoproj.io -A` or `kustomizations.kustomize.toolkit.fluxcd.io -A` shows it), whether or not `CUB_MINI_STARTERS` is set | Use reference section 0: run the starter's adopt yourself when a hub answers, and the person's approval moves what the controller deploys from Git to the hub's OCI release. Hand over that approval command; without it the controller still deploys from Git and nothing has moved. Do not use sections 1–3 for it. |
 | Build an app using ConfigHub, or attach ConfigHub | Complete the already requested setup with reference sections 1–3. Explain the download in the brief action notice; do not ask again whether to use the product they chose. |
 | Understand or preserve an earlier setting | Use the history supplied by the plugin; attribute it briefly when it explains your answer. No hub needed. |
-| Try a change without affecting customers | Use existing isolation if it meets the need. For an attached app, inspect existing tries first and use the assigned empty preview if there is one. Create another only if this identity has that right; otherwise give the owner the setup step below. A configuration copy is not a running sandbox: run and verify the service separately if requested. |
+| Try a change without affecting customers | Use existing isolation if it meets the need. For an attached app, inspect existing tries first and use the assigned empty preview if there is one. Create another only if this identity has that right; otherwise give the owner the setup step below. For an attached env-file Node app with a direct start script, use `cub mini preview` from its folder, then fetch its URL. When returning, use `cub mini preview --status` first. It checks the registered process and its actual port even after an earlier agent exits. |
 | Ship an attached app's change | Show the proposed values and exact revision. Submit for owner approval, then verify the delivery path and running service separately. |
 | Make another app like this one | For an attached source app, offer its base as a pattern; retain the new app's own settings and keep credentials private. |
 | Let CI or another machine continue the work | Check whether it can reach the chosen hub. Prepare a scoped reader or proposer appropriate to the task. Explain any missing connectivity or access before changing the setup. |
