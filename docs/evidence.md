@@ -122,6 +122,18 @@ Git and the plugin both met the target for explaining the chosen value. The diff
 
 ## Two first actions in fresh sessions
 
+### Published plugin 0.99.1 and mini.18 on macOS
+
+**Remember one setting.** With the five-minute guide’s two prompts, Codex chose a shell command to turn `CACHE` on. A fresh session answered “Why is the cache on?” in 8.1 seconds. It recovered both the previous value and the reason, next week’s sale. We repeated the exercise and asked for Python to reproduce the edit that failed on 0.99.0. Codex rewrote `.env` with Python, and the new session recovered the same answer in 7.6 seconds. Each trial began with a staged file in a clean profile. Neither made a commit or started a hub.
+
+**Run a preview.** The starting Node app served **Weekday pickup**. We asked Codex to try **Saturday pickup** for weekend collections, give us its address, leave it running and keep the app files, staging and production as they were. After the session closed, a new Codex session found the same address and explained why the heading had changed. Independent HTTP requests reached the same Node process and read **Saturday pickup** after both sessions. The original app and a separate copy run with staging’s settings served **Weekday pickup**. The tracked files stayed unchanged. First production delivery still required approval.
+
+From the public download through the first independent preview check took 2 minutes 12 seconds. Opening the returning session through independent verification took 58.7 seconds. The sessions used the app’s scoped launcher and an existing Codex sign-in. At teardown, the preview port closed and the test hub was removed.
+
+Two earlier prompts exposed a difference worth spelling out. When we asked to preserve staging and production, the agent did both but also edited the local `.env`. When we asked it to keep the files and show what the preview served, it verified the result and stopped the process. The guide now asks for the files to stay as they are and the preview to stay running. [Prompts, results and package fingerprints](runs/2026-11-18/first-actions/uncoached-mac.json).
+
+### Earlier run on plugin 0.99.0
+
 On 18 November 2026 we tested the public plugin 0.99.0 on macOS. Each follow-up session began in the same project without the previous conversation. These timings are from individual trials.
 
 | Task | Time to a result | What the next session recovered |

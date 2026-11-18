@@ -27,7 +27,7 @@ To try it, [change one setting and recover its reason](try-the-plugin.md#try-it-
 
 Codex can work on a scoped proposal key with a separate launcher ([setup and limits](approvals.md#codex-sessions-on-the-proposal-key)).
 
-On a Mac with no hub configuration, ask Codex to “Build me a small web app using ConfigHub.” The approved hook starts the local hub and tells you when it is ready. Other requests keep their usual behavior. If the hook cannot start the hub, it gives you the command to run in your own terminal.
+On a Mac with no hub configuration, ask “Build me a small web app using ConfigHub” or “Attach ConfigHub to this app so I can try a preview.” The approved hook starts the local hub. The five-minute cache example uses the plugin alone.
 
 Use normal app requests after setup; see [how the agent chooses a useful step and attributes ConfigHub actions](agent-workflow.md).
 
@@ -35,9 +35,9 @@ For what is recorded, refused or left to a person, see the [client capability ma
 
 ## Try a change and start a second app
 
-On macOS, with plugin 0.99.0 and mini.17, adopting a new local app with an env file also prepares a preview and a scoped launcher. When the agent attaches the app, ask it for the full path to the app’s `run-codex` launcher. Run that command in Terminal to open the next session with the app’s permissions.
+On macOS, attaching a local env-file app prepares a preview and gives you the full path to its `run-codex` launcher. Run that command in Terminal to open a fresh session with the app’s permissions. For a Node app that starts with a direct `node` command, that same launcher lets you return to a running preview.
 
-1. Ask, “Try a warmer greeting in preview and show me what it serves over HTTP.” The agent pulls the preview settings and runs a separate copy of the app. Staging and production stay as they were. Ask for the actual response if you only see what the hub stored.
+1. Ask, “Try a warmer greeting in preview. Give me its address and leave it running. Keep my files, staging and production as they are.” The agent pulls the preview settings and runs a separate copy of the app. Staging and production stay as they were. Ask for the actual response if you only see what the hub stored.
 2. If you like it, ask, “Make that the shared greeting and put it in staging.” Use the exact approval command the agent gives you when you are ready for production to take it. Delivery to a running app needs a connected deployment path.
 3. For a second app, open an ordinary Codex session in a new Git folder. Ask, “Build a second app using the first app’s setup.” The first app’s limited session cannot attach another app. The second app uses the same hub, starts with the shared greeting and gets its own first production review.
 
@@ -49,7 +49,7 @@ The record is the plugin's list of what agents changed, and why. Run this in the
 ~/.codex/confighub/bin/confighub mini changes
 ```
 
-If a script rewrote a whole file, the record can show the request against the filename without an entry for the individual key. For the five-minute example, ask Codex to use its built-in editor (`apply_patch`).
+For an env file, the record compares the settings before and after the edit. You can look up `CACHE` even if Codex used Python to rewrite the file and the repository has no commits.
 
 ## Remove it
 
