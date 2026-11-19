@@ -131,7 +131,7 @@ On 19 November 2026 we tried the [published plugin 0.99.7](https://github.com/co
 | Claude Code | Returned the running page on port 52607 in the same chat. | The same address and process, serving “Evening collection” (HTTP 200). |
 | Codex CLI | Returned the running page on port 52734 in the same chat. | The same address and process, serving “Evening collection” (HTTP 200). |
 
-We kept each client process open for the request and the yes. There was no restart, follow-up start request or pasted URL. Each first run included the mini download. Codex can ask permission to run a command or read the local address. For each client we verified the listener, its start time and the HTTP response independently. The original app kept its heading, Git showed no tracked edits, and staging and production stayed at revision 2. Only the preview used revision 3. Both hubs and all four test app processes were stopped afterward.
+We kept each client process open for the request and the yes. There was no restart, follow-up start request or pasted URL. Including the first mini download, the chat returned the verified address 79 seconds after yes in Claude Code and 90 seconds after yes in Codex. These are single runs. Codex can ask permission to run a command or read the local address. For each client we verified the listener, its start time and the HTTP response independently. The original app kept its heading, Git showed no tracked edits, and staging and production stayed at revision 2. Only the preview used revision 3. Both hubs and all four test app processes were stopped afterward.
 
 ### From the Workshop homepage to a running preview
 
