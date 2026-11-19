@@ -10,19 +10,13 @@ Connect an app you already have without rewriting its config files or changing h
 
 **Prerequisites:** The [Claude Code plugin](../../README.md#install) or [Codex setup](../codex.md#set-it-up). For automatic local HTTP process management, use a Node.js (20.6+) app whose `npm start` runs `node` directly (e.g. `node server.js` listening on `127.0.0.1`) and reads a visible setting from `.env` (plus `lsof` installed). *(Using Next.js, Vite, Python, or Rails? Use [the general attach steps](#what-you-do) and run your usual dev server with `cub mini try` settings, or ask your agent to scaffold a quick sample greeting app first.)*
 
-1. **Attach the app** (downloads and starts the local hub on first use, no account needed). Open the Git folder in your coding agent and ask:
+1. In the app folder, ask for the change you want:
    ```text
-   Attach ConfigHub to this app so I can try a preview.
+   Try “Evening collection” as the heading. Keep the usual board as it is. I’d like to open the preview again tomorrow.
    ```
-2. **Reopen on the app’s scoped session:**
-   - **Claude Code:** Close and reopen `claude` in the same folder (`.claude/settings.local.json` scopes it automatically).
-   - **Codex CLI:** Run the `run-codex` command printed at the end of Step 1.
-   You can leave the first production approval pending throughout this exercise.
-3. **Start a preview:**
-   ```text
-   Try a warmer greeting in preview.
-   ```
-   *(Substitute any visible `.env` setting your app renders.)* Open the local `http://127.0.0.1:...` URL your agent returns—it serves the new value while your original app and files stay unchanged.
+   Pick a setting your app already reads. If your plugin offers to attach the app, say **yes**. It downloads mini on first use and saves the change in a private preview on your machine. If your version gives no offer, ask **“Attach ConfigHub to this app so I can try a preview.”**
+2. Reopen the app. In **Claude Code**, reopen the same folder. In **Codex CLI**, use the `run-codex` command your agent gives you. The preview uses the app’s own key. You can leave production approval pending.
+3. Ask **“Show me the preview I asked to keep.”** Open the address and check the heading. If you used the explicit attach command on an older version, include the heading you want in this first request.
 4. **Verify across sessions:** Close and reopen the app session, then ask:
    ```text
    Is my preview still running? What does it serve?
