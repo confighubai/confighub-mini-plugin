@@ -32,6 +32,8 @@ In a terminal, `bin/confighub mini changes`, run from this plugin's folder, show
 
 Ask for an app "using ConfigHub", or ask the agent to attach ConfigHub to the app you have. The plugin's skill tells the agent what to run. It writes the app and its settings file, starts a hub on your machine if none answers (the plugin's own `confighub mini get`: no account, no sign-in), and makes three copies of the settings with `cub mini adopt`: a base, a staging copy that takes changes at once, and a live copy, your production, which changes only when you run the `cub mini approve` command it prints. If you keep `.env.staging` or `.env.production`, each becomes that copy's own values from the start. With `cub mini require-approval --agent`, the agent gets a key that can propose and cannot approve.
 
+For a local Node app that reads a setting from `.env`, ask your agent to try a change and keep the preview for tomorrow. It offers to attach the app to a local hub. Say yes, then reopen the app as directed. Ask for your preview there. You can come back for the same address in a fresh session while it’s running.
+
 ## Settings
 
 Each setting is off unless you turn it on, in Claude Code's settings file under `env`:
