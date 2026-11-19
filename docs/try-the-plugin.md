@@ -50,7 +50,7 @@ CACHE: on in .env
 
 If you used the sample, you can delete `try-confighub` when you're done.
 
-**Want to see a change running?** In an existing Node app with a heading read from `.env`, ask “Try the heading ‘Evening collection’ in a preview I can keep until tomorrow. Leave my usual app alone.” Your agent offers to attach the app locally. If you say yes, reopen Claude Code in the app folder, or start Codex with the app command your agent gives you. Ask to see the preview. When you come back, ask “Where’s the preview, and what does it say?” [Run a preview of my app](journeys/existing-app.md#run-a-preview-of-my-app).
+**Want to see a change running?** In an existing Node app with a heading read from `.env`, ask “Try the heading ‘Evening collection’ in a preview I can keep until tomorrow. Leave my usual app alone.” Your agent offers to attach the app locally. Say yes. On first use it downloads mini, then checks the page and gives you its address in this chat. When you come back, ask “Where’s the preview, and what does it say?” [Run a preview of my app](journeys/existing-app.md#run-a-preview-of-my-app).
 
 See [measured session timings](evidence.md#two-first-actions-in-fresh-sessions) or the [full plugin walkthrough](../examples/walkthroughs/tool-plugin.md).
 
