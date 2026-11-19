@@ -130,6 +130,16 @@ We asked to turn on the cache because the label printer needed to keep working d
 
 On plugin 0.99.4, Claude Code completed the whole sequence. Codex recovered the setting and its reason, offered to keep the preview and started it in the app’s scoped session. Reopening with ordinary Codex exposed a gap: it looked for `cub` on the shell path and could not give the address. This happened even though the preview was still serving the new heading. The Workshop guide directory and agent index also took Codex on a detour before it found the five-minute guide back on the homepage.
 
+On [plugin 0.99.5](https://github.com/confighubai/confighub-mini-plugin/releases/tag/v0.99.5) with [mini.22](https://github.com/confighubai/confighub-mini-plugin/releases/tag/mini-v0.11.1-mini.22), we repeated the test with new profiles and verified the installations against the release downloads.
+
+| Client and starting page | Guide and reason | Preview after closing the chat |
+| --- | --- | --- |
+| Codex CLI, live Workshop homepage | Found the app plugin. A fresh chat recovered `off → on` and the printer reason. | Started the preview in the app’s scoped session. A new ordinary Codex chat requested permission to read localhost, then returned the same port (61937) and heading, “Evening collection.” |
+| Claude Code, live Workshop homepage | Chose the Kubernetes Workshop skill. The app plugin was never installed. | The trial stopped at setup. |
+| Claude Code, [revised Workshop homepage](https://github.com/confighub/helm-expt/pull/2293) served locally | Found the app plugin directly. A fresh chat recovered `off → on` and the printer reason. | After reopening the app folder, a fresh chat returned the same port (62333) and heading, “Evening collection.” |
+
+In both completed runs we checked HTTP 200, the process ID and its start time before and after the last chat. The usual board kept serving “Weekday collection,” the uncommitted cache edit stayed intact, and staging and production stayed at revision 2. The preview held revision 3. We stopped the previews and removed both test hubs afterward.
+
 ### Keep a preview on plugin 0.99.4 and mini.21
 
 On 19 November 2026 we installed the [published plugin](https://github.com/confighubai/confighub-mini-plugin/releases/tag/v0.99.4) in two clean Mac profiles. Each started with a running Node app that displayed “Weekday collection.” The first request asked for an “Evening collection” heading at a local address that would still work after the chat closed. Both agents offered to attach the app and waited for a yes. Each downloaded [mini.21](https://github.com/confighubai/confighub-mini-plugin/releases/tag/mini-v0.11.1-mini.21) and saved the new heading in the preview.
