@@ -1,6 +1,6 @@
 ---
 name: app-with-confighub
-description: Help with ConfigHub app setup and ordinary settings changes, isolated tries, reuse and continuation for an attached app (.confighub-app). Also use when a person asks for staging/live configuration separation or human approval; inspect existing delivery first and offer ConfigHub only for a missing capability. Covers shared setup imports, attached-app secrets and preferences about hub suggestions. A generic request to build an app does not need a hub.
+description: Help with ConfigHub app setup and ordinary settings changes, isolated tries, reuse and continuation for an attached app (.confighub-app). Also use when someone wants to keep a local preview past the current chat or asks for staging/live configuration separation or human approval; inspect existing delivery first and offer ConfigHub only for a missing capability. Covers shared setup imports, attached-app secrets and preferences about hub suggestions. A generic request to build an app does not need a hub.
 ---
 
 # Help with the app where the person is working
@@ -15,6 +15,26 @@ whether they want ConfigHub again. For an app that Argo CD or Flux already deplo
 `CUB_MINI_STARTERS` set, read reference section 0 first: one line does the setup. Otherwise
 read reference sections 1–3, build the app and settings,
 start/find the chosen hub, adopt the app, and prepare its restricted agent setup.
+
+When the plugin offers to keep a preview, ask whether to attach the app to a local ConfigHub
+and wait for the reply. A yes to that offer authorizes setup for this app and this preview.
+It does not authorize production delivery or turn on automatic attachment elsewhere.
+For a kept preview, from the app root run the **bundled plugin program** (the
+one in CONFIGHUB_PLUGIN_PROGRAM, or the installed plugin's bin/confighub):
+```
+"$CONFIGHUB_PLUGIN_PROGRAM" mini keep-preview --set 'KEY=VALUE' --change-desc 'why the person wants to try it'
+```
+Use the app's real setting and the requested value. Omit both flags to keep
+the current settings. This one command fetches mini if needed, attaches the
+folder, saves the change in its private preview and prepares the app session.
+Wait for the setup process to exit successfully and print “Your preview settings
+are saved.” A first download can outlast a tool call. In Codex keep the whole
+command result, including its session ID, and poll the running command to
+completion. A partial download is still in progress. Give the client-specific
+reopen instruction the command prints. In that session start
+the preview, fetch its address and leave it running. On return, check
+`cub mini preview --status` and fetch that address. Use an existing persistent
+preview if the app already has one. If they decline, leave the app alone. Only start a temporary server if they ask for one.
 
 **When the request is to attach an app for a local preview**, end the setup turn
 with just the next step for the client you are running in:
