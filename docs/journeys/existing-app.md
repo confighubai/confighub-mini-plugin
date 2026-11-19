@@ -14,14 +14,11 @@ Connect an app you already have without rewriting its config files or changing h
    ```text
    Try “Evening collection” as the heading. Keep the usual board as it is. I’d like to open the preview again tomorrow.
    ```
-   Pick a setting your app already reads. If your plugin offers to attach the app, say **yes**. It downloads mini on first use and saves the change in a private preview on your machine. If your version gives no offer, ask **“Attach ConfigHub to this app so I can try a preview.”**
-2. Reopen the app. In **Claude Code**, reopen the same folder. In **Codex CLI**, use the `run-codex` command your agent gives you. The preview uses the app’s own key. You can leave production approval pending.
-3. Ask **“Show me the preview I asked to keep.”** Open the address and check the heading. If you used the explicit attach command on an older version, include the heading you want in this first request.
-4. **Verify across sessions:** Close and reopen the app session, then ask:
-   ```text
-   Is my preview still running? What does it serve?
-   ```
-   Your agent locates the running preview (`cub mini preview --status`) and checks its response. Ask to stop the preview (`cub mini preview --stop`) when finished. ([What Claude Code and Codex found on the published package](../evidence.md#keep-a-preview-on-plugin-0994-and-mini21))
+   Pick a setting your app already reads. Say **yes** when your agent offers to attach the app locally. The first download can take a minute.
+2. Open the address your agent gives you in this chat. It has checked the page with the app’s preview settings. Codex may ask for permission to run the setup command or read the local address.
+3. Later, open a fresh chat in the same app folder and ask **“Where’s the preview, and what does it say?”** Your agent checks the running process and reads the page. You can ask it to stop the preview when you’re finished.
+
+[See what Claude Code and Codex returned](../evidence.md#the-preview-in-the-chat-that-said-yes).
 
 ---
 

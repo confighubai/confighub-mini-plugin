@@ -36,6 +36,8 @@ Codex runs hooks configured in its own settings directory rather than plugin-bun
 
 **You** choose what to share and decide separately about production. **Your agent** checks the preview, makes the greeting a shared staging setting at your request, and verifies the second app’s response.
 
+If you just want a preview of an existing Node app, ask for a change you can keep. Say yes to the local setup offer. Codex checks the running page and gives you the address in this chat. A fresh chat in the same folder can find it again.
+
 When you create or attach an app on macOS, ConfigHub prepares a local hub, a preview slot, and a **scoped `run-codex` launcher** for that folder. Running `run-codex` starts Codex on the app's proposal key—so the agent can update `preview` and `staging` freely while the hub refuses any attempt by the agent to self-approve `live` ([scoped Codex key details](approvals.md#codex-sessions-on-the-proposal-key)).
 
 1. **Attach or create your first app** in an ordinary `codex` session:
