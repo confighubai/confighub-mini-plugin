@@ -27,29 +27,19 @@ one in CONFIGHUB_PLUGIN_PROGRAM, or the installed plugin's bin/confighub):
 Use the app's real setting and the requested value. Omit both flags to keep
 the current settings. This one command fetches mini if needed, attaches the
 folder, saves the change in its private preview and prepares the app session.
-Wait for the setup process to exit successfully and print “Your preview settings
-are saved.” A first download can outlast a tool call. In Codex keep the whole
-command result, including its session ID, and poll the running command to
-completion. A partial download is still in progress. Give the client-specific
-reopen instruction the command prints.
+Wait for the setup command to finish. In Codex, poll its command handle if it is
+still downloading. Codex starts the saved preview in the app's restricted profile
+during this call. If Claude Code gets a command ending in `mini keep-preview --show`,
+run it yourself in the next Bash call in this conversation. That call uses the
+folder's new permissions. Fetch the printed address, report what the page says,
+and leave the preview running. A yes covers this step. Leave production approvals
+for the owner. Follow the reported recovery instruction if setup fails.
 
-- **“Show me the preview I kept.”** In the app’s scoped session, run `cub mini preview`. It starts the saved version or reuses its running process. Fetch the address it prints and leave the app running.
-- **“Where is it running?”** Check its status and fetch the address it prints. In ordinary Codex, run `"${CODEX_HOME:-$HOME/.codex}/confighub/bin/confighub" mini preview --status` from the app folder. This read-only check works without `cub` on PATH or a scoped launcher. If the session is denied a local connection, ask for permission to fetch the exact loopback address printed by the check. Verify the page there before answering. In a scoped session use `cub mini preview --status`. Use an existing persistent
-preview if the app already has one. If they decline, leave the app alone. Only start a temporary server if they ask for one.
-
-**When the request is to attach an app for a local preview**, end the setup turn
-with just the next step for the client you are running in:
-- **Claude Code:** “Reopen Claude Code in this app folder and ask for the preview.”
-  The app folder already has its scoped settings.
-- **Codex CLI:** Give the exact scoped `run-codex` command printed by adopt and
-  ask the person to start their preview there.
-
-That is the complete preview handoff. The approval line printed under “Tell the
-person this” is for shipping to production. Omit it from a preview reply, even
-as an optional next step. The preview works with that order pending. Make and
-verify the preview change in the new app session using the cub on its PATH. Missing
-`cub` is what the bundled program's `mini get` installs, not a reason to stop. A restricted
-key still uses the owner handoff below rather than acquiring new rights.
+When the person comes back asking where it is running, check the existing process.
+In ordinary Codex use `"${CODEX_HOME:-$HOME/.codex}/confighub/bin/confighub" mini preview --status`.
+In the app's scoped session use `cub mini preview --status`. Fetch the returned
+address, requesting local network access for that address if necessary, and verify
+the page. If asked to start a stopped preview in a scoped session, run `cub mini preview`.
 
 ## Choose the smallest useful step
 
