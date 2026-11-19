@@ -124,6 +124,19 @@ Git and the plugin both met the target for explaining the chosen value. The diff
 
 ### From the Workshop homepage to a running preview
 
+On 19 November 2026, Claude Code and Codex CLI each started in a clean Mac profile with an existing Node app and just the [live Workshop homepage](https://confighub.github.io/helm-expt/site/). Both found the [five-minute guide](try-the-plugin.md#try-it-in-five-minutes) and installed the [published plugin 0.99.6](https://github.com/confighubai/confighub-mini-plugin/releases/tag/v0.99.6).
+
+| Client | From opening Workshop to explaining the change in a fresh chat | What another new chat found |
+| --- | --- | --- |
+| Claude Code | 46 sec. Recovered `CACHE=off → on` and the reason for the uncommitted edit. | The original preview on port 62056, serving “Evening collection.” |
+| Codex CLI | 2 min 45 sec. Recovered `CACHE=off → on` and the reason for the uncommitted edit. | The original preview on port 62686, serving “Evening collection.” |
+
+The reason was to keep the label printer working during Tuesday’s storeroom Wi-Fi replacement. Each agent recovered it before a hub was installed. When asked for a preview to keep, each offered local setup and waited for a yes. We followed the printed reopen instruction for [mini.23](https://github.com/confighubai/confighub-mini-plugin/releases/tag/mini-v0.11.1-mini.23). The final chat got the app folder and a request to check the page. It received no URL or prompt to use mini. Codex requested local network access to read the page. The timings include installer permissions and session restarts.
+
+For each client we verified HTTP 200, the same process ID and start time across chats, and the same response body. The usual board kept serving “Weekday collection.” The only tracked file change was the requested cache edit. Staging and production stayed at revision 2 and the preview used revision 3. We stopped the test apps and removed both test hubs.
+
+**Earlier runs**
+
 We started Claude Code and Codex in separate clean Mac profiles with an existing Node app and the [Workshop homepage](https://confighub.github.io/helm-expt/site/). We asked each to find a quick way for tomorrow’s chat to remember an uncommitted setting. The only starting link was the homepage. Each agent found the five-minute guide, installed the plugin and told us to open a fresh session.
 
 We asked to turn on the cache because the label printer needed to keep working during Tuesday’s storeroom Wi-Fi replacement. Another chat had to give the previous value and the reason. We then asked for an “Evening collection” preview to keep until tomorrow. The only reply to the offer to attach the app was “Yes.” The last chat got no address, heading or setup instructions.
@@ -139,6 +152,8 @@ On [plugin 0.99.5](https://github.com/confighubai/confighub-mini-plugin/releases
 | Claude Code, [revised Workshop homepage](https://github.com/confighub/helm-expt/pull/2293) served locally | Found the app plugin directly. A fresh chat recovered `off → on` and the printer reason. | After reopening the app folder, a fresh chat returned the same port (62333) and heading, “Evening collection.” |
 
 In both completed runs we checked HTTP 200, the process ID and its start time before and after the last chat. The usual board kept serving “Weekday collection,” the uncommitted cache edit stayed intact, and staging and production stayed at revision 2. The preview held revision 3. We stopped the previews and removed both test hubs afterward.
+
+After the [first Workshop update](https://github.com/confighub/helm-expt/pull/2293) went live, we repeated the same prompts on 0.99.5. Claude Code again installed the Kubernetes skill. Codex found the app guide, recovered the reason and saved the new heading. When asked to show the saved preview, it checked the status of a process it had never started. Neither run completed. The [Workshop installer fix](https://github.com/confighub/helm-expt/pull/2294) put the app installer beside the guide. After deployment, a fresh Claude Code chat followed the live homepage and installed the correct plugin. The [preview fix](https://github.com/confighubai/confighub-mini/pull/931) uses a request to see the saved version to start the app. In a focused Codex run the next chat found the same process and read “Evening collection.”
 
 ### Keep a preview on plugin 0.99.4 and mini.21
 
