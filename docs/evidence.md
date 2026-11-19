@@ -122,6 +122,14 @@ Git and the plugin both met the target for explaining the chosen value. The diff
 
 ## Two first actions in fresh sessions
 
+### From the Workshop homepage to a running preview
+
+We started Claude Code and Codex in separate clean Mac profiles with an existing Node app and the [Workshop homepage](https://confighub.github.io/helm-expt/site/). We asked each to find a quick way for tomorrow’s chat to remember an uncommitted setting. The only starting link was the homepage. Each agent found the five-minute guide, installed the plugin and told us to open a fresh session.
+
+We asked to turn on the cache because the label printer needed to keep working during Tuesday’s storeroom Wi-Fi replacement. Another chat had to give the previous value and the reason. We then asked for an “Evening collection” preview to keep until tomorrow. The only reply to the offer to attach the app was “Yes.” The last chat got no address, heading or setup instructions.
+
+On plugin 0.99.4, Claude Code completed the whole sequence. Codex recovered the setting and its reason, offered to keep the preview and started it in the app’s scoped session. Reopening with ordinary Codex exposed a gap: it looked for `cub` on the shell path and could not give the address. This happened even though the preview was still serving the new heading. The Workshop guide directory and agent index also took Codex on a detour before it found the five-minute guide back on the homepage.
+
 ### Keep a preview on plugin 0.99.4 and mini.21
 
 On 19 November 2026 we installed the [published plugin](https://github.com/confighubai/confighub-mini-plugin/releases/tag/v0.99.4) in two clean Mac profiles. Each started with a running Node app that displayed “Weekday collection.” The first request asked for an “Evening collection” heading at a local address that would still work after the chat closed. Both agents offered to attach the app and waited for a yes. Each downloaded [mini.21](https://github.com/confighubai/confighub-mini-plugin/releases/tag/mini-v0.11.1-mini.21) and saved the new heading in the preview.

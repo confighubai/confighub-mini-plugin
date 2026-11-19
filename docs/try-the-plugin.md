@@ -4,7 +4,7 @@ Give your next session the reason for an uncommitted edit. The plugin records th
 
 ## Try it in five minutes
 
-**You** open a sample folder and ask two questions in separate sessions. **Your agent** edits the setting and later reads the record to explain why.
+Use your own Git app or the sample below. **You** ask for an edit, then open a fresh chat. **Your agent** edits the setting and later reads the record to explain why.
 
 1. **Install the plugin** (skip if already installed):
 
@@ -15,14 +15,14 @@ Give your next session the reason for an uncommitted edit. The plugin records th
    ```
    *(Using **Codex CLI**? Follow the [one-command Codex setup](codex.md#set-it-up) and approve `/hooks` instead.)*
 
-2. **Create a throwaway Git folder** and start a fresh `claude` or `codex` session inside it:
+2. **Open a fresh session in your app folder** so the plugin is active. Pick a non-secret setting you actually want to change and give the reason in your request. To try the example without changing your app, create this sample folder and start a fresh session there:
 
    ```sh
    mkdir try-confighub && cd try-confighub && git init -q &&
      printf 'CACHE=off\n' > .env && git add -f .env
    ```
 
-3. **Ask in Session 1** (and allow the edit):
+3. **Ask for the edit.** Here’s the request for the sample folder. In your own app, use the setting and reason you picked.
 
    ```text
    Turn the cache on in .env for next week's sale. Don't commit.
@@ -48,7 +48,11 @@ CACHE: on in .env
   asked: "Turn the cache on in .env for next week's sale. Don't commit."
 ```
 
-Delete `try-confighub` when you're done (unused local records expire after 30 days). See [measured session timings](evidence.md#two-first-actions-in-fresh-sessions) or the [full plugin walkthrough](../examples/walkthroughs/tool-plugin.md).
+If you used the sample, you can delete `try-confighub` when you're done.
+
+**Want to see a change running?** In an existing Node app with a heading read from `.env`, ask “Try a different heading in a preview I can keep until tomorrow. Leave my usual app alone.” Your agent offers to attach the app locally. If you say yes, reopen Claude Code in the app folder, or start Codex with the app command your agent gives you. Ask to see the preview. When you come back, ask “Where’s the preview, and what does it say?” [Run a preview of my app](journeys/existing-app.md#run-a-preview-of-my-app).
+
+See [measured session timings](evidence.md#two-first-actions-in-fresh-sessions) or the [full plugin walkthrough](../examples/walkthroughs/tool-plugin.md).
 
 ---
 
@@ -102,7 +106,7 @@ A record informs you and your agents, but an agent running with your credentials
 | Goal | Next step |
 |---|---|
 | Comment changed config values + reasons on every GitHub PR | Add the one-step [PR review Action](../review/README.md) |
-| Test changes in a local preview & put `live` behind human approval | Run `/confighub:staging` or follow [attach an existing app](journeys/existing-app.md) |
+| Review a proposed production change | [See what you are approving](approvals.md) |
 | Keep your overrides cleanly across upstream Helm chart upgrades | Install the local hub ([install](install-mini.md)) and see [your own Helm chart](your-own-chart.md) |
 | Run agents in CI or sandboxes with disposable hubs | See [agents in CI](../ci/README.md) and [CI & sandboxes](ci-and-sandboxes.md) |
 | Share records, keys, and approvals across teammates | Connect to [a shared hub](git-and-github.md) or see [unattended agents](agents-that-run-for-weeks.md) |
