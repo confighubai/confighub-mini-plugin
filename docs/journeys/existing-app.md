@@ -21,7 +21,7 @@ Connect an app you already have without rewriting its config files or changing h
    ```text
    Is my preview still running? What does it serve?
    ```
-   Your agent locates the running preview (`cub mini preview --status`) and checks its response. Ask to stop the preview (`cub mini preview --stop`) when finished. ([Measured clean-profile Mac run](../evidence.md#the-default-preview-on-plugin-0992-and-mini19))
+   Your agent locates the running preview (`cub mini preview --status`) and checks its response. Ask to stop the preview (`cub mini preview --stop`) when finished. ([What Claude Code and Codex found on the published package](../evidence.md#keep-a-preview-on-plugin-0994-and-mini21))
 
 ---
 
