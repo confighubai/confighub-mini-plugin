@@ -122,6 +122,17 @@ Git and the plugin both met the target for explaining the chosen value. The diff
 
 ## Two first actions in fresh sessions
 
+### The preview in the chat that said yes
+
+On 19 November 2026 we tried the [published plugin 0.99.7](https://github.com/confighubai/confighub-mini-plugin/releases/tag/v0.99.7) and [mini.24](https://github.com/confighubai/confighub-mini-plugin/releases/tag/mini-v0.11.1-mini.24) in two clean macOS profiles. Each started with the plugin installed, a running Node app showing “Weekday collection,” and no local hub. We asked for an “Evening collection” preview to keep. Both agents offered local setup. Our entire reply was “Yes.”
+
+| Client | What happened after yes | What a fresh chat found without the address |
+| --- | --- | --- |
+| Claude Code | Returned the running page on port 52607 in the same chat. | The same address and process, serving “Evening collection” (HTTP 200). |
+| Codex CLI | Returned the running page on port 52734 in the same chat. | The same address and process, serving “Evening collection” (HTTP 200). |
+
+We kept each client process open for the request and the yes. There was no restart, follow-up start request or pasted URL. Each first run included the mini download. Codex can ask permission to run a command or read the local address. For each client we verified the listener, its start time and the HTTP response independently. The original app kept its heading, Git showed no tracked edits, and staging and production stayed at revision 2. Only the preview used revision 3. Both hubs and all four test app processes were stopped afterward.
+
 ### From the Workshop homepage to a running preview
 
 On 19 November 2026, Claude Code and Codex CLI each started in a clean Mac profile with an existing Node app and just the [live Workshop homepage](https://confighub.github.io/helm-expt/site/). Both found the [five-minute guide](try-the-plugin.md#try-it-in-five-minutes) and installed the [published plugin 0.99.6](https://github.com/confighubai/confighub-mini-plugin/releases/tag/v0.99.6).

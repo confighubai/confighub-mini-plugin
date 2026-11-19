@@ -18,7 +18,7 @@ Connect an app you already have without rewriting its config files or changing h
 2. Open the address your agent gives you in this chat. It has checked the page with the app’s preview settings. Codex may ask for permission to run the setup command or read the local address.
 3. Later, open a fresh chat in the same app folder and ask **“Where’s the preview, and what does it say?”** Your agent checks the running process and reads the page. You can ask it to stop the preview when you’re finished.
 
-[See what Claude Code and Codex returned](../evidence.md#from-the-workshop-homepage-to-a-running-preview).
+[See what Claude Code and Codex returned](../evidence.md#the-preview-in-the-chat-that-said-yes).
 
 ---
 
