@@ -31,8 +31,10 @@ Wait for the setup process to exit successfully and print “Your preview settin
 are saved.” A first download can outlast a tool call. In Codex keep the whole
 command result, including its session ID, and poll the running command to
 completion. A partial download is still in progress. Give the client-specific
-reopen instruction the command prints. In that session start
-the preview, fetch its address and leave it running. When someone comes back asking where the version they tried is running, check its status and fetch the address it prints. In ordinary Codex, run `"${CODEX_HOME:-$HOME/.codex}/confighub/bin/confighub" mini preview --status` from the app folder. This read-only check works without `cub` on PATH or a scoped launcher. If the session is denied a local connection, ask for permission to fetch the exact loopback address printed by the check. Verify the page there before answering. In a scoped session use `cub mini preview --status`. Use an existing persistent
+reopen instruction the command prints.
+
+- **“Show me the preview I kept.”** In the app’s scoped session, run `cub mini preview`. It starts the saved version or reuses its running process. Fetch the address it prints and leave the app running.
+- **“Where is it running?”** Check its status and fetch the address it prints. In ordinary Codex, run `"${CODEX_HOME:-$HOME/.codex}/confighub/bin/confighub" mini preview --status` from the app folder. This read-only check works without `cub` on PATH or a scoped launcher. If the session is denied a local connection, ask for permission to fetch the exact loopback address printed by the check. Verify the page there before answering. In a scoped session use `cub mini preview --status`. Use an existing persistent
 preview if the app already has one. If they decline, leave the app alone. Only start a temporary server if they ask for one.
 
 **When the request is to attach an app for a local preview**, end the setup turn
