@@ -122,6 +122,19 @@ Git and the plugin both met the target for explaining the chosen value. The diff
 
 ## Two first actions in fresh sessions
 
+### Keep a preview on plugin 0.99.4 and mini.21
+
+On 19 November 2026 we installed the [published plugin](https://github.com/confighubai/confighub-mini-plugin/releases/tag/v0.99.4) in two clean Mac profiles. Each started with a running Node app that displayed “Weekday collection.” The first request asked for an “Evening collection” heading at a local address that would still work after the chat closed. Both agents offered to attach the app and waited for a yes. Each downloaded [mini.21](https://github.com/confighubai/confighub-mini-plugin/releases/tag/mini-v0.11.1-mini.21) and saved the new heading in the preview.
+
+| Client | How we opened the preview | What a fresh chat found without the address |
+| --- | --- | --- |
+| Claude Code | Reopened the app folder and asked for the preview | The same port (56886) and process (29932), serving “Evening collection” |
+| Codex CLI | Used the app’s printed launcher and asked for the preview | The same port (60693) and process (39467), serving “Evening collection” |
+
+We also reopened the Codex project with plain `codex`. That fresh chat found the same running preview and read back “Evening collection” without the launcher or a supplied address.
+
+We fetched each address independently and checked the process start time before and after reopening. The preview returned HTTP 200 at revision 3. The original board continued to serve “Weekday collection,” the source files stayed unchanged, and both staging and production kept revision 2.
+
 ### Starting from the live page in Claude Code and Codex
 
 On 18 November, six separate sessions in each client used plugin 0.99.2 and mini.19 on macOS. Each client began at the [live page](https://confighub.github.io/helm-expt/ai-agents/). After the edit, we asked only “Why is the cache on?” After closing the preview session, we asked only “Is my preview still running? What does it serve?”
