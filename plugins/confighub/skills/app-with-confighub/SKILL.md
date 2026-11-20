@@ -16,8 +16,13 @@ whether they want ConfigHub again. For an app that Argo CD or Flux already deplo
 read reference sections 1–3, build the app and settings,
 start/find the chosen hub, adopt the app, and prepare its restricted agent setup.
 
-When the plugin offers to keep a preview, ask whether to attach the app to a local ConfigHub
-and wait for the reply. A yes to that offer authorizes setup for this app and this preview.
+When the plugin offers to keep a preview, find the setting for the requested change
+before asking. Explain that the preview can be reopened in a fresh chat. Finish with
+this one question on its own line and wait for the reply:
+
+May I download ConfigHub mini and attach this app so you can keep its preview?
+
+A yes to that offer authorizes setup for this app and this preview.
 It does not authorize production delivery or turn on automatic attachment elsewhere.
 For a kept preview, from the app root run the **bundled plugin program** (the
 one in CONFIGHUB_PLUGIN_PROGRAM, or the installed plugin's bin/confighub):
@@ -27,6 +32,11 @@ one in CONFIGHUB_PLUGIN_PROGRAM, or the installed plugin's bin/confighub):
 Use the app's real setting and the requested value. Omit both flags to keep
 the current settings. This one command fetches mini if needed, attaches the
 folder, saves the change in its private preview and prepares the app session.
+In a workspace-restricted Codex session on macOS, this command may need access outside
+the app folder to create the local database and listen on a local port. If those
+actions require permission and the session can ask, request it on the first call
+to `keep-preview` (`sandbox_permissions=require_escalated`) for this command once.
+Keep the same ConfigHub identity, request no prefix rule, and stop if refused.
 Wait for the setup command to finish. In Codex, poll its command handle if it is
 still downloading. Codex starts the saved preview in the app's restricted profile
 during this call. If Claude Code gets a command ending in `mini keep-preview --show`,
