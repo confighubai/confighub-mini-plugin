@@ -16,6 +16,16 @@ whether they want ConfigHub again. For an app that Argo CD or Flux already deplo
 read reference sections 1–3, build the app and settings,
 start/find the chosen hub, adopt the app, and prepare its restricted agent setup.
 
+When the person names a host, start with the app’s own start command and the
+[guide for that host](https://github.com/confighubai/confighub-mini-plugin/blob/main/examples/walkthroughs/README.md#start-here-starters).
+For [Daytona](https://github.com/confighubai/confighub-mini-plugin/blob/main/examples/walkthroughs/starter-daytona.md),
+Daytona runs the app. ConfigHub keeps its settings and can bring an experiment
+back for review. Reuse the chosen sandbox and its access and auto-stop settings.
+For a new sandbox, keep it private and leave its auto-stop interval in place. Check the app’s
+actual response before saying it is running. For a new local attachment use
+`"$CONFIGHUB_PLUGIN_PROGRAM" mini get` and the launcher it prints. Local setup
+needs no hosted ConfigHub login. Respect the connection of an already attached app.
+
 When the plugin offers to keep a preview, find the setting for the requested change
 before asking. Explain that the preview can be reopened in a fresh chat. Finish with
 this one question on its own line and wait for the reply:
