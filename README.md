@@ -53,14 +53,6 @@ claude plugin marketplace add confighubai/confighub-mini-plugin
 claude plugin install confighub@confighub
 ```
 
-**Already installed?** Open a fresh chat in your app folder and ask this before undoing a settings change.
-
-> I’m thinking of undoing the last settings change ConfigHub recorded. Why did we make it, and where does this app use it? Just show me for now.
-
-Claude can find where the app reads `CACHE`. The plugin also kept the request that turned it on for Friday’s sale, even before a commit. A fresh chat can show you both. For the full history in Claude Code, type `/confighub:changes`. If this is your first edit, [try it in a sample folder](#try-one-setting).
-
-Want to see a different value running? [Keep a local preview](docs/journeys/existing-app.md#run-a-preview-of-my-app), or [try a larger batch in Daytona and bring it back for review](examples/walkthroughs/starter-daytona.md).
-
 <details>
 <summary><strong>Using the Codex CLI?</strong></summary>
 
@@ -73,6 +65,14 @@ git clone --depth 1 --branch v0 https://github.com/confighubai/confighub-mini-pl
 
 Then in Codex CLI, run `/hooks`, review and approve the ConfigHub hooks, and open a fresh session in your project folder. ([Codex setup and removal](docs/codex.md#set-it-up))
 </details>
+
+**Try it in your first chat.** Ask your agent to change one setting and say why. For example, in a test app with `CACHE=off` in `.env`, paste this:
+
+```text
+Set CACHE=on in .env for Saturday’s sale. Leave it uncommitted.
+```
+
+At the end of your first recorded settings edit, look for **ConfigHub plugin**. It shows `CACHE off → on` and quotes your request. Later, open a fresh chat and ask **“Why is the cache on?”** [Set up the sample folder](#try-one-setting) · [Keep a local preview](docs/journeys/existing-app.md#run-a-preview-of-my-app).
 
 *(Want the local hub CLI without a coding agent? [Install the local hub on its own](docs/install-mini.md).)*
 
