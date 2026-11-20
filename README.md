@@ -7,6 +7,8 @@ Ask Claude Code or Codex why a setting changed. When you want to see a change ru
 
 [Three things to try first](https://confighub.github.io/helm-expt/ai-agents/first-look.html) has copyable steps for both clients, including how to give a second app the shared greeting.
 
+**Web guide:** [ConfigHub for Coding Agents](https://confighub.github.io/helm-expt/ai-agents/) · [Step 1: Plugin](https://confighub.github.io/helm-expt/ai-agents/plugin.html) · [Step 2: Mini Hub](https://confighub.github.io/helm-expt/ai-agents/mini.html) · [Starters & recipes](https://confighub.github.io/helm-expt/ai-agents/starters.html) · [Agent router (`llms.txt`)](https://confighub.github.io/helm-expt/ai-agents/llms.txt) · [Kubernetes Workshop](https://confighub.github.io/helm-expt/site/index.html)
+
 ## Install
 
 Run these two commands in Terminal for **Claude Code**, then open a fresh `claude` session in your app folder:
