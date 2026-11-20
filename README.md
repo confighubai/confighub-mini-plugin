@@ -18,11 +18,11 @@ claude plugin marketplace add confighubai/confighub-mini-plugin
 claude plugin install confighub@confighub
 ```
 
-**Already installed?** Before changing a setting back, open your app folder in a fresh chat and ask:
+**Already installed?** Open a fresh chat in your app folder and ask this before undoing a settings change.
 
-> Pick the last setting ConfigHub recorded. What changed, why, and where does this app use it? Show me what you can verify. Leave the files alone.
+> I’m thinking of undoing the last settings change ConfigHub recorded. Why did we make it, and where does this app use it? Just show me for now.
 
-For example, the file says caching is on. The request says someone turned it on for Friday’s sale. Now you can decide whether to leave it on. To list the other settings in Claude Code, type `/confighub:changes`. If the record is empty, [try one edit in a sample folder](#try-one-setting).
+Claude can find where the app reads `CACHE`. The plugin also kept the request that turned it on for Friday’s sale, even before a commit. A fresh chat can show you both. For the full history in Claude Code, type `/confighub:changes`. If this is your first edit, [try it in a sample folder](#try-one-setting).
 
 Want to see a different value running? [Keep a local preview](docs/journeys/existing-app.md#run-a-preview-of-my-app), or [try a larger batch in Daytona and bring it back for review](examples/walkthroughs/starter-daytona.md).
 
