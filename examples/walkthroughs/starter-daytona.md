@@ -9,6 +9,12 @@ budget_seconds: 240
 
 A queue spikes and you want to try batches of 240 instead of 120. Use a disposable Daytona sandbox so the experiment cannot approve its own change. When you delete the sandbox, your team can still review the setting and the reason. Production stays at 120.
 
+**Want to run your app on Daytona?** Open its folder in Claude Code or Codex and ask:
+
+> Run this app in my Daytona sandbox and check what it serves. Use ConfigHub to keep its settings.
+
+Daytona runs the app. This starter lets you take a settings change out of the sandbox for review. You can try the settings example locally before signing in to Daytona. For a hosted run, choose an existing private sandbox or create one in Daytona and give your agent its name. Keep its usual auto-stop setting. A shared ConfigHub sign-in is only needed if you send the proposal to a shared hub.
+
 ## Quick start
 
 You need: an unpacked [mini package](../../docs/install-mini.md) that includes the Daytona starter. The local rehearsal needs no Daytona account.
@@ -102,9 +108,11 @@ Use an unpacked [mini package](../../docs/install-mini.md) that includes the Day
    cub component delete --recursive --detach batch
    ```
 
-For cleanup, remove only the app named by `TEAM_APP` from the shared hub, then its workflow, with `cub --context shared component delete --recursive --detach "$TEAM_APP"` and `cub --context shared changeworkflow delete --space workflows "$TEAM_APP-live-approval"`. Stop the local rehearsal hub with `cub mini stop --name batch-sandbox`. In Daytona, use `daytona sandbox delete YOUR_TEST_SANDBOX` and confirm it is gone.
+For cleanup, remove only the app named by `TEAM_APP` from the shared hub, then its workflow, with `cub --context shared component delete --recursive --detach "$TEAM_APP"` and `cub --context shared changeworkflow delete --space workflows "$TEAM_APP-live-approval"`. Stop the local rehearsal hub with `cub mini stop --name batch-sandbox`. For the v0 Daytona CLI, the owner runs `daytona delete YOUR_TEST_SANDBOX` and checks `daytona list`. With another CLI version, check its delete command first.
 
 ## Agent
+
+If the person wants their app running, check the current folder for its start command and ask which sandbox to use if none is named. Use the owner's chosen sandbox and its existing access and auto-stop settings. Use the installed Daytona CLI or SDK to start the app there and read its HTTP response. Report the setting the app actually read. The 120-to-240 exercise below is a separate job.
 
 Ask: “Try a batch size of 240 because the queue spiked. Leave production at 120 and bring me back a proposal I can review.” Use only the supplied proposer context. Report what changed in staging, what live still holds, the reason, and where the owner can review it.
 

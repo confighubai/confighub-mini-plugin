@@ -9,12 +9,14 @@ Ask Claude Code or Codex why a setting changed. When you want to see a change ru
 
 ## Install
 
-Run these two commands in Terminal for **Claude Code**, then open a fresh `claude` session:
+Run these two commands in Terminal for **Claude Code**, then open a fresh `claude` session in your app folder:
 
 ```sh
 claude plugin marketplace add confighubai/confighub-mini-plugin
 claude plugin install confighub@confighub
 ```
+
+**Already installed?** In your app’s Claude chat, type `/confighub:changes` to see the settings it remembers. In either client, ask “Show me the settings changes ConfigHub recorded in this project and why.” If the record is empty, [try one setting](#try-one-setting).
 
 <details>
 <summary><strong>Using the Codex CLI?</strong></summary>
