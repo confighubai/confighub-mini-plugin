@@ -112,6 +112,8 @@ For cleanup, remove only the app named by `TEAM_APP` from the shared hub, then i
 
 ## Agent
 
+For an unattached local app, use the app plugin you already have. In Claude Code run `"$CONFIGHUB_PLUGIN_PROGRAM" mini get` and use the local launcher it prints. Plain `cub` on the shell path may have no `mini` command. Its hosted context can be expired and the local setup will still work. For an attached app, use its existing connection.
+
 If the person wants their app running, check the current folder for its start command and ask which sandbox to use if none is named. Use the owner's chosen sandbox and its existing access and auto-stop settings. Use the installed Daytona CLI or SDK to start the app there and read its HTTP response. Report the setting the app actually read. The 120-to-240 exercise below is a separate job.
 
 Ask: “Try a batch size of 240 because the queue spiked. Leave production at 120 and bring me back a proposal I can review.” Use only the supplied proposer context. Report what changed in staging, what live still holds, the reason, and where the owner can review it.
