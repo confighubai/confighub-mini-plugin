@@ -15,6 +15,8 @@ Use your own Git app or the sample below. **You** ask for an edit, then open a f
    ```
    *(Using **Codex CLI**? Follow the [one-command Codex setup](codex.md#set-it-up) and approve `/hooks` instead.)*
 
+   If Claude Code says the marketplace’s “network source differs,” run `claude plugin marketplace list`. If `confighub` points to the older skills repository, follow its [one-time migration](https://github.com/confighub/confighub-skills#moving-an-older-installation), then retry the install.
+
 2. **Open a fresh session in your app folder** so the plugin is active. Pick a non-secret setting you actually want to change and give the reason in your request. To try the example without changing your app, create this sample folder and start a fresh session there:
 
    ```sh
