@@ -122,6 +122,22 @@ Git and the plugin both met the target for explaining the chosen value. The diff
 
 ## Two first actions in fresh sessions
 
+### Before changing a setting back
+
+On 20 November 2026, Claude Code turned `CACHE` from `off` to `on` in a sample catalog app for Friday’s sale, without committing. A fresh Claude Code chat and a fresh Codex chat each read the record from [plugin 0.99.9](https://github.com/confighubai/confighub-mini-plugin/releases/tag/v0.99.9). Asked what the setting did, both recovered the original request and found the line in `catalog.js` that selects cached or fresh data. We compared the app files before and after each question. Both left them untouched.
+
+### Trying a larger batch before shipping it
+
+We ran a small Node app on a Mac with 360 sample jobs and a batch limit of 120. We then used the [published mini.26](https://github.com/confighubai/confighub-mini-plugin/releases/tag/mini-v0.11.1-mini.26) to open a local preview at 240. We read both HTTP responses after the change.
+
+| What we read | Result |
+| --- | --- |
+| Ordinary app | Three batches of 120 jobs |
+| Preview | Two batches, one of 240 jobs and one of 120 |
+| App’s `.env`, staging settings and production settings in the local hub | Batch limit 120 in all three |
+
+This measured how the app grouped the jobs. Processing time would need a separate measurement on a real queue. We stopped both local processes and removed the test hub.
+
 ### The preview in the chat that said yes
 
 On 19 November 2026 we tried the [published plugin 0.99.7](https://github.com/confighubai/confighub-mini-plugin/releases/tag/v0.99.7) and [mini.24](https://github.com/confighubai/confighub-mini-plugin/releases/tag/mini-v0.11.1-mini.24) in two clean macOS profiles. Each started with the plugin installed, a running Node app showing “Weekday collection,” and no local hub. We asked for an “Evening collection” preview to keep. Both agents offered local setup. Our entire reply was “Yes.”
