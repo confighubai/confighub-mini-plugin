@@ -9,6 +9,12 @@ budget_seconds: 240
 
 A queue spikes and you want to try batches of 240 instead of 120. Use a disposable Daytona sandbox so the experiment cannot approve its own change. When you delete the sandbox, your team can still review the setting and the reason. Production stays at 120.
 
+**Want to run your app on Daytona?** Open its folder in Claude Code or Codex and ask:
+
+> Run this app in a Daytona sandbox and check what it serves. Use ConfigHub to keep its settings.
+
+Daytona runs the app. This starter lets you take a settings change out of the sandbox for review. You can try the settings example locally before signing in to Daytona. The hosted run needs Daytona access. A shared ConfigHub sign-in is only needed if you send the proposal to a shared hub.
+
 ## Quick start
 
 You need: an unpacked [mini package](../../docs/install-mini.md) that includes the Daytona starter. The local rehearsal needs no Daytona account.
