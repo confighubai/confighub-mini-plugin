@@ -126,7 +126,7 @@ Claude Code, signed in, and Git. Each slash command below, such as `/confighub:c
    claude -p "Staging's slow tests time out: raise TIMEOUT to 60 in .env. Make the change now; don't commit." --permission-mode acceptEdits
    ```
 
-9. `/confighub:staging`: the step to a hub. The local hub is ConfigHub, the server that keeps configuration with every change and can make production wait for your approval, made small enough for one computer. Typed in the app's folder, this downloads it (52 to 77 MB, by platform), checks it, starts a hub, and gives the app a staging and a production copy of its settings. What the agents changed here, with each request, goes into the hub in the same step. It approves nothing. After it, start a new Claude Code session in the folder: from then on the agent works on a key of its own, which can change staging and only propose changes to production.
+9. `/confighub:staging`: the step to a hub. The local hub is ConfigHub, the server that keeps configuration with every change and can make production wait for your approval, made small enough for one computer. Typed in the app's folder, this downloads it (sizes in the [release assets](../../docs/install-mini.md#the-current-release)), checks it, starts a hub, and gives the app a staging and a production copy of its settings. What the agents changed here, with each request, goes into the hub in the same step. It approves nothing. After it, start a new Claude Code session in the folder: from then on the agent works on a key of its own, which can change staging and only propose changes to production.
    <!-- run: staging -->
    ```sh
    claude -p "/confighub:staging"
