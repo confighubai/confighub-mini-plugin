@@ -1,0 +1,73 @@
+{
+  "app": "dispatch",
+  "edit": "HOLD_MINUTES=12 to HOLD_MINUTES=28 in a Git-ignored .env",
+  "recorded_request": "Change HOLD_MINUTES in .env to 28 because the freight elevator closes during evening parcel collection. Leave the change uncommitted.",
+  "separate_edit": "Added “Run locally for development.” in the README with no recorded reason.",
+  "unrelated_setting": "REGION=west",
+  "unchanged": [
+    "app file hashes",
+    ".env and README edits",
+    "Git commit",
+    "Git status and index state"
+  ],
+  "codex_setup": "Workspace and installed hooks trusted through the normal CLI in a disposable profile for both versions. Each question was asked in a new chat without a hook trust override.",
+  "setup": "Published plugin installed for the readers. No hub or provider. Authenticated client sessions on macOS. Session-creation prompts and raw logs stayed outside the app.",
+  "verification": {
+    "releases": {
+      "v0.99.13": {
+        "isDraft": false,
+        "publishedAt": "2026-11-21T19:44:09Z",
+        "tagName": "v0.99.13",
+        "url": "https://github.com/confighubai/confighub-mini-plugin/releases/tag/v0.99.13"
+      },
+      "mini-v0.11.1-mini.30": {
+        "isDraft": false,
+        "publishedAt": "2026-11-21T19:42:22Z",
+        "tagName": "mini-v0.11.1-mini.30",
+        "url": "https://github.com/confighubai/confighub-mini-plugin/releases/tag/mini-v0.11.1-mini.30"
+      }
+    },
+    "downloaded_plugin_commit": "8c042166a3f09d8c1b9544ac47763110b94b0d0d",
+    "matched_plugin_files": 23,
+    "matched_package_archives": {
+      "confighub-mini-0.11.1-mini.30-darwin-arm64.tar.xz": "daf011726329c227cfdbb0256c7be1d7dd083f268081c91739369c50fe02c5f0",
+      "confighub-mini-0.11.1-mini.30-darwin-amd64.tar.xz": "23e1900d2408d528c76a99f56c1beea604962e668bb8985e1e31219624780642",
+      "confighub-mini-0.11.1-mini.30-linux-arm64.tar.xz": "66f18b3997d52b536f74e97d5c1cfcb84e39ef7297ef489107f236da038c89ed",
+      "confighub-mini-0.11.1-mini.30-linux-amd64.tar.xz": "69690933ea8e27aeb4a396ae891bc00c125fa11822c50cb126a5ef0f5fada742"
+    }
+  },
+  "runs": [
+    {
+      "plugin": "0.99.12",
+      "client": "claude",
+      "question": "what did we change here and why?",
+      "first_answer": "**What changed:** There's one uncommitted change, in `README.md`. It adds a blank line and the sentence \"Run locally for development.\" under the `# Dispatch` heading.\n\n**Why:** I can't tell from the repo. The diff doesn't say, and I don't have any record of earlier work in this conversation, so I can't say what we intended. The line reads like a placeholder for run instructions.\n\nThe only commit so far is `feb3276 Start dispatch app`, which created `.gitignore` and the original `README.md`.\n\nIf you want, I can expand that line into real setup and run steps, but I'd need to know how the app starts.",
+      "found_setting_and_reason": false,
+      "also_reported_readme": true
+    },
+    {
+      "plugin": "0.99.12",
+      "client": "codex",
+      "question": "what did we change here and why?",
+      "first_answer": "The only uncommitted change is in [README.md](README.md): we added “Run locally for development.” beneath the project title.\n\nThe apparent intent was to indicate that Dispatch can be run locally during development. The change doesn’t explain how to run it, and there’s no accompanying code change or recorded rationale to establish more than that.",
+      "found_setting_and_reason": false,
+      "also_reported_readme": true
+    },
+    {
+      "plugin": "0.99.13",
+      "client": "claude",
+      "question": "what did we change here and why?",
+      "first_answer": "Two uncommitted changes are in the working tree.\n\n**1. `.env`: `HOLD_MINUTES` changed from 12 to 28**\n- **Why:** you asked for it because the freight elevator closes during evening parcel collection. The longer hold presumably covers that.\n- **Status:** you asked to leave it uncommitted. It doesn't appear in `git status`, so `.env` is probably gitignored and Git isn't tracking it. I haven't opened the file to confirm the current value. The 12 → 28 change comes from the recorded settings history.\n\n**2. `README.md`: added a line, \"Run locally for development.\"**\n- This shows in `git diff`. I have no recorded reason for it, so I can't say why it was made.\n\nThe only commit is `feb3276 Start dispatch app`.",
+      "found_setting_and_reason": true,
+      "also_reported_readme": true
+    },
+    {
+      "plugin": "0.99.13",
+      "client": "codex",
+      "question": "what did we change here and why?",
+      "first_answer": "Here’s what changed in this project:\n\n- **`HOLD_MINUTES` changed from 12 to 28** in `.env`. The recorded reason was that the freight elevator closes during evening parcel collection. The request specified leaving the change uncommitted.\n- **README.md has an uncommitted addition:** “Run locally for development.” No reason for that edit is recorded.\n\nThe only commit in the Git history is the initial “Start dispatch app” commit. The settings change comes from ConfigHub’s local history; `.env` does not appear in Git’s working-tree status.",
+      "found_setting_and_reason": true,
+      "also_reported_readme": true
+    }
+  ]
+}
