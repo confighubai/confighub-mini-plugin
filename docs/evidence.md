@@ -138,6 +138,21 @@ We ran a small Node app on a Mac with 360 sample jobs and a batch limit of 120. 
 
 This measured how the app grouped the jobs. Processing time would need a separate measurement on a real queue. We stopped both local processes and removed the test hub.
 
+### Opening Friday’s production settings
+
+On 21 November 2026, we installed [plugin 0.99.12](https://github.com/confighubai/confighub-mini-plugin/releases/tag/v0.99.12) and [mini.29](https://github.com/confighubai/confighub-mini-plugin/releases/tag/mini-v0.11.1-mini.29) from the public downloads. We asked Claude Code and Codex, independently, **“Open Friday’s production settings as a new preview.”** Then we started a fresh chat in the same app folder and asked **“Where is the preview I left running, and did the sample job finish there?”** Neither prompt included a URL or a command.
+
+The batch app used the packaged **web** and **Daytona** starters together and ran locally. Its sample destination succeeds on the fourth attempt. With Friday’s two retries, the preview exhausted three attempts and queued the job. With the current production override of four retries, production delivered the job on attempt four.
+
+| Client on macOS | Open Friday’s settings | Find the preview in another chat |
+| --- | --- | --- |
+| Claude Code | Served revision 2. The job queued after three attempts. | Found the same process and read the queued result. |
+| Codex CLI | Served revision 2. The job queued after three attempts. | Found the same process and read the queued result. |
+
+Time from the prompt to the reply was 8.5 seconds to open and 7.2 seconds to find the preview again in Claude Code. Codex took 41.6 and 21.6 seconds, respectively. It read several CLI help screens before opening the preview. Both clients started with an attached app.
+
+Both runs kept the production process, production and staging histories, and app files intact. The return checks compared the address, process identity, revision ID and HTTP response. The starter settings and the job ran locally on macOS. We supplied Friday timestamps on the two older revisions in this disposable hub before the sessions began. The preview runs today’s code with the saved settings. An initial Claude session stopped at sign-in before it opened a preview. The test had created the app key in a disposable home and launched Claude from the Mac account. We fixed the path to that same key in the test profile and started a new chat.
+
 ### The preview in the chat that said yes
 
 On 19 November 2026 we tried the [published plugin 0.99.7](https://github.com/confighubai/confighub-mini-plugin/releases/tag/v0.99.7) and [mini.24](https://github.com/confighubai/confighub-mini-plugin/releases/tag/mini-v0.11.1-mini.24) in two clean macOS profiles. Each started with the plugin installed, a running Node app showing “Weekday collection,” and no local hub. We asked for an “Evening collection” preview to keep. Both agents offered local setup. Our entire reply was “Yes.”

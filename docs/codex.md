@@ -14,6 +14,8 @@ Codex runs hooks configured in its own settings directory rather than plugin-bun
 2. **Approve hooks once in Codex CLI:** open `codex`, run `/hooks`, review and approve the ConfigHub hooks, then start a **fresh `codex` session** in your project folder.
 
 **What to try first:**
+- **In your app:** Ask “Show me one setting ConfigHub remembers changing here, and why.” If your record is empty, the five-minute example gives you your first edit.
+- **In an empty folder:** [Ask Codex to build your first app](../README.md#build-my-first-app).
 - **Plugin only (no server):** [Remember why a setting changed in five minutes](try-the-plugin.md#try-it-in-five-minutes).
 - **Local hub + live preview:** [Run a preview of an existing app](journeys/existing-app.md#run-a-preview-of-my-app) or follow [the preview and second-app steps below](#try-a-change-and-start-a-second-app).
 
