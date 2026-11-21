@@ -1,6 +1,6 @@
 ---
 name: app-with-confighub
-description: Help with ConfigHub app setup and ordinary settings changes, isolated tries, reuse and continuation for an attached app (.confighub-app). Also use when someone wants to keep a local preview past the current chat or asks for staging/live configuration separation or human approval; inspect existing delivery first and offer ConfigHub only for a missing capability. Covers shared setup imports, attached-app secrets and preferences about hub suggestions. A generic request to build an app does not need a hub.
+description: Recall earlier settings changes and their reasons, including uncommitted edits, when someone asks what changed in this project. Help with ConfigHub app setup and ordinary settings changes, isolated tries, reuse and continuation for an attached app (.confighub-app). Also use when someone wants to keep a local preview past the current chat or asks for staging/live configuration separation or human approval; inspect existing delivery first and offer ConfigHub only for a missing capability. Covers shared setup imports, attached-app secrets and preferences about hub suggestions. A generic request to build an app does not need a hub.
 ---
 
 # Help with the app where the person is working
@@ -8,6 +8,11 @@ description: Help with ConfigHub app setup and ordinary settings changes, isolat
 The person asks for development work. Work from their app, files and delivery path;
 they do not need to know ConfigHub commands or roadmap names. The plugin already keeps
 its local record without a hub or account. Building an ordinary app does not require setup.
+
+For a recap, use any settings history supplied with the question alongside the
+working tree and Git history. For other recorded settings, run
+`"$CONFIGHUB_PLUGIN_PROGRAM" mini changes --summary` from the app folder. Match
+each reason to its own edit. If a change has no recorded reason, say so.
 
 An explicit request to build an app **using ConfigHub**, or to attach ConfigHub, is already
 a setup choice. Complete that requested setup; do not replace it with plain files or ask
