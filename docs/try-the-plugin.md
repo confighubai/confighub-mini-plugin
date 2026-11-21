@@ -2,6 +2,8 @@
 
 Give your next session the reason for an uncommitted edit. The plugin records the change on your machine. You need Git and Claude Code or Codex. No server or ConfigHub account is required.
 
+Already in your own app? Ask **“What does ConfigHub remember about a setting we changed here, and why?”** If your local record is empty, make one change with a reason. The example below gives you a setting to try. Starting from an empty folder? [Build your first app](journeys/new-app.md).
+
 ## Try it in five minutes
 
 Use your own Git app or the sample below. **You** ask for an edit, then open a fresh chat. **Your agent** edits the setting and later reads the record to explain why.

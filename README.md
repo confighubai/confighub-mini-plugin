@@ -4,7 +4,7 @@ Ask Claude or Codex to build an app, or start with one you already run. Try your
 
 ConfigHub remembers which settings worked, why you chose them, and which ones each app keeps for itself. Start on your laptop. There’s no platform to build first.
 
-**[Install the plugin](#install)** · **[Already installed? Try the cache prompt](#try-one-setting)**
+**[Install the plugin](#install)** · [Start in my app](#try-one-setting) · [Build my first app](#build-my-first-app)
 
 ## Install
 
@@ -30,7 +30,7 @@ Then in Codex CLI, run `/hooks`, review and approve the ConfigHub hooks, and ope
 
 ## Try one setting
 
-**Try this first after installing in Claude Code or Codex.** In five minutes, you can see a fresh chat remember why you made a change. If your test app already has `CACHE=off` in `.env`, start at step 2.
+In your app folder, ask **“What does ConfigHub remember about a setting we changed here, and why?”** If there’s a record, look for the key, the change and the request behind it. To start a record, ask for a change you already want, or try the five-minute cache example below. If your test app has `CACHE=off`, start at step 2.
 
 1. Create a throwaway Git folder and start a fresh `claude` (or `codex`) session inside it:
    ```sh
@@ -56,17 +56,17 @@ In a local Node web app that reads its heading from `.env`, paste this into your
 Show me my app as it is and a local preview with the heading “Evening collection.” Give me both links and keep the preview running for tomorrow.
 ```
 
-Say yes when your agent offers local setup. Open both links to compare the headings. [Existing app guide](docs/journeys/existing-app.md#run-a-preview-of-my-app)
+Say yes to local setup and compare the two headings. Once the hub has production history, you can also ask **“Open Friday’s production settings as a new preview.”** [Existing app guide](docs/journeys/existing-app.md#run-a-preview-of-my-app)
 
 ## Build my first app
 
-In an empty Git folder, paste this into your agent.
+In an empty Git folder, ask for the app you want. For one you can also preview locally, try this.
 
 ```text
-Build a small greeting app using ConfigHub. Give it a configurable greeting and separate staging and production settings. Run it locally and show me the greeting it serves.
+Build a small Node app for my neighborhood market. Give it a heading I can change in .env, run it locally and give me the link.
 ```
 
-Open the local address and read the greeting. The hub keeps separate staging and production settings. [New app guide](docs/journeys/new-app.md)
+Open your page. When you want to try a different heading, ask **“Show me ‘Evening market’ in a preview I can open again tomorrow.”** Your agent can offer to keep it in a local hub. [New app guide](docs/journeys/new-app.md)
 
 [Three things to try first](https://confighub.github.io/helm-expt/ai-agents/first-look.html) includes copyable steps for both agents and a second app that inherits the first app’s greeting.
 

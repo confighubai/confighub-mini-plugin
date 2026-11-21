@@ -11,7 +11,7 @@ This page shows how to install it: in one step from Claude Code, on its own with
 | the local hub | 0.11.1-mini.29 |
 | The ConfigHub server inside it | v0.11.1, the same version a shared hub on confighub.com runs |
 | `cub`, ConfigHub's command-line tool, inside it | v0.11.1 |
-| The download | 52 to 77 MB, depending on the platform |
+| The download | Choose your platform in the [release assets](https://github.com/confighubai/confighub-mini-plugin/releases/tag/mini-v0.11.1-mini.29) to see its download size |
 
 The Claude plugin's own version is on the [releases page](https://github.com/confighubai/confighub-mini-plugin/releases). `bin/confighub mini get` always gets the newest local hub.
 

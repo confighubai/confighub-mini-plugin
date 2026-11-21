@@ -22,6 +22,10 @@ You can try a change you care about the same way. For example, ask a queue app t
 
 [See what Claude Code and Codex returned](../evidence.md#the-preview-in-the-chat-that-said-yes).
 
+### Compare with last Friday
+
+Once the hub has saved production settings from Friday or earlier, ask **“Open Friday’s production settings as a new preview.”** Your agent runs the current checkout with the settings the hub held for production at the end of the most recent completed Friday in your timezone. If you attached the app on Saturday, its history starts on Saturday. You can still preview a change to today’s settings. Otherwise, open the historical preview and compare it with your usual app. In a fresh chat in the same folder, ask **“Where’s the preview I left running, and what does it show?”** [What the two-starter app served](../evidence.md#opening-fridays-production-settings).
+
 ---
 
 ## What you do
