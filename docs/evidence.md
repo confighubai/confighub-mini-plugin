@@ -142,7 +142,13 @@ This measured how the app grouped the jobs. Processing time would need a separat
 
 With published plugin 0.99.12, a Claude Code session changed the pickup window in an uncommitted market app from 15 to 35 minutes for evening shoppers. We then asked fresh Claude Code and Codex sessions **“What does ConfigHub remember about a setting we changed here, and why?”** Both named the key, both values and the reason. The file still held 35 after each question.
 
-With the more general **“What’s one setting we changed in this app, and why?”**, Codex recovered the same edit. Claude checked Git and said there was no history. There was a local ConfigHub record in both cases. That’s why the suggested first question names ConfigHub.
+With the more general **“What’s one setting we changed in this app, and why?”**, Codex recovered the same edit. Claude checked Git and said there was no history. There was a local ConfigHub record in both cases. That run used 0.99.12.
+
+### Asking what changed without naming ConfigHub
+
+A Claude Code session changed `HOLD_MINUTES` from 12 to 28 because the freight elevator closes during evening parcel collection. Git ignored its `.env` file. The README also had a separate, uncommitted edit with no recorded reason.
+
+We asked fresh Claude Code and Codex chats **“what did we change here and why?”** On 0.99.12 both reported only the README. On published 0.99.13 both also gave the setting, its old and new values and the elevator reason. Both reported the README edit separately. The files and Git state stayed unchanged. [Questions, first answers and package verification](runs/2026-11-21/change-recap/results.json).
 
 ### Opening Friday’s production settings
 
