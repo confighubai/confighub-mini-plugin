@@ -301,6 +301,8 @@ say what they need, and `cub mini needs APP` lists it. Do not write the service'
 
 For a preview of a local env-file Node app, run `cub mini preview --set 'KEY=VALUE' --change-desc "WHY"` in the app’s scoped session. Read the actual key from the app. This stores the change in the preview only and starts the app from that revision. With no setting change, run `cub mini preview`. Leave the working files, staging and production unchanged. Fetch the address it prints and give it to the person. Leave the process running, including at the end of the turn. Stop it only if asked. On return, run `cub mini preview --status` to find and verify the existing process.
 
+When someone asks to open Friday’s production settings as a new preview, run `cub mini preview --from-live Friday` in the attached app. It uses the current app code and the production settings held at the end of the most recent completed Friday in the caller’s timezone. Fetch the page and report the revision and what the app serves. If history is missing, tell them. To give this configuration a name on the hub, someone with permission to create variants can run `cub mini try APP friday --from live --at Friday`. To find a running preview in a later chat, use `cub mini preview --status`, which verifies each preview in this checkout.
+
 When the person asks to "try" a change "first", "in a copy", or "without touching
 production", change neither staging nor live. A restricted proposer uses an assigned
 try, including an empty `preview` made during app setup, before considering an owner
