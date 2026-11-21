@@ -4,45 +4,7 @@ Ask Claude or Codex to build an app, or start with one you already run. Try your
 
 ConfigHub remembers which settings worked, why you chose them, and which ones each app keeps for itself. Start on your laptop. There’s no platform to build first.
 
-**[Build my first app](#build-my-first-app)** · **[Try a change in my app](#try-a-change-in-my-app)**
-
-[Install the plugin](#install) for Claude Code or Codex. Once you’ve installed it, open a fresh chat in the folder you want to work in.
-
-## Build my first app
-
-In an empty Git folder, paste this into your agent.
-
-```text
-Build a small greeting app using ConfigHub. Give it a configurable greeting and separate staging and production settings. Run it locally and show me the greeting it serves.
-```
-
-Open the local address and read the greeting. The hub keeps separate staging and production settings. [New app guide](docs/journeys/new-app.md)
-
-## Try a change in my app
-
-In a local Node web app that reads its heading from `.env`, paste this into your agent.
-
-```text
-Show me my app as it is and a local preview with the heading “Evening collection.” Give me both links and keep the preview running for tomorrow.
-```
-
-Say yes when your agent offers local setup. Open both links to compare the headings. [Existing app guide](docs/journeys/existing-app.md#run-a-preview-of-my-app)
-
-## Try one setting
-
-**Why is the cache on?** Try this five-minute example with the plugin alone.
-
-1. Create a throwaway Git folder and start a fresh `claude` (or `codex`) session inside it:
-   ```sh
-   mkdir try-confighub && cd try-confighub && git init -q &&
-     printf 'CACHE=off\n' > .env && git add -f .env
-   ```
-2. Ask: **“Turn the cache on in `.env` for next week’s sale. Don’t commit.”**
-3. Start a **new** session in the same folder and ask: **“Why is the cache on?”** (or type `/confighub:why CACHE` in Claude Code). Even with no Git commit, it recovers `off → on` and the sale request. ([Full five-minute guide](docs/try-the-plugin.md#try-it-in-five-minutes))
-
-[Three things to try first](https://confighub.github.io/helm-expt/ai-agents/first-look.html) includes copyable steps for both agents and a second app that inherits the first app’s greeting.
-
-**Web guide:** [ConfigHub for Coding Agents](https://confighub.github.io/helm-expt/ai-agents/) · [Step 1: Plugin](https://confighub.github.io/helm-expt/ai-agents/plugin.html) · [Step 2: Mini Hub](https://confighub.github.io/helm-expt/ai-agents/mini.html) · [Starters & recipes](https://confighub.github.io/helm-expt/ai-agents/starters.html) · [Agent router (`llms.txt`)](https://confighub.github.io/helm-expt/ai-agents/llms.txt) · [Kubernetes Workshop](https://confighub.github.io/helm-expt/site/index.html)
+**[Install the plugin](#install)** · **[Already installed? Try the cache prompt](#try-one-setting)**
 
 ## Install
 
@@ -66,13 +28,49 @@ git clone --depth 1 --branch v0 https://github.com/confighubai/confighub-mini-pl
 Then in Codex CLI, run `/hooks`, review and approve the ConfigHub hooks, and open a fresh session in your project folder. ([Codex setup and removal](docs/codex.md#set-it-up))
 </details>
 
-**Try it in your first chat.** Ask your agent to change one setting and say why. For example, in a test app with `CACHE=off` in `.env`, paste this:
+## Try one setting
+
+**Try this first after installing in Claude Code or Codex.** In five minutes, you can see a fresh chat remember why you made a change. If your test app already has `CACHE=off` in `.env`, start at step 2.
+
+1. Create a throwaway Git folder and start a fresh `claude` (or `codex`) session inside it:
+   ```sh
+   mkdir try-confighub && cd try-confighub && git init -q &&
+     printf 'CACHE=off\n' > .env && git add -f .env
+   ```
+2. Paste this in the chat.
+
+   ```text
+   Set CACHE=on in .env for Saturday’s sale. Leave it uncommitted.
+   ```
+
+   Look for **ConfigHub plugin** at the end of the turn. It shows `CACHE off → on` and quotes your request.
+3. Open a fresh chat in the same folder and ask **“Why is the cache on?”** It can tell you it was for Saturday’s sale, even before you commit.
+
+[Full five-minute guide](docs/try-the-plugin.md#try-it-in-five-minutes) · [Next, run a preview of your app](#try-a-change-in-my-app)
+
+## Try a change in my app
+
+In a local Node web app that reads its heading from `.env`, paste this into your agent.
 
 ```text
-Set CACHE=on in .env for Saturday’s sale. Leave it uncommitted.
+Show me my app as it is and a local preview with the heading “Evening collection.” Give me both links and keep the preview running for tomorrow.
 ```
 
-At the end of your first recorded settings edit, look for **ConfigHub plugin**. It shows `CACHE off → on` and quotes your request. Later, open a fresh chat and ask **“Why is the cache on?”** [Set up the sample folder](#try-one-setting) · [Keep a local preview](docs/journeys/existing-app.md#run-a-preview-of-my-app).
+Say yes when your agent offers local setup. Open both links to compare the headings. [Existing app guide](docs/journeys/existing-app.md#run-a-preview-of-my-app)
+
+## Build my first app
+
+In an empty Git folder, paste this into your agent.
+
+```text
+Build a small greeting app using ConfigHub. Give it a configurable greeting and separate staging and production settings. Run it locally and show me the greeting it serves.
+```
+
+Open the local address and read the greeting. The hub keeps separate staging and production settings. [New app guide](docs/journeys/new-app.md)
+
+[Three things to try first](https://confighub.github.io/helm-expt/ai-agents/first-look.html) includes copyable steps for both agents and a second app that inherits the first app’s greeting.
+
+**Web guide:** [ConfigHub for Coding Agents](https://confighub.github.io/helm-expt/ai-agents/) · [Step 1: Plugin](https://confighub.github.io/helm-expt/ai-agents/plugin.html) · [Step 2: Mini Hub](https://confighub.github.io/helm-expt/ai-agents/mini.html) · [Starters & recipes](https://confighub.github.io/helm-expt/ai-agents/starters.html) · [Agent router (`llms.txt`)](https://confighub.github.io/helm-expt/ai-agents/llms.txt) · [Kubernetes Workshop](https://confighub.github.io/helm-expt/site/index.html)
 
 *(Want the local hub CLI without a coding agent? [Install the local hub on its own](docs/install-mini.md).)*
 
