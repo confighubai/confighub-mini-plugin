@@ -30,7 +30,7 @@ Then in Codex CLI, run `/hooks`, review and approve the ConfigHub hooks, and ope
 
 ## Try one setting
 
-In your app folder, ask **“Show me one setting ConfigHub remembers changing here, and why.”** If there’s a record, look for the key, the change and the request behind it. To start a record, ask for a change you already want, or try the five-minute cache example below. If your test app has `CACHE=off`, start at step 2.
+In your app folder, ask **“What does ConfigHub remember about a setting we changed here, and why?”** If there’s a record, look for the key, the change and the request behind it. To start a record, ask for a change you already want, or try the five-minute cache example below. If your test app has `CACHE=off`, start at step 2.
 
 1. Create a throwaway Git folder and start a fresh `claude` (or `codex`) session inside it:
    ```sh

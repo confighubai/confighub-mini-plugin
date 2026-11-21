@@ -2,7 +2,7 @@
 
 Start with the app you want. Ask **“Build a small Node app for my neighborhood market. Give it a heading I can change in .env, run it locally and give me the link.”** Open the page. When you want to compare two headings, ask for a preview you can reopen tomorrow. ConfigHub can keep that preview and help a fresh chat find it. [Try a running preview](existing-app.md#run-a-preview-of-my-app).
 
-## Start with staging and production already set up
+## If you want staging and production from the start
 
 1. **Install the plugin** ([README](../../README.md#install)) and open a fresh `claude` session in an empty Git folder:
    ```sh

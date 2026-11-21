@@ -138,6 +138,12 @@ We ran a small Node app on a Mac with 360 sample jobs and a batch limit of 120. 
 
 This measured how the app grouped the jobs. Processing time would need a separate measurement on a real queue. We stopped both local processes and removed the test hub.
 
+### Asking about one setting in your own app
+
+With published plugin 0.99.12, a Claude Code session changed the pickup window in an uncommitted market app from 15 to 35 minutes for evening shoppers. We then asked fresh Claude Code and Codex sessions **“What does ConfigHub remember about a setting we changed here, and why?”** Both named the key, both values and the reason. The file still held 35 after each question.
+
+With the more general **“What’s one setting we changed in this app, and why?”**, Codex recovered the same edit. Claude checked Git and said there was no history. There was a local ConfigHub record in both cases. That’s why the suggested first question names ConfigHub.
+
 ### Opening Friday’s production settings
 
 On 21 November 2026, we installed [plugin 0.99.12](https://github.com/confighubai/confighub-mini-plugin/releases/tag/v0.99.12) and [mini.29](https://github.com/confighubai/confighub-mini-plugin/releases/tag/mini-v0.11.1-mini.29) from the public downloads. We asked Claude Code and Codex, independently, **“Open Friday’s production settings as a new preview.”** Then we started a fresh chat in the same app folder and asked **“Where is the preview I left running, and did the sample job finish there?”** Neither prompt included a URL or a command.
