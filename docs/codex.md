@@ -7,9 +7,17 @@ Codex runs hooks configured in its own settings directory rather than plugin-bun
 1. **Install hooks and workflow** (paste in Terminal from any folder; requires Git and Codex CLI):
 
    ```sh
+   curl -sSfL https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/install-codex.sh | bash
+   ```
+
+   <details>
+   <summary>Prefer to clone and run manually without <code>curl | bash</code>?</summary>
+
+   ```sh
    git clone --depth 1 --branch v0 https://github.com/confighubai/confighub-mini-plugin.git "$HOME/confighub-mini-plugin" &&
      "$HOME/confighub-mini-plugin/plugins/confighub/bin/confighub" mini codex-setup
    ```
+   </details>
 
 2. **Approve hooks once in Codex CLI:** open `codex`, run `/hooks`, review and approve the ConfigHub hooks, then start a **fresh `codex` session** in your project folder.
 
