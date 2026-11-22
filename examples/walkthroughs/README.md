@@ -24,6 +24,7 @@ A starter gives a new app of one kind its usual settings, each with a reason ([s
 | [daytona: a sandbox experiment](starter-daytona.md) | Bring a sandbox change back for review. The local example needs no Daytona account | the local hub |
 | [temporal-worker: Activity retries](starter-temporal-worker.md) | See a local Temporal worker use a new retry limit, then go back to the old one | the local hub |
 | [unikraft: an incident banner](starter-unikraft.md) | Change a banner on a test service and undo it. Try it locally or on Unikraft Cloud | the local hub |
+| [stripe, supabase & resend: add-on starters](starter-addons-stripe-supabase-resend.md) | Keep Stripe test mode, Supabase pool/SSL limits, and Resend mail sandbox explicit in staging while gating live behind approval | the local hub |
 
 For framework-specific guides, see [Next.js on Vercel](../../docs/nextjs-on-vercel.md) and [Rails on Fly](../../docs/rails-on-fly.md). Both guides say what ran and what you need to try it.
 
