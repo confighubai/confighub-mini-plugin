@@ -18,14 +18,13 @@ claude plugin install confighub@confighub
 <details>
 <summary><strong>Using the Codex CLI?</strong></summary>
 
-With Git and Codex installed, run this in Terminal from any folder:
+With Git and Codex installed, run this one-liner in Terminal from any folder:
 
 ```sh
-git clone --depth 1 --branch v0 https://github.com/confighubai/confighub-mini-plugin.git "$HOME/confighub-mini-plugin" &&
-  "$HOME/confighub-mini-plugin/plugins/confighub/bin/confighub" mini codex-setup
+curl -sSfL https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/install-codex.sh | bash
 ```
 
-Then in Codex CLI, run `/hooks`, review and approve the ConfigHub hooks, and open a fresh session in your project folder. ([Codex setup and removal](docs/codex.md#set-it-up))
+Then in Codex CLI, run `/hooks`, review and approve the ConfigHub hooks, and open a fresh session in your project folder. ([Codex setup, manual clone, and removal](docs/codex.md#set-it-up))
 </details>
 
 ## Try one setting
