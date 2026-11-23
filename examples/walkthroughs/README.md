@@ -22,9 +22,9 @@ A starter gives a new app of one kind its usual settings, each with a reason ([s
 | [vercel: an app on Vercel](starter-vercel.md) | Send approved settings to a Hobby project, or try it locally without a Vercel account | the local hub |
 | [heroku: an app on Heroku in a pipeline](starter-heroku.md) | Connect from the apps' config vars, send staging to the staging app, and approve production onto the production app, with a stand-in for Heroku | both |
 | [kustomize-flux: a Kustomize app that Flux deploys](starter-kustomize-flux.md) | Try sending approved settings to Flux on a local cluster | the local hub |
-| [daytona: a sandbox experiment](starter-daytona.md) | Bring a sandbox change back for review. The local example needs no Daytona account | the local hub |
+| [daytona: your app in your sandbox](starter-daytona.md) | Run your own app in your Daytona sandbox with staging's settings, with production behind your approval | `/confighub:staging` |
 | [temporal-worker: Activity retries](starter-temporal-worker.md) | See a local Temporal worker use a new retry limit, then go back to the old one | the local hub |
-| [unikraft: an incident banner](starter-unikraft.md) | Change a banner on a test service and undo it. Try it locally or on Unikraft Cloud | the local hub |
+| [unikraft: your service on Unikraft Cloud](starter-unikraft.md) | Connect the service your app already runs as, and approve each production change there | `/confighub:staging` |
 | [stripe, supabase & resend: add-on starters](starter-addons-stripe-supabase-resend.md) | Keep Stripe test mode, Supabase pool/SSL limits, and Resend mail sandbox explicit in staging while gating live behind approval | the local hub |
 
 For framework-specific guides, see [Next.js on Vercel](../../docs/nextjs-on-vercel.md), [Rails on Fly](../../docs/rails-on-fly.md) and [an app on Heroku](../../docs/heroku.md). Each guide says what ran and what you need to try it.
