@@ -4,7 +4,7 @@ Connect an app that already runs on Vercel. Give your agent a staging copy of it
 
 ## Connect and approve with two commands
 
-You need Claude Code or Codex CLI with the [ConfigHub plugin](../README.md#install), a signed-in Vercel CLI, and an app folder already linked to a running Vercel project with `vercel link`. It works on your real app: connecting only reads from Vercel, and nothing changes there until you approve a production change. For a first try, pick a readable, non-secret setting such as `APP_BANNER`.
+You need Claude Code or Codex CLI with the [ConfigHub plugin](../README.md#install), a signed-in Vercel CLI, and an app folder already linked to a running Vercel project with `vercel link`. It works on your real app: connecting only reads from Vercel, and nothing changes there until you approve a production change. Approving deploys the app from this folder as it is, with the approved settings, so commit or set aside any work you do not want in production first. For a first try, pick a readable, non-secret setting such as `APP_BANNER`.
 
 1. **Connect.**
    - **Claude Code:** In the app folder, run `/confighub:staging` (or ask `Attach ConfigHub to this Vercel app so production settings wait for my approval`), then **open a fresh Claude Code session** in the same folder to pick up the agent’s scoped key.
