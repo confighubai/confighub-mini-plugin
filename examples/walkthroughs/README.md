@@ -20,13 +20,14 @@ A starter gives a new app of one kind its usual settings, each with a reason ([s
 | [kustomize-argocd: a Kustomize app that Argo CD deploys](starter-kustomize-argocd.md) | Try sending approved settings to Argo CD on a local cluster | the local hub |
 | [parameter-store: an app that reads AWS Parameter Store](starter-parameter-store.md) | Try the local example. Testing also records delivery to real AWS from a shared hub | the local hub |
 | [vercel: an app on Vercel](starter-vercel.md) | Send approved settings to a Hobby project, or try it locally without a Vercel account | the local hub |
+| [heroku: an app on Heroku in a pipeline](starter-heroku.md) | Connect from the apps' config vars, send staging to the staging app, and approve production onto the production app, with a stand-in for Heroku | both |
 | [kustomize-flux: a Kustomize app that Flux deploys](starter-kustomize-flux.md) | Try sending approved settings to Flux on a local cluster | the local hub |
 | [daytona: a sandbox experiment](starter-daytona.md) | Bring a sandbox change back for review. The local example needs no Daytona account | the local hub |
 | [temporal-worker: Activity retries](starter-temporal-worker.md) | See a local Temporal worker use a new retry limit, then go back to the old one | the local hub |
 | [unikraft: an incident banner](starter-unikraft.md) | Change a banner on a test service and undo it. Try it locally or on Unikraft Cloud | the local hub |
 | [stripe, supabase & resend: add-on starters](starter-addons-stripe-supabase-resend.md) | Keep Stripe test mode, Supabase pool/SSL limits, and Resend mail sandbox explicit in staging while gating live behind approval | the local hub |
 
-For framework-specific guides, see [Next.js on Vercel](../../docs/nextjs-on-vercel.md) and [Rails on Fly](../../docs/rails-on-fly.md). Both guides say what ran and what you need to try it.
+For framework-specific guides, see [Next.js on Vercel](../../docs/nextjs-on-vercel.md), [Rails on Fly](../../docs/rails-on-fly.md) and [an app on Heroku](../../docs/heroku.md). Each guide says what ran and what you need to try it.
 
 ## Then these six
 
@@ -71,3 +72,4 @@ The clearest place to see what a hub adds: in each, an agent with ordinary tools
 | [20. Noor's staging: more memory, and production left alone](story-20-noors-staging.md) | An agent changes staging's own file; production changes only with your approval | the local hub |
 | [23. Theo's first app: the setup travels with it from the first prompt](story-23-theo-first-app.md) | The reason for each setting an agent writes, kept with it from the first file, and where the app came from | the Claude plugin |
 | [25. Alice ships it, Bob hardens it](story-25-alice-bob-hardened.md) | A reviewer's fixes become the starter's next version: the next app starts with them, the first app takes them | the local hub |
+| [26. Staging and production, seen in the app on your laptop](story-26-staging-in-your-own-app.md) | Your agent's staging change, then a production change you approved, each seen in the app as it already runs, with its files unchanged | both |

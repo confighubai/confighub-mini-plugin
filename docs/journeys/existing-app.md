@@ -6,6 +6,8 @@ Connect an app you already have without rewriting its config files or changing h
 
 ## Run a preview of my app
 
+To see staging and production in the app as it already runs, step by step with a small Python app, follow [the walkthrough](../../examples/walkthroughs/story-26-staging-in-your-own-app.md).
+
 **You** choose the app, ask for a change and open the address. **Your agent** changes the preview setting, checks the response and leaves it running. Your working files and both staging and production settings stay as they were.
 
 **Prerequisites:** The [Claude Code plugin](../../README.md#install) or [Codex setup](../codex.md#set-it-up), an app that reads a setting from `.env`, `.env.local` or `.env.development`, and `lsof` installed. The preview runs your app the way it already runs: the `dev` or `start` script in `package.json`, the `web:` line of a `Procfile`, or a command you give. Next.js, Vite and Python apps work this way, and your files are not changed. The app has to listen on `127.0.0.1` or take the address and port it is given; a command that listens on every network address is refused, and you can give it after `--` with an option that keeps it on this machine. No app yet? Ask your agent to make a small sample app first.
