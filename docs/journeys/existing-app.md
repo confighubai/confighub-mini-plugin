@@ -46,7 +46,7 @@ Works with any `.env`, Compose, Terraform, or Kustomize repository:
 
 | Your app keeps settings in | Shared `base` | `staging` overrides | `live` (production) overrides |
 |---|---|---|---|
-| Env / Compose | `.env`, `app.env`, `compose.yaml`, or `.env.example` | `.env.staging` | `.env.production` *(non-secret values only)* |
+| Env / Compose | `.env.local`, `.env.development`, `.env`, `app.env`, `compose.yaml`, or `.env.example` | `.env.staging` | `.env.production` *(non-secret values only)* |
 | Terraform | `common.tfvars` | `staging.tfvars` | `prod.tfvars` |
 | Kustomize | `base/` | `overlays/staging` | `overlays/prod`, `production`, `live`, or Argo CD target |
 | Helm chart values | Use [`cub helm install`](../your-own-chart.md) instead of `adopt` (see [Helm values](#helm-values)) | — | — |

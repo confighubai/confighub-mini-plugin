@@ -24,6 +24,8 @@ The first step downloads the local hub if it is not there, and reads only. Crede
 
 Without ConfigHub: your agent starts a new instance with `unikraft instances run -e ...` itself, production included, and the next session has no record of why.
 
+`cub` is ConfigHub's command-line tool. `/confighub:staging` downloads it with the hub, and the commands it prints give the full path to `cub`, so you can paste them as they are.
+
 ## Deeper dive
 
 The rest of this page is the full version: what the first step reads and leaves on Unikraft, the banner demo with its own image and a scoped delivery reader, the move to a shared hub, what an agent leaves to you, and how this was tested.

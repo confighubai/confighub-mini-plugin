@@ -24,6 +24,8 @@ The first step downloads the local hub if it is not there. The sandbox gets stag
 
 Without ConfigHub: your agent edits the `.env` in the sandbox or passes `-e` to `daytona create`, production's values included, and the reasons go when the sandbox goes.
 
+`cub` is ConfigHub's command-line tool. `/confighub:staging` downloads it with the hub, and the commands it prints give the full path to `cub`, so you can paste them as they are.
+
 ## Deeper dive
 
 The rest of this page is the full version: what the run in the sandbox does and leaves alone, the batch-job rehearsal of an agent that proposes from inside a sandbox, the move to a shared hub for review, what an agent leaves to the owner, and how this was tested.
