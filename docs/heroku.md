@@ -42,4 +42,4 @@ The first step says how many settings it left on Heroku.
 
 ## Testing
 
-Each release runs this path against a stand-in for the `heroku` command: connecting from an app in a pipeline, a staging change, a production change that waits, approval, a second delivery that writes nothing, a setting changed on Heroku by hand, and a rollback. Sending staging to the staging app, the agent's key being refused the first yes for it, and a staging change carried on in the same command ran the same way, for the next release. It has not been run against a real Heroku account.
+Each release runs this path against a stand-in for the `heroku` command: connecting from an app in a pipeline, a staging change, a production change that waits, approval, a second delivery that writes nothing, a setting changed on Heroku by hand, and a rollback. Sending staging to the staging app, the agent's key being refused the first yes for it, and a staging change carried on in the same command ran the same way. It has not been run against a real Heroku account.
