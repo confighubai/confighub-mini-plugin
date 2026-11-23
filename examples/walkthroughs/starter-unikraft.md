@@ -5,33 +5,42 @@ starter: unikraft
 needs: [confighub mini package with the Unikraft starter, Unikraft CLI, disposable Cloud service, BuildKit, jq, curl]
 budget_seconds: 600
 -->
-# Roll out and undo an incident banner on Unikraft Cloud
+# Put an approved setting live on your Unikraft Cloud service
 
-An incident starts and you need a banner change without rebuilding the image. Connect a disposable service, approve a green incident banner, and restore blue when the incident ends. The same image serves each change. The HTTPS response includes the ConfigHub revision that the service loaded.
+Your app is built from its `Kraftfile` and already runs on Unikraft Cloud. Connect that service as it is, let your coding agent change staging, and approve each production change. Approving starts a new instance of the same image with the approved settings, so no image is rebuilt.
 
 ## Quick start
 
-You need: an unpacked mini package with the Unikraft starter, the Unikraft CLI, BuildKit, jq, curl and a disposable Unikraft Cloud service.
+You need: Claude Code with the [ConfigHub plugin](../../README.md#install), the `unikraft` command signed in (`unikraft login`), and your app's folder, whose service runs one instance of an image pinned by digest.
 
 | | By hand | Ask your agent |
 |---|---|---|
-| Connect the service | `cub mini adopt app --name banner --live`, after the import and catalog review in step 2 | "Connect this test app to the approved Unikraft starter and show the current blue banner." |
-| Propose green | `cub mini set banner UNIKRAFT_BANNER=green --variant live --change-desc "Show the incident banner"` | "Propose a green incident banner. Check that blue is still live, then deliver after I approve and show the revision the endpoint serves." |
-| Approve and deliver | Approve the order, then deliver it with the scoped reader (step 4) | You approve it yourself. |
-| Restore blue | The same `cub mini set` command with `UNIKRAFT_BANNER=blue` (step 5) | "Propose restoring blue. Check that green is still live. After I approve, deliver the rollback and verify the new revision." |
+| Connect your service | `/confighub:staging --unikraft SERVICE` in the app's folder, in Claude Code | You type it yourself: naming the service is your step. |
+| Change a setting | `cub mini set APP KEY=VALUE --variant live --change-desc "Why"` | "Turn on the incident banner in production. I'll approve it." |
+| Approve it | `cub mini approve APP`; the first time, it also asks once whether production goes to the service | You approve it yourself. |
+| Undo | `cub mini rollback APP --reason "Why"`, then `cub mini approve APP` | "Propose turning the banner off again. I'll approve it." |
 
-The same image serves each change, and the HTTPS response shows the revision the service loaded.
+The first step downloads the local hub if it is not there, and reads only. Credentials stay in the instance; while one is there, approving stops and says so, since a new instance would need it.
 
-Without ConfigHub: your agent changes the banner directly with the Unikraft CLI, production included, and the next session has no record of why.
+Without ConfigHub: your agent starts a new instance with `unikraft instances run -e ...` itself, production included, and the next session has no record of why.
 
 ## Deeper dive
 
-The rest of this page is the full version: building the service, the scoped reader that delivers each approved revision, the move to a shared hub, what an agent leaves to you, and how this was tested.
+The rest of this page is the full version: what the first step reads and leaves on Unikraft, the banner demo with its own image and a scoped delivery reader, the move to a shared hub, what an agent leaves to you, and how this was tested.
 
 <details>
 <summary>Show the full walkthrough</summary>
 
 ## Human
+
+### Your own service
+
+- `/confighub:staging --unikraft SERVICE` asks the `unikraft` command for the service, which must be listed under that name with one running instance. Name it as `METRO/SERVICE` when two metros have a service of that name. Production starts from the environment the instance runs with. If the instance runs with no environment of its own, production starts from the `Kraftfile`'s `env:`, which `unikraft build` puts in the image. Staging starts with the same settings. The step writes nothing to Unikraft and no settings file. A folder with a `Kraftfile` and no service named is told the command to type.
+- Each approval starts one new instance of the image the running instance uses, with the approved settings and the rest of what the old instance ran with, and rolls the service over to it. When the service already holds what was approved, nothing starts. `cub mini deliver APP --compare` names any setting that differs, without its value.
+- Unikraft keeps an instance's settings with the instance. A credential there is never read into the hub, so a new instance cannot be given it: approving stops before starting anything and says which setting to move out. Give the app its credentials another way first, such as a volume or a secret store.
+- Staging changes stay in the hub. To see them running, ask your agent to run the app with staging's settings.
+
+### The banner demo
 
 Use an unpacked mini package containing the Unikraft starter. Use a new test hub and a disposable single-instance service in an organization where you can also delete the resources. The packaged example at `examples/unikraft/README.md` gives the provider setup and scoped reader commands.
 
@@ -67,11 +76,15 @@ curl -fsS "$(jq -r .endpoint app/.confighub-unikraft.json)"
 
 ## Agent
 
-Keep the provider sign-in with the person or delivery service. Give the owner the order and wait for their approval. Before and after delivery, read the endpoint and report the banner, revision and pinned image.
+For the person's own service, the person types `/confighub:staging --unikraft SERVICE` and approves; do neither for them. Propose production changes with `cub mini set APP KEY=VALUE --variant live --change-desc WHY` and give the person the approve line. If approving stops on a credential in the instance, say which setting it names and leave it where it is.
+
+For the banner demo, keep the provider sign-in with the person or delivery service. Give the owner the order and wait for their approval. Before and after delivery, read the endpoint and report the banner, revision and pinned image.
 
 ## Testing
 
-Without a provider account, run the local stand-in test from the unpacked package:
+The own-service path was run on a real local hub with a stand-in for the `unikraft` command and no Unikraft account. The stand-in answers in the forms the delivery program was run against on a real service. The run covered a service that Unikraft does not confirm, the first step reading only, credentials left out of the hub and the output, a change that waits and is not sent, the first yes refused in a Claude Code session, approval starting one new instance of the same image, a second delivery that starts nothing, a setting changed on Unikraft by hand, a credential in the instance stopping delivery, and an instance with no environment of its own starting from the `Kraftfile`.
+
+For the banner demo, without a provider account, run the local stand-in test from the unpacked package:
 
 ```sh
 "$MINI/examples/starter-check/check" "$MINI/starters/unikraft.yaml" --package "$MINI" --check-addon
@@ -93,7 +106,7 @@ It checks import, apply, compare and planted faults. The live run checks the app
 <!-- next-step boundary=same-tier: try an incident banner | Want to see what the endpoint serves while the next change waits for approval? -->
 <!-- arms: b -->
 
-This proves: owner approval controls delivery of a specific revision to Unikraft Cloud. The HTTPS response verifies the live setting and revision after update and rollback. The shared-hub test also checks the destination's approval and reader.
+This proves: for your own service, production starts from what the service runs with and changes only after your approval, with credentials never read. For the banner demo, owner approval controls delivery of a specific revision to Unikraft Cloud. The HTTPS response verifies the live setting and revision after update and rollback. The shared-hub test also checks the destination's approval and reader.
 
 <!-- results:begin -->
 

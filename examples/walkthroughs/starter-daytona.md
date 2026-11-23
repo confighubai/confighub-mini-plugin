@@ -5,40 +5,43 @@ starter: daytona
 needs: [confighub mini package, hosted ConfigHub for the shared step]
 budget_seconds: 240
 -->
-# Bring a sandbox experiment back for review
+# Run your own app in your Daytona sandbox with staging's settings
 
-A queue spikes and you want to try batches of 240 instead of 120. Use a disposable Daytona sandbox so the experiment cannot approve its own change. When you delete the sandbox, your team can still review the setting and the reason. Production stays at 120.
-
-**Want to run your app on Daytona?** Open its folder in Claude Code or Codex and ask:
-
-> Run this app in my Daytona sandbox and check what it serves. Use ConfigHub to keep its settings.
-
-Daytona runs the app. This starter lets you take a settings change out of the sandbox for review. You can try the settings example locally before signing in to Daytona. For a hosted run, choose an existing private sandbox or create one in Daytona and give your agent its name. Keep its usual auto-stop setting. A shared ConfigHub sign-in is only needed if you send the proposal to a shared hub.
+Your agent works in a Daytona sandbox that holds a clone of your app. Connect the app once from its folder, and your agent runs it in that sandbox with staging's settings. Production stays behind your approval, in the hub on your machine, so deleting the sandbox loses nothing.
 
 ## Quick start
 
-You need: an unpacked [mini package](../../docs/install-mini.md) that includes the Daytona starter. The local rehearsal needs no Daytona account.
+You need: Claude Code with the [ConfigHub plugin](../../README.md#install), the `daytona` command signed in (`daytona login`), and a started sandbox that holds a copy of your app, as it does for your agent's work.
 
 | | By hand | Ask your agent |
 |---|---|---|
-| Connect the batch job | `cub mini adopt batch`, then the owner's approvals in step 2 | "Set up my batch job so I can try changes while keeping production at 120." |
-| Try 240 | `"$MINI/examples/daytona-starter/propose" "$PWD/batch" "$PWD/returned"` with the proposer's key (step 3) | "Try 240 because the queue spiked, and leave production at 120." |
-| Put the file back | `cp batch/daytona.env batch/app.env` | "Put my local file back and keep the experiment for later." |
+| Connect your app | `/confighub:staging` in the app's folder, in Claude Code | You type it yourself. |
+| Run it in your sandbox | `cub mini preview --staging --daytona SANDBOX` | "Run this app in my Daytona sandbox dev-box with staging's settings, and show me what it serves." |
+| Try a change | `cub mini set APP KEY=VALUE --variant staging --change-desc "Why"`, then run it again | "Try a batch limit of 240 in staging because the queue spiked, run it in the sandbox again, and propose it for production." |
+| Approve or refuse | `cub mini approve APP` or `cub mini refuse APP --reason "Why"` | You decide yourself. |
 
-Production stays at 120, and the proposal for 240 keeps its reason for your team to review.
+The first step downloads the local hub if it is not there. The sandbox gets staging's settings as environment variables, never a credential and no ConfigHub key.
 
-Without ConfigHub: your agent changes `DAYTONA_BATCH_LIMIT` directly in the sandbox's `app.env`, and the next session has no record of why.
+Without ConfigHub: your agent edits the `.env` in the sandbox or passes `-e` to `daytona create`, production's values included, and the reasons go when the sandbox goes.
 
 ## Deeper dive
 
-The rest of this page is the full version: every command for the local rehearsal, how a real sandbox keeps the proposer apart, the move to a shared hub for review, what an agent leaves to the owner, and how this was tested.
+The rest of this page is the full version: what the run in the sandbox does and leaves alone, the batch-job rehearsal of an agent that proposes from inside a sandbox, the move to a shared hub for review, what an agent leaves to the owner, and how this was tested.
 
 <details>
 <summary>Show the full walkthrough</summary>
 
 ## Human
 
-Use an unpacked [mini package](../../docs/install-mini.md) that includes the Daytona starter. Start with the local rehearsal: it needs no Daytona account and tests the proposal, export, and shared review. It does not run a batch job. Use an empty working directory and keep its keys and evidence private. The shared step needs a disposable app name in an organization where you can create and remove test resources.
+### Your own app
+
+- `cub mini preview --staging --daytona SANDBOX` asks Daytona to describe the sandbox, which must be the one named and started. It runs your app's own command, from `package.json` or the `Procfile`'s `web:` line, or the one you give after `--`, in the sandbox's copy of the app with staging's settings as environment variables. The copy is the folder of the same name in the sandbox's home; name another with `--sandbox-dir DIR`. The app listens on staging's `PORT`, or 3000, or the one you give with `--port`.
+- Credentials and secret references in staging never reach the sandbox, and nothing is written to the hub. `daytona preview-url SANDBOX --port PORT` opens the app. `cub mini preview --staging --daytona SANDBOX --stop` stops it and leaves the sandbox as it is.
+- Only staging runs in a sandbox. Your agent proposes production changes from your machine, where they wait for you, so the sandbox can be deleted at any time.
+
+### The batch-job rehearsal
+
+This is the path for an agent that itself runs inside the sandbox, with a hub of its own there. Use an unpacked [mini package](../../docs/install-mini.md) that includes the Daytona starter. Start with the local rehearsal: it needs no Daytona account and tests the proposal, export, and shared review. It does not run a batch job. Use an empty working directory and keep its keys and evidence private. The shared step needs a disposable app name in an organization where you can create and remove test resources.
 
 ### Steps
 
@@ -114,7 +117,7 @@ For cleanup, remove only the app named by `TEAM_APP` from the shared hub, then i
 
 For an unattached local app, use the app plugin you already have. In Claude Code run `"$CONFIGHUB_PLUGIN_PROGRAM" mini get` and use the local launcher it prints. Plain `cub` on the shell path may have no `mini` command. Its hosted context can be expired and the local setup will still work. For an attached app, use its existing connection.
 
-If the person wants their app running, check the current folder for its start command and ask which sandbox to use if none is named. Use the owner's chosen sandbox and its existing access and auto-stop settings. Use the installed Daytona CLI or SDK to start the app there and read its HTTP response. Report the setting the app actually read. The 120-to-240 exercise below is a separate job.
+If the person wants their app running in a sandbox, ask which sandbox if none is named, then run `cub mini preview --staging --daytona SANDBOX` in the app's folder, after `/confighub:staging` has connected it. If the sandbox has no copy of the app, say so and let the person put it there. Read what it serves through `daytona preview-url SANDBOX --port PORT`. Change staging with `cub mini set APP KEY=VALUE --variant staging --change-desc WHY` and run it again; propose production changes with `--variant live` and give the person the approve line. The 120-to-240 exercise below is a separate job.
 
 Ask: “Try a batch size of 240 because the queue spiked. Leave production at 120 and bring me back a proposal I can review.” Use only the supplied proposer context. Report what changed in staging, what live still holds, the reason, and where the owner can review it.
 
@@ -127,7 +130,9 @@ Never approve a production change, create or delete a cloud sandbox, or report t
 
 ## Testing
 
-The checks read the structured starter, the staging and live Units, and the shared hub's new pending order. The local scripted path tests configuration and the approval boundary. The separate real Daytona checks below test loopback, separate OS users and the returned archive. Neither path proves that a batch job ran.
+The own-app path was run on a real local hub with a stand-in for the `daytona` command, which runs the sandbox's commands in a folder on the same computer; no Daytona account was used. The run covered a sandbox Daytona does not describe, which runs nothing, the agent's staging change, the app serving that value from the sandbox, a credential in staging kept out of the sandbox and the output, stopping the run, and production refused for a sandbox.
+
+For the batch-job rehearsal, the checks read the structured starter, the staging and live Units, and the shared hub's new pending order. The local scripted path tests configuration and the approval boundary. The separate real Daytona checks below test loopback, separate OS users and the returned archive. Neither path proves that a batch job ran.
 
 <!-- agent-task: deploy -->
 > Set up my batch job so I can try changes while keeping production at 120.
@@ -151,7 +156,7 @@ The checks read the structured starter, the staging and live Units, and the shar
 <!-- arms: b -->
 <!-- next-step boundary=same-tier when "another change is ready to test in a sandbox": reuse the test | The 240-batch proposal is back with its reason. If another queue spike needs a trial, want to reuse this disposable sandbox before review? -->
 
-This proves: the starter and the settings are stored and the experiment can become a new pending proposal. Verify the value and reason on the destination; a copied file by itself is insufficient.
+This proves: your own app runs in your sandbox with staging's settings, with no credential and no ConfigHub key there. For the rehearsal, the starter and the settings are stored and the experiment can become a new pending proposal. Verify the value and reason on the destination; a copied file by itself is insufficient.
 
 <!-- results:begin -->
 
