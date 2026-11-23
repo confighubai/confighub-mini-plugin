@@ -2,18 +2,19 @@
 
 This page is for anyone who opens a GitOps repository they did not write, or have not looked at in a while, and needs to know what it deploys before they or an agent change it.
 
-The walkthrough [the Claude plugin](../examples/walkthroughs/tool-plugin.md) runs `/confighub:inventory` with the Claude plugin's other commands.
+The walkthrough [what your GitOps repository deploys](../examples/walkthroughs/tool-inventory.md) runs `/confighub:inventory` on a repository shaped like a platform team's, with charts deployed by Argo CD ApplicationSets, and shows how to check that it reads files only. [The Claude plugin](../examples/walkthroughs/tool-plugin.md) runs it with the Claude plugin's other commands.
 
 A GitOps repository is a Git repository that a tool such as Flux or Argo CD reads to decide what runs on your clusters. Its folders do not say which of them reach a cluster. A folder can look deployed and be deployed by nothing. Two environments can differ in values nobody wrote down. And an agent's change to production can sit in a file nobody opens.
 
 `/confighub:inventory` reads the repository's files and tells you:
 
-- each app and chart, and what in the repository deploys it;
+- each app and chart, what in the repository deploys it, and for which clusters;
+- the value files kept for each cluster, and what reads them;
 - the folders that nothing in the repository deploys;
 - the values that differ between environments;
 - the values agents changed, and why.
 
-It needs no cluster and no account, and it changes nothing.
+It needs no cluster, no account and no hub, it changes nothing, and it sends nothing anywhere. [What it reads and what it writes](#what-it-reads-and-what-it-writes) has the details a security reviewer asks for.
 
 ## A story: Amara's first day
 
@@ -77,9 +78,11 @@ To compare environments, it builds each Kustomize overlay with `kubectl kustomiz
 
 **Helm releases.** Each Flux `HelmRelease`, with its chart, the chart's version, and where the chart comes from. A release patched in an overlay is listed once, where it is defined.
 
-**Helm charts kept in this repository.** Each folder with a `Chart.yaml`, and what deploys it. A chart's own dependencies, in its `charts/` folder, are not listed.
+**Helm charts kept in this repository.** Each folder with a `Chart.yaml`, and what deploys it. A chart's own dependencies, in its `charts/` folder, are not listed. A chart that other charts here take as a dependency from a folder, with `file://`, is said to be built into them; a library chart, that Helm never deploys it alone.
 
-**Argo CD.** Each Application, with the folder or chart it deploys, the revision, and the cluster and namespace it deploys to. Each ApplicationSet, with what it makes. An ApplicationSet that makes one Application for each folder matching a pattern counts as deploying each of those folders. If it names a branch other than `HEAD`, the line says which, so you can tell one that points at an old or missing branch.
+**Argo CD.** Each Application, with the folder or chart it deploys, the revision, and the cluster and namespace it deploys to. Each ApplicationSet, with its generators in plain words, such as "one Application for each cluster labeled cert-manager=enabled", and what its template deploys, from its `source` or each of its `sources`. A source counts as this repository's when its `repoURL` is the repository's `origin`, written as ssh or https. List and Git generators of this repository, and combinations of them, are filled into the template for each Application, so `apps/api/{{env}}` deploys only the folders the list names. If it names a branch other than `HEAD`, the line says which, so you can tell one that points at an old or missing branch.
+
+**Helm value files Argo CD reads from this repository.** A value file a source reaches through another source's `ref:`, such as `$values/clusters/{{name}}/ingress/values.yaml`, is matched against the repository's files, and each file found is listed with the ApplicationSet or Application that reads it and what `{{name}}` is for it. With two or more, the values that differ between them are shown, as for environments.
 
 **Plain manifests.** Folders of Kubernetes objects that no Kustomize folder includes.
 
@@ -89,6 +92,8 @@ To compare environments, it builds each Kustomize overlay with `kubectl kustomiz
 - a Flux Kustomization that names a folder above it, since Flux deploys every folder under a path that has no `kustomization.yaml` of its own;
 - the overlays that build on it, for a base folder ("deployed through apps/production, apps/staging");
 - Flux itself, for the `flux-system` folder that `flux bootstrap` writes.
+
+Where an ApplicationSet's path is filled in from what only Argo CD knows, such as a cluster's labels, a folder that matches it is "perhaps deployed by" that ApplicationSet. When the whole path comes from Argo CD, a folder nothing else deploys is "not known", never "nothing".
 
 When nothing in the repository deploys a folder, it says so. That is not always a mistake. An Argo CD Application kept in another repository, a CI job or a person with `kubectl` may deploy it. It is something to ask about before you rely on it.
 
@@ -107,8 +112,16 @@ Here's what the inventory finds in the two example repositories most teams copy:
 
 - **It reads one repository.** A folder deployed from another repository, by an Argo CD Application or a Flux source kept there, shows as deployed by nothing.
 - **It reads files, not clusters.** It says what the repository asks for, not what is running. To list what was set on a cluster outside Git, and who set it, run `bin/confighub mini drift --dir DIR`, which reads the cluster and changes nothing.
-- **Some ApplicationSets are not followed.** Generators other than Git directories, such as list, cluster and matrix generators, are listed but not followed, unless the template names one folder.
+- **It does not know which clusters have a label.** For a clusters generator, it says which label picks the clusters; Argo CD keeps the list. Merge generators, and pull request, Git hosting service and plugin generators, are described but not filled in. An ApplicationSet kept inside a chart's templates is not read.
 - **It does not check sources.** It does not check that a Helm repository, an OCI registry or a branch it names exists.
+
+## What it reads and what it writes
+
+- **It reads** the repository's YAML and JSON files, up to 1 MB each, and the Claude plugin's own record of what agents changed there, kept on your computer.
+- **It runs** `git` on this computer, to find the repository's top folder and its `origin`. When two or more Kustomize overlays build on one base, it runs `kubectl kustomize` or `kustomize build` to compare them. An overlay built on a remote base makes kustomize download that base, as it would if you ran it yourself.
+- **It never** contacts a cluster or opens a Kubernetes configuration, signs in anywhere, starts or reaches a hub, or sends anything over the network.
+- **It writes** nothing in the repository. On your computer it notes the day you used it, in `~/.confighub/agent-changes`, and never sends that anywhere; `CUB_MINI_COUNT=0` turns it off.
+- **It hides** values that look like passwords, keys or tokens: they are shown as `(not shown)`.
 
 ## When you want more than a list
 
