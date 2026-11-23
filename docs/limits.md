@@ -42,7 +42,7 @@ The [client capability matrix](how-it-works.md#client-capabilities) distinguishe
 
 - **Parameter Store readback checks the AWS parameter.** The packaged cub plugin delivered an approved shared-hub revision to a real AWS test parameter. A service must reload the parameter and report the value to verify what the service is running. The [walkthrough](../examples/walkthroughs/starter-parameter-store.md#testing) describes the tested path.
 
-- **The inventory reads one repository's files.** A folder deployed from another repository shows as deployed by nothing, and the inventory says what the files ask for, not what is running. Some ApplicationSet generators are listed but not followed ([what it does not do](inventory.md#what-it-does-not-do)).
+- **The inventory reads one repository's files.** A folder deployed from another repository shows as deployed by nothing, and the inventory says what the files ask for, not what is running. For an ApplicationSet that picks clusters by label, it says which label, not which clusters have it ([what it does not do](inventory.md#what-it-does-not-do)).
 
 - **ConfigHub's approval controls deployment only when its path consumes the approved configuration.** For Vercel or Fly, keep the provider’s production credentials with the owner or delivery process. A shell signed in as a provider administrator can still change production directly. A VM can pull approved files, and a cluster can deploy approved releases from the hub. When Argo CD or Flux deploys from Git, branch protection and CODEOWNERS on that repository are the gate. They already give an approval of an exact commit by a named person.
 
