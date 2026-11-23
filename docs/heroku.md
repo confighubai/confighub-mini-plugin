@@ -2,6 +2,8 @@
 
 If your app runs on Heroku, ConfigHub gives you what a Heroku pipeline gives you, with your coding agent doing the work: a staging copy of the app's config vars that your agent changes at once, and a production copy that changes only when you approve. Approving puts the change live on your Heroku app.
 
+To try every step on your computer first, with a stand-in for Heroku and no account, follow [the Heroku walkthrough](../examples/walkthroughs/starter-heroku.md).
+
 ## Connect and approve with two commands
 
 You need Claude Code or Codex CLI with the [ConfigHub plugin](../README.md#install), the Heroku CLI signed in (`heroku login`), and your app's folder with a Git remote to the Heroku app, as `heroku git:remote -a APP` makes.
@@ -11,6 +13,12 @@ You need Claude Code or Codex CLI with the [ConfigHub plugin](../README.md#insta
 3. **Approve it.** In your own terminal, run `cub mini approve APP`. `cub` is ConfigHub's command-line tool. `/confighub:staging` downloads it with the hub, and the last lines it prints give this command with the full path to `cub`, so you can paste it as it is. It shows the change and asks. The first time, it also asks once whether approved settings should go to your Heroku app from now on. It then sets the change on the app. Heroku restarts the app whenever its config vars change.
 
 From then on, each production change your agent proposes is one command and one decision for you: `cub mini approve APP`.
+
+## Send staging to your staging app
+
+Staging changes can reach the staging app in your pipeline too. In your own terminal, run `cub mini deliver APP --staging` once. It asks whether staging's settings should go to your staging app from now on, names that app, and says it never sends to production. Answer `y`, and staging is sent at once.
+
+From then on, each staging change your agent makes is sent to the staging app in the same command, with no step for you. Staging needs no approval. It is sent by the same rules as production: only the settings your app set, never a credential or an add-on's setting, and nothing when the staging app already holds it, so Heroku does not restart the app for nothing. Before writing, ConfigHub checks with Heroku that the app is the staging app of your production app's pipeline. It refuses any other app, production included.
 
 ## What stays on Heroku
 
@@ -24,13 +32,14 @@ The first step says how many settings it left on Heroku.
 
 - `cub mini deliver APP --compare` writes nothing and says whether the Heroku app holds what you approved, naming any setting that differs.
 - `cub mini deliver APP` sends what was last approved again. When nothing differs, it writes nothing, and Heroku does not restart the app.
+- `cub mini deliver APP --staging --compare` writes nothing and says whether the staging app holds what staging has.
 - `cub mini rollback APP --reason "Why"` proposes undoing the last approved change. Once you approve it, it goes live the same way.
 
 ## What it does not do yet
 
-- Staging changes stay in the hub. They are not sent to the staging app in your pipeline.
+- An app in no pipeline has no staging app, so its staging stays in the hub.
 - A setting removed in the hub is not removed from Heroku.
 
 ## Testing
 
-Each release runs this path against a stand-in for the `heroku` command: connecting from an app in a pipeline, a staging change, a production change that waits, approval, a second delivery that writes nothing, a setting changed on Heroku by hand, and a rollback. It has not been run against a real Heroku account.
+Each release runs this path against a stand-in for the `heroku` command: connecting from an app in a pipeline, a staging change, a production change that waits, approval, a second delivery that writes nothing, a setting changed on Heroku by hand, and a rollback. Sending staging to the staging app, the agent's key being refused the first yes for it, and a staging change carried on in the same command ran the same way, for the next release. It has not been run against a real Heroku account.
