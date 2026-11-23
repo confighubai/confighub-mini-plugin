@@ -41,6 +41,7 @@ The words these pages use, such as *hub*, *base*, *change order* and *Space*, ar
 | [What a repository deploys](inventory.md) | `/confighub:inventory`: each app and chart, and what deploys it |
 | [Working with the tools you already have](integrations.md) | What the Claude plugin does with each tool, and how far along each one is |
 | [Going back](journeys/going-back.md) | Undoing a step, taking your apps out as plain files, and removing each part |
+| [For a security review](security.md) | What the Claude plugin reads, writes and sends, and to where; what it changes in an agent's behavior; and the setting that turns off each part |
 | [Limits](limits.md) | What the Claude plugin and the local hub don't do, or haven't been shown to do |
 
 ## Other tools and setups

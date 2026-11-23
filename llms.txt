@@ -83,6 +83,7 @@ An agent in Claude Code with the plugin also has its skill, [app-with-confighub]
 - [What a repository deploys](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/inventory.md): `/confighub:inventory`: each app and chart, and what deploys it
 - [Working with the tools you already have](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/integrations.md): What the Claude plugin does with each tool, and how far along each one is
 - [Going back](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/journeys/going-back.md): Undoing a step, taking your apps out as plain files, and removing each part
+- [For a security review](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/security.md): What the Claude plugin reads, writes and sends, and to where; what it changes in an agent's behavior; and the setting that turns off each part
 - [Limits](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/limits.md): What the Claude plugin and the local hub don't do, or haven't been shown to do
 
 ## Other tools and setups
