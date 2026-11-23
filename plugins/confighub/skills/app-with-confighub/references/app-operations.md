@@ -318,6 +318,8 @@ cub mini tries APP                                                     # what th
 NAME is a word for the try (`limit`). `--from live` makes the copy from what runs instead.
 In Codex, open the scoped launcher printed at setup to work on the preview. In that session use the cub on its PATH. The owner launcher pins its own profile even if called with agent environment variables.
 
+For any other app, such as a Vite, Next.js or Python one, `cub mini preview --try NAME` runs the app's own command with the try's settings as environment variables: `package.json`'s `dev` script, else its `start` script, else the `Procfile`'s `web:` line, or the command given after `--`. In a folder `/confighub:staging` connected, `cub mini preview --staging` does the same with staging's settings and `cub mini preview --production` with what the person approved for production; a change still waiting is not in it. The command is named before it runs, the app's files are not changed, and a value kept as a secret stays in them. The app must listen on 127.0.0.1 or ::1.
+
 For an env-file Node app whose start script calls Node directly (for example, `node server.js`), run `cub mini preview --try NAME` in the attached folder after changing the try. It pulls that try, runs the app independently on loopback, and prints the actual URL. Check its HTTP response before handing it over. On return, `cub mini preview --try NAME --status` checks the same running instance. For the reason, read the preview Unit receipt or the project record. When asked to stop, run `cub mini preview --try NAME --stop`. The default NAME is `preview`.
 
 For other app types, when asked to show the try running, pull only that copy with
