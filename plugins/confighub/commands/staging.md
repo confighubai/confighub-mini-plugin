@@ -1,6 +1,6 @@
 ---
 description: Give this app a staging and a production copy of its settings, with production behind your approval
-argument-hint: "[FOLDER] [--heroku APP]"
+argument-hint: "[FOLDER] [--heroku APP | --unikraft SERVICE]"
 disable-model-invocation: true
 allowed-tools: Bash("${CLAUDE_PLUGIN_ROOT}/bin/confighub":*)
 ---
