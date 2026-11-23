@@ -16,7 +16,7 @@ From then on, each production change your agent proposes is one command and one 
 
 ## Send staging to your staging app
 
-After the next confighub mini release, staging changes can reach the staging app in your pipeline too. In your own terminal, run `cub mini deliver APP --staging` once. It asks whether staging's settings should go to your staging app from now on, names that app, and says it never sends to production. Answer `y`, and staging is sent at once.
+Staging changes can reach the staging app in your pipeline too. In your own terminal, run `cub mini deliver APP --staging` once. It asks whether staging's settings should go to your staging app from now on, names that app, and says it never sends to production. Answer `y`, and staging is sent at once.
 
 From then on, each staging change your agent makes is sent to the staging app in the same command, with no step for you. Staging needs no approval. It is sent by the same rules as production: only the settings your app set, never a credential or an add-on's setting, and nothing when the staging app already holds it, so Heroku does not restart the app for nothing. Before writing, ConfigHub checks with Heroku that the app is the staging app of your production app's pipeline. It refuses any other app, production included.
 
@@ -32,12 +32,11 @@ The first step says how many settings it left on Heroku.
 
 - `cub mini deliver APP --compare` writes nothing and says whether the Heroku app holds what you approved, naming any setting that differs.
 - `cub mini deliver APP` sends what was last approved again. When nothing differs, it writes nothing, and Heroku does not restart the app.
-- `cub mini deliver APP --staging --compare` writes nothing and says whether the staging app holds what staging has. After the next release.
+- `cub mini deliver APP --staging --compare` writes nothing and says whether the staging app holds what staging has.
 - `cub mini rollback APP --reason "Why"` proposes undoing the last approved change. Once you approve it, it goes live the same way.
 
 ## What it does not do yet
 
-- On [the current release](install-mini.md#the-current-release), staging changes stay in the hub. Sending them to the staging app comes with the next release.
 - An app in no pipeline has no staging app, so its staging stays in the hub.
 - A setting removed in the hub is not removed from Heroku.
 

@@ -31,7 +31,7 @@ The rest of this page is the full version: every command with what it prints, a 
 
 ## Human
 ### What you need
-Claude Code with the ConfigHub plugin, an unpacked [confighub mini package](../../docs/install-mini.md), and Python 3. Step 9 needs a sign-in to your organization's shared hub. Sending staging to the staging app (steps 4 and 5) needs the confighub mini release after 0.11.1-mini.31; on mini.31 a staging change stays in the hub.
+Claude Code with the ConfigHub plugin, an unpacked [confighub mini package](../../docs/install-mini.md), and Python 3. Step 9 needs a sign-in to your organization's shared hub. Sending staging to the staging app (steps 4 and 5) needs confighub mini 0.11.1-mini.32 or later.
 ### Steps
 1. Set up a terminal. `MINI` is the unpacked package. `CUB_CONFIG` gives this walkthrough a `cub` configuration of its own, so your own settings are not touched.
    <!-- run: setup -->
