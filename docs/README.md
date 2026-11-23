@@ -13,6 +13,7 @@ The words these pages use, such as *hub*, *base*, *change order* and *Space*, ar
 | [A new app](journeys/new-app.md) | One request in Claude Code gives you the app, with staging and production settings in a hub |
 | [A Next.js app on Vercel](nextjs-on-vercel.md) | Build an app, try its staging settings on Vercel, then review the first production delivery |
 | [Rails on Fly](rails-on-fly.md) | Connect a running app and approve a change, or share one setup across two Rails apps |
+| [An app on Heroku](heroku.md) | Connect an app from its Heroku config vars, and put approved production changes live on Heroku |
 | [An app you already have](journeys/existing-app.md) | Attach `.env` files, Terraform var files, Kustomize or Helm values, with your values kept as they are |
 | [An app that Argo CD or Flux deploys](journeys/gitops-app.md) | A hub beside Git, a check on each pull request, or the hub as the app's source, and the way back |
 | [Install the local hub](install-mini.md) | The hub on your laptop, free and with no account: from Claude Code in one step, or on its own without the Claude plugin; upgrading and removing it |
