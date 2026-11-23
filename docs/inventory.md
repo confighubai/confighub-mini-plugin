@@ -69,6 +69,22 @@ In one screen she learns four things she did not know:
 
 - In Claude Code, with the Claude plugin installed: type `/confighub:inventory` in the repository.
 - In a terminal: from the Claude plugin's folder, run `bin/confighub mini inventory DIR`, where `DIR` is the repository. Without `DIR`, it reads the current folder.
+- Without installing the plugin: see the next section.
+
+## Without installing the plugin
+
+A security review may come before anyone installs a plugin with hooks. You can run the inventory first, on its own: one program, downloaded from the plugin's latest release and checked against the checksum published with it. Nothing is installed, and no hook is set up. Pick your computer's program, `confighub-darwin-arm64` for a Mac with Apple silicon, or `confighub-darwin-amd64`, `confighub-linux-arm64` or `confighub-linux-amd64`:
+
+```sh
+p=confighub-darwin-arm64
+curl -fsSLO https://github.com/confighubai/confighub-mini-plugin/releases/latest/download/$p.gz
+curl -fsSLO https://github.com/confighubai/confighub-mini-plugin/releases/latest/download/SHA256SUMS
+shasum -a 256 -c SHA256SUMS --ignore-missing
+gunzip $p.gz && chmod +x $p
+CUB_MINI_COUNT=0 ./$p mini inventory ~/code/your-gitops-repository
+```
+
+The checksum line must print `OK`. On Linux, use `sha256sum -c SHA256SUMS --ignore-missing`. On a Mac, download with `curl` as shown: a program downloaded with a browser is blocked, because it is not code-signed. With `CUB_MINI_COUNT=0`, the program writes nothing anywhere. Without it, it notes the day you used it in `~/.confighub/agent-changes`. [For a security review](security.md) says what the full plugin reads, writes and sends.
 
 To compare environments, it builds each Kustomize overlay with `kubectl kustomize` or `kustomize`. If neither is installed, it lists everything else and says that the comparison needs one of them.
 

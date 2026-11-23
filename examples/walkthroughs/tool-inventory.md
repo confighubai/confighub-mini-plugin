@@ -22,6 +22,8 @@ Each chart's line names the ApplicationSet or Application that deploys it, and e
 
 Without ConfigHub: you open each ApplicationSet, read its generators and sources, and match every templated path and value file against the folders by hand.
 
+Not ready to install a plugin with hooks on a work computer? [Run the inventory on its own](../../docs/inventory.md#without-installing-the-plugin): one program, checked against its published checksum, with nothing installed. [For a security review](../../docs/security.md) says what the full plugin reads, writes and sends.
+
 ## Deeper dive
 
 The rest of this page is the full version: a small repository shaped like a platform team's, what the inventory says about it, how to check for yourself that it reads files only, what an agent may do, and how this was tested.
