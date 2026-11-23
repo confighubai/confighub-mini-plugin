@@ -121,7 +121,7 @@ For an AI agent doing these jobs for a person:
 Never approve a production change order yourself, and never write raw Stripe secret keys, Supabase service-role tokens, or Resend API keys into plain-text non-secret settings.
 
 ## Testing
-`starters/stripe.yaml`, `starters/supabase.yaml`, and `starters/resend-mail.yaml` are validated by `go test ./internal/starter/...` in `confighubai/confighub-mini`. End-to-end delivery against external Stripe, Supabase, and Resend accounts has not been run in CI yet; these tasks verify the local hub, staging/live isolation, and owner-approval gate with no external credentials.
+The three starters, `stripe`, `supabase` and `resend-mail`, are checked by the package's own tests before each release. End-to-end delivery against external Stripe, Supabase, and Resend accounts has not been run in CI yet; these tasks verify the local hub, staging/live isolation, and owner-approval gate with no external credentials.
 
 <!-- agent-task: deploy -->
 > Connect shop-addons with the Stripe, Supabase, and Resend starters; keep staging in test/sandbox mode and hold production for my approval.
