@@ -7,11 +7,11 @@ budget_seconds: 600
 -->
 # Put an approved setting live on your Unikraft Cloud service
 
-Your app is built from its `Kraftfile` and already runs on Unikraft Cloud. Connect that service as it is, let your coding agent change staging, and approve each production change. Approving starts a new instance of the same image with the approved settings, so no image is rebuilt.
+Your app is built from its `Kraftfile` and already runs on Unikraft Cloud, with one or several instances. Connect that service as it is, let your coding agent change staging, and approve each production change. Approving rolls the service over to new instances of the same image with the approved settings, so no image is rebuilt.
 
 ## Quick start
 
-You need: Claude Code with the [ConfigHub plugin](../../README.md#install), the `unikraft` command signed in (`unikraft login`), and your app's folder, whose service runs one instance of an image pinned by digest.
+You need: Claude Code with the [ConfigHub plugin](../../README.md#install), the `unikraft` command signed in (`unikraft login`), and your app's folder, whose service runs one or more instances of an image pinned by digest.
 
 | | By hand | Ask your agent |
 |---|---|---|
@@ -37,9 +37,9 @@ The rest of this page is the full version: what the first step reads and leaves 
 
 ### Your own service
 
-- `/confighub:staging --unikraft SERVICE` asks the `unikraft` command for the service, which must be listed under that name with one running instance. Name it as `METRO/SERVICE` when two metros have a service of that name. Production starts from the environment the instance runs with. If the instance runs with no environment of its own, production starts from the `Kraftfile`'s `env:`, which `unikraft build` puts in the image. Staging starts with the same settings. The step writes nothing to Unikraft and no settings file. A folder with a `Kraftfile` and no service named is told the command to type.
-- Each approval starts one new instance of the image the running instance uses, with the approved settings and the rest of what the old instance ran with, and rolls the service over to it. When the service already holds what was approved, nothing starts. `cub mini deliver APP --compare` names any setting that differs, without its value.
-- Unikraft keeps an instance's settings with the instance, credentials included. Approving hands each credential the old instance runs with to the new one as it is. It goes from what Unikraft reports to the `unikraft` command's own environment, so it never appears in a command line, in what is printed, or in the hub. The new instance is checked to hold it. A credential whose name the `unikraft` command reads for itself, such as `HTTPS_PROXY`, cannot be handed over that way: approving stops before starting anything and says to rename it.
+- `/confighub:staging --unikraft SERVICE` asks the `unikraft` command for the service, which must be listed under that name with one or more running (or standby, when there are several) instances that agree on their settings. Name it as `METRO/SERVICE` when two metros have a service of that name. Production starts from the environment the instances run with. If they run with no environment of their own, production starts from the `Kraftfile`'s `env:`, which `unikraft build` puts in the image. Staging starts with the same settings. The step writes nothing to Unikraft and no settings file. A folder with a `Kraftfile` and no service named is told the command to type.
+- Each approval starts new instances matching the service's instance count (using `--replicas N-1` when there are several), of the same digest-pinned image the running instances use, with the approved settings and the rest of what the old instances ran with, and rolls the service over to them. A service whose instances disagree on their image or on non-managed settings is refused before anything starts. When every instance already holds what was approved, nothing starts. `cub mini deliver APP --compare` names any setting that differs (and which instance, when there are several), without its value.
+- Unikraft keeps an instance's settings with the instance, credentials included. Approving hands each credential the old instances run with to the new ones as it is. It goes from what Unikraft reports to the `unikraft` command's own environment, so it never appears in a command line, in what is printed, or in the hub. Every new instance is checked to hold it. A credential whose name the `unikraft` command reads for itself, such as `HTTPS_PROXY`, cannot be handed over that way: approving stops before starting anything and says to rename it.
 - Staging changes stay in the hub. To see them running, ask your agent to run the app with staging's settings.
 
 ### The banner demo
@@ -84,7 +84,7 @@ For the banner demo, keep the provider sign-in with the person or delivery servi
 
 ## Testing
 
-The own-service path was run on a real local hub with a stand-in for the `unikraft` command and no Unikraft account. The stand-in answers in the forms the delivery program was run against on a real service. The run covered a service that Unikraft does not confirm, the first step reading only, credentials left out of the hub and the output, a change that waits and is not sent, the first yes refused in a Claude Code session, approval starting one new instance of the same image, a second delivery that starts nothing, a setting changed on Unikraft by hand, a credential in the instance stopping delivery, and an instance with no environment of its own starting from the `Kraftfile`.
+The own-service path was run on a real local hub with a stand-in for the `unikraft` command and no Unikraft account. The stand-in answers in the forms the delivery program was run against on a real service. The run covered a service that Unikraft does not confirm, the first step reading only, credentials left out of the hub and the output, a change that waits and is not sent, the first yes refused in a Claude Code session, approval starting one new instance of the same image, a second delivery that starts nothing, a setting changed on Unikraft by hand, a credential in the instance carried to each new instance unseen, a service with three instances (two running, one on standby) rolling over to three new instances with its credential carried unseen and drift naming the differing instance, and an instance with no environment of its own starting from the `Kraftfile`.
 
 For the banner demo, without a provider account, run the local stand-in test from the unpacked package:
 
