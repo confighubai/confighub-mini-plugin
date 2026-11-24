@@ -1,6 +1,6 @@
 # A first run of confighub mini
 
-This page is for someone trying the local hub for the first time, on their own machine. The local hub is a hub, ConfigHub made small enough to run on one machine, with no Docker, no cluster and no account. You install it, try one short story, put your agents' record into the hub if you have one, and tell us how it went.
+This page is for someone trying the local hub for the first time, on their own machine. A **hub** is a ConfigHub server and database that stores your app's settings, the reason for each value, and who approved each change. The local hub (`confighub mini`) is ConfigHub made small enough to run on one machine, with no Docker, no cluster and no account. You install it, try one short story, put your agents' record into the hub if you have one, and tell us how it went.
 
 The words on this page are explained in [the glossary](README.md#words).
 

@@ -4,6 +4,8 @@ Ask Claude or Codex to build an app, or start with one you already run. Try your
 
 ConfigHub remembers which settings worked, why you chose them, and which ones each app keeps for itself. Start on your laptop. There’s no platform to build first.
 
+A **hub** is a ConfigHub server and database that stores your app’s settings, the reason for each value, and who approved each change — on your laptop (the local hub, `confighub mini`), hosted on confighub.com, or self-hosted in your own cluster.
+
 **[Install the plugin](#install)** · [Start in my app](#try-one-setting) · [Build my first app](#build-my-first-app)
 
 ## Install

@@ -66,6 +66,10 @@ A change to the chart itself, in `catalog/ingress`, is rendered for each cluster
 
 When agents make the changes, and you want only named people to be able to approve them, with each approval kept in ConfigHub: [a check that only the approved copy merges](../docs/approvals.md#when-a-cluster-deploys-from-git-a-check-on-each-pull-request). Argo CD still reads Git.
 
+## Record each pull request in a self-hosted hub with SSO
+
+If your platform or security team wants an immutable audit trail across GitOps repositories inside your own network — without replacing Git, branch protection, or Argo CD/Flux — run ConfigHub self-hosted in your own cluster behind your company's OIDC or SAML single sign-on (SSO), and pass three optional inputs to the review Action (`hub-url`, `hub-space`, and a scoped CI service account `hub-token`). Each pull request with configuration changes is recorded as an immutable `PullRequestReview` attestation with its changed values, reasons, reviewers who approved it, and a SHA-256 digest of the redacted review. Credentials never leave the runner. See [recording pull requests in a self-hosted hub with SSO](../examples/walkthroughs/tool-record-pr-hub.md).
+
 ## What the comment shows
 
 The comment lists every configuration value the pull request changes, from what to what. Where the ConfigHub plugin's record says why a value was set, the comment says why. The record is the plugin's list of what agents changed, with the reason for each change. Where no record explains a value, the reason is the message of the pull request's commit that set it: its line for that value in a section headed `Reasons:`, or else its first line.

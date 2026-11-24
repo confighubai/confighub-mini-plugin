@@ -19,6 +19,18 @@ inputs:
     description: A token that may comment on pull requests.
     required: false
     default: ${{ github.token }}
+  hub-url:
+    description: Optional URL of a self-hosted or hosted ConfigHub hub to record each pull request review in. Leave empty to send nothing to any hub.
+    required: false
+    default: ""
+  hub-space:
+    description: Optional ConfigHub Space to record PullRequestReview attestations in (required when hub-url is set).
+    required: false
+    default: ""
+  hub-token:
+    description: Optional scoped ConfigHub service account token for recording pull request reviews (required when hub-url is set).
+    required: false
+    default: ""
 outputs:
   review:
     description: The review, as Markdown.
@@ -53,3 +65,29 @@ runs:
         else
           gh api -X POST "repos/$REPO/issues/$PR/comments" -f body="$body" >/dev/null
         fi
+    - if: inputs.hub-url != '' && inputs.hub-space != '' && inputs.hub-token != '' && github.event.pull_request.number
+      shell: bash
+      env:
+        BASE: ${{ inputs.base || github.event.pull_request.base.sha }}
+        HEAD: ${{ github.event.pull_request.head.sha }}
+        PR: ${{ github.event.pull_request.number }}
+        REPO: ${{ github.repository }}
+        AUTHOR: ${{ github.event.pull_request.user.login }}
+        GH_TOKEN: ${{ inputs.github-token }}
+        HUB_URL: ${{ inputs.hub-url }}
+        HUB_SPACE: ${{ inputs.hub-space }}
+        CUB_TOKEN: ${{ inputs.hub-token }}
+      run: |
+        set -euo pipefail
+        approvers="$(gh api "repos/$REPO/pulls/$PR/reviews" --paginate --jq '[.[] | select(.state=="APPROVED") | .user.login] | unique | join(",")' 2>/dev/null || true)"
+        export CUB_CONFIG="$RUNNER_TEMP/cub-config"
+        export CUB_CONTEXT="pr-recorder"
+        cub context create "$CUB_CONTEXT" --server "$HUB_URL" >/dev/null 2>&1 || true
+        "$GITHUB_ACTION_PATH/../plugins/confighub/bin/confighub" mini record-pr \
+          --space "$HUB_SPACE" \
+          --repo "$REPO" \
+          --pr "$PR" \
+          --base "$BASE" \
+          --head "$HEAD" \
+          --author "$AUTHOR" \
+          --approved-by "$approvers"

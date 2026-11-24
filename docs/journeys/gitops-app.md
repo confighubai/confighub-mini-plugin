@@ -11,6 +11,7 @@ The words on this page, such as *hub*, *base* and *change order*, are explained 
 | Way | What deploys | Where your approval holds | To go back |
 |---|---|---|---|
 | 1. The hub beside Git | Git, as today | In the hub only. A merge to the branch still changes production | Stop the hub. Git is untouched |
+| 1b. Self-hosted hub recording your PR flow | Git, as today | GitHub branch protection and CODEOWNERS, as today; each PR's rendered diff, reasons, and approvers are recorded as immutable attestations in a self-hosted hub behind SSO ([walkthrough](../../examples/walkthroughs/tool-record-pr-hub.md)) | Remove the workflow inputs. Git is untouched |
 | 2. The hub beside Git, with a check on each pull request | Git, as today | A pull request whose files differ from the approved copy fails, and branch protection requires the check | Remove the required check, stop the hub |
 | 3. The hub as the source for one app | The hub, over OCI, through the same Argo CD or Flux | Only an approved change reaches the cluster. A change made on the cluster by hand is put back | Write the app back to Git, point the controller at Git again, stop the hub ([below](#hand-it-back-to-git)) |
 
