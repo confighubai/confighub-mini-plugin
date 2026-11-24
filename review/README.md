@@ -30,9 +30,45 @@ You need no hub (ConfigHub server), no account, and nothing installed in the clu
 
 3. Open a pull request. The review comments on it.
 
+## A person approves, and Argo CD keeps reading Git
+
+For a platform team whose clusters Argo CD or Flux deploys from Git. Nothing changes in how they deploy, and nothing is installed on anyone's computer: the review runs on GitHub's runners, may read the repository and write a comment, and needs no secret.
+
+1. Add the review, as above.
+2. Name who approves each part of the repository, in `.github/CODEOWNERS`:
+
+   ```text
+   /clusters/   @your-org/platform
+   /catalog/    @your-org/platform
+   ```
+
+3. In the branch protection for `main`, require a pull request, and a review from the code owners.
+
+Each change to a cluster's values then waits for someone on that team. They see in the comment what each cluster gets, and why. GitHub keeps who approved each pull request, and the comment stays on it: what changed, on which clusters, why, and who said yes.
+
+Here is part of the comment on a pull request that raises us-east's ingress for a launch, in a repository whose ApplicationSet deploys the ingress chart to each cluster labeled `ingress=enabled`, with each cluster's own values in `clusters/CLUSTER/ingress/values.yaml`:
+
+`clusters/us-east/ingress/values.yaml` (Helm values)
+
+| Value | Change | Why | What it was, and why |
+|---|---|---|---|
+| `replicas` | 4 → 6 | commit ede07e5: us-east launch: 6 ingress replicas | 4 since commit 9967c61 by Amara on 2026-11-24: start |
+
+`ApplicationSet argocd/ingress: Application us-east-ingress`
+
+for us-east, whose values this repository keeps. The ApplicationSet makes one Application for each cluster labeled ingress=enabled; Argo CD knows the full list.
+
+| Value | Change | Why |
+|---|---|---|
+| `Deployment/ingress/spec.replicas` | 4 → 6 | commit ede07e5: us-east launch: 6 ingress replicas |
+
+A change to the chart itself, in `catalog/ingress`, is rendered for each cluster whose values the repository keeps. A cluster that overrides the changed value shows no change.
+
+When agents make the changes, and you want only named people to be able to approve them, with each approval kept in ConfigHub: [a check that only the approved copy merges](../docs/approvals.md#when-a-cluster-deploys-from-git-a-check-on-each-pull-request). Argo CD still reads Git.
+
 ## What the comment shows
 
-The comment lists every configuration value the pull request changes, from what to what. Where the ConfigHub plugin's record says why a value was set, the comment says why. The record is the plugin's list of what agents changed, with the reason for each change. A value that no record explains is shown as such.
+The comment lists every configuration value the pull request changes, from what to what. Where the ConfigHub plugin's record says why a value was set, the comment says why. The record is the plugin's list of what agents changed, with the reason for each change. Where no record explains a value, the reason is the message of the pull request's commit that set it: its line for that value in a section headed `Reasons:`, or else its first line.
 
 The review reads Kubernetes files, Helm values, Kustomize, Compose, GitHub Actions workflows, settings files, Terraform variables and agent configuration.
 
@@ -83,7 +119,11 @@ The chart makes these anew each time it renders, so they are not compared: `Secr
 Overlays are rendered with `kubectl kustomize`, and charts with `helm template`, both on GitHub's runners.
 
 - **A Flux HelmRelease** is rendered when its chart is in the repository, or comes from a HelmRepository or OCIRepository defined in the repository.
-- **An Argo CD Application** is rendered when its chart is a folder of the repository or comes from a Helm repository. Its value files, values and parameters are used. Applications are rendered with `helm template` as Argo CD applies those settings. This has been tested on charts made for the tests, not yet on a real Argo CD setup.
+- **An Argo CD Application** is rendered when its chart is a folder of the repository or comes from a Helm repository. Its value files, values and parameters are used, including value files it takes from this repository through another of its sources (`$values/...`). Applications are rendered with `helm template` as Argo CD applies those settings.
+- **An Argo CD ApplicationSet** is rendered as the Applications it makes. For a list generator, or a Git generator of this repository, that is one for each entry. For a clusters generator, only Argo CD knows the clusters, so it is one for each cluster whose value file the repository keeps, such as `clusters/us-east/ingress/values.yaml`. At most 12 of one ApplicationSet's Applications are rendered, and the rest are counted.
+- **A chart's dependencies**, such as a library chart of the repository taken with `file://`, are built with `helm dependency build` in the review's copy of each commit, never in your files.
+
+This has been tested on charts made for the tests, not yet on a real Argo CD setup.
 
 Otherwise, the comment says why it was not rendered: for example, a source that needs credentials.
 

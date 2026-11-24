@@ -22,6 +22,8 @@ Each chart's line names the ApplicationSet or Application that deploys it, and e
 
 Without ConfigHub: you open each ApplicationSet, read its generators and sources, and match every templated path and value file against the folders by hand.
 
+Next, for each pull request: [the review](../../review/README.md#a-person-approves-and-argo-cd-keeps-reading-git) comments with what each cluster gets, and why, and GitHub's code owners make it wait for your team's approval. It is one workflow file, Argo CD keeps reading Git, and nothing is installed on anyone's computer.
+
 Not ready to install a plugin with hooks on a work computer? [Run the inventory on its own](../../docs/inventory.md#without-installing-the-plugin): one program, checked against its published checksum, with nothing installed. [For a security review](../../docs/security.md) says what the full plugin reads, writes and sends.
 
 ## Deeper dive
@@ -54,6 +56,8 @@ Claude Code, signed in, and Git. A GitOps repository is a Git repository that Ar
    printf 'apiVersion: v2\nname: lib\ntype: library\nversion: 0.1.0\n' > catalog/lib/Chart.yaml
    printf 'apiVersion: v2\nname: ingress\nversion: 1.4.0\ndependencies:\n- {name: lib, repository: "file://../lib", version: 0.1.0}\n' > catalog/ingress/Chart.yaml
    printf 'replicas: 1\nlogLevel: info\n' > catalog/ingress/values.yaml
+   mkdir -p catalog/ingress/templates
+   printf 'apiVersion: apps/v1\nkind: Deployment\nmetadata: {name: ingress}\nspec:\n  replicas: {{ .Values.replicas }}\n' > catalog/ingress/templates/deployment.yaml
    printf 'apiVersion: v2\nname: gpu-operator\nversion: 0.2.0\n' > catalog/gpu-operator/Chart.yaml
    printf 'replicas: 2\nlogLevel: info\n' > clusters/eu-west/ingress/values.yaml
    printf 'replicas: 4\nlogLevel: info\n' > clusters/us-east/ingress/values.yaml
@@ -134,6 +138,25 @@ Claude Code, signed in, and Git. A GitOps repository is a Git repository that Ar
    CUB_MINI_COUNT=0 "$p" mini inventory . > /dev/null && git status --short
    ```
 
+8. See what a pull request would show. Change us-east's ingress for a launch, commit it, and run the review that comments on each pull request. It renders the chart for us-east with us-east's own values, as Argo CD would, and takes the reason from the commit. It needs `helm`, which GitHub's runners have:
+   <!-- run: review -->
+   ```sh
+   printf 'replicas: 6\nlogLevel: info\n' > clusters/us-east/ingress/values.yaml
+   git commit -qam "us-east launch: 6 ingress replicas"
+   CUB_MINI_COUNT=0 "$p" mini review --base HEAD~1 --head HEAD
+   ```
+   ```text
+   clusters/us-east/ingress/values.yaml (Helm values)
+     replicas                                     4 → 6
+         why: commit …: us-east launch: 6 ingress replicas
+   …
+   What each overlay and release renders, before and after:
+     ApplicationSet argocd/ingress: Application us-east-ingress (helm template)
+         for us-east, whose values this repository keeps. The ApplicationSet makes one Application for each cluster labeled ingress=enabled; Argo CD knows the full list.
+         Deployment/ingress/spec.replicas             4 → 6   commit …: us-east launch: 6 ingress replicas
+   ```
+   To have it comment on each pull request, and wait for your team's approval, add [the review's workflow file and code owners](../../review/README.md#a-person-approves-and-argo-cd-keeps-reading-git).
+
 ### Undo it
 Remove the Claude plugin and the sample repository:
 <!-- run: uninstall -->
@@ -143,7 +166,7 @@ cd .. && rm -rf platform-gitops
 ```
 
 ### What you have now
-A list of what your repository deploys and for which clusters, read from its files, with each cluster's own value files and what nothing deploys. To keep each environment's values with the reason for each change, and make production wait for your approval, type `/confighub:staging` in an app's folder ([the Claude plugin](tool-plugin.md), step 9).
+A list of what your repository deploys and for which clusters, read from its files, with each cluster's own value files and what nothing deploys, and what a pull request would change on each cluster. Next, [add the review](../../review/README.md#a-person-approves-and-argo-cd-keeps-reading-git) so that each pull request says so in a comment and waits for your team's approval, while Argo CD keeps reading Git.
 
 ## Agent
 For an AI agent working where the Claude plugin is installed.
@@ -162,8 +185,8 @@ Arm a is an agent with no plugin, in the repository after step 2: it can read th
 <!-- agent-check answer: grep -q "clusters/us-east/ingress/values.yaml" ANSWER.md && grep -q "ingress" ANSWER.md && grep -qi "gpu-operator" ANSWER.md && test -z "$(git status --short | grep -v ANSWER.md)" -->
 <!-- agent-check-a answer: grep -q "clusters/us-east/ingress/values.yaml" ANSWER.md && grep -qi "gpu-operator" ANSWER.md && test -z "$(git status --short | grep -v ANSWER.md)" -->
 <!-- arms: a,b,c -->
-<!-- next-step boundary=plugin-to-mini when "deployed by: Argo CD ApplicationSet": keep each environment's values | The inventory shows which file each cluster's values live in. In a ConfigHub hub on this computer, each change to them keeps its reason, and production waits for your yes. If you want that, type /confighub:staging in an app's folder; you can remove it. -->
-The step this aims to win: connecting a hub with `/confighub:staging`.
+<!-- next-step boundary=same-tier when "deployed by: Argo CD ApplicationSet": a comment on each pull request | The inventory shows which file each cluster's values live in. On each pull request, a GitHub Action can say what every changed value becomes on each cluster, and why, while Argo CD keeps reading Git; GitHub's code owners make it wait for your team's approval. It is one workflow file. -->
+The step this aims to win: adding the review to the repository.
 
 This proves: what the Claude plugin's inventory says about a repository shaped like a platform team's chart catalog, read from its files alone, with the network turned off and nothing changed. It does not show which clusters Argo CD has, or what is running. A right result: the ingress chart is deployed by the ApplicationSet for each cluster labeled `ingress=enabled`, the library chart is built into it, the GPU operator chart is deployed by nothing, and us-east's values are in `clusters/us-east/ingress/values.yaml`. The checks can be run by hand in `platform-gitops`:
 ```sh
@@ -171,5 +194,5 @@ claude -p "/confighub:inventory" | grep -q "deployed by: Argo CD ApplicationSet 
 test -z "$(git status --short)"
 ```
 
-Ran on a development build of the Claude plugin, 23 November 2026, on macOS: the slash command in a real Claude Code session printed step 3's lists, the offline run in step 6 printed the same, and `git status` stayed empty. One agent session given the request above wrote an ANSWER.md that passed the check, naming the label, the library chart, the GPU operator chart and us-east's file, and said the cluster list is kept in Argo CD. The arms have not been run.
+Ran on a development build of the Claude plugin, 23 November 2026, on macOS: the slash command in a real Claude Code session printed step 3's lists, the offline run in step 6 printed the same, and `git status` stayed empty. One agent session given the request above wrote an ANSWER.md that passed the check, naming the label, the library chart, the GPU operator chart and us-east's file, and said the cluster list is kept in Argo CD. The arms have not been run. Step 8 ran on a development build on 24 November 2026, on macOS: the review rendered us-east's Application with 6 replicas, with the commit's message as the reason, and the repository was left unchanged.
 </details>

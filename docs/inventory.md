@@ -143,7 +143,8 @@ Here's what the inventory finds in the two example repositories most teams copy:
 
 The inventory tells you what the repository deploys today. It does not keep anything.
 
+- **For each pull request to show what it changes on each cluster, and wait for a person on your team to approve it**, add [the review](../review/README.md#a-person-approves-and-argo-cd-keeps-reading-git): one workflow file, and GitHub's own code owners. Argo CD or Flux keeps reading Git, and nothing is installed on anyone's computer.
 - **To keep each environment's values with the reason for each change**, add the local hub, which is ConfigHub made small enough to run on your laptop. In Claude Code, type `/confighub:staging` in the app's folder: it starts the hub and gives the app a staging and a production copy of its settings ([install the local hub](install-mini.md)).
 - **For the whole team to see the same inventory, and for agents to propose changes that a person approves**, use your organization's shared hub. [From the Claude plugin to ConfigHub](from-plugin-to-confighub.md) walks through each step.
 
-The last line of the inventory names the first of these steps. `CUB_MINI_TIPS=0` turns that line off.
+The last line of the inventory names the next step: the review, in a repository Argo CD or Flux reads, and otherwise the local hub. `CUB_MINI_TIPS=0` turns that line off.
