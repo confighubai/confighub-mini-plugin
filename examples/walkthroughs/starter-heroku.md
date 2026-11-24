@@ -135,8 +135,18 @@ Claude Code with the ConfigHub plugin, an unpacked [confighub mini package](../.
 In the shared hub: `cub --context shared component delete --recursive --detach "$TEAM_APP"`. Here: `cub mini uninstall --name mini --delete-data`, then `rm -rf ~/walkthrough ~/.confighub-walkthrough`.
 ### What you have now
 The staging app runs what your agent changed in staging. The production app runs only what you approved, and each value has its reason in the hub. Credentials and add-on settings never left Heroku.
+### Leaving Heroku
+To move production to Fly or Vercel, see the plan first, in your own terminal; it writes nothing. For Vercel, run `vercel link` in the app's folder first.
+
+```sh
+cub mini deliver api --fly FLYAPP --compare
+cub mini deliver api --vercel PROJECT --compare
+```
+
+Run the line the plan gives to copy the credentials from Heroku, then the same command without `--compare`. Staging stays on the Heroku staging app. [Moving production to Fly or Vercel](../../docs/heroku.md#moving-production-to-fly-or-vercel) has the details.
+
 ## Agent
-For trials, use the stand-in. **Deploy**: ask the person to type `/confighub:staging` in the app's folder; you cannot type it. **Update**: change staging with `cub mini set api KEY=VALUE --variant staging --change-desc "WHY"`. Once the person has said yes to the staging app, the change goes there in the same command. Before that, tell them the one command, `cub mini deliver api --staging`, for their own terminal. Propose production changes with `--variant live` and hand the person `cub mini approve api`. **Undo** with `cub mini rollback api --reason "WHY"` and hand over the approval. **Move** with step 9, and **delete** with step 10 only after the copy is confirmed. Never approve production, never give the first yes for either app, never run `heroku config:set` yourself, and never put a credential in a setting.
+For trials, use the stand-in. **Deploy**: ask the person to type `/confighub:staging` in the app's folder; you cannot type it. **Update**: change staging with `cub mini set api KEY=VALUE --variant staging --change-desc "WHY"`. Once the person has said yes to the staging app, the change goes there in the same command. Before that, tell them the one command, `cub mini deliver api --staging`, for their own terminal. Propose production changes with `--variant live` and hand the person `cub mini approve api`. **Undo** with `cub mini rollback api --reason "WHY"` and hand over the approval. **Move** with step 9, and **delete** with step 10 only after the copy is confirmed. Never approve production, never move it with `--fly` or `--vercel`, never give the first yes for either app, never run `heroku config:set` yourself, and never put a credential in a setting.
 ## Testing
 <!-- agent-task: deploy after=app -->
 > My Rails API runs on Heroku as shop-api, with shop-api-staging as its staging app. Set it up so staging takes your changes and production waits for me.

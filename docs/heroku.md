@@ -28,22 +28,28 @@ From then on, each staging change your agent makes is sent to the staging app in
 
 The first step says how many settings it left on Heroku.
 
-## Moving production to Fly
+## Moving production to Fly or Vercel
 
-When you move the app to Fly, ConfigHub sends production's approved settings to the Fly app, and tells you what it cannot send. First, see the plan. It writes nothing:
+When you move the app to Fly or to Vercel, ConfigHub sends production's approved settings there, and tells you what it cannot send. First, see the plan. It writes nothing:
 
 ```sh
 cub mini deliver APP --fly FLYAPP --compare
 ```
 
-It says:
+For Vercel, first run `vercel link` in the app's folder, choosing the project, because Vercel deploys the code in that folder. Then:
 
-1. which settings the hub sends to the Fly app, and which of them are missing or different there;
+```sh
+cub mini deliver APP --vercel PROJECT --compare
+```
+
+The plan says:
+
+1. which settings the hub sends there, and which of them are missing or different there;
 2. what stays on Heroku and the hub never sends, by name only: credentials, add-on settings and Heroku's own;
-3. one line to copy the credentials straight from Heroku to Fly in your own terminal, `fly secrets set KEY="$(heroku config:get KEY -a HEROKUAPP)" … -a FLYAPP`, so the hub never sees them. Add-on settings such as `DATABASE_URL` are left out, because Fly needs its own database;
+3. one line to run in your own terminal before production moves, which copies the credentials straight from Heroku to the new host, so the hub never sees them. Each value is read with `heroku config:get` and passed to `fly secrets set` or `vercel env add`, and the line stops if a read fails, so no credential is set empty. Add-on settings such as `DATABASE_URL` are left out, because the new host needs its own database;
 4. that the Heroku app keeps running until you remove it.
 
-Then run it without `--compare`, in your own terminal. It asks your yes, and sends production's settings to every Machine of the Fly app, one at a time. A stopped standby Machine stays stopped. From then on, each production change you approve goes to Fly. Your agent cannot name the Fly app or say yes. Staging still goes to the Heroku staging app.
+Then run the same command without `--compare`, in your own terminal. It asks your yes. On Fly, it sends production's settings to every Machine of the app, one at a time, and a stopped standby Machine stays stopped. On Vercel, it sets them on the project's production and deploys the folder's code to production. From then on, each production change you approve goes to the new host. Your agent cannot name the new host or say yes. Staging still goes to the Heroku staging app.
 
 ## Other commands
 
