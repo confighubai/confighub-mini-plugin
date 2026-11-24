@@ -2,7 +2,7 @@
 
 Start with the app you want to build or connect. ConfigHub keeps its setup and the reasons for each setting, so the next session, version, or app can start from it. Choose a [walkthrough](../examples/walkthroughs/README.md) for your stack, or install the Claude plugin and try a first app. [README](../README.md) · [Product overview](https://confighub.github.io/helm-expt/ai-agents/)
 
-The words these pages use, such as *hub*, *base*, *change order* and *Space*, are explained in [Words](#words), at the end of this page.
+A **hub** is a ConfigHub server and database that stores your app's settings, the reason for each value, and who approved each change — on your laptop (the local hub, `confighub mini`), hosted on confighub.com, or self-hosted in your own cluster. Other words these pages use, such as *base*, *change order* and *Space*, are explained in [Words](#words), at the end of this page.
 
 ## Get started
 

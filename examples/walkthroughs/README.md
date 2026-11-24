@@ -48,6 +48,7 @@ The clearest place to see what a hub adds: in each, an agent with ordinary tools
 |---|---|---|
 | [The Claude plugin](tool-plugin.md) | What your agents changed in configuration and why, the warning before one undoes another, and each `/confighub:` command; then the step to a hub | the Claude plugin |
 | [What your GitOps repository deploys](tool-inventory.md) | Before you change a platform team's repository: what deploys each chart and app, for which clusters, which file holds each cluster's values, and what nothing deploys. It reads files only, with no cluster, account or hub | the Claude plugin |
+| [Record pull requests in a self-hosted hub with SSO](tool-record-pr-hub.md) | Keep Git and Argo CD/Flux deploying from pull requests, and record each PR's rendered configuration diff, reasons, and GitHub approvers as immutable attestations in a self-hosted hub behind corporate SSO | the review Action or `cub mini` |
 
 ## More user stories
 
