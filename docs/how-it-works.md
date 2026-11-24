@@ -86,6 +86,14 @@ The agent then decides what to do. Usually it asks you. If it runs the same comm
 
 `CUB_MINI_STOP_BEFORE_UNDO=0` turns the stop off.
 
+## Holding a change to production
+
+An agent that works with your own sign-in to a host can change production with it: `fly secrets set` on the production app, `heroku config:set`, `vercel env add NAME production`, or `unikraft instances run -e`. Nobody approves that, and a later session does not know why. The plugin holds such a command once, before it runs. The agent is told what it would change on production, and that nothing has run. With no hub, it is told that `/confighub:staging` would make production wait for your yes. Where the app is kept in a hub, it is told to propose the change there, and approving puts it live. A credential is never proposed: you set it yourself.
+
+An app is production unless its name says otherwise: `shop` is held, and `shop-staging` or `shop-pr-42` are not. If you asked for the change in so many words, the agent runs the command again, and it goes ahead. It holds only what the agent runs in Claude Code with the plugin, not a change made through a script or another tool.
+
+`CUB_MINI_HOLD_PRODUCTION=0` turns the hold off.
+
 ## How closely MCP calls are watched
 
 The levels below describe Claude Code. Use the [client capability matrix](#client-capabilities) for Codex, where `ask` refuses rather than presenting a prompt.
@@ -217,6 +225,7 @@ You set each setting in Claude Code's settings, under `env`.
 | `CUB_MINI_RECORD_IN_REPO=1` | Adds the record to each commit the agent makes, as `.cub-mini/changes/SESSION.record`, readable from any checkout. When the agent commits in the same command that changed a file, the record is staged for the next commit. The file ends in `.record` so that Argo CD and Flux, syncing the repository, leave it alone. | When the record must outlive a sandbox, or be read from other checkouts, by the [pull-request review](../review/README.md) or by [Entire](entire.md). |
 | `CUB_MINI_CHECKS=LEVEL` | Sets [how closely MCP calls are watched](#how-closely-mcp-calls-are-watched) in every folder, over a folder's own choice: `off`, `log`, `warn`, `repeats` or `ask`. | When you want one level everywhere |
 | `CUB_MINI_STOP_BEFORE_UNDO=0` | Turns off the stop before a deploy that would undo another agent's change on the cluster. The agent is then told only after the command has run. | When you do not want commands held back. |
+| `CUB_MINI_HOLD_PRODUCTION=0` | Turns off the hold before an agent changes production directly on Fly, Heroku, Vercel or Unikraft with your sign-in. | When your agents may change production without asking. |
 | `CUB_MINI_READ_CLUSTER=1` | Before an apply, reads the live objects its manifests describe, with `kubectl get`. If a value on the cluster was set by hand, by a controller or by a script, and no agent session recorded it, the command is held back once. | When values on the cluster are also changed outside agent sessions. It is off by default because it reads the cluster before each apply. |
 | `CUB_MINI_DECISIONS=0` | Turns off keeping what the agent said about each value it changed ([above](#what-it-records-and-what-it-does-not)). | When you do not want the agent's own words in the record. |
 | `CUB_MINI_SIGN=0` | Turns off signing the record. Signing is on by default: each entry is signed as it is written ([signed records](signed-records.md)). | When you do not need to check that the record was not changed. |

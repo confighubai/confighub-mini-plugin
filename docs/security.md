@@ -63,7 +63,7 @@ In an ordinary session, it sends nothing. The record stays on the computer. It s
 ## What it can change in the agent's behavior
 
 - **It adds text to what the agent sees.** When the agent reads a file that earlier sessions changed, it is told what they changed and why, including the requests, marked as quotes. `CUB_MINI_HISTORY=0` turns this off.
-- **It refuses some tool calls once.** A command that would undo a change an earlier session made directly on a cluster is refused once, and the agent is told why. If it is still right, the agent runs it again. `CUB_MINI_STOP_BEFORE_UNDO=0` turns this off. For calls to MCP servers, the default is to record them only. The stricter levels are described in [how it works](how-it-works.md).
+- **It refuses some tool calls once.** A command that would undo a change an earlier session made directly on a cluster is refused once, and the agent is told why. If it is still right, the agent runs it again. `CUB_MINI_STOP_BEFORE_UNDO=0` turns this off. A command that changes production directly on a host, such as `fly secrets set` on the production app, `heroku config:set`, `vercel env add NAME production` or `unikraft instances run -e`, is also refused once, and the agent is told to ask the person, or to propose the change to the hub where the app is kept in one. Run again, it goes ahead. `CUB_MINI_HOLD_PRODUCTION=0` turns this off. For calls to MCP servers, the default is to record them only. The stricter levels are described in [how it works](how-it-works.md).
 - **It stops all agents on request.** While the file `~/.confighub/halt` exists, every tool call is refused.
 - **What it quotes comes from people who can commit.** If a team keeps the record in the repository, anyone who can commit there can write text that agents are later shown as an earlier request. That text is marked as a quote, not as an instruction to follow now.
 
@@ -90,6 +90,7 @@ Each plugin release publishes the four programs and a `SHA256SUMS` file. The sam
 | `CUB_MINI_EARLIER_SESSIONS=0` | Reading earlier Claude Code sessions |
 | `CUB_MINI_HISTORY=0` | Telling the agent what earlier sessions changed |
 | `CUB_MINI_STOP_BEFORE_UNDO=0` | Refusing an undo once |
+| `CUB_MINI_HOLD_PRODUCTION=0` | Refusing a direct change to production once |
 | `CUB_MINI_USAGE=0` | Adding token counts to a hub the agent changed |
 | `CUB_MINI_TELL=0` | Reading back a change the agent proposed on a hub |
 | `CUB_MINI_TIPS=0` | The offer to install the local hub, and the lines about it |
