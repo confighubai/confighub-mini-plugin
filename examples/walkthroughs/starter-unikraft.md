@@ -20,7 +20,7 @@ You need: Claude Code with the [ConfigHub plugin](../../README.md#install), the 
 | Approve it | `cub mini approve APP`; the first time, it also asks once whether production goes to the service | You approve it yourself. |
 | Undo | `cub mini rollback APP --reason "Why"`, then `cub mini approve APP` | "Propose turning the banner off again. I'll approve it." |
 
-The first step downloads the local hub if it is not there, and reads only. Credentials stay in the instance; while one is there, approving stops and says so, since a new instance would need it.
+The first step downloads the local hub if it is not there, and reads only. Credentials stay in the instance and never enter the hub; each approval hands them to the new instance as they are.
 
 Without ConfigHub: your agent starts a new instance with `unikraft instances run -e ...` itself, production included, and the next session has no record of why.
 
@@ -78,7 +78,7 @@ curl -fsS "$(jq -r .endpoint app/.confighub-unikraft.json)"
 
 ## Agent
 
-For the person's own service, the person types `/confighub:staging --unikraft SERVICE` and approves; do neither for them. Propose production changes with `cub mini set APP KEY=VALUE --variant live --change-desc WHY` and give the person the approve line. If approving stops on a credential in the instance, say which setting it names and leave it where it is.
+For the person's own service, the person types `/confighub:staging --unikraft SERVICE` and approves; do neither for them. Propose production changes with `cub mini set APP KEY=VALUE --variant live --change-desc WHY` and give the person the approve line. Credentials in the instance carry over to each new instance by themselves; never read, copy or set them. If approving stops on a credential whose name the `unikraft` command reads for itself, such as `HTTPS_PROXY`, tell the person which setting to rename.
 
 For the banner demo, keep the provider sign-in with the person or delivery service. Give the owner the order and wait for their approval. Before and after delivery, read the endpoint and report the banner, revision and pinned image.
 
