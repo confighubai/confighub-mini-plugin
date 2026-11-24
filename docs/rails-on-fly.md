@@ -4,7 +4,7 @@ Connect a Rails app that already runs on Fly. Give your agent a staging copy of 
 
 ## Connect and approve with two commands
 
-Use Claude Code with the [ConfigHub plugin](../README.md#install) and the [current mini package](install-mini.md#the-current-release), a signed-in `flyctl`, and a `fly.toml` naming your disposable app. Use one Machine, one Fly registry image and a readable setting such as `APP_SUPPORT_HOURS`. A normal tagged deploy works when Fly reports the running image’s digest. Delivery uses that exact digest and stops if it cannot verify it.
+Use Claude Code with the [ConfigHub plugin](../README.md#install) and the [current mini package](install-mini.md#the-current-release), a signed-in `flyctl`, and a `fly.toml` naming your disposable app. Use a Fly registry image and a readable setting such as `APP_SUPPORT_HOURS`. An app with several Machines takes the settings on each, one at a time, and a stopped standby stays stopped. A normal tagged deploy works when Fly reports the running image’s digest. Delivery uses that exact digest and stops if it cannot verify it.
 
 1. **Connect.** In the app folder in Claude Code, type `/confighub:staging`. ConfigHub installs and starts the local hub if needed. **Start a new Claude Code session in the same folder** to pick up the agent’s key.
 2. **Ask for a change.** “Set `APP_SUPPORT_HOURS` to `Daily` in staging. Propose the same change for production and show me the approval command.” This updates the hub’s staging settings. The running Fly app still serves its old value.
@@ -95,9 +95,9 @@ Look for `Daily` in both staging copies, `coral` and `info` in the shop, and `in
 
 ## Send approved settings to an app on Fly
 
-With a signed-in `flyctl` and a Fly app with one Machine, run `cub mini waiting` and paste the approval command for the exact shop order into your own terminal. Review the values before you confirm.
+With a signed-in `flyctl` and your Fly app, run `cub mini waiting` and paste the approval command for the exact shop order into your own terminal. Review the values before you confirm.
 
-When the shop's folder has a `fly.toml`, the approval carries on: it finds the app's one Machine, sends production's approved settings to it, and prints what is now live. The first time, it asks once whether approved settings should go to the Fly app named in `fly.toml` from now on. Credentials and `secret://` settings are left on Fly as they are. `cub mini deliver rails-shop` sends production's approved settings again, and `cub mini deliver rails-shop --compare` checks the Machine without changing it. `--no-deliver` approves only.
+When the shop's folder has a `fly.toml`, the approval carries on: it finds the app's Machines, sends production's approved settings to each, and prints what is now live. The first time, it asks once whether approved settings should go to the Fly app named in `fly.toml` from now on. Credentials and `secret://` settings are left on Fly as they are. `cub mini deliver rails-shop` sends production's approved settings again, and `cub mini deliver rails-shop --compare` checks the Machine without changing it. `--no-deliver` approves only.
 
 ### With explicit flags, for a delivery service
 

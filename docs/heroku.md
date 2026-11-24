@@ -28,6 +28,23 @@ From then on, each staging change your agent makes is sent to the staging app in
 
 The first step says how many settings it left on Heroku.
 
+## Moving production to Fly
+
+When you move the app to Fly, ConfigHub sends production's approved settings to the Fly app, and tells you what it cannot send. First, see the plan. It writes nothing:
+
+```sh
+cub mini deliver APP --fly FLYAPP --compare
+```
+
+It says:
+
+1. which settings the hub sends to the Fly app, and which of them are missing or different there;
+2. what stays on Heroku and the hub never sends, by name only: credentials, add-on settings and Heroku's own;
+3. one line to copy the credentials straight from Heroku to Fly in your own terminal, `fly secrets set KEY="$(heroku config:get KEY -a HEROKUAPP)" … -a FLYAPP`, so the hub never sees them. Add-on settings such as `DATABASE_URL` are left out, because Fly needs its own database;
+4. that the Heroku app keeps running until you remove it.
+
+Then run it without `--compare`, in your own terminal. It asks your yes, and sends production's settings to every Machine of the Fly app, one at a time. A stopped standby Machine stays stopped. From then on, each production change you approve goes to Fly. Your agent cannot name the Fly app or say yes. Staging still goes to the Heroku staging app.
+
 ## Other commands
 
 - `cub mini deliver APP --compare` writes nothing and says whether the Heroku app holds what you approved, naming any setting that differs.
@@ -42,4 +59,4 @@ The first step says how many settings it left on Heroku.
 
 ## Testing
 
-Each release runs this path against a stand-in for the `heroku` command: connecting from an app in a pipeline, a staging change, a production change that waits, approval, a second delivery that writes nothing, a setting changed on Heroku by hand, and a rollback. Sending staging to the staging app, the agent's key being refused the first yes for it, and a staging change carried on in the same command ran the same way. It has not been run against a real Heroku account.
+Each release runs this path against a stand-in for the `heroku` command: connecting from an app in a pipeline, a staging change, a production change that waits, approval, a second delivery that writes nothing, a setting changed on Heroku by hand, and a rollback. Sending staging to the staging app, the agent's key being refused the first yes for it, and a staging change carried on in the same command ran the same way. The move to Fly ran the same way, against stand-ins for `heroku` and `flyctl`, with a Fly app of two Machines. None of it has run against a real Heroku or Fly account.
