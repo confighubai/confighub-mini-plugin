@@ -57,7 +57,7 @@ In a local Node web app that reads its heading from `.env`, paste this into your
 Show me my app as it is and a local preview with the heading “Evening collection.” Give me both links and keep the preview running for tomorrow.
 ```
 
-Say yes to local setup and compare the two headings. Once the hub has production history, you can also ask **“Open Friday’s production settings as a new preview.”** [Existing app guide](docs/journeys/existing-app.md#run-a-preview-of-my-app)
+Say yes to local setup and compare the two headings. Once the hub has production history, you can also ask **“Open Friday’s production settings as a new preview.”** First local setup downloads the local hub once ([package size](docs/install-mini.md#the-current-release)) and runs two `127.0.0.1` processes (ConfigHub and PostgreSQL, no Docker); remove everything anytime with `cub mini uninstall --delete-data`. [Existing app guide](docs/journeys/existing-app.md#run-a-preview-of-my-app)
 
 ## Build my first app
 
