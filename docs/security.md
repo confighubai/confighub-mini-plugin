@@ -1,6 +1,6 @@
 # For a security review: what the Claude plugin does on a computer
 
-This page is for a platform or security team deciding whether people may install the ConfigHub plugin for Claude Code on work computers. It says what the plugin reads, what it writes, what it sends and to where, what it can change in an agent's behavior, and how to turn each part off. Each setting below is an environment variable. To set one for every session, put it in the `env` block of Claude Code's `settings.json`, for example `{ "env": { "CUB_MINI_RECORD": "0" } }`.
+This page is for a platform or security team deciding whether people may install the ConfigHub plugin for Claude Code on work computers. It says what the plugin reads, what it writes, what it sends and to where, what it can change in an agent's behavior, and how to turn each part off. For the ConfigHub hub server itself (local `confighub mini` or self-hosted in your cluster), see [For a security review: the ConfigHub hub](security-hub.md). Each setting below is an environment variable. To set one for every session, put it in the `env` block of Claude Code's `settings.json`, for example `{ "env": { "CUB_MINI_RECORD": "0" } }`.
 
 If you want to see what the plugin's program does before anyone installs it, [run the inventory without installing the plugin](inventory.md#without-installing-the-plugin). That is one program, checked against its published checksum, run on one of your repositories with no hooks and nothing installed.
 

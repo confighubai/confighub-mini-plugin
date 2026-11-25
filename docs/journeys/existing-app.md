@@ -16,7 +16,7 @@ To see staging and production in the app as it already runs, step by step with a
    ```text
    Try “Evening collection” as the heading. Keep the usual board as it is. I’d like to open the preview again tomorrow.
    ```
-   Pick a setting your app already reads. Say **yes** when your agent offers to attach the app locally. The first download can take a minute.
+   Pick a setting your app already reads. Say **yes** when your agent offers to attach the app locally. The first download can take a minute ([package size](../install-mini.md#the-current-release)); it runs two local `127.0.0.1` processes (ConfigHub and PostgreSQL, no Docker), and `cub mini uninstall --delete-data` removes them and their data cleanly.
 2. Open the address your agent gives you in this chat. It has checked the page with the app’s preview settings. Codex may ask for permission to run the setup command or read the local address.
 3. Later, open a fresh chat in the same app folder and ask **“Where’s the preview, and what does it say?”** Your agent checks the running process and reads the page. You can ask it to stop the preview when you’re finished.
 

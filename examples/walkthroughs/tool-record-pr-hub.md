@@ -19,9 +19,10 @@ You need: a GitOps repository on GitHub, and a ConfigHub hub (self-hosted in you
 | Sign in (humans) | `cub auth login --server https://confighub.internal.example.com` (via corporate OIDC/SAML SSO) | You sign in yourself; CI uses a scoped service account token (`CONFIGHUB_PR_RECORDER_TOKEN`) granted write access only to the audit Space |
 | Create audit Space | `cub space create platform-audit` | "Create a `platform-audit` Space for recording pull request reviews." |
 | Record a PR | `cub mini record-pr --space platform-audit --repo ORG/REPO --pr 412 --base $BASE --head $HEAD --author dev --approved-by sec-lead` | "Add `hub-url`, `hub-space`, and `hub-token` inputs to our `confighubai/confighub-mini-plugin/review@v0` workflow so each PR is recorded in `platform-audit`." |
+| Backfill recent PRs | `cub mini record-pr --space platform-audit --repo ORG/REPO --backfill 20` | "Backfill the last 20 merged configuration commits into Space `platform-audit` so audit queries work on day one." |
 | Query the audit trail | `cub mini record-pr --space platform-audit --list` | "List the pull request configuration reviews recorded in Space `platform-audit`." |
 
-Credentials never leave the runner: secret values in changed files or commit messages are redacted before writing to the hub. Code-only pull requests write nothing, and re-running on the same pull request and commit writes no duplicate attestation.
+Credentials never leave the runner: secret values in changed files or commit messages are redacted before writing to the hub. Code-only pull requests write nothing, and re-running on the same pull request and commit writes no duplicate attestation. For a security review of the hub server itself (network surface, PostgreSQL storage, upgrades, and teardown), see [For a security review: the ConfigHub hub](../../docs/security-hub.md).
 
 Without ConfigHub: audit questions ("which PR raised `ingress` replicas in `us-east`, why, and who approved it?") mean searching GitHub comments and commit logs across repositories by hand, where comments can be edited or deleted.
 
