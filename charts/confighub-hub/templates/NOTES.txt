@@ -1,0 +1,21 @@
+ConfigHub hub is installed in namespace {{ .Release.Namespace }}.
+
+1. Reach the hub:
+{{- if .Values.ingress.enabled }}
+{{- range .Values.ingress.hosts }}
+   https://{{ .host }}
+{{- end }}
+{{- else }}
+   kubectl -n {{ .Release.Namespace }} port-forward svc/{{ include "confighub-hub.fullname" . }} 8080:{{ .Values.service.port }}
+{{- end }}
+
+2. Sign in and create an audit Space:
+   cub auth login --server https://confighub.internal.example.com
+   cub space create platform-audit
+
+3. Upgrade in place (preserves PVC data and PostgreSQL history):
+   helm upgrade {{ .Release.Name }} ./charts/confighub-hub -n {{ .Release.Namespace }} --reuse-values --set image.tag=<NEW_TAG>
+
+4. Remove everything:
+   helm uninstall {{ .Release.Name }} -n {{ .Release.Namespace }}
+   kubectl -n {{ .Release.Namespace }} delete pvc {{ include "confighub-hub.fullname" . }}-data

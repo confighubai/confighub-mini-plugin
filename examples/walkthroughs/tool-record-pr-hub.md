@@ -22,9 +22,11 @@ You need: a GitOps repository on GitHub, and a ConfigHub hub (self-hosted in you
 | Backfill recent PRs | `cub mini record-pr --space platform-audit --repo ORG/REPO --backfill 20` | "Backfill the last 20 merged configuration commits into Space `platform-audit` so audit queries work on day one." |
 | Query the audit trail | `cub mini record-pr --space platform-audit --list` | "List the pull request configuration reviews recorded in Space `platform-audit`." |
 
-Credentials never leave the runner: secret values in changed files or commit messages are redacted before writing to the hub. Code-only pull requests write nothing, and re-running on the same pull request and commit writes no duplicate attestation. For a security review of the hub server itself (network surface, PostgreSQL storage, upgrades, and teardown), see [For a security review: the ConfigHub hub](../../docs/security-hub.md).
+Credentials never leave the runner: secret values in changed files or commit messages are redacted before writing to the hub. Code-only pull requests write nothing, and re-running on the same pull request and commit writes no duplicate attestation. For a security review of the hub server itself (network surface, PostgreSQL storage, upgrades, and teardown), see [For a security review: the ConfigHub hub](../../docs/security-hub.md). To deploy the hub in your own Kubernetes cluster with Helm, persistent PostgreSQL storage, and OIDC/SAML SSO, see [Self-hosting the ConfigHub hub in Kubernetes (Helm)](../../docs/self-hosted-helm.md).
 
 Without ConfigHub: audit questions ("which PR raised `ingress` replicas in `us-east`, why, and who approved it?") mean searching GitHub comments and commit logs across repositories by hand, where comments can be edited or deleted.
+
+**Where this grows (1:46 video):** Once your team trusts the self-hosted hub beside Git, watch the [ConfigHub Trailer](https://youtu.be/H7xtSqMZrao) to see multi-cluster fleet promotion, field guards, and `cub unit blame` alongside Argo CD, Flux, and Sveltos.
 
 ## Deeper dive
 
@@ -107,7 +109,7 @@ This proves: a platform team can record every pull request's rendered configurat
 
 <details><summary>Test results</summary>
 
-26 November 2026, in a Kubernetes `kind` cluster running a self-hosted ConfigHub v0.11.1 hub (`confighub` namespace) alongside a live Dex `v2.41.1` OIDC IdP (`oidc` namespace, verified OIDC discovery, JWKS `kid`, and RS256 ID token for `priya@acme.example.com`). Running `cub mini record-pr --from-github` against the in-cluster hub recorded `acme/gitops-fleet#412` with GitHub-API-verified approvers `sec-lead,sre-oncall` (excluding `COMMENTED` reviewer `commenter`) and `API_TOKEN` redacted; re-running wrote nothing; `--backfill 3` imported `#411` and skipped `#412`; `--list` returned both PRs with zero credentials.
+26 November 2026, in a Kubernetes `kind` cluster running the packaged Helm chart (`charts/confighub-hub/` v0.1.0, self-hosted ConfigHub v0.11.1 hub with PVC persistence in `confighub` namespace) alongside a live Dex `v2.41.1` OIDC IdP (`oidc` namespace, verified OIDC discovery, JWKS `kid`, and RS256 ID token for `priya@acme.example.com`). Running `cub mini record-pr --from-github` against the in-cluster hub recorded `acme/gitops-fleet#412` with GitHub-API-verified approvers `sec-lead,sre-oncall` (excluding `COMMENTED` reviewer `commenter`) and `API_TOKEN` redacted; re-running wrote nothing; `--backfill 3` imported `#411` and skipped `#412`; an in-place `helm upgrade` replaced the pod on the same PVC and `--list` still returned `acme/gitops-fleet#412` with zero data loss and zero credentials.
 
 </details>
 

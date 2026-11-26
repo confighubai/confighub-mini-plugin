@@ -1,0 +1,6 @@
+apiVersion: v2
+name: confighub-hub
+description: Self-hosted ConfigHub hub with persistent PostgreSQL storage and corporate OIDC/SAML SSO support
+type: application
+version: 0.1.0
+appVersion: "0.11.1"
