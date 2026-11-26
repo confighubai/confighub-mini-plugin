@@ -1,0 +1,55 @@
+replicaCount: 1
+
+image:
+  repository: confighub-selfhosted
+  tag: "v0.11.1"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: confighub.internal.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+persistence:
+  enabled: true
+  size: 10Gi
+  storageClass: ""
+  accessModes:
+    - ReadWriteOnce
+
+# Corporate OIDC / SAML single sign-on (RFC 8693 token exchange).
+# Set issuer and audience to enable OIDC token exchange against Dex, Okta,
+# Microsoft Entra ID, or Keycloak.
+oidc:
+  issuer: ""
+  audience: ""
+  jwksUrl: ""
+
+# Extra environment variables passed to the ConfigHub hub container.
+extraEnv: []
+
+resources:
+  requests:
+    cpu: 250m
+    memory: 512Mi
+  limits:
+    cpu: "2"
+    memory: 2Gi
+
+podSecurityContext:
+  fsGroup: 1000
+
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  allowPrivilegeEscalation: false

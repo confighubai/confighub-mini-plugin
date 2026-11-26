@@ -43,6 +43,7 @@ A **hub** is a ConfigHub server and database that stores your app's settings, th
 | [Going back](journeys/going-back.md) | Undoing a step, taking your apps out as plain files, and removing each part |
 | [For a security review (plugin)](security.md) | What the Claude plugin reads, writes and sends, and to where; what it changes in an agent's behavior; and the setting that turns off each part |
 | [For a security review (hub)](security-hub.md) | Network surface, PostgreSQL storage, credential redaction, upgrades, backups, and one-command teardown for a local or self-hosted ConfigHub hub |
+| [Self-hosting the hub in Kubernetes (Helm)](self-hosted-helm.md) | Packaged Helm chart (`charts/confighub-hub/`) with OIDC/SAML SSO, persistent PostgreSQL storage, in-place `helm upgrade`, and teardown |
 | [Limits](limits.md) | What the Claude plugin and the local hub don't do, or haven't been shown to do |
 
 ## Other tools and setups

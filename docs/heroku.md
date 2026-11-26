@@ -2,7 +2,17 @@
 
 If your app runs on Heroku, ConfigHub gives you what a Heroku pipeline gives you, with your coding agent doing the work: a staging copy of the app's config vars that your agent changes at once, and a production copy that changes only when you approve. Approving puts the change live on your Heroku app.
 
-To try every step on your computer first, with a stand-in for Heroku and no account, follow [the Heroku walkthrough](../examples/walkthroughs/starter-heroku.md).
+**Moving off Heroku to Fly or Vercel right now? Run a read-only compare first with no hub installed:**
+
+```sh
+cub mini deliver --compare --heroku HEROKU_APP --fly FLY_APP
+# or, after vercel link in the app's folder:
+cub mini deliver --compare --heroku HEROKU_APP --vercel PROJECT
+```
+
+That writes nothing to Heroku, Fly, or Vercel, installs no hub, never prints credential values, and prints the missing/differing non-secret vars plus a safe one-line credential copy command.
+
+To try the full staging + approval flow on your computer first, with a stand-in for Heroku and no account, follow [the Heroku walkthrough](../examples/walkthroughs/starter-heroku.md).
 
 ## Connect and approve with two commands
 

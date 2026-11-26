@@ -53,6 +53,7 @@ An agent in Claude Code with the plugin also has its skill, [app-with-confighub]
 - [25. Alice ships it, Bob hardens it](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/examples/walkthroughs/story-25-alice-bob-hardened.md): A reviewer's fixes become the starter's next version: the next app starts with them, the first app takes them
 - [26. Staging and production, seen in the app on your laptop](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/examples/walkthroughs/story-26-staging-in-your-own-app.md): Your agent's staging change, then a production change you approved, each seen in the app as it already runs, with its files unchanged
 - [27. When your agent reaches for production with your own sign-in](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/examples/walkthroughs/story-27-production-waits.md): Your agent's `fly secrets set` on production held once before it runs, with what it would change and how to make production wait for your yes; a change you asked for goes ahead
+- [28. Three agents, zero shared chat history, one operational memory](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/examples/walkthroughs/story-28-multi-agent-handoff.md): Claude Code, Codex, and Antigravity each use a scoped service account and one thin skill to ship, harden, and recover `fx-api` at 2 AM with zero shared chat transcripts
 
 ## Get started
 
@@ -87,6 +88,7 @@ An agent in Claude Code with the plugin also has its skill, [app-with-confighub]
 - [Going back](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/journeys/going-back.md): Undoing a step, taking your apps out as plain files, and removing each part
 - [For a security review (plugin)](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/security.md): What the Claude plugin reads, writes and sends, and to where; what it changes in an agent's behavior; and the setting that turns off each part
 - [For a security review (hub)](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/security-hub.md): Network surface, PostgreSQL storage, credential redaction, upgrades, backups, and one-command teardown for a local or self-hosted ConfigHub hub
+- [Self-hosting the hub in Kubernetes (Helm)](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/self-hosted-helm.md): Packaged Helm chart (`charts/confighub-hub/`) with OIDC/SAML SSO, persistent PostgreSQL storage, in-place `helm upgrade`, and teardown
 - [Limits](https://raw.githubusercontent.com/confighubai/confighub-mini-plugin/main/docs/limits.md): What the Claude plugin and the local hub don't do, or haven't been shown to do
 
 ## Other tools and setups
