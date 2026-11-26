@@ -8,7 +8,7 @@ To try every step on your computer first, with a stand-in for Heroku and no acco
 
 You need Claude Code or Codex CLI with the [ConfigHub plugin](../README.md#install), the Heroku CLI signed in (`heroku login`), and your app's folder with a Git remote to the Heroku app, as `heroku git:remote -a APP` makes.
 
-1. **Connect.** In the app's folder, type `/confighub:staging` in Claude Code. It reads the production app's config vars into the hub. If the app is in a pipeline, staging starts from the staging app's config vars. Nothing on Heroku changes. If the folder has no Heroku remote, name the app once: `/confighub:staging --heroku APP`.
+1. **Connect.** In the app's folder, type `/confighub:staging` in Claude Code. The first time, it downloads and starts the local hub (~65 MB, two local processes on `127.0.0.1` only; remove everything anytime with `cub mini uninstall --delete-data`). It reads the production app's config vars into the hub. If the app is in a pipeline, staging starts from the staging app's config vars. Nothing on Heroku changes. If the folder has no Heroku remote, name the app once: `/confighub:staging --heroku APP`.
 2. **Ask for a change.** Open a fresh Claude Code session in the folder, so your agent works on a key of its own, and ask for the change you want, for example: `Raise WEB_CONCURRENCY to 8 in production. Checkout times out under load.` Your agent can change staging at once. A production change waits for you.
 3. **Approve it.** In your own terminal, run `cub mini approve APP`. `cub` is ConfigHub's command-line tool. `/confighub:staging` downloads it with the hub, and the last lines it prints give this command with the full path to `cub`, so you can paste it as it is. It shows the change and asks. The first time, it also asks once whether approved settings should go to your Heroku app from now on. It then sets the change on the app. Heroku restarts the app whenever its config vars change.
 
@@ -30,7 +30,25 @@ The first step says how many settings it left on Heroku.
 
 ## Moving production to Fly or Vercel
 
-When you move the app to Fly or to Vercel, ConfigHub sends production's approved settings there, and tells you what it cannot send. First, see the plan. It writes nothing:
+### Read-only compare first (no hub installed)
+
+To see what is missing or different on Fly or Vercel before installing any hub or changing either host, run the standalone read-only compare from the plugin:
+
+```sh
+cub mini deliver --compare --heroku HEROKU_APP --fly FLY_APP
+```
+
+For Vercel, run `vercel link` in the app's folder first, then:
+
+```sh
+cub mini deliver --compare --heroku HEROKU_APP --vercel PROJECT
+```
+
+This needs no hub, writes nothing to Heroku, Fly, or Vercel, never prints credential values, and prints the exact missing/differing non-secret vars plus the safe one-line credential copy command below.
+
+### Managed move with approvals (with the hub)
+
+When you are ready for ConfigHub to send production's approved settings to Fly or Vercel and gate future changes behind approval, first preview the plan from your connected app (`APP`). It writes nothing:
 
 ```sh
 cub mini deliver APP --fly FLYAPP --compare

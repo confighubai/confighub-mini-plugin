@@ -7,7 +7,7 @@ budget_seconds: 240
 -->
 # Run your own app in your Daytona sandbox with staging's settings
 
-Your agent works in a Daytona sandbox that holds a clone of your app. Connect the app once from its folder, and your agent runs it in that sandbox with staging's settings. Production stays behind your approval, in the hub on your machine, so deleting the sandbox loses nothing.
+Your agent works in a Daytona sandbox that holds a clone of your app. Connect the app once from its folder, and your agent runs it in that sandbox with staging's settings. Production stays behind your approval, in the local hub on your machine or in a shared hub (on `confighub.com` or self-hosted) that cloud Daytona sandboxes can reach even when your laptop is asleep, so deleting the sandbox loses nothing.
 
 ## Quick start
 
@@ -19,6 +19,7 @@ You need: Claude Code with the [ConfigHub plugin](../../README.md#install), the 
 | Run it in your sandbox | `cub mini preview --staging --daytona SANDBOX` | "Run this app in my Daytona sandbox dev-box with staging's settings, and show me what it serves." |
 | Try a change | `cub mini set APP KEY=VALUE --variant staging --change-desc "Why"`, then run it again | "Try a batch limit of 240 in staging because the queue spiked, run it in the sandbox again, and propose it for production." |
 | Approve or refuse | `cub mini approve APP` or `cub mini refuse APP --reason "Why"` | You decide yourself. |
+| Reach from cloud sandboxes (shared hub) | `cub context create shared --server https://hub.confighub.com && cub --context shared auth login` (or your self-hosted hub URL), then copy the app up with `cub mini copy` | "Copy this app to my `shared` hub context so cloud Daytona sandboxes can reach staging without my laptop." |
 
 The first step downloads the local hub if it is not there. The sandbox gets staging's settings as environment variables, never a credential and no ConfigHub key.
 

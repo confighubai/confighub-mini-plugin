@@ -18,7 +18,7 @@ You need: a GitOps repository on GitHub, and a ConfigHub hub (self-hosted in you
 |---|---|---|
 | Sign in (humans) | `cub auth login --server https://confighub.internal.example.com` (via corporate OIDC/SAML SSO) | You sign in yourself; CI uses a scoped service account token (`CONFIGHUB_PR_RECORDER_TOKEN`) granted write access only to the audit Space |
 | Create audit Space | `cub space create platform-audit` | "Create a `platform-audit` Space for recording pull request reviews." |
-| Record a PR | `cub mini record-pr --space platform-audit --repo ORG/REPO --pr 412 --base $BASE --head $HEAD --author dev --approved-by sec-lead` | "Add `hub-url`, `hub-space`, and `hub-token` inputs to our `confighubai/confighub-mini-plugin/review@v0` workflow so each PR is recorded in `platform-audit`." |
+| Record a PR | `cub mini record-pr --space platform-audit --repo ORG/REPO --pr 412 --base $BASE --head $HEAD --from-github` (pulls verified `APPROVED` reviewers from GitHub API via `GITHUB_TOKEN`) | "Add `hub-url`, `hub-space`, and `hub-token` inputs to our `confighubai/confighub-mini-plugin/review@v0` workflow so each PR is recorded in `platform-audit` with GitHub API approvers." |
 | Backfill recent PRs | `cub mini record-pr --space platform-audit --repo ORG/REPO --backfill 20` | "Backfill the last 20 merged configuration commits into Space `platform-audit` so audit queries work on day one." |
 | Query the audit trail | `cub mini record-pr --space platform-audit --list` | "List the pull request configuration reviews recorded in Space `platform-audit`." |
 
@@ -71,7 +71,7 @@ Git, and `cub` with the local hub ([install the local hub](../../docs/install-mi
    cub mini record-pr --space platform-audit --list
    ```
 
-5. In GitHub Actions, pass the three optional inputs to the [configuration review Action](../../review/README.md):
+5. In GitHub Actions, pass the three optional inputs to the [configuration review Action](../../review/README.md). The Action passes `GITHUB_TOKEN` and `--from-github` so `cub mini record-pr` fetches verified `APPROVED` reviewers directly from the GitHub API (ignoring comment-only or superseded reviews):
    ```yaml
    - uses: confighubai/confighub-mini-plugin/review@v0
      with:
@@ -79,6 +79,8 @@ Git, and `cub` with the local hub ([install the local hub](../../docs/install-mi
        hub-space: platform-audit
        hub-token: ${{ secrets.CONFIGHUB_PR_RECORDER_TOKEN }}
    ```
+
+   To deploy the hub in your own Kubernetes cluster behind your OIDC IdP (such as Dex, Okta, or Entra ID), run the ConfigHub hub `Deployment` and `Service` in a dedicated `confighub` namespace behind your ingress/TLS termination, point `CONFIGHUB_AUTH_ISSUER` and `CONFIGHUB_TOKEN_EXCHANGE_AUDIENCE` at your IdP, and issue a scoped service account token for the audit Space.
 
    To undo: remove those three inputs from your workflow file. Git, branch protection, and Argo CD or Flux keep working unchanged.
 
@@ -88,7 +90,7 @@ Never pass or print `CUB_TOKEN` or any secret value. When asked to check what pu
 
 ## Testing
 
-The command was run end to end on a real local ConfigHub v0.11.1 hub standing in for a self-hosted hub, with a GitOps repository PR changing `Deployment/ingress/spec.replicas` from `2` to `6` and rotating `API_TOKEN` with a token pasted in the commit message. The first run recorded one `PullRequestReview` attestation in Space `platform-audit` with `API_TOKEN (redacted)` and no secret value; the second run skipped idempotently; `--list` printed the PR, commit, author, and approvers. Unit tests (`TestRecordPRToHubAndIdempotency`, `TestRecordPRRedactsCredentials`, `TestRecordPRSkipsNonConfigAndDryRunWritesNothing`) verify both planted faults (`record-pr-duplicate` and `review-record-credential`).
+The command was run end to end in a Kubernetes `kind` cluster hosting both a self-hosted ConfigHub v0.11.1 hub (`confighub` namespace) and a live Dex OIDC provider (`oidc` namespace, verifying live OIDC discovery, JWKS, and RS256 ID token issuance). Against a GitOps repository PR changing `Deployment/ingress/spec.replicas` and rotating `API_TOKEN`, `cub mini record-pr --from-github` fetched verified `APPROVED` reviewers (`sec-lead,sre-oncall`) from the GitHub API while excluding a `COMMENTED` reviewer, recorded one `PullRequestReview` attestation with `API_TOKEN (redacted)` and no secret value, skipped idempotently on re-run, backfilled an earlier PR with `--backfill 3`, and listed both PRs with `--list`. Unit tests (`TestRecordPRToHubAndIdempotency`, `TestRecordPRRedactsCredentials`, `TestRecordPRSkipsNonConfigAndDryRunWritesNothing`, `TestRecordPRBackfillRespectsLimitAndIdempotency`, `TestRecordPRApproversFromGitHubAPI`) verify all planted faults (`record-pr-duplicate`, `review-record-credential`, `backfill-ignores-limit`, and `record-pr-unapproved-reviewer`).
 
 <!-- agent-task: dry-run -->
 > Show what `cub mini record-pr --dry-run` would record for the latest commit on this branch without writing anything to the hub.
@@ -99,13 +101,13 @@ The command was run end to end on a real local ConfigHub v0.11.1 hub standing in
 <!-- next-step boundary=same-tier: check pull requests against the hub | Want branch protection to block a PR whose files differ from the hub's approved copy? -->
 <!-- arms: a -->
 
-This proves: a platform team can record every pull request's rendered configuration changes, reasons, and GitHub approvers as immutable attestations in a ConfigHub hub without replacing Git or Argo CD/Flux, and without sending credentials.
+This proves: a platform team can record every pull request's rendered configuration changes, reasons, and GitHub-API-verified approvers as immutable attestations in a self-hosted Kubernetes hub alongside an OIDC provider without replacing Git or Argo CD/Flux, and without sending credentials.
 
 <!-- results:begin -->
 
 <details><summary>Test results</summary>
 
-24 November 2026, on a real local ConfigHub v0.11.1 hub standing in for a self-hosted hub (macOS arm64). Recording PR `acme/gitops-fleet#412` created 1 `PullRequestReview` attestation attached to the `pr-reviews` ledger Unit in Space `platform-audit`; re-running on the same PR and head commit wrote nothing; `--list` showed `acme/gitops-fleet#412`, author `platform-bot`, and approvers `sec-lead,sre-oncall`; the token pasted in `.env` and the commit message was redacted and absent from the attestation and output. No live corporate OIDC/SAML IdP was provisioned.
+26 November 2026, in a Kubernetes `kind` cluster running a self-hosted ConfigHub v0.11.1 hub (`confighub` namespace) alongside a live Dex `v2.41.1` OIDC IdP (`oidc` namespace, verified OIDC discovery, JWKS `kid`, and RS256 ID token for `priya@acme.example.com`). Running `cub mini record-pr --from-github` against the in-cluster hub recorded `acme/gitops-fleet#412` with GitHub-API-verified approvers `sec-lead,sre-oncall` (excluding `COMMENTED` reviewer `commenter`) and `API_TOKEN` redacted; re-running wrote nothing; `--backfill 3` imported `#411` and skipped `#412`; `--list` returned both PRs with zero credentials.
 
 </details>
 
