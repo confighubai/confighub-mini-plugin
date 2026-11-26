@@ -28,8 +28,8 @@ env:
   COMPONENT: shop
   HUB_FILE: ci/shop/shop.tar.gz
   DEPLOY_DIR: ci/shop/deploy
-  PLUGIN: v0.99.24
-  MINI: 0.11.1-mini.41
+  PLUGIN: v0.99.25
+  MINI: 0.11.1-mini.42
   CLAUDE_CODE: 2.1.285
 jobs:
   agent:
