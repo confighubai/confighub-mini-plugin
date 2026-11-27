@@ -7,7 +7,11 @@ A **hub** is a ConfigHub server and PostgreSQL database that stores your apps' s
 ## Network surface
 
 - **Local hub (`confighub mini`):** The ConfigHub server and its bundled PostgreSQL listen on loopback (`127.0.0.1`) only, on randomly chosen local ports. Nothing listens on external network interfaces, no Docker daemon is required, and no account or outbound cloud connection is needed once downloaded.
-- **Self-hosted hub in Kubernetes:** Install with the packaged [Helm chart (`charts/confighub-hub/`)](../charts/confighub-hub/README.md) ([one-page Helm install, upgrade, and backup guide](self-hosted-helm.md)). Runs non-root behind your own ingress and TLS termination with a `PersistentVolumeClaim` for PostgreSQL. People sign in through your company's OIDC or SAML single sign-on (SSO) with `cub auth login --server https://...` (for example, Dex, Okta, or Entra ID; tested end to end with `helm install` and `helm upgrade` in `kind` alongside a live Dex OIDC provider). Automated jobs (such as GitHub Actions running `cub mini record-pr --from-github`) authenticate with scoped service account keys granted access only to the specific Space they write to, and pull verified `APPROVED` reviewers directly from the GitHub API.
+- **Self-hosted hub in Kubernetes:**
+  - **Install:** Packaged [Helm chart (`charts/confighub-hub/`)](../charts/confighub-hub/README.md) ([install, upgrade, and backup guide](self-hosted-helm.md)).
+  - **Runtime:** Non-root container behind your Ingress/TLS with a `PersistentVolumeClaim` for PostgreSQL.
+  - **Human sign-in:** Corporate OIDC/SAML SSO via `cub auth login --server https://...` (Dex, Okta, Entra ID; tested end to end with `helm install` + `helm upgrade` in `kind` + Dex).
+  - **CI auth:** Scoped service account keys restricted to the target Space; `cub mini record-pr --from-github` pulls verified `APPROVED` reviewers directly from the GitHub API.
 
 ## What is stored in PostgreSQL
 
@@ -26,7 +30,8 @@ A **hub** is a ConfigHub server and PostgreSQL database that stores your apps' s
 
 ## Binaries, upgrades, and backups
 
-- **Verification:** Each local hub release publishes `SHA256SUMS` alongside the platform archives ([current release](install-mini.md#the-current-release)). `bin/confighub mini get` verifies the downloaded archive against its checksum before unpacking. macOS binaries are currently not Apple-notarized (downloaded via `curl`, they run without Gatekeeper prompts).
+- **Verification:** Each local hub release publishes `SHA256SUMS` alongside the platform archives ([current release](install-mini.md#the-current-release)). `bin/confighub mini get` verifies the downloaded archive against its checksum before unpacking.
+- **macOS note:** macOS binaries are currently not Apple-notarized (downloaded via `curl`, they run without Gatekeeper prompts).
 - **Upgrades (local hub):** Installing a newer `confighub mini` package migrates an existing local hub's PostgreSQL schema in place on the first `cub mini` command, preserving all Spaces, Units, revisions, waiting orders, and attestations.
 - **Backups and exit:** Export any app back to plain files with `cub mini copy APP --variant live --to-dir DIR`, or hand a GitOps app back to Git with `cub mini back-to-git APP --variant live --repo DIR` without restarting pods.
 

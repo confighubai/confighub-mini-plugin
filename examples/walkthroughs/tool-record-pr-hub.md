@@ -22,11 +22,13 @@ You need: a GitOps repository on GitHub, and a ConfigHub hub (self-hosted in you
 | Backfill recent PRs | `cub mini record-pr --space platform-audit --repo ORG/REPO --backfill 20` | "Backfill the last 20 merged configuration commits into Space `platform-audit` so audit queries work on day one." |
 | Query the audit trail | `cub mini record-pr --space platform-audit --list` | "List the pull request configuration reviews recorded in Space `platform-audit`." |
 
-Credentials never leave the runner: secret values in changed files or commit messages are redacted before writing to the hub. Code-only pull requests write nothing, and re-running on the same pull request and commit writes no duplicate attestation. For a security review of the hub server itself (network surface, PostgreSQL storage, upgrades, and teardown), see [For a security review: the ConfigHub hub](../../docs/security-hub.md). To deploy the hub in your own Kubernetes cluster with Helm, persistent PostgreSQL storage, and OIDC/SAML SSO, see [Self-hosting the ConfigHub hub in Kubernetes (Helm)](../../docs/self-hosted-helm.md).
+- **Credentials stay local:** secret values in changed files or commit messages are redacted before writing to the hub.
+- **Idempotent & noise-free:** code-only PRs write nothing; re-running on the same PR and commit writes no duplicate attestation.
+- **Security & deployment:** [hub security review](../../docs/security-hub.md) · [self-hosted Kubernetes Helm guide](../../docs/self-hosted-helm.md).
 
-Without ConfigHub: audit questions ("which PR raised `ingress` replicas in `us-east`, why, and who approved it?") mean searching GitHub comments and commit logs across repositories by hand, where comments can be edited or deleted.
+Without ConfigHub: audit questions ("which PR raised `ingress` replicas in `us-east`, why, and who approved it?") mean searching editable GitHub comments and commit logs across repos by hand.
 
-**Where this grows (1:46 video):** Once your team trusts the self-hosted hub beside Git, watch the [ConfigHub Trailer](https://youtu.be/H7xtSqMZrao) to see multi-cluster fleet promotion, field guards, and `cub unit blame` alongside Argo CD, Flux, and Sveltos.
+**Where this grows (1:46 video):** Watch the [ConfigHub Trailer](https://youtu.be/H7xtSqMZrao) for multi-cluster fleet promotion, field guards, and `cub unit blame` alongside Argo CD, Flux, and Sveltos.
 
 ## Deeper dive
 
@@ -73,7 +75,7 @@ Git, and `cub` with the local hub ([install the local hub](../../docs/install-mi
    cub mini record-pr --space platform-audit --list
    ```
 
-5. In GitHub Actions, pass the three optional inputs to the [configuration review Action](../../review/README.md). The Action passes `GITHUB_TOKEN` and `--from-github` so `cub mini record-pr` fetches verified `APPROVED` reviewers directly from the GitHub API (ignoring comment-only or superseded reviews):
+5. In GitHub Actions, pass three optional inputs to the [configuration review Action](../../review/README.md):
    ```yaml
    - uses: confighubai/confighub-mini-plugin/review@v0
      with:
@@ -81,10 +83,7 @@ Git, and `cub` with the local hub ([install the local hub](../../docs/install-mi
        hub-space: platform-audit
        hub-token: ${{ secrets.CONFIGHUB_PR_RECORDER_TOKEN }}
    ```
-
-   To deploy the hub in your own Kubernetes cluster behind your OIDC IdP (such as Dex, Okta, or Entra ID), run the ConfigHub hub `Deployment` and `Service` in a dedicated `confighub` namespace behind your ingress/TLS termination, point `CONFIGHUB_AUTH_ISSUER` and `CONFIGHUB_TOKEN_EXCHANGE_AUDIENCE` at your IdP, and issue a scoped service account token for the audit Space.
-
-   To undo: remove those three inputs from your workflow file. Git, branch protection, and Argo CD or Flux keep working unchanged.
+   The Action passes `GITHUB_TOKEN` and `--from-github` so `cub mini record-pr` pulls verified `APPROVED` reviewers directly from the GitHub API (ignoring comment-only or superseded reviews). To deploy the hub in Kubernetes behind OIDC (Dex, Okta, Entra ID), see [Self-hosting the ConfigHub hub in Kubernetes (Helm)](../../docs/self-hosted-helm.md). To undo: remove those three inputs; Git and Argo CD/Flux keep working unchanged.
 
 ## Agent
 
@@ -92,7 +91,13 @@ Never pass or print `CUB_TOKEN` or any secret value. When asked to check what pu
 
 ## Testing
 
-The command was run end to end in a Kubernetes `kind` cluster hosting both a self-hosted ConfigHub v0.11.1 hub (`confighub` namespace) and a live Dex OIDC provider (`oidc` namespace, verifying live OIDC discovery, JWKS, and RS256 ID token issuance). Against a GitOps repository PR changing `Deployment/ingress/spec.replicas` and rotating `API_TOKEN`, `cub mini record-pr --from-github` fetched verified `APPROVED` reviewers (`sec-lead,sre-oncall`) from the GitHub API while excluding a `COMMENTED` reviewer, recorded one `PullRequestReview` attestation with `API_TOKEN (redacted)` and no secret value, skipped idempotently on re-run, backfilled an earlier PR with `--backfill 3`, and listed both PRs with `--list`. Unit tests (`TestRecordPRToHubAndIdempotency`, `TestRecordPRRedactsCredentials`, `TestRecordPRSkipsNonConfigAndDryRunWritesNothing`, `TestRecordPRBackfillRespectsLimitAndIdempotency`, `TestRecordPRApproversFromGitHubAPI`) verify all planted faults (`record-pr-duplicate`, `review-record-credential`, `backfill-ignores-limit`, and `record-pr-unapproved-reviewer`).
+| Check | Result (26 November 2026) |
+|---|---|
+| Cluster + OIDC | `charts/confighub-hub/` v0.1.0 (`kind`, ConfigHub v0.11.1 + PVC) alongside live Dex `v2.41.1` (verified OIDC discovery, JWKS `kid`, RS256 ID token for `priya@acme.example.com`) |
+| `--from-github` & redaction | Recorded `acme/gitops-fleet#412` with verified approvers `sec-lead,sre-oncall` (excluded `COMMENTED` reviewer `commenter`) and `API_TOKEN (redacted)` |
+| Idempotency & `--backfill 3` | Re-run wrote nothing; `--backfill 3` imported `#411` and skipped `#412` |
+| In-place `helm upgrade` | Pod replaced on same PVC; `--list` still returned `#412` with zero data loss |
+| Planted-fault unit tests | `TestRecordPRToHubAndIdempotency` (`record-pr-duplicate`), `TestRecordPRRedactsCredentials` (`review-record-credential`), `TestRecordPRSkipsNonConfigAndDryRunWritesNothing`, `TestRecordPRBackfillRespectsLimitAndIdempotency` (`backfill-ignores-limit`), `TestRecordPRApproversFromGitHubAPI` (`record-pr-unapproved-reviewer`) |
 
 <!-- agent-task: dry-run -->
 > Show what `cub mini record-pr --dry-run` would record for the latest commit on this branch without writing anything to the hub.
@@ -109,7 +114,7 @@ This proves: a platform team can record every pull request's rendered configurat
 
 <details><summary>Test results</summary>
 
-26 November 2026, in a Kubernetes `kind` cluster running the packaged Helm chart (`charts/confighub-hub/` v0.1.0, self-hosted ConfigHub v0.11.1 hub with PVC persistence in `confighub` namespace) alongside a live Dex `v2.41.1` OIDC IdP (`oidc` namespace, verified OIDC discovery, JWKS `kid`, and RS256 ID token for `priya@acme.example.com`). Running `cub mini record-pr --from-github` against the in-cluster hub recorded `acme/gitops-fleet#412` with GitHub-API-verified approvers `sec-lead,sre-oncall` (excluding `COMMENTED` reviewer `commenter`) and `API_TOKEN` redacted; re-running wrote nothing; `--backfill 3` imported `#411` and skipped `#412`; an in-place `helm upgrade` replaced the pod on the same PVC and `--list` still returned `acme/gitops-fleet#412` with zero data loss and zero credentials.
+26 November 2026: passed end-to-end in `kind` (`charts/confighub-hub/` v0.1.0 + Dex `v2.41.1`), including `--from-github`, `--backfill 3`, idempotent re-run, credential redaction, and in-place `helm upgrade` persistence.
 
 </details>
 
