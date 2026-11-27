@@ -23,6 +23,8 @@ The metadata is signed separately and checked by `bin/confighub mini changes --v
 ## GitHub, with no hub
 
 - **A comment on each pull request.** The [review](../review/README.md) is one step in a workflow file. It lists every configuration value the pull request changes, what each becomes on each cluster, and the reason from the record. Nobody installs anything, and no account is needed.
+- **Any Git host, with no CI job.** `cub mini review --commit-summary` prints a short 3–6 line plain-text summary (credentials redacted) for any commit message or PR/MR description on GitHub, GitLab, Gitea, or Bitbucket.
+- **Bring the next teammate and agent on board.** `cub mini to-hub --share-setup --yes` adds the plugin offer to `.claude/settings.json` and an idempotent ConfigHub section to `AGENTS.md` (preserving existing rules) so the next person or agent who clones the repository starts with the same workflow.
 - **An agent in a GitHub Actions job.** [agent-plugin-only.yml](../ci/agent-plugin-only.yml) runs Claude Code with the Claude plugin on a task and hands the result back as a pull request, with the record in it ([agents in CI](../ci/README.md)).
 
 ## A hub, with no confighub mini
